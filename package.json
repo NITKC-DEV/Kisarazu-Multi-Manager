@@ -1,0 +1,24 @@
+{
+  "dependencies": {
+    "discord.js": "^14.3.0",
+    "dotenv": "^16.0.2",
+    "node.js": "^0.0.1-security"
+  },
+  "name": "nitkc-main",
+  "description": "",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NITKC22s/bot-main.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/NITKC22s/bot-main/issues"
+  },
+  "homepage": "https://github.com/NITKC22s/bot-main#readme"
+}
