@@ -19,7 +19,7 @@ client.once("ready", async () => {
         description: "このBOTの概要を表示します"
     }
     ];
-    await client.application.commands.set(data, '***REMOVED***');
+    await client.application.commands.set(data, config.server);
     console.log("Ready!");
 });
 
