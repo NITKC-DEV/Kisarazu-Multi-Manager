@@ -72,7 +72,7 @@ client.on("interactionCreate", async (interaction) => {
             fields: [
                 {
                   name: '​\nバージョン情報',
-                  value: 'v1.0.0 ',
+                  value: 'v1.0.1 ',
                 },
                 {
                     name: '​\n開発者',
