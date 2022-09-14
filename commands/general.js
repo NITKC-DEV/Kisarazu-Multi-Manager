@@ -14,7 +14,7 @@ module.exports =
                     .setTitle('ヘルプ')
                     .setAuthor({
                         name: "\u200b",
-                        iconURL: 'https://www.kisarazu.ac.jp/wp-content/uploads/2015/01/symbolmark_5cm-300x297.jpg',
+                        iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
                         url: 'https://discord.gg/mwyC8PTcXa'
                     })
                     .setDescription('現在実装されているコマンド一覧です')
@@ -36,7 +36,7 @@ module.exports =
                     .setTitle('NITKC統合管理BOT概要')
                     .setAuthor({
                         name: "\u200b",
-                        iconURL: 'https://www.kisarazu.ac.jp/wp-content/uploads/2015/01/symbolmark_5cm-300x297.jpg',
+                        iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
                         url: 'https://discord.gg/mwyC8PTcXa'
                     })
                     .setDescription('このbotの概要を紹介します')
@@ -44,7 +44,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v1.0.1 ',
+                                value: 'v1.0.2 ',
                             },
                             {
                                 name: '開発者',
