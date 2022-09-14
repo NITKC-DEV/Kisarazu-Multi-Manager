@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const commands = require('../botmain')
 
 
 module.exports =
@@ -8,19 +9,21 @@ module.exports =
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
             async execute(interaction) {
-                const exampleEmbed = new EmbedBuilder()
+                const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('ヘルプ')
-                    .setAuthor({ name:"\u200b",iconURL: 'https://www.kisarazu.ac.jp/wp-content/uploads/2015/01/symbolmark_5cm-300x297.jpg', url: 'https://discord.gg/mwyC8PTcXa' })
+                    .setAuthor({
+                        name: "\u200b",
+                        iconURL: 'https://www.kisarazu.ac.jp/wp-content/uploads/2015/01/symbolmark_5cm-300x297.jpg',
+                        url: 'https://discord.gg/mwyC8PTcXa'
+                    })
                     .setDescription('現在実装されているコマンド一覧です')
                     .addFields(
-                        { name: '/help', value: 'ヘルプを表示します' },
-                        { name: '/about', value: 'このBOTの概要を表示します', },
-                        { name: '/genshintimer', value: 'このBOTに搭載されている機能「genshin-timer」の概要を表示します。',  },
+                        commands.map(e => ({ name: '/' + e.data.name, value: e.data.description }))
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin'});
-                await interaction.reply({embeds:[exampleEmbed]});
+                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                await interaction.reply({ embeds: [embed] });
             },
         },
         {
@@ -28,7 +31,42 @@ module.exports =
                 .setName('about')
                 .setDescription('このBOTの概要を表示します'),
             async execute(interaction) {
-                await interaction.reply('Pong!');
+                const embed = new EmbedBuilder()
+                    .setColor(0x00A0EA)
+                    .setTitle('NITKC統合管理BOT概要')
+                    .setAuthor({
+                        name: "\u200b",
+                        iconURL: 'https://www.kisarazu.ac.jp/wp-content/uploads/2015/01/symbolmark_5cm-300x297.jpg',
+                        url: 'https://discord.gg/mwyC8PTcXa'
+                    })
+                    .setDescription('このbotの概要を紹介します')
+                    .addFields(
+                        [
+                            {
+                                name: 'バージョン情報',
+                                value: 'v1.0.1 ',
+                            },
+                            {
+                                name: '開発者',
+                                value: '開発は、このサーバーの管理者3人([kokastar](https://github.com/starkoka)、[NXVZBGB FBEN](https://github.com/NXVZBGBFBEN)、[naotiki](https://github.com/naotiki))で行っています',
+                            },
+                            {
+                                name: '搭載機能',
+                                value: '[Genshin-timer Discord BOT v1.0.0](https://github.com/starkoka/Genshin-Timer)',
+                            },
+                            {
+                                name: 'ソースコード',
+                                value: '一部のソースコードはオープンソースとなっています。以下のリンクより参照してください。\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                            },
+                            {
+                                name: '実行環境',
+                                value: 'node.js v18.9.0\ndiscord.js v14.3.0',
+                            },
+                        ]
+                    )
+                    .setTimestamp()
+                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                await interaction.reply({ embeds: [embed] });
             },
         },
     ]
