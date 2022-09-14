@@ -1,17 +1,23 @@
-const { Client, Intents, GatewayIntentBits, Partials} = require('discord.js');
-const config = require('./config.json');
+const { Client, Intents, GatewayIntentBits, Partials, Collection } = require('discord.js');
+const config = require('./config.dev.json');
 const dotenv = require('dotenv');
+const path = require('path')
+const fs = require('fs')
 
 dotenv.config();
 const client = new Client({
     intents: [GatewayIntentBits.Guilds],
     partials: [Partials.Channel],
 });
+client.commands = new Collection();
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
 
 
 /*スラッシュコマンド登録*/
 client.once("ready", async () => {
-    const data = [{
+ /*   const data = [{
         name: "help",
         description: "このBOTのヘルプを表示します",
     },{
@@ -19,7 +25,18 @@ client.once("ready", async () => {
         description: "このBOTの概要を表示します"
     }
     ];
-    await client.application.commands.set(data, config.server);
+
+    await client.application.commands.set(data, config.server);*/
+    for (const file of commandFiles) {
+        const filePath = path.join(commandsPath, file);
+        const command = require(filePath);
+        // Set a new item in the Collection
+        // With the key as the command name and the value as the exported module
+        for (let i = 0; i < command.length; i++) {
+            client.commands.set(command[i].data.name, command[i]);
+        }
+
+    }
     console.log("Ready!");
 });
 
@@ -28,7 +45,18 @@ client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) {
         return;
     }
+    const command = interaction.client.commands.get(interaction.commandName);
 
+    if (!command) return;
+    console.log(command)
+    try {
+        await command.execute(interaction);
+    } catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+    }
+
+    return;/*
     if (interaction.commandName === 'help') {
         const help = {
             color: 0x00A0EA,
@@ -99,6 +127,6 @@ client.on("interactionCreate", async (interaction) => {
         };
         await interaction.reply({ embeds: [help] });
 
-    }
+    }*/
 });
 client.login(config.token);
