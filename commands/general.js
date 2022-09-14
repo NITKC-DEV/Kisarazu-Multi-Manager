@@ -52,7 +52,7 @@ module.exports =
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v1.0.0](https://github.com/starkoka/Genshin-Timer)',
+                                value: '[Genshin-timer Discord BOT v1.0.1](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: 'ソースコード',
