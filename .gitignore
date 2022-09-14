@@ -1,3 +1,6 @@
 node_modules/
 package-lock.json
 config.json
+/config.dev.json
+yarn.lock
+/.idea/
