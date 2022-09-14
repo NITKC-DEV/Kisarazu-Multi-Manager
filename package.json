@@ -1,14 +1,15 @@
 {
   "dependencies": {
     "discord.js": "^14.3.0",
-    "dotenv": "^16.0.2",
-    "node.js": "^0.0.1-security"
+    "dotenv": "^16.0.2"
   },
   "name": "nitkc-main",
   "description": "",
   "version": "1.0.1",
   "main": "index.js",
   "scripts": {
+    "dev": "cross-env NODE_ENV=development node botmain.js",
+    "start": "cross-env NODE_ENV=production node botmain.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -20,5 +21,8 @@
   "bugs": {
     "url": "https://github.com/NITKC22s/bot-main/issues"
   },
-  "homepage": "https://github.com/NITKC22s/bot-main#readme"
+  "homepage": "https://github.com/NITKC22s/bot-main#readme",
+  "devDependencies": {
+    "cross-env": "^7.0.3"
+  }
 }
