@@ -1,15 +1,18 @@
 {
   "dependencies": {
+    "@discordjs/rest": "^1.1.0",
     "discord.js": "^14.3.0",
     "dotenv": "^16.0.2"
   },
   "name": "nitkc-main",
   "description": "",
   "version": "1.0.1",
-  "main": "index.js",
+  "main": "botmain.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node botmain.js",
-    "start": "cross-env NODE_ENV=production node botmain.js",
+    "dev": "cross-env NODE_ENV=development node .",
+    "dev cmd": "cross-env NODE_ENV=development node deploy-commands.js",
+    "prod cmd": "cross-env NODE_ENV=production node deploy-commands.js",
+    "start": "cross-env NODE_ENV=production node .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
