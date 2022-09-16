@@ -6,6 +6,7 @@ module.exports =
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
             async execute(interaction) {
+                const commands = require('../botmain')
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('ヘルプ')
@@ -41,7 +42,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v1.1.1 ',
+                                value: 'v1.0.2 ',
                             },
                             {
                                 name: '開発者',
@@ -65,13 +66,5 @@ module.exports =
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 await interaction.reply({ embeds: [embed] });
             },
-
         },
-
-
     ]
-
-;
-
-
-const commands = require('../botmain')
