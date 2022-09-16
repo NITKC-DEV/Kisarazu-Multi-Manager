@@ -39,8 +39,3 @@ module.exports =
             },
         },
     ]
-
-;
-
-
-const commands = require('../botmain')
