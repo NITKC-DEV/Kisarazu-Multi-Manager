@@ -48,7 +48,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 /*原神デイリー通知*/
-cron.schedule('0 12 * * *', () => {
+cron.schedule('0 5 * * *', () => {
     const daily = {
         color: 0x27668D,
         title: 'デイリー更新',
