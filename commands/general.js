@@ -42,7 +42,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v1.0.2 ',
+                                value: 'v1.1.1 ',
                             },
                             {
                                 name: '開発者',
