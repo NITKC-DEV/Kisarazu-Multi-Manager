@@ -4,36 +4,26 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord.js');
 const config = process.env.NODE_ENV == "production" ? require('./config.json') : require('./config.dev.json')
 console.log(config)
+// ./commands/ ディレクトリ内を探索
 const commands = [];
 const commandsPath = path.join(__dirname, 'commands');
+//.jsを検索
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
-
-
-for (const file of commandFiles) {
+for (const file of commandFiles) {//ファイルの数だけ
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
     for (let i = 0; i < command.length; i++) {
-
+        //各コマンドを配列にぶちこむ
         commands.push(command[i].data.toJSON());
     }
 }
 
+// Discord API通信準備 トークン設定
 const rest = new REST({ version: '10' }).setToken(config.token);
-
-/*rest.put(Routes.applicationCommands(config.client), { body: commands })
-    .then(data => console.log(`Successfully registered ${data.length} application commands.`))
-    .catch(console.error);*/
-
-/*rest.put(Routes.applicationGuildCommands(config.client, config.server), { body: [] })
-    .then(() => console.log('Successfully deleted all guild commands.'))
-    .catch(console.error);*/
-/*
-rest.put(Routes.applicationGuildCommands(config.client,"1004598980291866694"), { body: [] })
-    .then(() => console.log('Successfully deleted application command'))
-    .catch(console.error);*/
-const { prompt, Select ,MultiSelect,Toggle } = require('enquirer');
+const { Select ,MultiSelect,Toggle } = require('enquirer');
 
 async function run() {
+    //GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client, config.server))
     console.log("---コマンド一覧---")
     for (const command of data) {
@@ -55,6 +45,7 @@ async function run() {
     switch (mode) {
         case '登録(更新)': {
             console.log("---追加コマンド---")
+            //差分を確認
             for (const filterElement of commands.filter(v => !data.map(e => e.name).includes(v.name))) {
                 console.log(`/${filterElement.name}`)
                 console.log(`  ${filterElement.description}`)
@@ -66,6 +57,7 @@ async function run() {
                 disabled: 'いいえ'
             }).run();
             if (prompt){
+               // PUTで上書き すべてcommandsの内容に
                await rest.put(Routes.applicationCommands(config.client), { body: commands })
                     .then(data => console.log(`${data.length} 個のアプリケーション コマンドが正常に登録されました。`))
                     .catch(console.error);
@@ -92,6 +84,6 @@ async function run() {
     }
 }
 
-run().then(r => {
+run().then(() => {
 
 })
