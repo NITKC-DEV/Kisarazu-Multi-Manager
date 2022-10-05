@@ -1,4 +1,4 @@
-const { Client, Intents, GatewayIntentBits, Partials, Collection } = require('discord.js');
+const { Client, Intents, GatewayIntentBits, Partials, Collection, EmbedBuilder} = require('discord.js');
 const config = process.env.NODE_ENV == "development" ? require('./config.dev.json') : require('./config.json')
 const dotenv = require('dotenv');
 const path = require('path')
@@ -65,9 +65,9 @@ cron.schedule('0 5 * * *', () => {
         },
     };
     client.channels.cache.get(config.daily).send({embeds: [daily]})
-    var dt = new Date();
-    var dayofweek = dt.getDay();
-    var date = dt.getDate();
+    let dt = new Date();
+    let dayofweek = dt.getDay();
+    let date = dt.getDate();
     if(dayofweek==1){ /*月曜日*/
         const monday = {
             color: 0x27668D,
@@ -207,6 +207,310 @@ cron.schedule('0 5 * * *', () => {
             timestamp: new Date().toISOString(),
         };
         client.channels.cache.get(config.daily).send({embeds: [sixteenth]})
+    }
+
+    console.log('デイリー通知送信完了')
+});
+
+/*時間割設定*/
+let M,E,D,J,C;
+cron.schedule('0 17 * * *', () => {
+    client.channels.cache.get(config.daily).send({embeds: [daily]})
+    let dt = new Date();
+    let dayofweek = dt.getDay();
+    let date = dt.getDate();
+    if(dayofweek==5){ /*月曜日分セット(金曜日実行)*/
+        M = new EmbedBuilder()
+            .setColor(0x00A0EA)
+            .setTitle('機械工学科 時間割')
+            .setAuthor({
+                name: "木更津22s統合管理BOT",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .setDescription('月曜日の時間割です。本日は7,8時間目に課題学習時間があります。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .addFields(
+                [
+                    {
+                        name: '基礎数学Ⅱ',
+                        value:'担当教員:関口 昌由 \n授業場所:1年機械工学科教室',
+                    },
+                    {
+                        name: '工学実験ⅠB',
+                        value:'担当教員:小田 功,高橋 美喜男,松井 翔太 \n授業場所:実習工場',
+                    },
+                    {
+                        name: '図学製図Ⅱ',
+                        value:'担当教員:松井 翔太 \n授業場所:1年機械工学科教室',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        E = new EmbedBuilder()
+            .setColor(0xD64E5A)
+            .setTitle('電気電子工学科 時間割')
+            .setDescription('月曜日の時間割です。本日は7,8時間目に課題学習時間があります。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '基礎数学Ⅱ',
+                        value:'担当教員:鈴木 道治 \n授業場所:1年電気電子工学科教室',
+                    },
+                    {
+                        name: '空きコマ',
+                        value:'時間割上では、3,4時間目は空きコマになっています。',
+                    },
+                    {
+                        name: '英語ⅠB',
+                        value:'担当教員:岩崎 洋一,小川 祐輔 \n授業場所:1年電気電子工学科教室',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        D = new EmbedBuilder()
+            .setColor(0x865DC0)
+            .setTitle('電子制御工学科 時間割')
+            .setDescription('月曜日の時間割です。本日は7,8時間目に課題学習時間があります。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '基礎数学Ⅱ',
+                        value:'担当教員:阿部 孝之 \n授業場所:1年電子制御工学科教室',
+                    },
+                    {
+                        name: '英語ⅡB',
+                        value:'担当教員:瀬川 直美 \n授業場所:特別教室',
+                    },
+                    {
+                        name: '物理学Ⅰ',
+                        value:'担当教員:高谷 博史 \n授業場所:1年電子制御工学科教室',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        J = new EmbedBuilder()
+            .setColor(0xCAAB0D)
+            .setTitle('情報工学科 時間割')
+            .setDescription('月曜日の時間割です。本日は7,8時間目に課題学習時間があります。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '物理学Ⅰ',
+                        value:'担当教員:高谷 博史 \n授業場所:1年情報工学科教室',
+                    },
+                    {
+                        name: '英語ⅠB',
+                        value:'担当教員:小川 祐輔 \n授業場所:1年情報工学科教室',
+                    },
+                    {
+                        name: '基礎数学Ⅲ',
+                        value:'担当教員:阿部 孝之 \n授業場所:1年情報工学科教室',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        C = new EmbedBuilder()
+            .setColor(0x1E9B50)
+            .setTitle('環境都市工学科 時間割')
+            .setDescription('月曜日の時間割です。本日は7,8時間目に課題学習時間があります。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '英語ⅡB',
+                        value:'担当教員:瀬川 直美 \n授業場所:特別教室',
+                    },
+                    {
+                        name: '基礎数学Ⅲ',
+                        value:'担当教員:阿部 孝之 \n授業場所:1年環境都市工学科教室',
+                    },
+                    {
+                        name: '基礎数学Ⅱ',
+                        value:'担当教員:佐野 照和 \n授業場所:1年環境都市工学科教室',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+    }
+
+    else if(dayofweek==1){ /*火曜日(月曜日実行)*/
+        M = new EmbedBuilder()
+            .setColor(0x00A0EA)
+            .setTitle('機械工学科 時間割')
+            .setAuthor({
+                name: "木更津22s統合管理BOT",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .setDescription('火曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .addFields(
+                [
+                    {
+                        name: '地理B',
+                        value:'担当教員:小谷 俊博,武長 玄次郎,高石 憲明 \n授業場所:1年機械工学科教室',
+                    },
+                    {
+                        name: '物理学Ⅰ',
+                        value:'担当教員:高谷 博史 \n授業場所:1年機械工学科教室',
+                    },
+                    {
+                        name: '技術者入門Ⅱ',
+                        value:'担当教員:板垣 貴喜,内田 洋彰,小田 功,歸山 智治,松井 翔太',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        E = new EmbedBuilder()
+            .setColor(0xD64E5A)
+            .setTitle('電気電子工学科 時間割')
+            .setDescription('火曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '物理学Ⅰ',
+                        value:'担当教員:高谷 博史 \n授業場所:1年電気電子工学科教室',
+                    },
+                    {
+                        name: '基礎化学ⅠB',
+                        value:'担当教員:藤井 翔 \n授業場所:化学実験室',
+                    },
+                    {
+                        name: '技術者入門Ⅱ',
+                        value:'担当教員:小原 翔馬,水越 彰仁 ',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        D = new EmbedBuilder()
+            .setColor(0x865DC0)
+            .setTitle('電子制御工学科 時間割')
+            .setDescription('火曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '電子計算機Ⅰ\n',
+                        value:'担当教員:沢口 義人 \n授業場所:1年電子制御工学科教室',
+                    },
+                    {
+                        name: '技術者入門Ⅱ',
+                        value:'担当教員:沢口 義人,奥山 彫夢',
+                    },
+                    {
+                        name: '技術者入門Ⅱ',
+                        value:'担当教員:沢口 義人,奥山 彫夢',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        J = new EmbedBuilder()
+            .setColor(0xCAAB0D)
+            .setTitle('情報工学科 時間割')
+            .setDescription('火曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '実験実習ⅠB',
+                        value:'担当教員:米村 恵一,能城 沙織 \n授業場所:情報工学科回路実験室',
+                    },
+                    {
+                        name: 'コンピュータ入門Ⅱ',
+                        value:'担当教員:丸山 真佐夫,吉澤 陽介 \n授業場所:情報工学科計算機演習室',
+                    },
+                    {
+                        name: '技術者入門Ⅱ',
+                        value:'担当教員:米村 恵一,和田 州平',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        C = new EmbedBuilder()
+            .setColor(0x1E9B50)
+            .setTitle('環境都市工学科 時間割')
+            .setDescription('火曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '基礎数学Ⅱ',
+                        value:'担当教員:佐野 照和 \n授業場所:1年環境都市工学科教室',
+                    },
+                    {
+                        name: '空きコマ',
+                        value:'時間割上では、3,4時間目は空きコマになっています。',
+                    },
+                    {
+                        name: '技術者入門Ⅱ',
+                        value:'担当教員:石川 雅朗',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
     }
 
     console.log('デイリー通知送信完了')

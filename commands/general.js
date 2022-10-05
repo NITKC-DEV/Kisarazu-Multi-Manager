@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+
 module.exports =
     [
         {
@@ -66,5 +67,12 @@ module.exports =
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 await interaction.reply({ embeds: [embed] });
             },
+        },{
+        data: new SlashCommandBuilder()
+            .setName('timetable')
+            .setDescription('今日(17時以降は明日)の時間割を表示します'),
+        async execute(interaction) {
+            await interaction.reply({ embeds: [J] });
         },
+    },
     ]
