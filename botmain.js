@@ -245,7 +245,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年機械工学科教室',
+                        value:'授業場所:1年機械工学科教室ほか ',
                     },
 
                 ]
@@ -278,7 +278,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年電気電子工学科教室',
+                        value:'授業場所:1年電気電子工学科教室ほか',
                     },
 
                 ]
@@ -311,7 +311,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年電子制御工学科教室',
+                        value:'授業場所:1年電子制御工学科教室ほか',
                     },
 
                 ]
@@ -344,7 +344,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年情報工学科教室',
+                        value:'授業場所:1年情報工学科教室ほか',
                     },
 
                 ]
@@ -377,7 +377,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年環境都市学科教室',
+                        value:'授業場所:1年環境都市学科教室ほか',
                     },
 
                 ]
@@ -534,7 +534,7 @@ cron.schedule('0 17 * * *', () => {
             .setFooter({ text: 'Developed by NITKC22s server Admin' });
     }
 
-    if(dayofweek==2){ /*水曜日分セット(火曜日実行)*/
+    else if(dayofweek==2){ /*水曜日分セット(火曜日実行)*/
         M = new EmbedBuilder()
             .setColor(0x00A0EA)
             .setTitle('機械工学科 時間割')
@@ -552,7 +552,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '保健体育ⅠB',
-                        value:'担当教員:坂田 洋満,篠村 朋樹\t',
+                        value:'担当教員:坂田 洋満,篠村 朋樹　\n授業場所:体育館・グラウンド他ほか',
                     },
                     {
                         name: '英語ⅠB',
@@ -560,7 +560,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年機械工学科教室',
+                        value:'授業場所:1年機械工学科教室ほか',
                     },
 
                 ]
@@ -593,7 +593,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年電気電子工学科教室',
+                        value:'授業場所:1年電気電子工学科教室ほか',
                     },
 
                 ]
@@ -614,7 +614,7 @@ cron.schedule('0 17 * * *', () => {
                 [
                     {
                         name: '保健体育ⅠB',
-                        value:'担当教員:坂田 洋満,篠村 朋樹',
+                        value:'担当教員:坂田 洋満,篠村 朋樹 \n授業場所:体育館・グラウンドほか',
                     },
                     {
                         name: '美術',
@@ -626,7 +626,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年電子制御工学科教室',
+                        value:'授業場所:1年電子制御工学科教室ほか',
                     },
 
                 ]
@@ -659,7 +659,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年情報工学科教室',
+                        value:'授業場所:1年情報工学科教室ほか',
                     },
 
                 ]
@@ -692,7 +692,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: '課題学習時間',
-                        value:'授業場所:1年環境都市学科教室',
+                        value:'授業場所:1年環境都市学科教室ほか',
                     },
 
                 ]
@@ -727,7 +727,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: 'HR',
-                        value:'授業場所:1年機械工学科教室',
+                        value:'授業場所:1年機械工学科教室ほか',
                     },
 
                 ]
@@ -760,7 +760,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: 'HR',
-                        value:'授業場所:1年電気電子工学科教室',
+                        value:'授業場所:1年電気電子工学科教室ほか',
                     },
 
                 ]
@@ -793,7 +793,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: 'HR',
-                        value:'授業場所:1年電子制御工学科教室',
+                        value:'授業場所:1年電子制御工学科教室ほか',
                     },
 
                 ]
@@ -826,7 +826,7 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: 'HR',
-                        value:'授業場所:1年情報工学科教室',
+                        value:'授業場所:1年情報工学科教室ほか',
                     },
 
                 ]
@@ -859,7 +859,174 @@ cron.schedule('0 17 * * *', () => {
                     },
                     {
                         name: 'HR',
-                        value:'授業場所:1年環境都市学科教室',
+                        value:'授業場所:1年環境都市学科教室ほか',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+    }
+
+    else if(dayofweek==4){ /*金曜日分セット(木曜日実行)*/
+        M = new EmbedBuilder()
+            .setColor(0x00A0EA)
+            .setTitle('機械工学科 時間割')
+            .setAuthor({
+                name: "木更津22s統合管理BOT",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .setDescription('金曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .addFields(
+                [
+                    {
+                        name: '英語ⅡB',
+                        value:'担当教員:瀬川 直美 \n授業場所:特別教室',
+                    },
+                    {
+                        name: '基礎化学ⅠB',
+                        value:'担当教員:藤井 翔 \n授業場所:化学実験室',
+                    },
+                    {
+                        name: '基礎数学Ⅲ',
+                        value:'担当教員:阿部 孝之 \n授業場所:第一講義室',
+                    },
+                    {
+                        name: '課題学習時間',
+                        value:'授業場所:1年機械工学科教室ほか',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        E = new EmbedBuilder()
+            .setColor(0xD64E5A)
+            .setTitle('電気電子工学科 時間割')
+            .setDescription('金曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '地理B',
+                        value:'担当教員:若葉 陽一 \n授業場所:1年電気電子工学科教室',
+                    },
+                    {
+                        name: '英語ⅡB',
+                        value:'担当教員:鈴木 道治 \n授業場所:特別教室',
+                    },
+                    {
+                        name: 'プログラミングⅠ',
+                        value:'担当教員:岩崎 洋一,小川 祐輔 \n授業場所:ネットワーク情報センター',
+                    },
+                    {
+                        name: '課題学習時間',
+                        value:'授業場所:1年電気電子工学科教室ほか',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        D = new EmbedBuilder()
+            .setColor(0x865DC0)
+            .setTitle('電子制御工学科 時間割')
+            .setDescription('金曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '機械制御入門Ⅱ',
+                        value:'担当教員:坂田 洋満,篠村 朋樹',
+                    },
+                    {
+                        name: '地理B',
+                        value:'担当教員:加藤 達彦,馬場 喜久 \n授業場所:第6講義室',
+                    },
+                    {
+                        name: '基礎数学Ⅲ',
+                        value:'担当教員:藤井 翔 \n授業場所:第一講義室',
+                    },
+                    {
+                        name: '課題学習時間',
+                        value:'授業場所:1年電子制御工学科教室ほか',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        J = new EmbedBuilder()
+            .setColor(0xCAAB0D)
+            .setTitle('情報工学科 時間割')
+            .setDescription('金曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '保健体育ⅠB',
+                        value:'担当教員:加田 謙一郎 \n授業場所:グラウンド・体育館ほか',
+                    },
+                    {
+                        name: '基礎数学Ⅱ',
+                        value:'担当教員:山下 哲 \n授業場所:1年情報工学科教室',
+                    },
+                    {
+                        name: '地理B',
+                        value:'担当教員:加藤 達彦,馬場 喜久 \n授業場所:第6講義室',
+                    },
+                    {
+                        name: '課題学習時間',
+                        value:'授業場所:1年情報工学科教室ほか',
+                    },
+
+                ]
+            )
+            .setTimestamp()
+            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+        C = new EmbedBuilder()
+            .setColor(0x1E9B50)
+            .setTitle('環境都市工学科 時間割')
+            .setDescription('金曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
+            .setAuthor({
+                name: "木更津22s統合管理bot",
+                iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                url: 'https://discord.gg/mwyC8PTcXa'
+            })
+            .addFields(
+                [
+                    {
+                        name: '地理B',
+                        value:'担当教員:島﨑 彦人 \n授業場所:特別教室',
+                    },
+                    {
+                        name: '保健体育ⅠB',
+                        value:'担当教員:藤井 翔 \n授業場所:体育館・グラウンドほか',
+                    },
+                    {
+                        name: '力学基礎',
+                        value:'担当教員:加田 謙一郎 \n授業場所:環境都市工学科都市創造実験室',
+                    },
+                    {
+                        name: '課題学習時間',
+                        value:'授業場所:1年環境都市学科教室ほか',
                     },
 
                 ]
