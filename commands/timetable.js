@@ -46,20 +46,20 @@ module.exports =[
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
                             url: 'https://discord.gg/mwyC8PTcXa'
                         })
-                        .setDescription('月曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
+                        .setDescription('月曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください\n')
                         .addFields(
                             [
                                 {
                                     name: '基礎数学Ⅱ',
-                                    value:'担当教員:関口 昌由 \n授業場所:1年機械工学科教室',
+                                    value:'担当教員:関口 昌由 \n授業場所:1年機械工学科教室\n​',
                                 },
                                 {
                                     name: '工学実験ⅠB',
-                                    value:'担当教員:小田 功,高橋 美喜男,松井 翔太 \n授業場所:実習工場',
+                                    value:'担当教員:小田 功,高橋 美喜男,松井 翔太 \n授業場所:実習工場\n​',
                                 },
                                 {
                                     name: '図学製図Ⅱ',
-                                    value:'担当教員:松井 翔太 \n授業場所:1年機械工学科教室',
+                                    value:'担当教員:松井 翔太 \n授業場所:1年機械工学科教室\n​',
                                 },
                                 {
                                     name: '課題学習時間',
