@@ -212,5 +212,27 @@ cron.schedule('0 5 * * *', () => {
     console.log('デイリー通知送信完了')
 });
 
+/*時間割送信*/
+cron.schedule('0 20 * * 0', () => {
+
+
+});
+cron.schedule('0 20 * * 1', () => {
+
+
+});
+cron.schedule('0 20 * * 2', () => {
+
+
+});
+cron.schedule('0 20 * * 3', () => {
+
+
+});
+cron.schedule('0 20 * * 4', () => {
+
+
+});
+
 
 client.login(config.token);
