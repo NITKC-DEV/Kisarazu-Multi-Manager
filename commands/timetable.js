@@ -236,6 +236,19 @@ module.exports =[
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
+                else{
+                    embed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle('エラー！！！')
+                        .setDescription('おっと！何かが上手く行かなかったようだ<@626680496834871308>\n\n Error: Command argument is invalid')
+                        .setAuthor({
+                            name: "木更津22s統合管理bot",
+                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                            url: 'https://discord.gg/mwyC8PTcXa'
+                        })
+                        .setTimestamp()
+                        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                }
             }
             else if(dayofweek===2){
                 if(interaction.options.getString('学科')==='M'){
@@ -301,7 +314,7 @@ module.exports =[
 
                 }
                 else if(interaction.options.getString('学科')==='D'){
-                    embed= new EmbedBuilder()
+                    embed = new EmbedBuilder()
                         .setColor(0x865DC0)
                         .setTitle('電子制御工学科 時間割')
                         .setDescription('火曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
@@ -391,6 +404,19 @@ module.exports =[
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
+                else{
+                    embed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle('エラー！！！')
+                        .setDescription('おっと！何かが上手く行かなかったようだ<@626680496834871308>\n\n Error: Command argument is invalid')
+                        .setAuthor({
+                            name: "木更津22s統合管理bot",
+                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                            url: 'https://discord.gg/mwyC8PTcXa'
+                        })
+                        .setTimestamp()
+                        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                }
             }
             else if(dayofweek===3){
                 if(interaction.options.getString('学科')==='M'){
@@ -463,7 +489,7 @@ module.exports =[
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
                 else if(interaction.options.getString('学科')==='D'){
-                    embed= new EmbedBuilder()
+                    embed = new EmbedBuilder()
                         .setColor(0x865DC0)
                         .setTitle('電子制御工学科 時間割')
                         .setDescription('水曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
@@ -564,6 +590,19 @@ module.exports =[
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
+                else{
+                    embed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle('エラー！！！')
+                        .setDescription('おっと！何かが上手く行かなかったようだ<@626680496834871308>\n\n Error: Command argument is invalid')
+                        .setAuthor({
+                            name: "木更津22s統合管理bot",
+                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                            url: 'https://discord.gg/mwyC8PTcXa'
+                        })
+                        .setTimestamp()
+                        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                }
             }
             else if(dayofweek===4){
                 if(interaction.options.getString('学科')==='M'){
@@ -601,7 +640,7 @@ module.exports =[
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
                 else if(interaction.options.getString('学科')==='E'){
-                    embed= new EmbedBuilder()
+                    embed = new EmbedBuilder()
                         .setColor(0xD64E5A)
                         .setTitle('電気電子工学科 時間割')
                         .setDescription('木曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
@@ -736,10 +775,23 @@ module.exports =[
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
+                else{
+                    embed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle('エラー！！！')
+                        .setDescription('おっと！何かが上手く行かなかったようだ<@626680496834871308>\n\n Error: Command argument is invalid')
+                        .setAuthor({
+                            name: "木更津22s統合管理bot",
+                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                            url: 'https://discord.gg/mwyC8PTcXa'
+                        })
+                        .setTimestamp()
+                        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                }
             }
             else if(dayofweek===5){
                 if(interaction.options.getString('学科')==='M'){
-                    embed= new EmbedBuilder()
+                    embed = new EmbedBuilder()
                         .setColor(0x00A0EA)
                         .setTitle('機械工学科 時間割')
                         .setAuthor({
@@ -909,7 +961,21 @@ module.exports =[
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 }
+                else{
+                    embed = new EmbedBuilder()
+                        .setColor(0xFF0000)
+                        .setTitle('エラー！！！')
+                        .setDescription('おっと！何かが上手く行かなかったようだ<@626680496834871308>\n\n Error: Command argument is invalid')
+                        .setAuthor({
+                            name: "木更津22s統合管理bot",
+                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                            url: 'https://discord.gg/mwyC8PTcXa'
+                        })
+                        .setTimestamp()
+                        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                }
             }
+
 
             await interaction.reply({ embeds: [embed] });
         },
