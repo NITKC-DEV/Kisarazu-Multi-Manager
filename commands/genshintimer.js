@@ -1,9 +1,19 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
-
-
+const { SlashCommandBuilder, EmbedBuilder, Client, GatewayIntentBits, Partials} = require('discord.js')
+const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json')
+const dotenv = require('dotenv');
+const path = require('path')
+const fs = require('fs')
+const cron = require('node-cron');
+require('date-utils');
+dotenv.config();
+const client = new Client({
+    intents: [GatewayIntentBits.Guilds],
+    partials: [Partials.Channel],
+});
 
 module.exports =
     [
+
 
         {
             data: new SlashCommandBuilder()
@@ -43,19 +53,19 @@ module.exports =
         {data: new SlashCommandBuilder()
                 .setName('jushi')
                 .setDescription('樹脂が設定した量まで回復したら通知します')
-                .addIntegerOption(option =>
+                .addStringOption(option =>
                     option
                         .setName('現在')
                         .setDescription('現在の天然樹脂の数を入力します')
                         .setRequired(true)
                 )
-                .addIntegerOption(option =>
+                .addStringOption(option =>
                     option
                         .setName('通知量')
                         .setDescription('通知してほしい樹脂の数を入力します')
                         .setRequired(true)
                 )
-                .addIntegerOption(option =>
+                .addStringOption(option =>
                     option
                         .setName('次の回復')
                         .setDescription('現在の天然樹脂の数を入力します')
@@ -70,12 +80,26 @@ module.exports =
                     second = (interaction.options.getString("通知量")-interaction.options.getString("現在"))*8-(8-interaction.options.getString("次の回復"))
                 }
                 second=second*60*1000
-                let user=interaction.user.id
-                let notice=interaction.options.getString("通知量")
-                const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json')
-                let chanel= config.notice
-                setTimeout(function (){jushi(interaction.user.id,interaction.options.getString("通知量"),config.notice)},second);
-                const enbed = {
+                setTimeout(function (){
+                    const jushi = {
+                        color: 0x27668D,
+                        title: '樹脂回復通知',
+                        author: {
+                            name: 'Genshin-timer',
+                            icon_url: 'https://pbs.twimg.com/media/FcdR7aIaIAE75Uu?format=png&name=large',
+                            url: 'https://github.com/starkoka/Genshin-Timer',
+                        },
+                        description: `<@!${interaction.user.id}>さん、樹脂が${interaction.options.getString("通知量")}まで回復しました`,
+                        timestamp: new Date().toISOString(),
+                        footer: {
+                            text: 'Developed by @kokastar_studio',
+                            icon_url: 'https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg',
+                        },
+                    };
+                    client.channels.cache.get(`${config.notice}`).send(`<@!${interaction.user.id}>`)
+                    client.channels.cache.get(`${config.notice}`).send({ embeds: [jushi] })
+                },second);
+                const embed = {
                     color: 0x27668D,
                     title: '樹脂回復通知',
                     author: {
@@ -90,6 +114,6 @@ module.exports =
                         icon_url: 'https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg',
                     },
                 };
-                await interaction.reply({ embeds: [enbed] })
+                await interaction.reply({ embeds: [embed] })
             },},
     ]
