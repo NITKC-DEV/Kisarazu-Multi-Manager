@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder, Client, GatewayIntentBits, Partials} = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder, Client, GatewayIntentBits, Partials } = require('discord.js')
 const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json')
 const dotenv = require('dotenv');
 const path = require('path')
@@ -6,10 +6,6 @@ const fs = require('fs')
 const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
-const client = new Client({
-    intents: [GatewayIntentBits.Guilds],
-    partials: [Partials.Channel],
-});
 
 module.exports =
     [
@@ -50,7 +46,8 @@ module.exports =
                 await interaction.reply({ embeds: [about] });
             },
         },
-        {data: new SlashCommandBuilder()
+        {
+            data: new SlashCommandBuilder()
                 .setName('jushi')
                 .setDescription('樹脂が設定した量まで回復したら通知します')
                 .addStringOption(option =>
@@ -71,16 +68,16 @@ module.exports =
                         .setDescription('現在の天然樹脂の数を入力します')
                         .setRequired(false)
                 ),
-                async execute(interaction) {
+            async execute(interaction) {
+
                 let second
-                if(interaction.options.getString("次の回復")===null){
-                    second = (interaction.options.getString("通知量")-interaction.options.getString("現在"))*8
+                if (interaction.options.getString("次の回復") === null) {
+                    second = (interaction.options.getString("通知量") - interaction.options.getString("現在")) * 8
+                } else {
+                    second = (interaction.options.getString("通知量") - interaction.options.getString("現在")) * 8 - (8 - interaction.options.getString("次の回復"))
                 }
-                else{
-                    second = (interaction.options.getString("通知量")-interaction.options.getString("現在"))*8-(8-interaction.options.getString("次の回復"))
-                }
-                second=second*60*1000
-                setTimeout(function (){
+                second = second * 60 * 1000
+                setTimeout(function () {
                     const jushi = {
                         color: 0x27668D,
                         title: '樹脂回復通知',
@@ -96,9 +93,10 @@ module.exports =
                             icon_url: 'https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg',
                         },
                     };
-                    client.channels.cache.get(`${config.notice}`).send(`<@!${interaction.user.id}>`)
-                    client.channels.cache.get(`${config.notice}`).send({ embeds: [jushi] })
-                },second);
+                    interaction.client.channels.cache.get(config.notice).send(`<@!${interaction.user.id}>`)
+                    interaction.client.channels.cache.get(config.notice).send({ embeds: [jushi] })
+
+                }, second);
                 const embed = {
                     color: 0x27668D,
                     title: '樹脂回復通知',
@@ -115,5 +113,6 @@ module.exports =
                     },
                 };
                 await interaction.reply({ embeds: [embed] })
-            },},
+            },
+        },
     ]
