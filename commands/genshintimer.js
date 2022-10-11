@@ -29,12 +29,12 @@ module.exports =
                                 value: 'デイリーミッションの更新や、週ボスの更新等をお知らせします。\n',
                             },
                             {
-                                name: '​\nリポップ通知機能',
-                                value: 'coming soon...\n',
-                            },
-                            {
                                 name: '​\n樹脂回復通知機能',
-                                value: 'coming soon...\n',
+                    		value: '現在の樹脂と、お知らせしてほしい樹脂の量を指定すると、その値まで樹脂が回復したらお知らせしてくれます。\n',
+                	    },
+        		    {
+    				name: '​\nリポップ通知機能',
+                    		value: 'coming soon...\n',
                             },
                         ],
                     )
