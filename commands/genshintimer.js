@@ -1,9 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder, Client, GatewayIntentBits, Partials } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
 const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json')
 const dotenv = require('dotenv');
-const path = require('path')
-const fs = require('fs')
-const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
 
@@ -65,7 +62,7 @@ module.exports =
                 .addStringOption(option =>
                     option
                         .setName('次の回復')
-                        .setDescription('現在の天然樹脂の数を入力します')
+                        .setDescription('次の回復までの時間を分単位で入力します')
                         .setRequired(false)
                 ),
             async execute(interaction) {
@@ -113,6 +110,46 @@ module.exports =
                     },
                 };
                 await interaction.reply({ embeds: [embed] })
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('score')
+                .setDescription('聖遺物のスコアを入れてね')
+                .addStringOption(option =>
+                    option
+                        .setName('スコア')
+                        .setDescription('聖遺物のスコア(サブOPの率✕2+ダメージ+攻撃%)')
+                        .setRequired(true)
+                ),
+            async execute(interaction) {
+                if (interaction.options.getString('スコア') == 33.4  ) {
+                    await interaction.reply('なんでや！阪神関係ないやろ！');
+                }
+                else if (interaction.options.getString('スコア') == 44.5  ) {
+                    await interaction.reply('あてぃし！？');
+                }
+                else if (interaction.options.getString('スコア') < 30  ) {
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'は流石に経験値にしようか:)');
+                }
+                else if(interaction.options.getString('スコア') < 40){
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'、時計/杯/冠なら強いんじゃない〜?');
+                }
+                else if(interaction.options.getString('スコア') < 50){
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'って強くない？');
+                }
+                else if(interaction.options.getString('スコア') < 60){
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'だとぉ？:face_with_symbols_over_mouth: ふざけるなぁ:sparkler:');
+                }
+                else if(interaction.options.getString('スコア') < 60.4){
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'ってまじで言ってる？？？え？？？？');
+                }
+                else if(interaction.options.getString('スコア') < 0){
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'ってなんだよ、負の値じゃんwww');
+                }
+                else{
+                    await interaction.reply('スコア'+interaction.options.getString('スコア')+'ってなんだよ、嘘つくな:face_with_symbols_over_mouth:');
+                }
             },
         },
     ]
