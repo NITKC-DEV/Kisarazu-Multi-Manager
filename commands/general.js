@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+
 module.exports =
     [
         {
@@ -42,7 +43,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v1.1.1 ',
+                                value: 'v2.0.0 ',
                             },
                             {
                                 name: '開発者',
@@ -50,7 +51,7 @@ module.exports =
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v1.0.1](https://github.com/starkoka/Genshin-Timer)',
+                                value: '[Genshin-timer Discord BOT v2.0.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能',
                             },
                             {
                                 name: 'ソースコード',
