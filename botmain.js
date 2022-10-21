@@ -1048,12 +1048,13 @@ cron.schedule('0 20 * * 0', () => {
             .setFooter({ text: 'Developed by NITKC22s server Admin' });
 
     });
-cron.schedule('0 20 * * 0,1,2,3,4', () => {
-    client.channels.cache.get(config.M).send({embeds: [m]})
-    client.channels.cache.get(config.E).send({embeds: [e]})
-    client.channels.cache.get(config.D).send({embeds: [d]})
-    client.channels.cache.get(config.J).send({embeds: [j]})
-    client.channels.cache.get(config.C).send({embeds: [c]})
+cron.schedule('0 20 * * 0,1,2,3,4', async () => {
+    (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(id)).send({ embeds: [m] }));
+    (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(id)).send({ embeds: [e] }));
+    (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(id)).send({ embeds: [d] }));
+    (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(id)).send({ embeds: [j] }));
+    (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(id)).send({ embeds: [c] }));
 });
+
 
 client.login(config.token);
