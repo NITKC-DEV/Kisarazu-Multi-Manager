@@ -1,5 +1,5 @@
-import { timetableBuilder } from './timetable/timetableUtils'
-import { Classes } from './timetable/timetables'
+const  timetableBuilder  = require('./timetable/timetableUtils');
+const  Classes = require('./timetable/timetables.json');
 const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
 const dotenv = require('dotenv');
@@ -79,7 +79,7 @@ client.on("voiceStateUpdate", (oldState, newState) => {
     }
 });
 
-export const dayOfWeeks = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "日曜日"]
+
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
     const daily = {
@@ -248,7 +248,7 @@ cron.schedule('0 5 * * *', () => {
 
 
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
-    let dayOfWeek = new Date().getDay();
+    let dayOfWeek = new Date().getDay()+1;
     (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
         .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
     (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
@@ -260,7 +260,6 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
         .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
 });
-
 
 
 
