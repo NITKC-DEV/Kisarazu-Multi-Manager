@@ -47,7 +47,7 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
-/*自習室BOT実験(VCに参加したら通知)*/
+/*自習室BOT(VCに参加したら通知)*/
 client.on("voiceStateUpdate",  (oldState, newState) => {
     if(newState && oldState){
 
