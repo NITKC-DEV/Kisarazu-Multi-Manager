@@ -26,7 +26,7 @@ module.exports=
                             {name:'専門科目を語る会',value:'1033563012470157403'},
                         )
                 )
-                //チャンネルに対応したロールを作成をするかどうかを指定 ->boolean
+                //チャンネルに対応したロールを作成をするかどうかを指定 -> boolean
                 .addBooleanOption(option =>
                      option
                         .setName('ロールの作成')
@@ -43,8 +43,18 @@ module.exports=
                 //選択されたカテゴリのIDを扱いやすいように単独の変数に変換
                 const categoryID= interactionCopy.options.getString('カテゴリ');
 
-                //                                           チャンネル名     カテゴリのID
-                await interactionCopy.guild.channels.create({name:channelName,parent:categoryID});
+                //チャンネルの作成。権限はカテゴリの権限に同期される。
+                //                                           チャンネル名     カテゴリのID      メモ的な
+                await interactionCopy.guild.channels.create({name:channelName,parent:categoryID,reason:'Botによって作成'});
+                
+                //もし、ロールの作成にてtrueが選択されていたら、ロールを作成する
+                if(interactionCopy.options.getBoolean('ロールの作成'))
+                {
+                    //ロールの作成。権限は@everyoneが適用される。
+                    //                                        ロール名とりまチャネ名  メンション許可   メモ的な
+                    await interactionCopy.guild.roles.create({name:channelName,mentionable:true,reason:'Botによって作成'});
+                }
+                
                 await interactionCopy.reply("Created!!!!!");
             }
 
