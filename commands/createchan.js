@@ -1,4 +1,4 @@
-const { SlashCommandBuilder}=require('discord.js');
+const { SlashCommandBuilder, PermissionsBitField, BitField}=require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json');
 
 //ここから先の[]が"../botmain.js/スラッシュコマンド登録"にてcommandsに代入
@@ -51,9 +51,11 @@ module.exports=
                 //もし、ロールの作成にてtrueが選択されていたら、ロールを作成する
                 if(interactionCopy.options.getBoolean('ロールの作成'))
                 {
+                    //ロール権限の格納
+                    const perm=new PermissionsBitField();
                     //ロールの作成。権限は@everyoneが適用される。
-                    //                                        ロール名:とりまチャネ名  メンション許可   メモ的な
-                    await interactionCopy.guild.roles.create({name:channelName,mentionable:true,reason:'Botによって作成'});
+                    //                                        ロール名:とりまチャネ名  メンション許可    上で作ったpermから、すべての権限を取り除く        メモ的な
+                    await interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:[perm.remove([PermissionsBitField.All])],reason:'Botによって作成'});
                 }
                 
                 await interactionCopy.reply("Created!!!!!");
