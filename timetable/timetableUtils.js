@@ -1,7 +1,7 @@
 const { EmbedBuilder } =require('discord.js')
 
 
-let tmp = new EmbedBuilder().setAuthor({
+const tmp = new EmbedBuilder().setAuthor({
     name: "木更津22s統合管理BOT",
     iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
     url: 'https://discord.gg/mwyC8PTcXa'

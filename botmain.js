@@ -1,7 +1,7 @@
 const  timetableBuilder  = require('./timetable/timetableUtils');
 const  Classes = require('./timetable/timetables.json');
 const { Client, GatewayIntentBits, Partials, Collection } = require('discord.js');
-const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
+const config = require('./environmentConfig')
 const dotenv = require('dotenv');
 const path = require('path')
 const fs = require('fs')
