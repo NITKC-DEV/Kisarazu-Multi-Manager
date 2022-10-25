@@ -28,11 +28,17 @@ module.exports=
                         )
                 )
                 //チャンネルに対応したロールを作成をするかどうかを指定 -> boolean
-                .addBooleanOption(option =>
+                .addNumberOption(option =>
                      option
                         .setName('ロールの作成')
                         .setDescription('チャンネルに対応したロールを作成するかを指定します')
                         .setRequired(true)
+                         .addChoices
+                         (
+                             {name: '作成する',value:1},
+                             {name: '作成しない',value:0}
+                         )
+                    
                 ),
 
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
