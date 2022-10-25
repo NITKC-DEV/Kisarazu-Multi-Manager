@@ -55,7 +55,7 @@ module.exports=
                 await interactionCopy.guild.channels.create({name:channelName,parent:categoryID,reason:'Botによって作成'});
                 
                 //もし、ロールの作成にてtrueが選択されていたら、ロールを作成する
-                if(interactionCopy.options.getBoolean('ロールの作成'))
+                if(interactionCopy.options.getNumber('ロールの作成'))
                 {
                     //ロールの作成。権限は@everyoneが適用される。
                     //                                        ロール名:とりまチャネ名  メンション許可    権限なし            メモ的な
