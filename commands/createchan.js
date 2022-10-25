@@ -51,11 +51,9 @@ module.exports=
                 //もし、ロールの作成にてtrueが選択されていたら、ロールを作成する
                 if(interactionCopy.options.getBoolean('ロールの作成'))
                 {
-                    //ロール権限の格納
-                    const perm=new PermissionsBitField();
                     //ロールの作成。権限は@everyoneが適用される。
-                    //                                        ロール名:とりまチャネ名  メンション許可    上で作ったpermから、すべての権限を取り除く        メモ的な
-                    await interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:[perm.remove([PermissionsBitField.All])],reason:'Botによって作成'});
+                    //                                        ロール名:とりまチャネ名  メンション許可    権限なし            メモ的な
+                    await interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:'Botによって作成'});
                 }
                 
                 await interactionCopy.reply("Created!!!!!");
