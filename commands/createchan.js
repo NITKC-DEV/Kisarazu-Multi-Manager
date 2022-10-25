@@ -1,4 +1,5 @@
 const { SlashCommandBuilder}=require('discord.js');
+const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json');
 
 //ここから先の[]が"../botmain.js/スラッシュコマンド登録"にてcommandsに代入
 module.exports=
@@ -6,7 +7,7 @@ module.exports=
         {
             //スラッシュコマンドの定義
             data:new SlashCommandBuilder()
-                .setName('createchan')
+                .setName('createhan')
                 .setDescription('チャンネルの作成')
                 //チャンネル名を入力 -> string
                 .addStringOption(option =>
@@ -23,7 +24,7 @@ module.exports=
                         .setDescription('チャンネルを作成するカテゴリを指定します')
                         .setRequired(true)
                         .addChoices(
-                            {name:'専門科目を語る会',value:'1033563012470157403'},
+                            ...config.categories.map(category => ({name:category.name, value:category.id}))
                         )
                 )
                 //チャンネルに対応したロールを作成をするかどうかを指定 -> boolean
@@ -51,7 +52,7 @@ module.exports=
                 if(interactionCopy.options.getBoolean('ロールの作成'))
                 {
                     //ロールの作成。権限は@everyoneが適用される。
-                    //                                        ロール名とりまチャネ名  メンション許可   メモ的な
+                    //                                        ロール名:とりまチャネ名  メンション許可   メモ的な
                     await interactionCopy.guild.roles.create({name:channelName,mentionable:true,reason:'Botによって作成'});
                 }
                 
