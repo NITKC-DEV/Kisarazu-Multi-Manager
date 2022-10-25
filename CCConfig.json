@@ -1,0 +1,23 @@
+{
+  "servers": [
+    {
+      "ID": "0000000000000000000",
+      "categories": [
+        {
+          "ID": "0000000000000000000",
+          "name": "",
+          "allowRole": false,
+          "channels": [
+            {
+              "ID": "0000000000000000000",
+              "name": "",
+              "thereRole": false,
+              "roleID": "0000000000000000000",
+              "roleName": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
