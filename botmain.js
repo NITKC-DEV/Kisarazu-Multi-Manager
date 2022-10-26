@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
-const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
+const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.dev.json')
 const dotenv = require('dotenv');
 const path = require('path')
 const fs = require('fs')
@@ -7,7 +7,11 @@ const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMembers,
+    ],
     partials: [Partials.Channel],
 });
 
@@ -47,35 +51,19 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
+
 /*自習室BOT(VCに参加したら通知)*/
-client.on("voiceStateUpdate",  (oldState, newState) => {
-    if(newState && oldState){
-
-        //newState関係
-        console.log(`NEW:userid   : ${newState.id}`);       //ユーザID
-        console.log(`NEW:channelid: ${newState.channelID}`);//チャンネルID、nullならdisconnect
-        console.log(`NEW:guildid  : ${newState.guild.id}`); //ギルドID
-
-        //oldState関係
-        console.log(`OLD:userid   : ${oldState.id}`);       //ユーザID
-        console.log(`OLD:channelid: ${oldState.channelID}`);//チャンネルID、nullならconnect
-        console.log(`OLD:guildid  : ${oldState.guild.id}`); //ギルドID
-
-        if(oldState.channelID===newState.channelID){
-            //ここはミュートなどの動作を行ったときに発火する場所
-            concole.log(`other`);
-        }
-        if(oldState.channelID===null && newState.channelID != null){
-            //ここはconnectしたときに発火する場所
-            concole.log(`connect`);
-        }
+client.on('voiceStateUpdate', (oldState, newState) => {
+    if(oldState.channel===null){
+        console.log(oldState+"さんがVCに入りました！大歓迎！");
     }
-    if(oldState.channelID !=null && newState.channelID === null){
-        //ここはdisconnectしたときに発火する場所
-        console.log(`disconnect`);
+    else if(newState.channel===null){
+        console.log(oldState+"さんがVCから離れたらしい！もう二度と来んじゃねーぞ");
     }
-});
-
+    else{
+        console.log(oldState+"さんがを変更しました！ちぇ〜んじ");
+    }
+})
 
 
 /*原神デイリー通知*/
