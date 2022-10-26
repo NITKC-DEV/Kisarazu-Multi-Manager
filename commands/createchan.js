@@ -1,7 +1,9 @@
-const { SlashCommandBuilder}=require("discord.js");
+const { SlashCommandBuilder,Guild}=require("discord.js");
 const config = process.env.NODE_ENV === "development" ? require("../config.dev.json") : require("../config.json");
 const ccconfig=require("../CCConfig.json");
 const fs=require("fs");
+
+//let gi=new Guild();
 
 //ここから先の[]が"../botmain.js/スラッシュコマンド登録"にてcommandsに代入
 module.exports=
@@ -26,7 +28,11 @@ module.exports=
                         .setDescription("チャンネルを作成するカテゴリを指定します")
                         .setRequired(true)
                         .addChoices(
-                            ...config.categories.map(category => ({name:category.name, value:category.id}))
+                            //...config.categories.map(category => ({name:category.name, value:category.id})),
+                            ...ccconfig.servers.map(server=>
+                                
+                                    if(server.ID === config.server)...server.categories.map (category => ({name: category.name, value: category.ID}))
+                            )
                         )
                 )
                 //チャンネルに対応したロールを作成をするかどうかを指定 -> boolean
@@ -61,7 +67,7 @@ module.exports=
                 {
                     //ロールの作成。権限は@everyoneが適用される。
                     //                                        ロール名:とりまチャネ名  メンション許可    権限なし            メモ的な
-                    await interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:"Botによって作成"});
+                    interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:"Botによって作成"});
                 }
                 
                 await interactionCopy.reply("Created!!!!!");
@@ -112,7 +118,8 @@ module.exports=
                     if(interactionCopy.channel.parentId === ccconfig.servers[serverIndex].categories[i].ID)
                     {
                         categoryIndex = i;
-                        break;
+                        await interactionCopy.reply("このカテゴリはすでに追加されています");
+                        return;
                     }
                     if(i===ccconfig.servers[serverIndex].categories.length-1)
                     {
