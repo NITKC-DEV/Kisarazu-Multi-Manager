@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
-const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json')
+const config =require('../environmentConfig')
 const dotenv = require('dotenv');
 require('date-utils');
 dotenv.config();
