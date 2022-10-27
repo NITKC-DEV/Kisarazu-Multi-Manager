@@ -47,6 +47,8 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
+/*Happy Halloween!*/
+
 /*自習室BOT実験(VCに参加したら通知)*/
 client.on("voiceStateUpdate",  (oldState, newState) => {
     if(newState && oldState){
