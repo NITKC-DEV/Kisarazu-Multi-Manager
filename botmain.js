@@ -7,7 +7,14 @@ const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.MessageContent
+    ],
     partials: [Partials.Channel],
 });
 
@@ -48,6 +55,21 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 /*Happy Halloween!*/
+client.on('messageCreate', message => {
+    if(message.author.bot){
+        return;
+    }
+    console.log(message)
+    if (message.content.match(/トリック/) && message.content.match(/オア/) && message.content.match(/トリート/)) {
+        let channel = message.channel;
+        let author = message.author.username;
+        let reply_text = `単位くれないといたずらしちゃうぞ`;
+        message.reply(reply_text)
+            .then(message => console.log(`Sent message: ${reply_text}`))
+            .catch(console.error);
+    }
+})
+
 
 /*自習室BOT実験(VCに参加したら通知)*/
 client.on("voiceStateUpdate",  (oldState, newState) => {
