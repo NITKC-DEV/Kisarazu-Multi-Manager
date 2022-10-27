@@ -4,3 +4,4 @@ config.json
 /config.dev.json
 yarn.lock
 /.idea/
+/.fleet/settings.json
