@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
+const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dotenv = require('dotenv');
 const path = require('path')
 const fs = require('fs')
@@ -54,20 +55,9 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
-/*Happy Halloween!*/
+/*TxtEasterEgg*/
 client.on('messageCreate', message => {
-    if(message.author.bot){
-        return;
-    }
-    console.log(message)
-    if (message.content.match(/トリック/) && message.content.match(/オア/) && message.content.match(/トリート/)) {
-        let channel = message.channel;
-        let author = message.author.username;
-        let reply_text = `単位くれないといたずらしちゃうぞ`;
-        message.reply(reply_text)
-            .then(message => console.log(`Sent message: ${reply_text}`))
-            .catch(console.error);
-    }
+    TxtEasterEgg.func(message);
 })
 
 
