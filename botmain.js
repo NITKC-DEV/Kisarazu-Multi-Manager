@@ -1,13 +1,21 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder} = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
+const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dotenv = require('dotenv');
 const path = require('path')
 const fs = require('fs')
 const cron = require('node-cron');
 require('date-utils');
-dotenv.config();
+dotenv.config()
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.MessageContent
+    ],
     partials: [Partials.Channel],
 });
 
@@ -46,6 +54,12 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
 });
+
+/*TxtEasterEgg*/
+client.on('messageCreate', message => {
+    TxtEasterEgg.func(message);
+})
+
 
 /*自習室BOT実験(VCに参加したら通知)*/
 client.on("voiceStateUpdate",  (oldState, newState) => {
