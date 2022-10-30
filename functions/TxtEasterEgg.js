@@ -7,7 +7,7 @@ exports.func = function func(message) {
         return;
     }
 
-    if(month=== 9 && date===29){  /*Happy Halloween!*/
+    if(month=== 9 && date===31){  /*Happy Halloween!*/
 
         if (message.content.match(/トリック/) && message.content.match(/オア/) && message.content.match(/トリート/)) {
             let channel = message.channel;
@@ -25,5 +25,17 @@ exports.func = function func(message) {
                 .then(message => console.log(`Sent message: ${reply_text}`))
                 .catch(console.error);
         }
+    }
+    if(month=== 0 && date===1){  /*Happy NewYear!*/
+
+        if (message.content.match(/あけおめ/) || message.content.match(/あけまして/) && message.content.match(/明けまして/)) {
+            let channel = message.channel;
+            let author = message.author.username;
+            let reply_text = `あけおめ！`;
+            message.reply(reply_text)
+                .then(message => console.log(`Sent message: ${reply_text}`))
+                .catch(console.error);
+        }
+
     }
 }

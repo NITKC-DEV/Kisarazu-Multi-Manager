@@ -6,7 +6,7 @@ const path = require('path')
 const fs = require('fs')
 const cron = require('node-cron');
 require('date-utils');
-dotenv.config();
+dotenv.config()
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
