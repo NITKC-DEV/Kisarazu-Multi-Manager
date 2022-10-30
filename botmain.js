@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder} = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dotenv = require('dotenv');
