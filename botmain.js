@@ -60,38 +60,6 @@ client.on('messageCreate', message => {
     TxtEasterEgg.func(message);
 })
 
-
-/*自習室BOT実験(VCに参加したら通知)*/
-client.on("voiceStateUpdate",  (oldState, newState) => {
-    if(newState && oldState){
-
-        //newState関係
-        console.log(`NEW:userid   : ${newState.id}`);       //ユーザID
-        console.log(`NEW:channelid: ${newState.channelID}`);//チャンネルID、nullならdisconnect
-        console.log(`NEW:guildid  : ${newState.guild.id}`); //ギルドID
-
-        //oldState関係
-        console.log(`OLD:userid   : ${oldState.id}`);       //ユーザID
-        console.log(`OLD:channelid: ${oldState.channelID}`);//チャンネルID、nullならconnect
-        console.log(`OLD:guildid  : ${oldState.guild.id}`); //ギルドID
-
-        if(oldState.channelID===newState.channelID){
-            //ここはミュートなどの動作を行ったときに発火する場所
-            concole.log(`other`);
-        }
-        if(oldState.channelID===null && newState.channelID != null){
-            //ここはconnectしたときに発火する場所
-            concole.log(`connect`);
-        }
-    }
-    if(oldState.channelID !=null && newState.channelID === null){
-        //ここはdisconnectしたときに発火する場所
-        console.log(`disconnect`);
-    }
-});
-
-
-
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
     const daily = {

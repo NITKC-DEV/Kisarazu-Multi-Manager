@@ -43,7 +43,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v2.0.1 ',
+                                value: 'v2.0.2 ',
                             },
                             {
                                 name: '開発者',
