@@ -1,5 +1,6 @@
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.dev.json')
+const studyroom = require('./functions/studyroom.js')
 const dotenv = require('dotenv');
 const path = require('path')
 const fs = require('fs')
@@ -54,15 +55,7 @@ client.on("interactionCreate", async (interaction) => {
 
 /*自習室BOT(VCに参加したら通知)*/
 client.on('voiceStateUpdate', (oldState, newState) => {
-    if(oldState.channel===null){
-        console.log(oldState+"さんがVCに入りました！大歓迎！");
-    }
-    else if(newState.channel===null){
-        console.log(oldState+"さんがVCから離れたらしい！もう二度と来んじゃねーぞ");
-    }
-    else{
-        console.log(oldState+"さんがを変更しました！ちぇ〜んじ");
-    }
+    studyroom.func(oldState, newState);
 })
 
 
