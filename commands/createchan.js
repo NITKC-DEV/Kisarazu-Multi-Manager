@@ -26,26 +26,28 @@ module.exports=
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
             async execute(interactionCopy)
             {
-                // const chooseCatecory=new ActionRowBuilder()
-                //     .addComponents(
-                //         new SelectMenuBuilder
-                //             .setPlaceholder("カテゴリを選択")
-                //
-                //     )
-                let a=ccconfig.servers.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({test:category.ID}));
+                let a=ccconfig.servers.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,description:"やあ",value:category.ID}));
+                const chooseCatecory=new ActionRowBuilder()
+                    .addComponents(
+                        new SelectMenuBuilder().setCustomId('selectWow')
+                            .setPlaceholder("カテゴリを選択")
+                            .addOptions(...a)
+
+                    )
+
                 console.log(a);
                 console.log(interactionCopy.guild.id);
                 let b=['test','test2'];
                 console.log(...b);
-                
+
                 //入力されたチャンネル名を扱いやすいように単独の変数に変換
-                
+
                     //ロールの作成。権限は@everyoneが適用される。
                     //                                        ロール名:とりまチャネ名  メンション許可    権限なし            メモ的な
                     //interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:"Botによって作成"});
                 
-                
-                await interactionCopy.reply("Hello, World!");
+
+                await interactionCopy.reply({ content: 'Pong!', components: [chooseCatecory] });
             }
 
         },
@@ -82,7 +84,7 @@ module.exports=
                         ccconfig.servers[ccconfig.servers.length] =
                             {
                                 ID: interactionCopy.guild.id,
-                                categories: [{ID:"0000000000000000000",name:"",allowRole:false,channels:[]}]};
+                                categories: [{ID:"0000000000000000000",name:"aaaa",allowRole:false,channels:[]}]};
                         serverIndex=i+1;
                         break;
                     }
@@ -128,7 +130,7 @@ module.exports=
                 .setDescription("testtest"),
             async execute (interactionCopy)
             {
-                
+
                 const row = new ActionRowBuilder()
 			        .addComponents(
                         new SelectMenuBuilder()
@@ -146,7 +148,7 @@ module.exports=
                                     value: 'second_option',
                                 })
                     )
-                
+
                 const ttt = new ActionRowBuilder()
 			        .addComponents(
                         new SelectMenuBuilder()
@@ -164,7 +166,7 @@ module.exports=
                                     value: 'second_option',
                                 })
                     )
-                
+
                 //await interactionCopy.reply({ content: 'Pong!', components: [ttt]});
                 await interactionCopy.reply({content:"aaaaaaa",components:[row,ttt]});
             }
