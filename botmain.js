@@ -38,7 +38,7 @@ client.on("interactionCreate", async (interaction) => {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) return;
-    console.log("SlashCommand : "+command.data.description);
+    console.log("SlashCommand : "+command.data.name);
     try {
         await command.execute(interaction);
     } catch (error) {
