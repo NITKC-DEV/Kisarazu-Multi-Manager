@@ -4,4 +4,4 @@ config.json
 /config.dev.json
 yarn.lock
 /.idea/
-CCConfig.json
+./CCConfig.json

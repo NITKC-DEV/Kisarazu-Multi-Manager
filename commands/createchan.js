@@ -1,5 +1,7 @@
-const { SlashCommandBuilder,Guild}=require("discord.js");
-const config = process.env.NODE_ENV === "development" ? require("../config.dev.json") : require("../config.json");
+// noinspection SpellCheckingInspection
+
+const { SlashCommandBuilder,ActionRowBuilder, Events, SelectMenuBuilder}=require("discord.js");
+const config = process.env.NODE_ENV === "development" ? require("../../bot-main-pullrequest/config.dev.json") : require("../config.json");
 const ccconfig=require("../CCConfig.json");
 const fs=require("fs");
 
@@ -19,58 +21,31 @@ module.exports=
                         .setName("チャンネル名")
                         .setDescription("作成するチャンネル名を指定します")
                         .setRequired(true)
-
-                )
-                //チャンネルを作成するカテゴリを指定し、そのカテゴリのIDを取得 -> string
-                .addStringOption(option =>
-                    option
-                        .setName("カテゴリ")
-                        .setDescription("チャンネルを作成するカテゴリを指定します")
-                        .setRequired(true)
-                        .addChoices(
-                            //...config.categories.map(category => ({name:category.name, value:category.id})),
-                            ...ccconfig.servers.map(server=>
-                                
-                                    if(server.ID === config.server)...server.categories.map (category => ({name: category.name, value: category.ID}))
-                            )
-                        )
-                )
-                //チャンネルに対応したロールを作成をするかどうかを指定 -> boolean
-                .addNumberOption(option =>
-                     option
-                        .setName("ロールの作成")
-                        .setDescription("チャンネルに対応したロールを作成するかを指定します")
-                        .setRequired(true)
-                         .addChoices
-                         (
-                             {name: "作成する",value:1},
-                             {name: "作成しない",value:0}
-                         )
-                    
                 ),
 
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
             async execute(interactionCopy)
             {
-                //入力されたチャンネル名を扱いやすいように単独の変数に変換
-                const channelName = interactionCopy.options.getString("チャンネル名");
-
-                //選択されたカテゴリのIDを扱いやすいように単独の変数に変換
-                const categoryID= interactionCopy.options.getString("カテゴリ");
-
-                //チャンネルの作成。権限はカテゴリの権限に同期される。
-                //                                           チャンネル名     カテゴリのID      メモ的な
-                await interactionCopy.guild.channels.create({name:channelName,parent:categoryID,reason:"Botによって作成"});
+                // const chooseCatecory=new ActionRowBuilder()
+                //     .addComponents(
+                //         new SelectMenuBuilder
+                //             .setPlaceholder("カテゴリを選択")
+                //
+                //     )
+                let a=ccconfig.servers.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({test:category.ID}));
+                console.log(a);
+                console.log(interactionCopy.guild.id);
+                let b=['test','test2'];
+                console.log(...b);
                 
-                //もし、ロールの作成にてtrueが選択されていたら、ロールを作成する
-                if(interactionCopy.options.getNumber("ロールの作成"))
-                {
+                //入力されたチャンネル名を扱いやすいように単独の変数に変換
+                
                     //ロールの作成。権限は@everyoneが適用される。
                     //                                        ロール名:とりまチャネ名  メンション許可    権限なし            メモ的な
-                    interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:"Botによって作成"});
-                }
+                    //interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:"Botによって作成"});
                 
-                await interactionCopy.reply("Created!!!!!");
+                
+                await interactionCopy.reply("Hello, World!");
             }
 
         },
@@ -145,6 +120,53 @@ module.exports=
                 }
                 
                 await interactionCopy.reply("Added!!!!!");
+            }
+        },
+        {
+            data:new SlashCommandBuilder()
+                .setName("modaltest")
+                .setDescription("testtest"),
+            async execute (interactionCopy)
+            {
+                
+                const row = new ActionRowBuilder()
+			        .addComponents(
+                        new SelectMenuBuilder()
+                            .setCustomId('select')
+                            .setPlaceholder('Nothing selected')
+                            .addOptions(
+                                {
+                                    label: 'Select me',
+                                    description: 'This is a description',
+                                    value: 'first_option',
+                                },
+                                {
+                                    label: 'You can select me too',
+                                    description: 'This is also a description',
+                                    value: 'second_option',
+                                })
+                    )
+                
+                const ttt = new ActionRowBuilder()
+			        .addComponents(
+                        new SelectMenuBuilder()
+                            .setCustomId('select2')
+                            .setPlaceholder('tttt')
+                            .addOptions(
+                                {
+                                    label: 'Select me',
+                                    description: 'This is a description',
+                                    value: 'first_option',
+                                },
+                                {
+                                    label: 'aaaaaaaaaaaa',
+                                    description: 'This is also a description',
+                                    value: 'second_option',
+                                })
+                    )
+                
+                //await interactionCopy.reply({ content: 'Pong!', components: [ttt]});
+                await interactionCopy.reply({content:"aaaaaaa",components:[row,ttt]});
             }
         }
     ]
