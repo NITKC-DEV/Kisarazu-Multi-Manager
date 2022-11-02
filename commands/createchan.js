@@ -26,28 +26,20 @@ module.exports=
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
             async execute(interactionCopy)
             {
-                let a=ccconfig.servers.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,description:"やあ",value:category.ID}));
                 const chooseCatecory=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder().setCustomId('selectWow')
                             .setPlaceholder("カテゴリを選択")
-                            .addOptions(...a)
-
+                            .addOptions(
+                                ...ccconfig.servers.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID}))
+                            )
                     )
 
-                console.log(a);
-                console.log(interactionCopy.guild.id);
-                let b=['test','test2'];
-                console.log(...b);
-
-                //入力されたチャンネル名を扱いやすいように単独の変数に変換
-
-                    //ロールの作成。権限は@everyoneが適用される。
-                    //                                        ロール名:とりまチャネ名  メンション許可    権限なし            メモ的な
-                    //interactionCopy.guild.roles.create({name:channelName,mentionable:true,permissions:BigInt(0),reason:"Botによって作成"});
+                await interactionCopy.reply({ content: interactionCopy.options.getString('チャンネル名')+"を作成するカテゴリを指定してください。", components: [chooseCatecory] ,ephemeral: true});
                 
-
-                await interactionCopy.reply({ content: 'Pong!', components: [chooseCatecory] });
+                //チャンネルの作成。権限はカテゴリの権限に同期される。
+                //                                           チャンネル名                                            カテゴリのID      メモ的な
+                //await interactionCopy.guild.channels.create({name:interactionCopy.options.getString('チャンネル名'),parent:,reason:'Botによって作成'});
             }
 
         },
@@ -84,7 +76,7 @@ module.exports=
                         ccconfig.servers[ccconfig.servers.length] =
                             {
                                 ID: interactionCopy.guild.id,
-                                categories: [{ID:"0000000000000000000",name:"aaaa",allowRole:false,channels:[]}]};
+                                categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]};
                         serverIndex=i+1;
                         break;
                     }
