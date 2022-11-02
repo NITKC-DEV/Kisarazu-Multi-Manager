@@ -10,6 +10,7 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds],
     partials: [Partials.Channel],
 });
+module.exports.client=client
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
@@ -45,6 +46,10 @@ client.on("interactionCreate", async (interaction) => {
         console.error(error);
         await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
     }
+});
+
+client.on("test", async (interaction) => {
+console.log(interaction);
 });
 
 /*自習室BOT実験(VCに参加したら通知)*/
