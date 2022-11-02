@@ -18,6 +18,31 @@
           ]
         }
       ]
+    },
+    {
+      "ID": "1004598980291866694",
+      "categories": [
+        {
+          "ID": "0000000000000000000",
+          "name": "キャンセル",
+          "allowRole": false,
+          "channels": []
+        },
+        {
+          "ID": "1034151272867184792",
+          "name": "test1",
+          "allowRole": false,
+          "channels": [
+            {
+              "ID": "",
+              "name": "",
+              "thereRole": false,
+              "roleID": "0000000000000000000",
+              "roleName": ""
+            }
+          ]
+        }
+      ]
     }
   ]
 }
