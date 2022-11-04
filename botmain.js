@@ -58,6 +58,9 @@ client.on('voiceStateUpdate', (oldState, newState) => {
     studyroom.func(oldState, newState);
 })
 
+cron.schedule('42 15 * * *',() => {
+    studyroom.update();
+})
 
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
