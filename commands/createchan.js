@@ -1,11 +1,10 @@
-// noinspection SpellCheckingInspection
-
 const { SlashCommandBuilder,ActionRowBuilder, Events, SelectMenuBuilder}=require("discord.js");
 const config = process.env.NODE_ENV === "development" ? require("../../bot-main-pullrequest/config.dev.json") : require("../config.json");
-const ccconfig=require("../CCConfig.json");
+let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
+const {client}=require("../botmain.js");
 
-//let gi=new Guild();
+
 
 //ここから先の[]が"../botmain.js/スラッシュコマンド登録"にてcommandsに代入
 module.exports=
@@ -26,20 +25,26 @@ module.exports=
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
             async execute(interactionCopy)
             {
-                const chooseCatecory=new ActionRowBuilder()
+                const selectCategory=new ActionRowBuilder()
                     .addComponents(
-                        new SelectMenuBuilder().setCustomId('selectWow')
+                        new SelectMenuBuilder()
                             .setPlaceholder("カテゴリを選択")
+                            .setCustomId("selectCat")
                             .addOptions(
-                                ...ccconfig.servers.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID}))
+                                ...ccconfig.guilds.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID}))
                             )
                     )
 
-                await interactionCopy.reply({ content: interactionCopy.options.getString('チャンネル名')+"を作成するカテゴリを指定してください。", components: [chooseCatecory] ,ephemeral: true});
+                let channelName=interactionCopy.options.getString("チャンネル名");
+                let channelNameSpaceChanged=channelName.replace(" ","-");
+                while(channelName!==channelNameSpaceChanged)
+                {
+                    channelName=channelName.replace(" ","-");
+                    channelNameSpaceChanged=channelNameSpaceChanged.replace(" ","-");
+                }
                 
-                //チャンネルの作成。権限はカテゴリの権限に同期される。
-                //                                           チャンネル名                                            カテゴリのID      メモ的な
-                //await interactionCopy.guild.channels.create({name:interactionCopy.options.getString('チャンネル名'),parent:,reason:'Botによって作成'});
+                await interactionCopy.reply({ content:channelNameSpaceChanged+" を作成するカテゴリを指定してください。", components: [selectCategory] ,ephemeral: true});
+                
             }
 
         },
@@ -64,16 +69,16 @@ module.exports=
                 
                 let serverIndex;
                 let categoryIndex;
-                for (let i = 0; i < ccconfig.servers.length; i++)
+                for (let i = 0; i < ccconfig.guilds.length; i++)
                 {
-                    if (interactionCopy.guild.id === ccconfig.servers[i].ID)
+                    if (interactionCopy.guild.id === ccconfig.guilds[i].ID)
                     {
                         serverIndex=i;
                         break;
                     }
-                    if (i === ccconfig.servers.length - 1)
+                    if (i === ccconfig.guilds.length - 1)
                     {
-                        ccconfig.servers[ccconfig.servers.length] =
+                        ccconfig.guilds[ccconfig.guilds.length] =
                             {
                                 ID: interactionCopy.guild.id,
                                 categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]};
@@ -82,22 +87,22 @@ module.exports=
                     }
                 }
                 
-                for(let i=0;i<ccconfig.servers[serverIndex].categories.length;i++)
+                for(let i=0; i<ccconfig.guilds[serverIndex].categories.length; i++)
                 {
-                    if(interactionCopy.channel.parentId === ccconfig.servers[serverIndex].categories[i].ID)
+                    if(interactionCopy.channel.parentId === ccconfig.guilds[serverIndex].categories[i].ID)
                     {
                         categoryIndex = i;
                         await interactionCopy.reply("このカテゴリはすでに追加されています");
                         return;
                     }
-                    if(i===ccconfig.servers[serverIndex].categories.length-1)
+                    if(i===ccconfig.guilds[serverIndex].categories.length-1)
                     {
-                        ccconfig.servers[serverIndex].categories[ccconfig.servers[serverIndex].categories.length]=
+                        ccconfig.guilds[serverIndex].categories[ccconfig.guilds[serverIndex].categories.length]=
                             {
                                 ID: interactionCopy.channel.parentId,
                                 name: interactionCopy.channel.parent.name,
-                                allowRole:Boolean(interactionCopy.options.getNumber("ロールの作成")),
-                                channels:[{ID:"",name:"",thereRole:false,roleID:"0000000000000000000",roleName:""}]
+                                allowRole:Boolean(interactionCopy.options.getNumber ("ロールの追加を許可")),
+                                channels:[{ID:"",name:"",thereRole:false,roleID:"0000000000000000000",roleName:"",creatorId: "0000000000000000000",createTime: 0 }]
                             };
                         categoryIndex =i+1;
                         break;
@@ -114,53 +119,6 @@ module.exports=
                 }
                 
                 await interactionCopy.reply("Added!!!!!");
-            }
-        },
-        {
-            data:new SlashCommandBuilder()
-                .setName("modaltest")
-                .setDescription("testtest"),
-            async execute (interactionCopy)
-            {
-
-                const row = new ActionRowBuilder()
-			        .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId('select')
-                            .setPlaceholder('Nothing selected')
-                            .addOptions(
-                                {
-                                    label: 'Select me',
-                                    description: 'This is a description',
-                                    value: 'first_option',
-                                },
-                                {
-                                    label: 'You can select me too',
-                                    description: 'This is also a description',
-                                    value: 'second_option',
-                                })
-                    )
-
-                const ttt = new ActionRowBuilder()
-			        .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId('select2')
-                            .setPlaceholder('tttt')
-                            .addOptions(
-                                {
-                                    label: 'Select me',
-                                    description: 'This is a description',
-                                    value: 'first_option',
-                                },
-                                {
-                                    label: 'aaaaaaaaaaaa',
-                                    description: 'This is also a description',
-                                    value: 'second_option',
-                                })
-                    )
-
-                //await interactionCopy.reply({ content: 'Pong!', components: [ttt]});
-                await interactionCopy.reply({content:"aaaaaaa",components:[row,ttt]});
             }
         }
     ]
