@@ -86,6 +86,10 @@ client.on(Events.InteractionCreate, async interaction =>
                 
                 interaction.update({content:"このチャンネルに対応したロールを作成しますか？", components: [mkRole]});
             }
+            else
+            {
+                interaction.update({content:"作成しました",components:[]});
+            }
         }
     }
 });
