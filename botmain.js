@@ -1,8 +1,9 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder, Events,Message,ActionRowBuilder,SelectMenuBuilder} = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
+let ccconfig=require("./CCConfig.json");
 const dotenv = require('dotenv');
-const path = require('path')
-const fs = require('fs')
+const path = require('path');
+const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
@@ -10,12 +11,12 @@ const client = new Client({
     intents: [GatewayIntentBits.Guilds],
     partials: [Partials.Channel],
 });
-module.exports.client=client
+module.exports.client=client;
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
-module.exports = client.commands
+module.exports = client.commands;
 
 
 /*スラッシュコマンド登録*/
@@ -48,10 +49,46 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
-client.on("test", async (interaction) => {
-console.log(interaction);
+client.on(Events.InteractionCreate, async interaction =>
+{
+    if (!interaction.isSelectMenu ()) return;
+    if (interaction.customId === "selectCat")
+    {
+        if(interaction.values[0]==="0000000000000000000")
+        {
+            interaction.update({content:"キャンセルされました", components: []});
+        }
+        else
+        {
+            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津22s統合管理BOTによって作成"});
+            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels[ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels.length]={ID:newChannel.id,name:newChannel.name};
+            const ccjson = JSON.stringify (ccconfig, null, 2);
+            try
+            {
+                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+            } catch (e)
+            {
+                console.log (e);
+            }
+            
+            if(ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).allowRole)
+            {
+                const mkRole=new ActionRowBuilder()
+                    .addComponents(
+                        new SelectMenuBuilder()
+                            .setCustomId("mkRole")
+                            .addOptions
+                            (
+                                {label:"作成する",value:newChannel.id+" t"},
+                                {label:"作成しない",value:newChannel.id+" n"}
+                            )
+                    )
+                
+                interaction.update({content:"このチャンネルに対応したロールを作成しますか？", components: [mkRole]});
+            }
+        }
+    }
 });
-
 /*自習室BOT実験(VCに参加したら通知)*/
 client.on("voiceStateUpdate",  (oldState, newState) => {
     if(newState && oldState){
