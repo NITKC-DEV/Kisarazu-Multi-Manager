@@ -5,7 +5,7 @@ Discord.jsで書かれています。
 
 
 ## 開発者
-### [kokastar](https:github.com/starkoka)
+### [kokastar](https://github.com/starkoka)
 役割：開発リーダー  
 制作：[Genshin-Timer](https://github.com/starkoka/Genshin-Timer)、help・aboutコマンド、時間割機能、自習室機能  
 
