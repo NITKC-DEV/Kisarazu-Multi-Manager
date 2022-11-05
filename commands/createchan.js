@@ -102,7 +102,7 @@ module.exports=
                                 ID: interactionCopy.channel.parentId,
                                 name: interactionCopy.channel.parent.name,
                                 allowRole:Boolean(interactionCopy.options.getNumber ("ロールの追加を許可")),
-                                channels:[{ID:"",name:"",thereRole:false,roleID:"0000000000000000000",roleName:"",creatorId: "0000000000000000000",createTime: 0 }]
+                                channels:[{ID:"",name:"",creatorId: "0000000000000000000",createTime: 0 ,thereRole:false,roleID:"0000000000000000000",roleName:""}]
                             };
                         categoryIndex =i+1;
                         break;
