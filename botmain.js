@@ -56,7 +56,7 @@ client.on(Events.InteractionCreate, async interaction =>
     {
         if(interaction.values[0]==="0000000000000000000")
         {
-            interaction.update({content:"キャンセルされました", components: []});
+            await interaction.update({content:"キャンセルされました", components: []});
         }
         else
         {
@@ -79,17 +79,43 @@ client.on(Events.InteractionCreate, async interaction =>
                             .setCustomId("mkRole")
                             .addOptions
                             (
-                                {label:"作成する",value:newChannel.id+" t"},
-                                {label:"作成しない",value:newChannel.id+" n"}
+                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
+                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
                             )
                     )
                 
-                interaction.update({content:"このチャンネルに対応したロールを作成しますか？", components: [mkRole]});
+                await interaction.update({content:"このチャンネルに対応したロールを作成しますか？", components: [mkRole]});
             }
             else
             {
                 interaction.update({content:"作成しました",components:[]});
             }
+        }
+    }
+    if(interaction.customId==="mkRole")
+    {
+        if(interaction.values[0].split("/")[2]==="1")
+        {
+            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津22s統合管理BOTによって作成"});
+            const newData={roleID:newRole.id,roleName:newRole.name};
+            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole=true;
+            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleID=newData.roleID;
+            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleName=newData.roleName;
+            console.log(ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleName);
+            await interaction.update({ content:"ロールを作成して終了しました", components: []});
+        }
+        else
+        {
+            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole =false;
+            await interaction.update({ content:"ロールを作成せずに終了しました", components: []});
+        }
+        const ccjson = JSON.stringify (ccconfig, null, 2);
+        try
+        {
+            fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+        } catch (e)
+        {
+            console.log (e);
         }
     }
 });
