@@ -11,7 +11,8 @@ const client = new Client({
 });
 const date = JSON.parse(fs.readFileSync('./studyroom.json', 'utf8'));
 const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.dev.json')
-client.login(config.token);
+
+
 exports.func = async function studyroom(oldState, newState){
     let time = new Date();
     let UNIX=time.getTime()/1000; //UNIXTime
@@ -20,35 +21,25 @@ exports.func = async function studyroom(oldState, newState){
         date.date.push({
                 "uid": "",
                 "name": "",
+                "icon":"",
                 "lastJoin": 0,
-                "s0": 0,
-                "s1": 0,
-                "s2": 0,
-                "s3": 0,
-                "s4": 0,
-                "s5": 0,
-                "s6": 0,
-                "studyAll": 0,
-                "t0": 0,
-                "t1": 0,
-                "t2": 0,
-                "t3": 0,
-                "t4": 0,
-                "t5": 0,
-                "t6": 0,
+                "study":[0,0,0,0,0,0,0],
+                "StudyAll": 0,
+                "task":[0,0,0,0,0,0,0],
                 "TaskAll": 0,
-                "now": false,
-                "StudyAll": 0
+                "now": false
             })
-        date.date[date.date.length - 1].uid = String(newState.id);
-        let name=await client.users.fetch(newState.id);
-        let username = name.username;
-        let discriminator=name.discriminator;
-        date.date[date.date.length - 1].name = username + '#' + discriminator;
+        date.date[date.date.length - 1].uid = String(newState.id); //id取得
         user=date.date[date.date.length - 1];
 
     }
-
+    //名前とアイコンの更新
+    let userDate=await client.users.fetch(newState.id);
+    let username = userDate.username;
+    let discriminator=userDate.discriminator;
+    let icon = userDate.displayAvatarURL()
+    user.name = username + '#' + discriminator;
+    user.icon = icon;
 
 
     let userPoint = date.date.indexOf(user) /*その人のデータの位置*/
@@ -59,7 +50,7 @@ exports.func = async function studyroom(oldState, newState){
     }
     else if(newState.channel===null){
         user.StudyAll += UNIX-user.lastJoin;
-        user.s0 += UNIX-user.lastJoin;
+        user.study[0] += UNIX-user.lastJoin;
         console.log(user.name+"さんがVCから離れたらしい！滞在時間:"+(UNIX-user.lastJoin) + "合計滞在時間" + user.StudyAll);
         user.now = false;
     }
@@ -70,7 +61,6 @@ exports.func = async function studyroom(oldState, newState){
     fs.writeFileSync('./studyroom.json', JSON.stringify(date,null ,"\t")); //json書き出し
 }
 
-//この実装だと、日付をまたいで記録したときに想定しない値を撮ってしまうため注意
 
 exports.update = function (){
     /*0時に切断したことにする*/
@@ -86,7 +76,7 @@ exports.update = function (){
         let userPoint = date.date.indexOf(user) /*その人のデータの位置*/
         /*切断と同様の処理*/
         user.StudyAll += UNIX-user.lastJoin;
-        user.s0 += UNIX-user.lastJoin;
+        user.study[0] += UNIX-user.lastJoin;
         /*参加と同じ処理*/
         console.log(user.name+"さんがVCに入ったまま日付をまたぎました！");
         user.lastJoin = UNIX;
@@ -95,22 +85,18 @@ exports.update = function (){
 
     /*日付を1日ずらす作業*/
     for(let i=0;i<date.date.length;i++){
-        date.date[i].s0 = date.date[i].s1;
-        date.date[i].s1 = date.date[i].s2;
-        date.date[i].s2 = date.date[i].s3;
-        date.date[i].s3 = date.date[i].s4;
-        date.date[i].s4 = date.date[i].s5;
-        date.date[i].s5 = date.date[i].s6;
-        date.date[i].s6 = 0;
+        for(let j=0;j<6;j++){
+            date.date[i].study[j] = date.date[i].study[j+1];
+        }
+        date.date[i].study[6] = 0;
     }
     for(let i=0;i<date.date.length;i++){
-        date.date[i].t0 = date.date[i].t1;
-        date.date[i].t1 = date.date[i].t2;
-        date.date[i].t2 = date.date[i].t3;
-        date.date[i].t3 = date.date[i].t4;
-        date.date[i].t4 = date.date[i].t5;
-        date.date[i].t5 = date.date[i].t6;
-        date.date[i].t6 = 0;
+        for(let j=0;j<6;j++){
+            date.date[i].task[j] = date.date[i].task[j+1];
+        }
+        date.date[i].task[6] = 0;
     }
     fs.writeFileSync('./studyroom.json', JSON.stringify(date,null ,"\t")); //json書き出し
 }
+
+client.login(config.token);

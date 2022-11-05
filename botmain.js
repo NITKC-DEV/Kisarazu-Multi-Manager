@@ -1,6 +1,6 @@
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
 const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.dev.json')
-const studyroom = require('./functions/studyroom.js')
+const studyroom = require('./functions/studyRoom.js')
 const dotenv = require('dotenv');
 const path = require('path')
 const fs = require('fs')
@@ -48,7 +48,7 @@ client.on("interactionCreate", async (interaction) => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
 
