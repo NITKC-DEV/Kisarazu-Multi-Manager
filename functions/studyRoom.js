@@ -44,18 +44,31 @@ exports.func = async function studyroom(oldState, newState){
 
     let userPoint = date.date.indexOf(user) /*その人のデータの位置*/
     if(oldState.channel===null){
-        console.log(user.name+"さんがVCに入りました！大歓迎！");
-        user.lastJoin = UNIX; //参加した時刻を書き込み
-        user.now = true;
+        if(config.studyVC.indexOf(newState.channelId)!==-1){
+            console.log(user.name+"さんがVCに入りました！大歓迎！");
+            user.lastJoin = UNIX; //参加した時刻を書き込み
+            user.now = true;
+        }
     }
     else if(newState.channel===null){
-        user.StudyAll += UNIX-user.lastJoin;
-        user.study[0] += UNIX-user.lastJoin;
-        console.log(user.name+"さんがVCから離れたらしい！滞在時間:"+(UNIX-user.lastJoin) + "合計滞在時間" + user.StudyAll);
-        user.now = false;
+        if(config.studyVC.indexOf(oldState.channelId)!==-1){
+            user.StudyAll += UNIX-user.lastJoin;
+            user.study[0] += UNIX-user.lastJoin;
+            console.log(user.name+"さんがVCから離れたらしい！滞在時間:"+(UNIX-user.lastJoin) + "合計滞在時間" + user.StudyAll);
+            user.now = false;
+        }
     }
     else{
-        console.log(user.name+"さんがVCを変更しました！ちぇ〜んじ");
+        if(config.studyVC.indexOf(oldState.channelId)!==-1){
+            user.StudyAll += UNIX-user.lastJoin;
+            user.study[0] += UNIX-user.lastJoin;
+            user.now = false;
+        }
+        if(config.studyVC.indexOf(newState.channelId)!==-1){
+            user.lastJoin = UNIX; //参加した時刻を書き込み
+            user.now = true;
+        }
+        console.log(user.name+"さんがVC切り替えを行いました");
     }
     date.date[userPoint]=user
     fs.writeFileSync('./studyroom.json', JSON.stringify(date,null ,"\t")); //json書き出し
@@ -66,7 +79,7 @@ exports.update = function (){
     /*0時に切断したことにする*/
     let time = new Date();
     let UNIX=time.getTime()/1000; //UNIXTime
-    UNIX=UNIX-(UNIX%86400); //今日の0時
+    UNIX=UNIX-(UNIX%86400)-32400; //今日の0時
 
     let now = date.date.filter(function(item, index){ /*今入ってる人を列挙*/
         if (item.now === true ) return true;
@@ -75,8 +88,8 @@ exports.update = function (){
         let user = now[i]; /*その人のデータ*/
         let userPoint = date.date.indexOf(user) /*その人のデータの位置*/
         /*切断と同様の処理*/
-        user.StudyAll += UNIX-user.lastJoin;
-        user.study[0] += UNIX-user.lastJoin;
+        user.StudyAll += UNIX-user.lastJoin+32400;
+        user.study[0] += UNIX-user.lastJoin+32400; //32400は時差考慮
         /*参加と同じ処理*/
         console.log(user.name+"さんがVCに入ったまま日付をまたぎました！");
         user.lastJoin = UNIX;
@@ -85,16 +98,16 @@ exports.update = function (){
 
     /*日付を1日ずらす作業*/
     for(let i=0;i<date.date.length;i++){
-        for(let j=0;j<6;j++){
-            date.date[i].study[j] = date.date[i].study[j+1];
+        for(let j=6;j>0;j--){
+            date.date[i].study[j] = date.date[i].study[j-1];
         }
-        date.date[i].study[6] = 0;
+        date.date[i].study[0] = 0;
     }
     for(let i=0;i<date.date.length;i++){
-        for(let j=0;j<6;j++){
-            date.date[i].task[j] = date.date[i].task[j+1];
+        for(let j=6;j>0;j--){
+            date.date[i].task[j] = date.date[i].task[j-1];
         }
-        date.date[i].task[6] = 0;
+        date.date[i].task[0] = 0;
     }
     fs.writeFileSync('./studyroom.json', JSON.stringify(date,null ,"\t")); //json書き出し
 }

@@ -55,10 +55,10 @@ client.on("interactionCreate", async (interaction) => {
 
 /*自習室BOT(VCに参加したら通知)*/
 client.on('voiceStateUpdate', (oldState, newState) => {
-    studyroom.func(oldState, newState);
+    studyroom.func(oldState, newState)
 })
 
-cron.schedule('42 15 * * *',() => {
+cron.schedule('0 0 * * *',() => {
     studyroom.update();
 })
 
