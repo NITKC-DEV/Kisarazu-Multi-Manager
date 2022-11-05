@@ -102,7 +102,7 @@ module.exports =
                             },
                             {
                                 name:"累計勉強時間",
-                                value:user.StudyAll + "時間"
+                                value:Math.floor(user.StudyAll/360)/10 + "時間"
                             }
                         )
                         .setTimestamp()
