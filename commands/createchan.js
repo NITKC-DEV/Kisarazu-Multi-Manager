@@ -1,4 +1,4 @@
-const { SlashCommandBuilder,ActionRowBuilder, Events, SelectMenuBuilder}=require("discord.js");
+const { SlashCommandBuilder,ActionRowBuilder, Events, SelectMenuBuilder,PermissionFlagsBits}=require("discord.js");
 const config = process.env.NODE_ENV === "development" ? require("../../bot-main-pullrequest/config.dev.json") : require("../config.json");
 let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
@@ -62,11 +62,11 @@ module.exports=
                             {name: "許可する", value: 1},
                             {name: "許可しない", value: 0}
                         )
-                ),
+                )
+                .setDefaultMemberPermissions(1<<3),
         
             async execute (interactionCopy)
             {
-                
                 let serverIndex;
                 let categoryIndex;
                 for (let i = 0; i < ccconfig.guilds.length; i++)
@@ -118,7 +118,7 @@ module.exports=
                     console.log (e);
                 }
                 
-                await interactionCopy.reply("Added!!!!!");
+                await interactionCopy.reply("追加しました");
             }
         }
     ]
