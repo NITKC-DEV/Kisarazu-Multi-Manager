@@ -3,6 +3,7 @@ const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
 const Classes = require('./timetable/timetables.json');
+const studyroom = require('./functions/studyRoom.js')
 
 const dotenv = require('dotenv');
 const path = require('path');
@@ -11,7 +12,11 @@ const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
 const client = new Client({
-    intents: [GatewayIntentBits.Guilds],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildVoiceStates,
+        GatewayIntentBits.GuildMembers,
+    ],
     partials: [Partials.Channel],
 });
 module.exports.client=client;
@@ -48,168 +53,19 @@ client.on("interactionCreate", async (interaction) => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-
-        await interaction.reply({ content: 'There was an error while executing this command!', ephemeral: true });
+        await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
 
-//SelectMenu受け取り
-client.on(Events.InteractionCreate, async interaction =>
-{
-    if (!interaction.isSelectMenu ()) return;
-    
-    // /createchanでのカテゴリ選択の受け取り
-    if (interaction.customId === "selectCat")
-    {
-        //キャンセル受付
-        if(interaction.values[0]==="0000000000000000000")
-        {
-            await interaction.update({content:"キャンセルされました", components: []});
-        }
-        //カテゴリ受付
-        else
-        {
-            //チャンネル作成
-            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津22s統合管理BOTによって作成"});
-            
-            //作成チャンネル情報記録
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels[ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels.length]={ID:newChannel.id,name:newChannel.name,creatorID:interaction.user.id,createTime:Date.now()};
-            
-            //json書き込み
-            const ccjson = JSON.stringify (ccconfig);
-            try
-            {
-                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-            } catch (e)
-            {
-                console.log (e);
-                await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
-                return;
-            }
-            
-            //ロール作成許可時にロール作成をするかを問うSelectMenu作成
-            if(ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).allowRole)
-            {
-                const mkRole=new ActionRowBuilder()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId("mkRole")
-                            .addOptions
-                            (
-                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
-                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
-                            )
-                    )
-                
-                await interaction.update({content:"このチャンネルに対応したロールを作成しますか？", components: [mkRole]});
-            }
-            else
-            {
-                interaction.update({content:"作成しました",components:[]});
-            }
-        }
-    }
-    //ロール作成受け取り
-    if(interaction.customId==="mkRole")
-    {
-        //作成
-        if(interaction.values[0].split("/")[2]==="1")
-        {
-            //ロール作成
-            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津22s統合管理BOTによって作成"});
-           
-            //作成ロール情報記録
-            const newData={roleID:newRole.id,roleName:newRole.name};
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole=true;
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleID=newData.roleID;
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleName=newData.roleName;
-            
-            //json記録
-            const ccjson = JSON.stringify (ccconfig);
-            try
-            {
-                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-            } catch (e)
-            {
-                console.log (e);
-                const mkRole=new ActionRowBuilder()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId("mkRole")
-                            .addOptions
-                            (
-                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
-                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
-                            )
-                    )
-                await interaction.update({ content:"データの保存に失敗しました\nやり直してください\nこのチャンネルに対応したロールを作成しますか？", components: [mkRole]});
-                return;
-            }
-            
-            await interaction.update({ content:"ロールを作成して終了しました", components: []});
-        }
-        //作成しない
-        else
-        {
-            //作成しなかったことを記録
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole =false;
-            
-            //json記録
-            const ccjson = JSON.stringify (ccconfig);
-            try
-            {
-                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-            } catch (e)
-            {
-                console.log (e);
-                const mkRole=new ActionRowBuilder()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId("mkRole")
-                            .addOptions
-                            (
-                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
-                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
-                            )
-                    )
-                await interaction.update({ content:"データの保存に失敗しました\nやり直してください\nこのチャンネルに対応したロールを作成しますか？", components: [mkRole]});
-                return;
-            }
-            
-            await interaction.update({ content:"ロールを作成せずに終了しました", components: []});
-        }
-        
-    }
-});
-/*自習室BOT実験(VCに参加したら通知)*/
-client.on("voiceStateUpdate", (oldState, newState) => {
-    if (newState && oldState) {
 
-        //newState関係
-        console.log(`NEW:userid   : ${newState.id}`);       //ユーザID
-        console.log(`NEW:channelid: ${newState.channelID}`);//チャンネルID、nullならdisconnect
-        console.log(`NEW:guildid  : ${newState.guild.id}`); //ギルドID
+/*自習室BOT(VCに参加したら通知)*/
+client.on('voiceStateUpdate', (oldState, newState) => {
+    studyroom.func(oldState, newState)
+})
 
-        //oldState関係
-        console.log(`OLD:userid   : ${oldState.id}`);       //ユーザID
-        console.log(`OLD:channelid: ${oldState.channelID}`);//チャンネルID、nullならconnect
-        console.log(`OLD:guildid  : ${oldState.guild.id}`); //ギルドID
-
-        if (oldState.channelID === newState.channelID) {
-            //ここはミュートなどの動作を行ったときに発火する場所
-            concole.log(`other`);
-        }
-        if (oldState.channelID === null && newState.channelID != null) {
-            //ここはconnectしたときに発火する場所
-            concole.log(`connect`);
-        }
-    }
-    if (oldState.channelID != null && newState.channelID === null) {
-        //ここはdisconnectしたときに発火する場所
-        console.log(`disconnect`);
-    }
-});
-
+cron.schedule('0 0 * * *',() => {
+    studyroom.update();
+})
 
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
@@ -391,7 +247,6 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
         .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
 });
-
 
 
 client.login(config.token);
