@@ -128,5 +128,39 @@ module.exports=
                 
                 await interactionCopy.reply("追加しました");
             }
+        },
+        {
+            data: new SlashCommandBuilder ()
+                .setName("removecategory")
+                .setDescription ("/addchategoryによって登録されたカテゴリの登録を解除します")
+                .setDefaultMemberPermissions(1<<3)
+                .addStringOption(option =>
+                    option
+                        .setName("チャンネルとロールの削除")
+                        .setDescription("カテゴリ削除時に/createchanによって作成されたチャンネルとロールを削除しますか？")
+                        .setRequired(true)
+                        .addChoices(
+                            {name:"削除する",value:"/t"},
+                            {name:"削除しない",value:"/f"}
+                        )
+                ),
+            
+            async execute(interactionCopy)
+            {
+                //ActionRowBuilder作成
+                let DCR= interactionCopy.options.getString("チャンネルとロールの削除");
+                const selectCategory=new ActionRowBuilder()
+                    .addComponents(
+                        new SelectMenuBuilder()
+                            .setPlaceholder("カテゴリを選択")
+                            .setCustomId("remCat")
+                            .addOptions(
+                                {label:"全てのカテゴリを削除する",value:"ALL"+DCR},
+                                ...ccconfig.guilds.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID+DCR}))
+                            )
+                    )
+                
+                await interactionCopy.reply({ content:"削除するカテゴリを指定してください。", components: [selectCategory] ,ephemeral: true});
+            }
         }
     ]

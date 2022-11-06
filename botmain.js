@@ -73,7 +73,8 @@ client.on(Events.InteractionCreate, async interaction =>
         else
         {
             //チャンネル作成
-            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津22s統合管理BOTによって作成"});
+
+            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津22s統合管理BOTの操作により作成"});
 
             //作成チャンネル情報記録
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels[ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels.length]={ID:newChannel.id,name:newChannel.name,creatorID:interaction.user.id,createTime:Date.now()};
@@ -181,7 +182,129 @@ client.on(Events.InteractionCreate, async interaction =>
 
             await interaction.update({ content:"ロールを作成せずに終了しました", components: []});
         }
-
+    }
+    //カテゴリ削除受け取り
+    if(interaction.customId==="remCat")
+    {
+        //ccconfig内のguildsの実行ギルドのインデックスを取得
+        let indGuild=-1;
+        for(let i=0;i<ccconfig.guilds.length;i++)
+        {
+            if(ccconfig.guilds[1].ID===interaction.guild.id)indGuild=i;
+        }
+        if(indGuild===-1)
+        {
+            await interaction.update({ content:"このサーバーは登録されていません", components: []});
+            return;
+        }
+        //全削除
+        if(interaction.values[0].split("/")[0]==="ALL")
+        {
+            //チャンネルとロールの削除
+            if(interaction.values[0].split("/")[1]==="t")
+            {
+                for(let i=1;i<ccconfig.guilds[indGuild].categories.length;i++)
+                {
+                    for(let j=1;j<ccconfig.guilds[indGuild].categories[i].channels.length;j++)
+                    {
+                        //エラー起きやすそうだからtry文
+                        try
+                        {
+                            //チャンネル削除
+                            await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[i].channels[j].ID, "木更津22s統合管理BOTの操作により削除");
+                            //対応ロール存在時にロール削除
+                            if (ccconfig.guilds[indGuild].categories[i].channels[j].thereRole)
+                            {
+                                await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[i].channels[j].roleID, "木更津22s統合管理BOTの操作により削除");
+                            }
+                        }
+                        catch(e)
+                        {
+                            console.log(e);
+                        }
+                        
+                    }
+                }
+            }
+            //ccconfigからカテゴリの情報を削除
+            ccconfig.guilds[indGuild] =
+                            {
+                                ID: interaction.guild.id,
+                                categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]
+                            };
+            //jsonに書き込み
+                const ccjson = JSON.stringify (ccconfig);
+                try
+                {
+                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+                } catch (e)
+                {
+                    console.log (e);
+                    await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
+                    return;
+                }
+                
+                await interaction.update({content:"削除しました",components:[]});
+        }
+        //キャンセル選択時
+        else if(interaction.values[0].split("/")[0]==="0000000000000000000")
+        {
+            await interaction.update({content:"キャンセルされました",components:[]})
+        }
+        //個別削除時
+        else
+        {
+            //選択されたカテゴリのインデックスを取得
+            let indCategory=-1
+            for(let i = 1; i <ccconfig.guilds[indGuild].categories.length; i++)
+            {
+                if(ccconfig.guilds[indGuild].categories[i].ID===interaction.values[0].split("/")[0])indCategory=i;
+            }
+            if(indCategory===-1)
+            {
+                await interaction.update ({content:"データエラーです\nやり直してください",components:[]});
+                return;
+            }
+            
+            //チャンネルとロールの削除時
+            if(interaction.values[0].split("/")[1]==="t")
+            {
+                for(let i=1;i<ccconfig.guilds[indGuild].categories[indCategory].channels.length;i++)
+                {
+                    //エラー起きそうだから(以下略
+                    try
+                    {
+                        //カテゴリ内のチャンネル削除
+                        await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].ID, "木更津22s統合管理BOTの操作により削除");
+                        //対応するロールが存在するときにロールを削除
+                        if (ccconfig.guilds[indGuild].categories[indCategory].channels[i].thereRole)
+                        {
+                            await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].roleID, "木更津22s統合管理BOTの操作により削除");
+                        }
+                    }
+                    catch(e)
+                    {
+                        console.log(e);
+                    }
+                }
+            }
+            //ccconfigから当該カテゴリの情報をまるまる削除
+            ccconfig.guilds[indGuild].categories.splice(indCategory,1);
+            
+            //jsonに書き込み
+                const ccjson = JSON.stringify (ccconfig);
+                try
+                {
+                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+                } catch (e)
+                {
+                    console.log (e);
+                    await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
+                    return;
+                }
+                
+                await interaction.update({content:"削除しました",components:[]});
+        }
     }
 });
 
