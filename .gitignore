@@ -5,3 +5,4 @@ config.json
 yarn.lock
 /.idea/
 /CCConfig.json
+/.fleet/settings.json
