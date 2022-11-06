@@ -1,0 +1,29 @@
+{
+  "guilds": [
+    {
+      "ID": "0000000000000000000",
+      "categories": [
+        {
+          "ID": "0000000000000000000",
+          "name": "",
+          "allowRole": false,
+          "active": false,
+          "channels": [
+            {
+              "ID": "0000000000000000000",
+              "name": "",
+              "creatorId": "0000000000000000000",
+              "createTime": 0,
+              "thereRole": false,
+              "roleID": "0000000000000000000",
+              "roleName": ""
+            }
+          ]
+        }
+      ],
+      "minimumInterval": 0,
+      "controlChannelID": 0,
+      "copiedRoleID": 0
+    }
+  ]
+}
