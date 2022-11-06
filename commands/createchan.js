@@ -115,7 +115,7 @@ module.exports=
                 }
                 
                 //jsonに書き込み
-                const ccjson = JSON.stringify (ccconfig, null, 2);
+                const ccjson = JSON.stringify (ccconfig);
                 try
                 {
                     fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
