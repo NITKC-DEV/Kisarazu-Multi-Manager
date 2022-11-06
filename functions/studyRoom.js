@@ -10,7 +10,7 @@ const client = new Client({
     partials: [Partials.Channel],
 });
 const date = JSON.parse(fs.readFileSync('./studyroom.json', 'utf8'));
-const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.dev.json')
+const config = process.env.NODE_ENV === "development" ? require('../config.dev.json') : require('../config.json')
 
 
 exports.func = async function studyroom(oldState, newState){
