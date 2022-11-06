@@ -25,6 +25,7 @@ module.exports=
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
             async execute(interactionCopy)
             {
+                //カテゴリ選択用SelectMenu作成
                 const selectCategory=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -34,8 +35,10 @@ module.exports=
                                 ...ccconfig.guilds.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID}))
                             )
                     )
-
+                
+                //SlashCommandからチャンネル名を受け取り
                 let channelName=interactionCopy.options.getString("チャンネル名");
+                //スペースがあると都合が悪くてチャンネルもどうせスペース使えないのでスペースをハイフンに置き換え
                 let channelNameSpaceChanged=channelName.replace(" ","-");
                 while(channelName!==channelNameSpaceChanged)
                 {
@@ -49,6 +52,7 @@ module.exports=
 
         },
         {
+            //カテゴリ登録用スラッシュコマンド
             data: new SlashCommandBuilder ()
                 .setName ("addcategory")
                 .setDescription ("/CreateChanによってチャンネルの作成ができるカテゴリにこのカテゴリを追加します")
@@ -69,6 +73,8 @@ module.exports=
             {
                 let serverIndex;
                 let categoryIndex;
+                
+                //CCConfig.jsonにギルドのプロファイルがあればその位置を返し、なければ新規作成
                 for (let i = 0; i < ccconfig.guilds.length; i++)
                 {
                     if (interactionCopy.guild.id === ccconfig.guilds[i].ID)
@@ -87,6 +93,7 @@ module.exports=
                     }
                 }
                 
+                //CCConfig.jsonにカテゴリのプロファイルがあればすでに登録されている旨を返し、なければ登録
                 for(let i=0; i<ccconfig.guilds[serverIndex].categories.length; i++)
                 {
                     if(interactionCopy.channel.parentId === ccconfig.guilds[serverIndex].categories[i].ID)
@@ -109,6 +116,7 @@ module.exports=
                     }
                 }
                 
+                //jsonに書き込み
                 const ccjson = JSON.stringify (ccconfig, null, 2);
                 try
                 {
