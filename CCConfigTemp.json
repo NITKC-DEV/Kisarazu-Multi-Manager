@@ -7,6 +7,7 @@
           "ID": "0000000000000000000",
           "name": "",
           "allowRole": false,
+          "active": false,
           "channels": [
             {
               "ID": "0000000000000000000",
@@ -19,7 +20,10 @@
             }
           ]
         }
-      ]
+      ],
+      "minimumInterval": 0,
+      "controlChannelID": 0,
+      "copiedRoleID": 0
     }
   ]
 }
