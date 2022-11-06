@@ -1,8 +1,6 @@
-const { SlashCommandBuilder,ActionRowBuilder, Events, SelectMenuBuilder,PermissionFlagsBits}=require("discord.js");
-const config = process.env.NODE_ENV === "development" ? require("../../bot-main-pullrequest/config.dev.json") : require("../config.json");
+const { SlashCommandBuilder,ActionRowBuilder,SelectMenuBuilder}=require("discord.js");
 let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
-const {client}=require("../botmain.js");
 
 
 
