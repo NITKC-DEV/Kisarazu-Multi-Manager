@@ -124,6 +124,8 @@ module.exports=
                 } catch (e)
                 {
                     console.log (e);
+                    await interactionCopy.reply("データの保存に失敗しました\nやり直してください");
+                    return;
                 }
                 
                 await interactionCopy.reply("追加しました");

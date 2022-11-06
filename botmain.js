@@ -79,6 +79,8 @@ client.on(Events.InteractionCreate, async interaction =>
             } catch (e)
             {
                 console.log (e);
+                await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
+                return;
             }
             
             //ロール作成許可時にロール作成をするかを問うSelectMenu作成
@@ -118,6 +120,28 @@ client.on(Events.InteractionCreate, async interaction =>
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleID=newData.roleID;
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleName=newData.roleName;
             
+            //json記録
+            const ccjson = JSON.stringify (ccconfig, null, 2);
+            try
+            {
+                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+            } catch (e)
+            {
+                console.log (e);
+                const mkRole=new ActionRowBuilder()
+                    .addComponents(
+                        new SelectMenuBuilder()
+                            .setCustomId("mkRole")
+                            .addOptions
+                            (
+                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
+                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
+                            )
+                    )
+                await interaction.update({ content:"データの保存に失敗しました\nやり直してください\nこのチャンネルに対応したロールを作成しますか？", components: [mkRole]});
+                return;
+            }
+            
             await interaction.update({ content:"ロールを作成して終了しました", components: []});
         }
         //作成しない
@@ -125,18 +149,32 @@ client.on(Events.InteractionCreate, async interaction =>
         {
             //作成しなかったことを記録
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole =false;
+            
+            //json記録
+            const ccjson = JSON.stringify (ccconfig, null, 2);
+            try
+            {
+                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+            } catch (e)
+            {
+                console.log (e);
+                const mkRole=new ActionRowBuilder()
+                    .addComponents(
+                        new SelectMenuBuilder()
+                            .setCustomId("mkRole")
+                            .addOptions
+                            (
+                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
+                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
+                            )
+                    )
+                await interaction.update({ content:"データの保存に失敗しました\nやり直してください\nこのチャンネルに対応したロールを作成しますか？", components: [mkRole]});
+                return;
+            }
+            
             await interaction.update({ content:"ロールを作成せずに終了しました", components: []});
         }
         
-        //json記録
-        const ccjson = JSON.stringify (ccconfig, null, 2);
-        try
-        {
-            fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-        } catch (e)
-        {
-            console.log (e);
-        }
     }
 });
 /*自習室BOT実験(VCに参加したら通知)*/
