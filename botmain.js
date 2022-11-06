@@ -1,5 +1,5 @@
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
-const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.dev.json')
+const config = process.env.NODE_ENV === "development" ? require('./config.dev.json') : require('./config.json')
 const studyroom = require('./functions/studyRoom.js')
 const dotenv = require('dotenv');
 const path = require('path')
