@@ -120,7 +120,7 @@ client.on(Events.InteractionCreate, async interaction =>
         if(interaction.values[0].split("/")[2]==="1")
         {
             //ロール作成
-            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津22s統合管理BOTによって作成"});
+            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津22s統合管理BOTの操作により作成"});
 
             //作成ロール情報記録
             const newData={roleID:newRole.id,roleName:newRole.name};
