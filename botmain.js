@@ -76,7 +76,7 @@ client.on(Events.InteractionCreate, async interaction =>
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels[ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels.length]={ID:newChannel.id,name:newChannel.name,creatorID:interaction.user.id,createTime:Date.now()};
             
             //json書き込み
-            const ccjson = JSON.stringify (ccconfig, null, 2);
+            const ccjson = JSON.stringify (ccconfig);
             try
             {
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
@@ -125,7 +125,7 @@ client.on(Events.InteractionCreate, async interaction =>
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleName=newData.roleName;
             
             //json記録
-            const ccjson = JSON.stringify (ccconfig, null, 2);
+            const ccjson = JSON.stringify (ccconfig);
             try
             {
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
@@ -155,7 +155,7 @@ client.on(Events.InteractionCreate, async interaction =>
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole =false;
             
             //json記録
-            const ccjson = JSON.stringify (ccconfig, null, 2);
+            const ccjson = JSON.stringify (ccconfig);
             try
             {
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
