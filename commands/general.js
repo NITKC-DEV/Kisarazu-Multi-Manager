@@ -12,9 +12,9 @@ module.exports =
                     .setColor(0x00A0EA)
                     .setTitle('ヘルプ')
                     .setAuthor({
-                        name: "\u200b",
+                        name: "木更津22s統合管理BOT",
                         iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                        url: 'https://discord.gg/mwyC8PTcXa'
+                        url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('現在実装されているコマンド一覧です')
                     .addFields(
@@ -34,16 +34,16 @@ module.exports =
                     .setColor(0x00A0EA)
                     .setTitle('NITKC統合管理BOT概要')
                     .setAuthor({
-                        name: "\u200b",
+                        name: "木更津22s統合管理BOT",
                         iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                        url: 'https://discord.gg/mwyC8PTcXa'
+                        url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('このbotの概要を紹介します')
                     .addFields(
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v2.0.0 ',
+                                value: 'v3.0.0 ',
                             },
                             {
                                 name: '開発者',

@@ -87,7 +87,7 @@ module.exports =
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setThumbnail(user.icon)
                         .setDescription("現在のランク：" + rank)
@@ -123,7 +123,7 @@ module.exports =
                     .setAuthor({
                         name: "木更津22s統合管理bot",
                         iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                        url: 'https://discord.gg/mwyC8PTcXa'
+                        url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('ボイスチャットに接続している時間を勉強している時間とみなし、勉強時間を記録してくれるツールです。')
                     .addFields(

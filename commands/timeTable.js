@@ -69,7 +69,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理BOT",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('月曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください\n')
                         .addFields(
@@ -104,7 +104,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('月曜日の時間割です。\n※休講や、授業変更等がある可能性があります。各自で確認してください')
                         .addFields(
@@ -140,7 +140,7 @@ module.exports =[
                             .setAuthor({
                                 name: "木更津22s統合管理bot",
                                 iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                                url: 'https://discord.gg/mwyC8PTcXa'
+                                url: 'https://github.com/NITKC22s/bot-main'
                             })
                             .addFields(
                                 [
@@ -175,7 +175,7 @@ module.exports =[
                             .setAuthor({
                                 name: "木更津22s統合管理bot",
                                 iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                                url: 'https://discord.gg/mwyC8PTcXa'
+                                url: 'https://github.com/NITKC22s/bot-main'
                             })
                             .addFields(
                                 [
@@ -210,7 +210,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -244,7 +244,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
@@ -258,7 +258,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理BOT",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('火曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
                         .addFields(
@@ -290,7 +290,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -321,7 +321,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -352,7 +352,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -382,7 +382,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -412,7 +412,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
@@ -426,7 +426,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理BOT",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('水曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
                         .addFields(
@@ -462,7 +462,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -496,7 +496,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -530,7 +530,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -564,7 +564,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -598,7 +598,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
@@ -612,7 +612,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理BOT",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('木曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
                         .addFields(
@@ -647,7 +647,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -681,7 +681,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -715,7 +715,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -749,7 +749,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -783,7 +783,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
@@ -797,7 +797,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理BOT",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('金曜日の時間割です。\n ※休講や、授業変更等がある可能性があります。各自で確認してください')
                         .addFields(
@@ -832,7 +832,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -866,7 +866,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -900,7 +900,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -935,7 +935,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .addFields(
                             [
@@ -969,7 +969,7 @@ module.exports =[
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setTimestamp()
                         .setFooter({ text: 'Developed by NITKC22s server Admin' });
