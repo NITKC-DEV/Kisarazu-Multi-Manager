@@ -1,6 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 const fs = require("fs");
-const commands = require("../botmain");
 
 module.exports =
     [
@@ -16,7 +15,6 @@ module.exports =
                 ),
 
             async execute(interaction) {
-                const commands = require('../botmain')
                 //jsonの読み込みとユーザーデータの取り出し
                 const date = JSON.parse(fs.readFileSync('./studyroom.json', 'utf8'));
                 let option = interaction.options.data[0].value;
@@ -116,7 +114,6 @@ module.exports =
                 .setName('studyroom')
                 .setDescription('自習室機能の説明です'),
             async execute(interaction) {
-                const commands = require('../botmain')
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('自習室機能')

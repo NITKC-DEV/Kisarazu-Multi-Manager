@@ -1,5 +1,5 @@
 /*自習室機能 VC部分*/
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials} = require('discord.js');
 const fs = require('fs');
 const client = new Client({
     intents: [
