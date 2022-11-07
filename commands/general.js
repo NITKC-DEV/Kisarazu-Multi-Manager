@@ -13,7 +13,7 @@ module.exports =
                     .setTitle('ヘルプ')
                     .setAuthor({
                         name: "木更津22s統合管理BOT",
-                        iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('現在実装されているコマンド一覧です')
@@ -35,7 +35,7 @@ module.exports =
                     .setTitle('NITKC統合管理BOT概要')
                     .setAuthor({
                         name: "木更津22s統合管理BOT",
-                        iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('このbotの概要を紹介します')
