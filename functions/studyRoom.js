@@ -79,7 +79,7 @@ exports.update = function (){
     /*0時に切断したことにする*/
     let time = new Date();
     let UNIX=time.getTime()/1000; //UNIXTime
-    UNIX=UNIX-(UNIX%86400)-32400; //今日の0時
+    UNIX=UNIX-(UNIX%86400)-32400+86400; //今日の0時
 
     let now = date.date.filter(function(item, index){ /*今入ってる人を列挙*/
         if (item.now === true ) return true;
@@ -88,8 +88,8 @@ exports.update = function (){
         let user = now[i]; /*その人のデータ*/
         let userPoint = date.date.indexOf(user) /*その人のデータの位置*/
         /*切断と同様の処理*/
-        user.StudyAll += UNIX-user.lastJoin+32400;
-        user.study[0] += UNIX-user.lastJoin+32400; //32400は時差考慮
+        user.StudyAll += UNIX-user.lastJoin;
+        user.study[0] += UNIX-user.lastJoin;
         /*参加と同じ処理*/
         console.log(user.name+"さんがVCに入ったまま日付をまたぎました！");
         user.lastJoin = UNIX;

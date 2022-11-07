@@ -73,10 +73,11 @@ module.exports =
                     let dt = new Date();
                     let date = [0,0,0,0,0,0,0];
                     let month = [0,0,0,0,0,0,0];
+                    dt.setDate(dt.getDate()+1)
                     for(let i=0;i<7;i++){
-                        dt.setDate(dt.getDate()-1)
+                        dt.setDate(dt.getDate()-1);
                         month[i] = dt.getMonth();
-                        date[i] = dt.getDate()
+                        date[i] = dt.getDate();
                     }
 
                     embed = new EmbedBuilder()
