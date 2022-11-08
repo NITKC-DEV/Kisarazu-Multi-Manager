@@ -27,7 +27,7 @@ module.exports =
                         .setAuthor({
                             name: "木更津22s統合管理bot",
                             iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('データが存在しないか、破損しています。VCに参加してからもう一度試してください。それでもエラーが起きる場合は、管理者に連絡してください。')
                         .setTimestamp()
