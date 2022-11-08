@@ -1,4 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const version = require('../package.json')
 
 module.exports =
     [
@@ -43,7 +44,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v3.0.0 ',
+                                value: 'v' + version.version,
                             },
                             {
                                 name: '開発者',
@@ -55,7 +56,7 @@ module.exports =
                             },
                             {
                                 name: 'ソースコード',
-                                value: '一部のソースコードはオープンソースとなっています。以下のリンクより参照してください。\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津22s統合管理bot](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: '実行環境',
