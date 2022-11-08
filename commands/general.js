@@ -1,5 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
-const version = require('../package.json')
+const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
+const packageVer = require('../package.json')
 
 module.exports =
     [
@@ -44,7 +44,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v' + version.version,
+                                value: 'v' + packageVer.version,
                             },
                             {
                                 name: '開発者',
@@ -60,7 +60,7 @@ module.exports =
                             },
                             {
                                 name: '実行環境',
-                                value: 'node.js v18.9.0\ndiscord.js v14.3.0',
+                                value: 'node.js v18.9.0\ndiscord.js v' + version,
                             },
                         ]
                     )
