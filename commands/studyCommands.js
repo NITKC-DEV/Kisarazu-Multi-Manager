@@ -26,8 +26,8 @@ module.exports =
                         .setTitle('データが存在しません')
                         .setAuthor({
                             name: "木更津22s統合管理bot",
-                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
-                            url: 'https://discord.gg/mwyC8PTcXa'
+                            iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                            url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('データが存在しないか、破損しています。VCに参加してからもう一度試してください。それでもエラーが起きる場合は、管理者に連絡してください。')
                         .setTimestamp()
@@ -73,10 +73,11 @@ module.exports =
                     let dt = new Date();
                     let date = [0,0,0,0,0,0,0];
                     let month = [0,0,0,0,0,0,0];
+                    dt.setDate(dt.getDate()+1)
                     for(let i=0;i<7;i++){
-                        dt.setDate(dt.getDate()-1)
+                        dt.setDate(dt.getDate()-1);
                         month[i] = dt.getMonth();
-                        date[i] = dt.getDate()
+                        date[i] = dt.getDate();
                     }
 
                     embed = new EmbedBuilder()
@@ -84,7 +85,7 @@ module.exports =
                         .setTitle(user.name + 'の自習室データ')
                         .setAuthor({
                             name: "木更津22s統合管理bot",
-                            iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                            iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
                             url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setThumbnail(user.icon)
@@ -119,7 +120,7 @@ module.exports =
                     .setTitle('自習室機能')
                     .setAuthor({
                         name: "木更津22s統合管理bot",
-                        iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('ボイスチャットに接続している時間を勉強している時間とみなし、勉強時間を記録してくれるツールです。')
