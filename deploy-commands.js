@@ -2,7 +2,7 @@ const fs = require('node:fs');
 const path = require('node:path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord.js');
-const config = process.env.NODE_ENV == "production" ? require('./config.json') : require('./config.dev.json')
+const config =require('./environmentConfig')
 console.log(config)
 // ./commands/ ディレクトリ内を探索
 const commands = [];
@@ -36,9 +36,9 @@ async function run() {
     const mode = await new Select({
         name: 'mode',
         message: 'モードを選んでください',
-        choices: ['登録(更新)', '削除', '終了',]
+        choices: ['登録(更新)', '削除', 'キャンセル',]
     }).run();
-    if (mode=='終了'){
+    if (mode=='キャンセル'){
         return
     }
 
@@ -57,8 +57,8 @@ async function run() {
                 disabled: 'いいえ'
             }).run();
             if (prompt){
-               // PUTで上書き すべてcommandsの内容に
-               await rest.put(Routes.applicationCommands(config.client), { body: commands })
+                // PUTで上書き すべてcommandsの内容に
+                await rest.put(Routes.applicationCommands(config.client), { body: commands })
                     .then(data => console.log(`${data.length} 個のアプリケーション コマンドが正常に登録されました。`))
                     .catch(console.error);
             }
