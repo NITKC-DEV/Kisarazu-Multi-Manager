@@ -47,11 +47,11 @@ module.exports =
                             },
                             {
                                 name: '開発者',
-                                value: '開発は、このサーバーの管理者3人([kokastar](https://github.com/starkoka)、[NXVZBGB FBEN](https://github.com/NXVZBGBFBEN)、[naotiki](https://github.com/naotiki))で行っています',
+                                value: '開発は、このサーバーの管理者4人([kokastar](https://github.com/starkoka)、[NXVZBGB FBEN](https://github.com/NXVZBGBFBEN)、[naotiki](https://github.com/naotiki)、[KouRo](https://github.com/Kou-Ro))で行っています',
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.0.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能',
+                                value: '[Genshin-timer Discord BOT v2.0.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\n自習室機能\nチャンネル作成機能\n',
                             },
                             {
                                 name: 'ソースコード',
