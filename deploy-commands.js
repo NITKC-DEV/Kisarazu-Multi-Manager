@@ -76,7 +76,7 @@ async function run() {
             }).run();
             for (const selectedElement of selected) {
                 console.log(selectedElement)
-                await rest.delete(Routes.applicationCommand(config.client, selectedElement[1]))
+               await rest.delete(Routes.applicationCommand(config.client, selectedElement[1]))
                     .then(() => console.log(`アプリケーション コマンド"${selectedElement.name}"が正常に削除されました`))
                     .catch(console.error);
             }
