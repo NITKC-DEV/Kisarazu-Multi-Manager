@@ -10,7 +10,7 @@
   },
   "name": "nitkc-main",
   "description": "",
-  "version": "1.1.1",
+  "version": "3.0.1",
   "main": "botmain.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development node .",
