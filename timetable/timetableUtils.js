@@ -3,7 +3,7 @@ const { EmbedBuilder } =require('discord.js')
 
 const tmp = new EmbedBuilder().setAuthor({
     name: "木更津22s統合管理BOT",
-    iconURL: 'https://pbs.twimg.com/media/FcoDQ9zaIAUL08j?format=png&name=small',
+    iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
     url: 'https://github.com/NITKC22s/bot-main'
 }).setFooter({ text: 'Developed by NITKC22s server Admin' });
 const dayOfWeeks = ["日曜日", "月曜日", "火曜日", "水曜日", "木曜日", "金曜日", "土曜日"]

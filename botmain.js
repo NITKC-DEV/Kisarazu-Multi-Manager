@@ -4,7 +4,7 @@ let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
 const Classes = require('./timetable/timetables.json');
 const studyroom = require('./functions/studyRoom.js')
-
+const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
@@ -16,6 +16,9 @@ const client = new Client({
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
         GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.GuildMessageReactions,
+        GatewayIntentBits.MessageContent
     ],
     partials: [Partials.Channel],
 });
@@ -222,7 +225,7 @@ client.on(Events.InteractionCreate, async interaction =>
                         {
                             console.log(e);
                         }
-                        
+
                     }
                 }
             }
@@ -243,7 +246,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                     return;
                 }
-                
+
                 await interaction.update({content:"削除しました",components:[]});
         }
         //キャンセル選択時
@@ -265,7 +268,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 await interaction.update ({content:"データエラーです\nやり直してください",components:[]});
                 return;
             }
-            
+
             //チャンネルとロールの削除時
             if(interaction.values[0].split("/")[1]==="t")
             {
@@ -290,7 +293,7 @@ client.on(Events.InteractionCreate, async interaction =>
             }
             //ccconfigから当該カテゴリの情報をまるまる削除
             ccconfig.guilds[indGuild].categories.splice(indCategory,1);
-            
+
             //jsonに書き込み
                 const ccjson = JSON.stringify (ccconfig);
                 try
@@ -302,7 +305,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                     return;
                 }
-                
+
                 await interaction.update({content:"削除しました",components:[]});
         }
     }
@@ -315,6 +318,10 @@ client.on('voiceStateUpdate', (oldState, newState) => {
 
 cron.schedule('0 0 * * *',() => {
     studyroom.update();
+})
+/*TxtEasterEgg*/
+client.on('messageCreate', message => {
+    TxtEasterEgg.func(message);
 })
 
 /*原神デイリー通知*/
