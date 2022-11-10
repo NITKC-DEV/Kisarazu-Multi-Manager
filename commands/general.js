@@ -48,7 +48,7 @@ module.exports =
                             },
                             {
                                 name: '開発者',
-                                value: '開発は、このサーバーの管理者4人([kokastar](https://github.com/starkoka)、[NXVZBGB FBEN](https://github.com/NXVZBGBFBEN)、[naotiki](https://github.com/naotiki)、[KouRo](https://github.com/Kou-Ro))で行っています',
+                                value: '開発は、このサーバーの管理者4人([kokastar](https://github.com/starkoka)、[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)、[naotiki](https://github.com/naotiki)、[KouRo](https://github.com/Kou-Ro))で行っています',
                             },
                             {
                                 name: '搭載機能',
@@ -61,6 +61,7 @@ module.exports =
                             {
                                 name: '実行環境',
                                 value: 'node.js v18.9.0\ndiscord.js v' + version,
+
                             },
                         ]
                     )
