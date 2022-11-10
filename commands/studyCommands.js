@@ -26,7 +26,7 @@ module.exports =
                         .setTitle('データが存在しません')
                         .setAuthor({
                             name: "木更津22s統合管理bot",
-                            iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                             url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('データが存在しないか、破損しています。VCに参加してからもう一度試してください。それでもエラーが起きる場合は、管理者に連絡してください。')
@@ -76,7 +76,7 @@ module.exports =
                     dt.setDate(dt.getDate()+1)
                     for(let i=0;i<7;i++){
                         dt.setDate(dt.getDate()-1);
-                        month[i] = dt.getMonth();
+                        month[i] = dt.getMonth()+1;
                         date[i] = dt.getDate();
                     }
 
@@ -85,7 +85,7 @@ module.exports =
                         .setTitle(user.name + 'の自習室データ')
                         .setAuthor({
                             name: "木更津22s統合管理bot",
-                            iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                             url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setThumbnail(user.icon)
@@ -120,22 +120,22 @@ module.exports =
                     .setTitle('自習室機能')
                     .setAuthor({
                         name: "木更津22s統合管理bot",
-                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('ボイスチャットに接続している時間を勉強している時間とみなし、勉強時間を記録してくれるツールです。')
                     .addFields(
                         {
                             name:"対象ボイスチャット",
-                            value:"現在は「みんなの自習室」「一人の自習室」の2つが対象となっています。"
+                            value:"現在は「みんなの教室」「一人の自習室」の2つが対象となっています。"
                         },
                         {
                             name:"データ確認方法",
-                            value:"/studydate コマンドを使用してください。なお、一度も記録をしてない場合はデータがないので、対象のボイスチャッチに一度参加してから実行してみてください。"
+                            value:"/studydate コマンドを使用してください。なお、一度も記録をしてない場合はデータがないので、対象のボイスチャットに一度参加してから実行してみてください。"
                         },
                         {
                             name:"ランク",
-                            value:"直近7日間の勉強時間に応じて、ランクが設定されます。ランクは以下のように設定されています。\n\n赤：48時間以上\n橙：42時間以上\n黄：35時間以上\n青：24時間以上\n水：14時間以上\n緑：7時間以上\n茶：3時間以上\n灰：3時間未満"
+                            value:"直近7日間の勉強時間に応じて、ランクが設定されます。ランクは以下のように設定されています。\n\n赤：48時間以上\n橙：42時間以上\n黄：35時間以上\n青：24時間以上\n水：14時間以上\n緑：7時間以上\n茶：3時間以上\n灰：3時間未満\n\n小数点以下切り捨てで表示しているため、必ずしも合計が一致するとは限りません。"
                         }
 
 

@@ -1,4 +1,5 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
+const packageVer = require('../package.json')
 
 module.exports =
     [
@@ -13,7 +14,7 @@ module.exports =
                     .setTitle('ヘルプ')
                     .setAuthor({
                         name: "木更津22s統合管理BOT",
-                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('現在実装されているコマンド一覧です')
@@ -35,7 +36,7 @@ module.exports =
                     .setTitle('NITKC統合管理BOT概要')
                     .setAuthor({
                         name: "木更津22s統合管理BOT",
-                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('このbotの概要を紹介します')
@@ -43,7 +44,7 @@ module.exports =
                         [
                             {
                                 name: 'バージョン情報',
-                                value: 'v3.0.0 ',
+                                value: 'v' + packageVer.version,
                             },
                             {
                                 name: '開発者',
@@ -55,11 +56,12 @@ module.exports =
                             },
                             {
                                 name: 'ソースコード',
-                                value: '一部のソースコードはオープンソースとなっています。以下のリンクより参照してください。\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津22s統合管理bot](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: '実行環境',
-                                value: 'node.js v19.0.0\ndiscord.js v14.3.0',
+                                value: 'node.js v18.9.0\ndiscord.js v' + version,
+
                             },
                         ]
                     )
