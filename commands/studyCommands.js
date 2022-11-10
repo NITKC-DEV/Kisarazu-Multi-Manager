@@ -26,7 +26,7 @@ module.exports =
                         .setTitle('データが存在しません')
                         .setAuthor({
                             name: "木更津22s統合管理bot",
-                            iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                             url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setDescription('データが存在しないか、破損しています。VCに参加してからもう一度試してください。それでもエラーが起きる場合は、管理者に連絡してください。')
@@ -85,7 +85,7 @@ module.exports =
                         .setTitle(user.name + 'の自習室データ')
                         .setAuthor({
                             name: "木更津22s統合管理bot",
-                            iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                             url: 'https://github.com/NITKC22s/bot-main'
                         })
                         .setThumbnail(user.icon)
@@ -120,7 +120,7 @@ module.exports =
                     .setTitle('自習室機能')
                     .setAuthor({
                         name: "木更津22s統合管理bot",
-                        iconURL: 'https://cdn.discordapp.com/attachments/994146493567078451/1039390600014860289/Untitled.png',
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
                     .setDescription('ボイスチャットに接続している時間を勉強している時間とみなし、勉強時間を記録してくれるツールです。')
