@@ -1,35 +1,37 @@
 {
-  "dependencies": {
-    "@discordjs/builders": "^1.2.0",
-    "@discordjs/rest": "^1.1.0",
-    "date-utils": "^1.2.21",
-    "discord.js": "^14.3.0",
-    "dotenv": "^16.0.2",
-    "enquirer": "^2.3.6",
-    "node-cron": "^3.0.2"
-  },
-  "name": "nitkc-main",
-  "description": "",
+   "dependencies": {
+      "@discordjs/builders": "^1.2.0",
+      "@discordjs/rest": "^1.1.0",
+      "date-utils": "^1.2.21",
+      "discord.js": "^14.3.0",
+      "dotenv": "^16.0.2",
+      "enquirer": "^2.3.6",
+      "node-cron": "^3.0.2"
+   },
+   "name": "nitkc-main",
+   "description": "",
   "version": "3.0.1",
-  "main": "botmain.js",
-  "scripts": {
-    "dev": "cross-env NODE_ENV=development node .",
-    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
-    "start": "cross-env NODE_ENV=production node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/NITKC22s/bot-main.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/NITKC22s/bot-main/issues"
-  },
-  "homepage": "https://github.com/NITKC22s/bot-main#readme",
-  "devDependencies": {
-    "cross-env": "^7.0.3"
-  }
+   "main": "botmain.js",
+   "scripts": {
+      "dev": "cross-env NODE_ENV=development node .",
+      "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
+      "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
+      "start": "cross-env NODE_ENV=production node .",
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "format": "prettier --write *.js"
+   },
+   "repository": {
+      "type": "git",
+      "url": "git+https://github.com/NITKC22s/bot-main.git"
+   },
+   "author": "",
+   "license": "ISC",
+   "bugs": {
+      "url": "https://github.com/NITKC22s/bot-main/issues"
+   },
+   "homepage": "https://github.com/NITKC22s/bot-main#readme",
+   "devDependencies": {
+      "cross-env": "^7.0.3",
+      "prettier": "^2.7.1"
+   }
 }
