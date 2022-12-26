@@ -1,7 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
 const  timetableBuilder  = require('../timetable/timetableUtils')
 const Classes = require('../timetable/timetables.json')
-
+const fs = require('fs');
+const {configPath}=require("../environmentConfig")
 module.exports = [
     {
         data: new SlashCommandBuilder()
@@ -62,6 +63,25 @@ module.exports = [
 
 
             await interaction.reply({ embeds: [embed] });
+        },
+    },
+    {
+        data: new SlashCommandBuilder()
+            .setName('ttswitcher')
+            .setDescription('時間割定期送信のON/OFFを切り替えます')
+            .setDefaultMemberPermissions(1<<3)
+            .addBooleanOption(option =>
+                option
+                    .setName('options')
+                    .setDescription('定期実行の可否を指定します')
+                    .setRequired(true)
+            ),
+
+        async execute(interaction) {
+            const date = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
+            date.timetable = interaction.options.data[0].value
+            fs.writeFileSync(configPath, JSON.stringify(date,null ,"\t")) //ここで書き出し
+            await interaction.reply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
         },
     },
 
