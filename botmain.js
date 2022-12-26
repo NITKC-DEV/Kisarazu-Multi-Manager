@@ -485,16 +485,18 @@ cron.schedule('0 5 * * *', () => {
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     let dayOfWeek = new Date().getDay()+1;
     //timetable == trueのとき
-    (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
-        .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
-        .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
-        .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
-        .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
-        .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    if(config.timetable === true) {
+        (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
+            .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
+            .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
+            .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
+            .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
+            .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    }
 });
 
 
