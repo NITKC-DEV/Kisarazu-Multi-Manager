@@ -3,7 +3,6 @@ const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
 const Classes = require('./timetable/timetables.json');
-const studyroom = require('./functions/studyRoom.js')
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -311,14 +310,6 @@ client.on(Events.InteractionCreate, async interaction =>
     }
 });
 
-/*自習室BOT(VCに参加したら通知)*/
-client.on('voiceStateUpdate', (oldState, newState) => {
-    studyroom.func(oldState, newState)
-})
-
-cron.schedule('0 0 * * *',() => {
-    studyroom.update();
-})
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
     TxtEasterEgg.func(message);
