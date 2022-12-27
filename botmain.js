@@ -3,7 +3,6 @@ const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
 const Classes = require('./timetable/timetables.json');
-const studyroom = require('./functions/studyRoom.js')
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -311,14 +310,6 @@ client.on(Events.InteractionCreate, async interaction =>
     }
 });
 
-/*自習室BOT(VCに参加したら通知)*/
-client.on('voiceStateUpdate', (oldState, newState) => {
-    studyroom.func(oldState, newState)
-})
-
-cron.schedule('0 0 * * *',() => {
-    studyroom.update();
-})
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
     TxtEasterEgg.func(message);
@@ -493,16 +484,19 @@ cron.schedule('0 5 * * *', () => {
 
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     let dayOfWeek = new Date().getDay()+1;
-    (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
-        .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
-        .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
-        .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
-        .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
-    (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
-        .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    //timetable == trueのとき
+    if(config.timetable === true) {
+        (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
+            .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
+            .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
+            .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
+            .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
+        (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
+            .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    }
 });
 
 
