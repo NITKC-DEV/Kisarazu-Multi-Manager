@@ -485,7 +485,7 @@ cron.schedule('0 5 * * *', () => {
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     let dayOfWeek = new Date().getDay()+1;
     //timetable == trueのとき
-    let timetable = null 
+    let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable
     if(timetable === true) {
         (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
             .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
