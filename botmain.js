@@ -345,7 +345,7 @@ cron.schedule('0 5 * * *', () => {
             fields: [
                 {
                     name: '​\n週ボスリセット',
-                    value: 'トワリン、アンドリアス、タルタリア、若陀龍王、淑女、雷電将軍の報酬が再度受け取れるようになりました。\nまた、樹脂半減回数がリセットされました。',
+                    value: '風魔龍・トワリン、アンドリアス、「公子」、若陀龍王、「淑女」、禍津御建鳴神命、七葉寂照秘密主の報酬が再度受け取れるようになりました。\nまた、樹脂半減回数がリセットされました。',
                 },
                 {
                     name: '​\n評判任務更新',
@@ -367,6 +367,10 @@ cron.schedule('0 5 * * *', () => {
                     name: '​\n週間限定ギフトパック購入回数リセット',
                     value: '週間限定ギフトパックの購入上限回数がリセットされました。\n',
                 },
+                {
+                    name: '​\n七聖召喚ウィークリーゲスト対戦リセット',
+                    value: '七聖召喚のウィークリーゲスト対戦がリセットされました\n',
+                }
             ],
             timestamp: new Date().toISOString(),
         };
@@ -485,7 +489,8 @@ cron.schedule('0 5 * * *', () => {
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     let dayOfWeek = new Date().getDay()+1;
     //timetable == trueのとき
-    if(config.timetable === true) {
+    let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable
+    if(timetable === true) {
         (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
             .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
         (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
