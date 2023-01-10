@@ -29,7 +29,7 @@ client.commands = new Collection();
 module.exports = client.commands;
 
 
-/*スラッシュコマンド登録*/
+//スラッシュコマンド登録
 client.once("ready", async () => {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
