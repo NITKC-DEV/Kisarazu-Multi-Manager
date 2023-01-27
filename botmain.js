@@ -343,14 +343,14 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 //寮食前半後半通知
-cron.schedule('30 7 1 * *', () => {
+cron.schedule('28 7 1 * *', () => {
     let dt = new Date();
     let month = dt.getMonth();
     let embed
     if(month === 0 || month === 4 || month === 6 || month === 7 || month === 10 ){ //月は何故か-1する
         embed = new EmbedBuilder()
             .setColor(0x00A0EA)
-            .setTitle('寮食・風呂切り替え通知')
+            .setTitle('寮食・風呂入れ替え通知')
             .setAuthor({
                 name: "木更津22s統合管理BOT",
                 iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
@@ -376,7 +376,7 @@ cron.schedule('30 7 1 * *', () => {
     else if(month === 1 || month === 3 || month === 5 || month === 9 || month === 11 ){
         embed = new EmbedBuilder()
             .setColor(0x00A0EA)
-            .setTitle('寮食・風呂切り替え通知')
+            .setTitle('寮食・風呂入れ替え通知')
             .setAuthor({
                 name: "木更津22s統合管理BOT",
                 iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
@@ -399,6 +399,7 @@ cron.schedule('30 7 1 * *', () => {
             .setTimestamp()
             .setFooter({ text: 'Developed by NITKC22s server Admin' });
     }
+    client.channels.cache.get(config.ryou).send("<@&"+ config.RyouRole[0] + ">" + "<@&"+ config.RyouRole[1] + ">")
     client.channels.cache.get(config.ryou).send({ embeds: [embed] })
 });
 
