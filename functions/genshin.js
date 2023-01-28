@@ -1,6 +1,5 @@
-const config = require("../environmentConfig");
 const {Client, GatewayIntentBits, Partials} = require("discord.js");
-const client = new Client({
+new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,

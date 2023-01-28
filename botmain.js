@@ -1,6 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder, Events,Message,ActionRowBuilder,SelectMenuBuilder,
-    version
-} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, Events,ActionRowBuilder,SelectMenuBuilder} = require('discord.js');
 const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
@@ -12,7 +10,7 @@ const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
-const packageVer = require("./package.json");
+require("./package.json");
 dotenv.config();
 const client = new Client({
     intents: [
