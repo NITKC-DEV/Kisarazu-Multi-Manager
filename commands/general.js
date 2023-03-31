@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
 const packageVer = require('../package.json')
+const fs = require("fs");
+const {configPath} = require("../environmentConfig");
 
 module.exports =
     [
@@ -68,6 +70,25 @@ module.exports =
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 await interaction.reply({ embeds: [embed] });
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('ryoshokuswitcher')
+                .setDescription('寮食前半後半切り替え定期送信のON/OFFを切り替えます')
+                .setDefaultMemberPermissions(1<<3)
+                .addBooleanOption(option =>
+                    option
+                        .setName('options')
+                        .setDescription('定期実行の可否を指定します')
+                        .setRequired(true)
+                ),
+
+            async execute(interaction) {
+                const date = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
+                date.ryoshoku = interaction.options.data[0].value
+                fs.writeFileSync(configPath, JSON.stringify(date,null ,"\t")) //ここで書き出し
+                await interaction.reply({ content: "寮食前半後半切り替え定期送信を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
             },
         },
     ]

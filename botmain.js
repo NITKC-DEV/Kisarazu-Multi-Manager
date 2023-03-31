@@ -3,8 +3,11 @@ const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
 const Classes = require('./timetable/timetables.json');
+
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const genshin = require('./functions/genshin.js');
+const ryoshoku = require('./functions/ryoshoku.js')
+
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
@@ -341,64 +344,10 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 //寮食前半後半通知
-cron.schedule('28 7 1 * *', () => {
-    let dt = new Date();
-    let month = dt.getMonth();
-    let embed
-    if(month === 0 || month === 4 || month === 6 || month === 7 || month === 10 ){ //月は何故か-1する
-        embed = new EmbedBuilder()
-            .setColor(0x00A0EA)
-            .setTitle('寮食・風呂入れ替え通知')
-            .setAuthor({
-                name: "木更津22s統合管理BOT",
-                iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                url: 'https://github.com/NITKC22s/bot-main'
-            })
-            .setDescription('寮食・風呂の前半後半が入れ替わりました')
-            .addFields(
-                [
-                    {
-                        name: '前半',
-                        value: 'Bグループ(環境都市工学科、情報工学科、電子制御工学科の半分)',
-                    },
-                    {
-                        name: '後半',
-                        value: 'Aグループ(機械工学科、電気電子工学科、電子制御工学科の半分)',
-
-                    },
-                ]
-            )
-            .setTimestamp()
-            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+cron.schedule('23 1 1 * *', () => {
+    if(config.ryoshoku){
+        ryoshoku.ryoshokuNotice(client.channels.cache.get(config.ryou));
     }
-    else if(month === 1 || month === 3 || month === 5 || month === 9 || month === 11 ){
-        embed = new EmbedBuilder()
-            .setColor(0x00A0EA)
-            .setTitle('寮食・風呂入れ替え通知')
-            .setAuthor({
-                name: "木更津22s統合管理BOT",
-                iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                url: 'https://github.com/NITKC22s/bot-main'
-            })
-            .setDescription('寮食・風呂の前半後半が入れ替わりました')
-            .addFields(
-                [
-                    {
-                        name: '前半',
-                        value: 'Aグループ(機械工学科、電気電子工学科、電子制御工学科の半分)',
-                    },
-                    {
-                        name: '後半',
-                        value: 'Bグループ(環境都市工学科、情報工学科、電子制御工学科の半分)',
-
-                    },
-                ]
-            )
-            .setTimestamp()
-            .setFooter({ text: 'Developed by NITKC22s server Admin' });
-    }
-    client.channels.cache.get(config.ryou).send("<@&"+ config.RyouRole[0] + ">" + "<@&"+ config.RyouRole[1] + ">")
-    client.channels.cache.get(config.ryou).send({ embeds: [embed] })
 });
 
 
