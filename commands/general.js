@@ -1,7 +1,9 @@
-const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
+const { Client,SlashCommandBuilder, EmbedBuilder , version, GatewayIntentBits, Partials} = require('discord.js')
 const packageVer = require('../package.json')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
+const config = require("../environmentConfig");
+require('date-utils');
 
 module.exports =
     [
@@ -78,13 +80,22 @@ module.exports =
                 .setDescription('実行したチャンネルにbotが代理で送信します。')
                 .addStringOption(option =>
                     option
-                        .setName('options')
+                        .setName('メッセージ')
                         .setDescription('送りたいメッセージを入れます')
                         .setRequired(true)
                 ),
 
             async execute(interaction) {
+                let msg = interaction.options.getString('メッセージ');
 
+                let channelName = interaction.guild.channels.cache.get(interaction.channelId).name
+                const date = new Date();
+                const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
+
+                await interaction.reply({ content: channelName + 'チャンネルにメッセージを代理で送信します。', ephemeral: true });
+                console.log("\n" + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n" )
+
+                interaction.guild.channels.cache.get(interaction.channelId).send(msg)
             },
         },
     ]
