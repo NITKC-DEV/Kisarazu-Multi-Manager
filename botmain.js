@@ -344,7 +344,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 //寮食前半後半通知
-cron.schedule('23 1 1 * *', () => {
+cron.schedule('28 7 1 * *', () => {
     if(config.ryoshoku){
         ryoshoku.ryoshokuNotice(client.channels.cache.get(config.ryou));
     }
