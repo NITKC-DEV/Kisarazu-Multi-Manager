@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
 const packageVer = require('../package.json')
+const fs = require("fs");
+const {configPath} = require("../environmentConfig");
 
 module.exports =
     [
@@ -68,6 +70,21 @@ module.exports =
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 await interaction.reply({ embeds: [embed] });
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('secretmsg')
+                .setDescription('実行したチャンネルにbotが代理で送信します。')
+                .addStringOption(option =>
+                    option
+                        .setName('options')
+                        .setDescription('送りたいメッセージを入れます')
+                        .setRequired(true)
+                ),
+
+            async execute(interaction) {
+
             },
         },
     ]
