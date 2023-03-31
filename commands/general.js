@@ -62,7 +62,7 @@ module.exports =
                             },
                             {
                                 name: '実行環境',
-                                value: 'node.js v18.9.0\ndiscord.js v' + version,
+                                value: 'node.js v' + process.versions.node + `\n discord.js v` + version,
 
                             },
                         ]
