@@ -70,4 +70,50 @@ module.exports =
                 await interaction.reply({ embeds: [embed] });
             },
         },
+        {
+            data: new SlashCommandBuilder()
+                .setName('dashboard')
+                .setDescription('ダッシュボードを表示します')
+                .setDefaultMemberPermissions(1<<3),
+            async execute(interaction) {
+                const date = new Date();
+                const time = date.toFormat('YYYY年 MM月DD日 HH24:MI:SS')
+                const embed = new EmbedBuilder()
+                    .setColor(0x00A0EA)
+                    .setTitle('NIT,Kisarazu College 22s ダッシュボード')
+                    .setAuthor({
+                        name: "木更津22s統合管理BOT",
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                        url: 'https://github.com/NITKC22s/bot-main'
+                    })
+                    .addFields(
+                        [
+                            {
+                                name: '更新時刻',
+                                value: `\`\`\`${time}人\`\`\``,
+                            },
+                            {
+                                name: 'サーバーの人数',
+                                value: `\`\`\`${interaction.guild.memberCount}人(うちオンライン${online}人)\`\`\``,
+                            },
+                            {
+                                name: '搭載機能',
+                                value: '[Genshin-timer Discord BOT v2.1.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\n',
+                            },
+                            {
+                                name: 'ソースコード',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津22s統合管理bot](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                            },
+                            {
+                                name: '実行環境',
+                                value: 'node.js v18.9.0\ndiscord.js v' + version,
+
+                            },
+                        ]
+                    )
+                    .setTimestamp()
+                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                await interaction.reply({ embeds: [embed] });
+            },
+        },
     ]
