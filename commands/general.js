@@ -1,5 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
 const packageVer = require('../package.json')
+const fs = require("fs");
+const {configPath} = require("../environmentConfig");
 
 module.exports =
     [
@@ -120,6 +122,56 @@ module.exports =
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 await interaction.reply({ embeds: [embed] });
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('next-test')
+                .setDescription('次のテストを設定します。')
+                .setDefaultMemberPermissions(1<<3)
+                .addIntegerOption(option =>
+                        option
+                            .setName('年')
+                            .setDescription('テストが実施される年を入力')
+                            .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('開始月')
+                        .setDescription('テストが開始される月を入力')
+                        .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('開始日')
+                        .setDescription('テストが開始される日を入力')
+                        .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('終了月')
+                        .setDescription('テストが終了する月を入力')
+                        .setRequired(true)
+                )
+                .addIntegerOption(option =>
+                    option
+                        .setName('終了日')
+                        .setDescription('テストが終了する日を入力')
+                        .setRequired(true)
+                ),
+
+
+            async execute(interaction) {
+                const date = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
+                date.nextTest = [
+                    interaction.options.data[0].value,
+                    interaction.options.data[1].value,
+                    interaction.options.data[2].value,
+                    interaction.options.data[3].value,
+                    interaction.options.data[4].value
+                ]
+                fs.writeFileSync(configPath, JSON.stringify(date,null ,"\t")) //ここで書き出し
+                await interaction.reply({ content: `次のテストを${date.nextTest[0]}年${date.nextTest[1]}月${date.nextTest[2]}日〜${date.nextTest[3]}月${date.nextTest[4]}日に設定しました`, ephemeral: true });
             },
         },
     ]
