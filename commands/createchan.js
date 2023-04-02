@@ -1,4 +1,4 @@
-const { SlashCommandBuilder,ActionRowBuilder,SelectMenuBuilder}=require("discord.js");
+const { SlashCommandBuilder,ActionRowBuilder,StringSelectMenuBuilder}=require("discord.js");
 let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
 
@@ -26,7 +26,7 @@ module.exports=
                 //カテゴリ選択用SelectMenu作成
                 const selectCategory=new ActionRowBuilder()
                     .addComponents(
-                        new SelectMenuBuilder()
+                        new StringSelectMenuBuilder()
                             .setPlaceholder("カテゴリを選択")
                             .setCustomId("selectCat")
                             .addOptions(
@@ -151,7 +151,7 @@ module.exports=
                 let DCR= interactionCopy.options.getString("チャンネルとロールの削除");
                 const selectCategory=new ActionRowBuilder()
                     .addComponents(
-                        new SelectMenuBuilder()
+                        new StringSelectMenuBuilder()
                             .setPlaceholder("カテゴリを選択")
                             .setCustomId("remCat")
                             .addOptions(
