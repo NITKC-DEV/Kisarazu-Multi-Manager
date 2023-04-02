@@ -79,7 +79,11 @@ module.exports =
                 const date = new Date();
                 const time = date.toFormat('YYYY年 MM月DD日 HH24:MI:SS')
                 const members = await interaction.guild.members.fetch({ withPresences: true });
-                const user = members.filter(member => member.user.bot === false);
+                const user = members.filter(member => member.user.bot === false).size;
+                const online = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
+                const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
+
+
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('NIT,Kisarazu College 22s ダッシュボード')
@@ -96,11 +100,11 @@ module.exports =
                             },
                             {
                                 name: 'サーバーの人数',
-                                value: `\`\`\`${interaction.guild.memberCount}人(うちbot以外のユーザー${user.size}人)\`\`\``,
+                                value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
                             },
                             {
-                                name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.1.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\n',
+                                name: 'BOT台数',
+                                value: `\`\`\`導入台数${interaction.guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
                             },
                             {
                                 name: 'ソースコード',

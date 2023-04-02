@@ -17,7 +17,8 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildPresences
     ],
     partials: [Partials.Channel],
 });
@@ -58,6 +59,7 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
+
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
