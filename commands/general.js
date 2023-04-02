@@ -78,6 +78,8 @@ module.exports =
             async execute(interaction) {
                 const date = new Date();
                 const time = date.toFormat('YYYY年 MM月DD日 HH24:MI:SS')
+                const members = await interaction.guild.members.fetch({ withPresences: true });
+                const user = members.filter(member => member.user.bot === false);
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('NIT,Kisarazu College 22s ダッシュボード')
@@ -94,7 +96,7 @@ module.exports =
                             },
                             {
                                 name: 'サーバーの人数',
-                                value: `\`\`\`${interaction.guild.memberCount}人(うちオンライン${online}人)\`\`\``,
+                                value: `\`\`\`${interaction.guild.memberCount}人(うちbot以外のユーザー${user.size}人)\`\`\``,
                             },
                             {
                                 name: '搭載機能',
