@@ -77,25 +77,54 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('secretmsg')
-                .setDescription('実行したチャンネルにbotが代理で送信します。')
+                .setDescription('実行したチャンネルにbotが代理で送信します')
                 .addStringOption(option =>
                     option
                         .setName('メッセージ')
                         .setDescription('送りたいメッセージを入れます')
-                        .setRequired(true)
+                        .setRequired(false)
+                ).addAttachmentOption(option =>
+                    option
+                        .setName('添付ファイル1')
+                        .setDescription('添付するファイルをアップロードします')
+                        .setRequired(false)
+                ).addAttachmentOption(option =>
+                    option
+                        .setName('添付ファイル2')
+                        .setDescription('添付するファイルをアップロードします')
+                        .setRequired(false)
+                ).addAttachmentOption(option =>
+                    option
+                        .setName('添付ファイル3')
+                        .setDescription('添付するファイルをアップロードします')
+                        .setRequired(false)
                 ),
 
             async execute(interaction) {
                 let msg = interaction.options.getString('メッセージ');
-
-                let channelName = interaction.guild.channels.cache.get(interaction.channelId).name
+                let attachedFile1=interaction.options.getAttachment('添付ファイル1');
+                let attachedFile2=interaction.options.getAttachment('添付ファイル2');
+                let attachedFile3=interaction.options.getAttachment('添付ファイル3');
+                let channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
                 const date = new Date();
                 const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
 
                 await interaction.reply({ content: channelName + 'チャンネルにメッセージを代理で送信します。', ephemeral: true });
-                console.log("\n" + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n" )
-
-                interaction.guild.channels.cache.get(interaction.channelId).send(msg)
+                //メッセージの中身があるときに実行
+                if (msg)
+                {
+                    console.log ("Send a message: " + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
+        
+                    interaction.guild.channels.cache.get (interaction.channelId).send (msg);
+                }
+                //どれかのファイルに中身があるときに実行
+                if(attachedFile1||attachedFile2||attachedFile3)
+                {
+                    let attachFiles=[attachedFile1,attachedFile2,attachedFile3];
+                    console.log ("Send a file\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
+                    //filterがラムダ式で使えなかったので普通に関数を入れた
+                    interaction.guild.channels.cache.get(interaction.channelId).send({files:attachFiles.filter(function (file) {if(file)return file;})});
+                }
             },
         },
     ]
