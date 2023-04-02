@@ -92,7 +92,7 @@ module.exports =
                         [
                             {
                                 name: '更新時刻',
-                                value: `\`\`\`${time}人\`\`\``,
+                                value: `\`\`\`${time}\`\`\``,
                             },
                             {
                                 name: 'サーバーの人数',
