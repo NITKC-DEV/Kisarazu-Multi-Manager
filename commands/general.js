@@ -1,7 +1,25 @@
-const { SlashCommandBuilder, EmbedBuilder , version } = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder , version, Client, GatewayIntentBits, Partials} = require('discord.js')
 const packageVer = require('../package.json')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
+
+const moment = require('moment');
+const commands = require("../botmain");
+function monthsAndDaysBetween(startUnix, endUnix) {
+    const startDate = moment.unix(startUnix);
+    const endDate = moment.unix(endUnix);
+
+    let monthDiff = endDate.diff(startDate, 'months');
+    let dayDiff = endDate.diff(startDate, 'days') % 30;
+
+    // Handle cases where end date is in a later month but has a lower day value
+    if (endDate.date() < startDate.date()) {
+        monthDiff -= 1;
+        dayDiff = moment.duration(endDate.diff(startDate.clone().subtract(monthDiff, 'months'), 'days')).asDays();
+    }
+
+    return [monthDiff,dayDiff];
+}
 
 module.exports =
     [
@@ -74,104 +92,10 @@ module.exports =
         },
         {
             data: new SlashCommandBuilder()
-                .setName('dashboard')
-                .setDescription('ダッシュボードを表示します')
-                .setDefaultMemberPermissions(1<<3),
+                .setName('ping')
+                .setDescription('このBOTのpingを測定します'),
             async execute(interaction) {
-                const date = new Date();
-                const time = date.toFormat('YYYY年 MM月DD日 HH24:MI:SS')
-                const members = await interaction.guild.members.fetch({ withPresences: true });
-                const user = members.filter(member => member.user.bot === false).size;
-                const online = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
-                const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
-
-
-                const embed = new EmbedBuilder()
-                    .setColor(0x00A0EA)
-                    .setTitle('NIT,Kisarazu College 22s ダッシュボード')
-                    .setAuthor({
-                        name: "木更津22s統合管理BOT",
-                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
-                    })
-                    .addFields(
-                        [
-                            {
-                                name: '更新時刻',
-                                value: `\`\`\`${time}\`\`\``,
-                            },
-                            {
-                                name: 'サーバーの人数',
-                                value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
-                            },
-                            {
-                                name: 'BOT台数',
-                                value: `\`\`\`導入台数${interaction.guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
-                            },
-                            {
-                                name: 'ソースコード',
-                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津22s統合管理bot](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
-                            },
-                            {
-                                name: '実行環境',
-                                value: 'node.js v18.9.0\ndiscord.js v' + version,
-
-                            },
-                        ]
-                    )
-                    .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
-                await interaction.reply({ embeds: [embed] });
-            },
-        },
-        {
-            data: new SlashCommandBuilder()
-                .setName('next-test')
-                .setDescription('次のテストを設定します。')
-                .setDefaultMemberPermissions(1<<3)
-                .addIntegerOption(option =>
-                        option
-                            .setName('年')
-                            .setDescription('テストが実施される年を入力')
-                            .setRequired(true)
-                )
-                .addIntegerOption(option =>
-                    option
-                        .setName('開始月')
-                        .setDescription('テストが開始される月を入力')
-                        .setRequired(true)
-                )
-                .addIntegerOption(option =>
-                    option
-                        .setName('開始日')
-                        .setDescription('テストが開始される日を入力')
-                        .setRequired(true)
-                )
-                .addIntegerOption(option =>
-                    option
-                        .setName('終了月')
-                        .setDescription('テストが終了する月を入力')
-                        .setRequired(true)
-                )
-                .addIntegerOption(option =>
-                    option
-                        .setName('終了日')
-                        .setDescription('テストが終了する日を入力')
-                        .setRequired(true)
-                ),
-
-
-            async execute(interaction) {
-                const date = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
-                date.nextTest = [
-                    interaction.options.data[0].value,
-                    interaction.options.data[1].value,
-                    interaction.options.data[2].value,
-                    interaction.options.data[3].value,
-                    interaction.options.data[4].value
-                ]
-                fs.writeFileSync(configPath, JSON.stringify(date,null ,"\t")) //ここで書き出し
-                await interaction.reply({ content: `次のテストを${date.nextTest[0]}年${date.nextTest[1]}月${date.nextTest[2]}日〜${date.nextTest[3]}月${date.nextTest[4]}日に設定しました`, ephemeral: true });
+                await interaction.reply( `Ping : ${interaction.client.ws.ping}ms` );
             },
         },
     ]
