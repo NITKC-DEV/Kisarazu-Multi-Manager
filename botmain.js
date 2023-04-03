@@ -192,7 +192,7 @@ client.on(Events.InteractionCreate, async interaction =>
         let indGuild=-1;
         for(let i=0;i<ccconfig.guilds.length;i++)
         {
-            if(ccconfig.guilds[1].ID===interaction.guild.id)indGuild=i;
+            if(ccconfig.guilds[i].ID===interaction.guild.id)indGuild=i;
         }
         if(indGuild===-1)
         {
