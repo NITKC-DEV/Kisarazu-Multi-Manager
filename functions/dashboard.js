@@ -141,33 +141,42 @@ exports.generation = async function func(client) {
     let weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
 
     fs.writeFileSync(configPath, JSON.stringify(data, null, "\t"))
-    const embed = [
-        {
-            name: '更新時刻',
-            value: `\`\`\`${time}\`\`\``,
-        },
-        {
-            name: 'サーバーの人数',
-            value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
-        },
-        {
-            name: 'BOT台数',
-            value: `\`\`\`導入台数${client.guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
-        },
-        {
-            name: '次の定期テスト',
-            value: `\`\`\`${test}\`\`\``,
-        },
-        {
-            name: '今年度残り',
-            value: `\`\`\`${Math.floor(remainingYear / 86400000)}日\n${bar}\`\`\``,
+    return new EmbedBuilder()
+        .setColor(0x00A0EA)
+        .setTitle('NIT,Kisarazu College 22s ダッシュボード')
+        .setAuthor({
+            name: "木更津22s統合管理BOT",
+            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+            url: 'https://github.com/NITKC22s/bot-main'
+        })
+        .addFields([
+            {
+                name: '更新時刻',
+                value: `\`\`\`${time}\`\`\``,
+            },
+            {
+                name: 'サーバーの人数',
+                value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
+            },
+            {
+                name: 'BOT台数',
+                value: `\`\`\`導入台数${client.guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
+            },
+            {
+                name: '次の定期テスト',
+                value: `\`\`\`${test}\`\`\``,
+            },
+            {
+                name: '今年度残り',
+                value: `\`\`\`${Math.floor(remainingYear / 86400000)}日\n${bar}\`\`\``,
 
-        },
-        {
-            name: '千葉の天気(Powered by 気象庁)',
-            value: `\`\`\`${weather}\`\`\``,
+            },
+            {
+                name: '千葉の天気(Powered by 気象庁)',
+                value: `\`\`\`${weather}\`\`\``,
 
-        }
-    ]
-    return embed;
+            }
+        ])
+        .setTimestamp()
+        .setFooter({text: 'Developed by NITKC22s server Admin'});
 }
