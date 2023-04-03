@@ -98,15 +98,38 @@ module.exports =
                         .setRequired(false)
                 ),
 
-            async execute(interaction) {
-                let msg = interaction.options.getString('メッセージ');
-                let attachedFile1=interaction.options.getAttachment('添付ファイル1');
-                let attachedFile2=interaction.options.getAttachment('添付ファイル2');
-                let attachedFile3=interaction.options.getAttachment('添付ファイル3');
-                let channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
-                const date = new Date();
-                const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
-
+            async execute (interaction)
+            {
+                const receivedMsg = interaction.options.getString ('メッセージ');
+                const attachedFile1 = interaction.options.getAttachment ('添付ファイル1');
+                const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
+                const attachedFile3 = interaction.options.getAttachment ('添付ファイル3');
+                const channelName = interaction.guild.channels.cache.get (interaction.channelId).name;
+                const date = new Date ();
+                const currentTime = date.toFormat ('YYYY年 MM/DD HH24:MI:SS');
+                let sendingMsg='';
+                
+                //改行とバクスラのエスケープ処理
+                if(receivedMsg)for(let i=0;i<receivedMsg.length;i++)
+                {
+                    if(receivedMsg[i]==='\\')
+                    {
+                        switch (receivedMsg[i+1])
+                        {
+                            case '\\':
+                                sendingMsg+='\\';
+                                i++;
+                                break;
+                            case 'n':
+                                sendingMsg+='\n';
+                                i++;
+                                break
+                            
+                        }
+                    }
+                    else sendingMsg+=receivedMsg[i];
+                }
+    
                 /***
                  * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
                  * @param time 返信が削除されるまでの残り時間
@@ -116,9 +139,9 @@ module.exports =
                 await interaction.reply (replyOptions(5));
     
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
-                if (msg) console.log ("Send a message: " + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
+                if (sendingMsg) console.log ("Send a message: " + sendingMsg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (attachFiles) for (const file of attachFiles) console.log ("Send a file: " + file.url + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
-                if (msg||attachFiles[1])interaction.guild.channels.cache.get (interaction.channelId).send ({content: msg,files: attachFiles});
+                if (sendingMsg||attachFiles[1])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
                 
                 //5秒カウントダウンしたのちに返信を削除
                 for(let i=5;i>0;i--)
@@ -128,5 +151,5 @@ module.exports =
                 }
                 await interaction.deleteReply();
             },
-        },
+        }
     ]
