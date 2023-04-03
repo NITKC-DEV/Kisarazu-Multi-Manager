@@ -1,8 +1,6 @@
-const { Client,SlashCommandBuilder, EmbedBuilder , version, GatewayIntentBits, Partials} = require('discord.js')
-const packageVer = require('../package.json')
-const fs = require("fs");
-const {configPath} = require("../environmentConfig");
-const config = require("../environmentConfig");
+const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
+const packageVer = require('../package.json');
+const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 
 module.exports =
