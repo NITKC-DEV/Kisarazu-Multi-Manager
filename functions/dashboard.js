@@ -121,20 +121,23 @@ exports.generation = async function func(client) {
     const weatherData = await getWeather();
     let todayMax;
     let todayMin;
-    if (date.getMonth() === data.weather[0][0] && date.getDate() === data.weather[0][1]) {
-        todayMax = data.weather[0][2];
-        todayMin = data.weather[0][3];
+    if (weatherData.forecasts[0].date === data.weather[0][0]) {
+        todayMax = data.weather[0][1];
+        todayMin = data.weather[0][2];
     } else {
         data.weather[0] = data.weather[1];
-        data.weather[1] = [date.getMonth(), date.getDate(), weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
-        if (date.getMonth() === data.weather[0][0] && date.getDate() === data.weather[0][1]) {
-            todayMax = data.weather[0][2];
-            todayMin = data.weather[0][3];
+
+        if (weatherData.forecasts[0].date === data.weather[0][0]) {
+            todayMax = data.weather[0][1];
+            todayMin = data.weather[0][2];
         } else {
             todayMax = `---`;
             todayMin = `---`;
         }
     }
+
+    data.weather[1] = [weatherData.forecasts[1].date, weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+
     const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`]
     const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`]
 
