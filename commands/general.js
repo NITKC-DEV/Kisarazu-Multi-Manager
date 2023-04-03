@@ -109,22 +109,12 @@ module.exports =
                 const date = new Date();
                 const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
 
-                await interaction.reply({ content: channelName + 'チャンネルにメッセージを代理で送信します。', ephemeral: true });
-                //メッセージの中身があるときに実行
-                if (msg)
-                {
-                    console.log ("Send a message: " + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
-        
-                    interaction.guild.channels.cache.get (interaction.channelId).send (msg);
-                }
-                //どれかのファイルに中身があるときに実行
-                if(attachedFile1||attachedFile2||attachedFile3)
-                {
-                    let attachFiles=[attachedFile1,attachedFile2,attachedFile3];
-                    console.log ("Send a file\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
-                    //filterがラムダ式で使えなかったので普通に関数を入れた
-                    interaction.guild.channels.cache.get(interaction.channelId).send({files:attachFiles.filter(function (file) {if(file)return file;})});
-                }
+                await interaction.reply({content: channelName + 'にメッセージを代理で送信します', ephemeral:true});
+                
+                const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
+                if (msg) console.log ("Send a message: " + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
+                if (attachFiles) for (const file of attachFiles) console.log ("Send a file\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
+                if (msg||attachFiles[1])interaction.guild.channels.cache.get (interaction.channelId).send ({content: msg,files: attachFiles});
             },
         },
     ]
