@@ -189,12 +189,9 @@ client.on(Events.InteractionCreate, async interaction =>
     if(interaction.customId==="remCat")
     {
         //ccconfig内のguildsの実行ギルドのインデックスを取得
-        let indGuild=-1;
-        for(let i=0;i<ccconfig.guilds.length;i++)
-        {
-            if(ccconfig.guilds[i].ID===interaction.guild.id)indGuild=i;
-        }
-        if(indGuild===-1)
+        const indGuild=ccconfig.guilds.findIndex(guild=>guild.ID===interaction.guildId);
+        //存在し得ないはず...念のため
+        if(!indGuild)
         {
             await interaction.update({ content:"このサーバーは登録されていません", components: []});
             return;
@@ -257,12 +254,8 @@ client.on(Events.InteractionCreate, async interaction =>
         else
         {
             //選択されたカテゴリのインデックスを取得
-            let indCategory=-1
-            for(let i = 1; i <ccconfig.guilds[indGuild].categories.length; i++)
-            {
-                if(ccconfig.guilds[indGuild].categories[i].ID===interaction.values[0].split("/")[0])indCategory=i;
-            }
-            if(indCategory===-1)
+            const indCategory=ccconfig.guilds[indGuild].categories.findIndex(cat=>cat.ID===interaction.values[0].split("/")[0]);
+            if(!indCategory)
             {
                 await interaction.update ({content:"データエラーです\nやり直してください",components:[]});
                 return;
