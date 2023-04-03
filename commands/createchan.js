@@ -111,7 +111,7 @@ module.exports=
                     if(interactionCopy.channel.parentId === ccconfig.guilds[serverIndex].categories[i].ID)
                     {
                         categoryIndex = i;
-                        await interactionCopy.reply("このカテゴリはすでに追加されています");
+                        await interactionCopy.reply({content:"このカテゴリはすでに追加されています",ephemeral:true});
                         return;
                     }
                     if(i===ccconfig.guilds[serverIndex].categories.length-1)
@@ -136,11 +136,11 @@ module.exports=
                 } catch (e)
                 {
                     console.log (e);
-                    await interactionCopy.reply("データの保存に失敗しました\nやり直してください");
+                    await interactionCopy.reply({content:"データの保存に失敗しました\nやり直してください",ephemeral:true});
                     return;
                 }
                 
-                await interactionCopy.reply("追加しました");
+                await interactionCopy.reply({content:"追加しました",ephemeral:true});
             }
         },
         {
