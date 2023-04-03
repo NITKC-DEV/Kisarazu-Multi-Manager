@@ -2,9 +2,17 @@ const { SlashCommandBuilder, EmbedBuilder , version, Client, GatewayIntentBits, 
 const packageVer = require('../package.json')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
+const axios = require('axios');
 
 /*天気取得*/
-
+async function getWeather() {
+    try {
+        const response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
+        return response.data;
+    } catch (error) {
+        return null;
+    }
+}
 
 /*日数カウント*/
 function diffInMonthsAndDays(from, to) {
@@ -68,7 +76,6 @@ module.exports =
                         data.nextTest[i] = data.nextTest[i+1]
                     }
                     data.nextTest[3] = [0,0,0,0,0]
-                    fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t"))
                 }
                 else{
                     UNIXtest = Date.UTC(data.nextTest[0][0],data.nextTest[0][1]-1,data.nextTest[0][2],8,50,0);
@@ -80,7 +87,6 @@ module.exports =
                                 data.nextTest[i] = data.nextTest[i+1]
                             }
                             data.nextTest[3] = [0,0,0,0,0]
-                            fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t"))
                             if(data.nextTest[0][0] === 0){
                                 test = "現在設定されている次のテストはありません。"
                             }
@@ -123,10 +129,30 @@ module.exports =
                 }
                     bar += `| ${Math.floor((remainingProportion / 2) * 100) / 10}% DONE`
 
+                /*天気取得*/
+                const weatherData = await getWeather();
+                let todayMax;
+                let todayMin;
+                if (date.getMonth() === data.weather[0][0] && date.getDate() === data.weather[0][1]) {
+                    todayMax = data.weather[0][2];
+                    todayMin = data.weather[0][3];
+                } else {
+                    data.weather[0] = data.weather[1];
+                    data.weather[1] = [date.getMonth(), date.getDate(), weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+                    if (date.getMonth() === data.weather[0][0] && date.getDate() === data.weather[0][1]) {
+                        todayMax = data.weather[0][2];
+                        todayMin = data.weather[0][3];
+                    } else {
+                        todayMax = `---`;
+                        todayMin = `---`;
+                    }
+                }
+                const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin,weatherData.forecasts[1].temperature.min.celsius ?? `---`]
+                const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax,weatherData.forecasts[1].temperature.max.celsius ?? `---`]
 
+                let weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n最終更新：${weatherData.publicTimeFormatted} `;
 
-                console.log(weatherAPI)
-
+                fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t"))
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('NIT,Kisarazu College 22s ダッシュボード')
