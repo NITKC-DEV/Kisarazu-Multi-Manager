@@ -23,28 +23,42 @@ module.exports=
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
             async execute(interactionCopy)
             {
-                //カテゴリ選択用SelectMenu作成
-                const selectCategory=new ActionRowBuilder()
-                    .addComponents(
-                        new StringSelectMenuBuilder()
-                            .setPlaceholder("カテゴリを選択")
-                            .setCustomId("selectCat")
-                            .addOptions(
-                                ...ccconfig.guilds.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID}))
-                            )
-                    )
-                
-                //SlashCommandからチャンネル名を受け取り
-                let channelName=interactionCopy.options.getString("チャンネル名");
-                //スペースがあると都合が悪くてチャンネルもどうせスペース使えないのでスペースをハイフンに置き換え
-                let channelNameSpaceChanged=channelName.replace(" ","-");
-                while(channelName!==channelNameSpaceChanged)
+                if(ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId)&&ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId).categories.length>=1)
                 {
-                    channelName=channelName.replace(" ","-");
-                    channelNameSpaceChanged=channelNameSpaceChanged.replace(" ","-");
+                    //カテゴリ選択用SelectMenu作成
+                    const selectCategory = new ActionRowBuilder ()
+                        .addComponents (
+                            new StringSelectMenuBuilder ()
+                                .setPlaceholder ("カテゴリを選択")
+                                .setCustomId ("selectCat")
+                                .addOptions (
+                                    ...ccconfig.guilds.find (server => server.ID === interactionCopy.guild.id).categories.map (category => ({
+                                        label: category.name,
+                                        value: category.ID
+                                    }))
+                                )
+                        )
+        
+                    //SlashCommandからチャンネル名を受け取り
+                    let channelName = interactionCopy.options.getString ("チャンネル名");
+                    //スペースがあると都合が悪くてチャンネルもどうせスペース使えないのでスペースをハイフンに置き換え
+                    let channelNameSpaceChanged = channelName.replace (" ", "-");
+                    while (channelName !== channelNameSpaceChanged)
+                    {
+                        channelName = channelName.replace (" ", "-");
+                        channelNameSpaceChanged = channelNameSpaceChanged.replace (" ", "-");
+                    }
+        
+                    await interactionCopy.reply ({
+                        content: channelNameSpaceChanged + " を作成するカテゴリを指定してください。",
+                        components: [selectCategory],
+                        ephemeral: true
+                    });
                 }
-                
-                await interactionCopy.reply({ content:channelNameSpaceChanged+" を作成するカテゴリを指定してください。", components: [selectCategory] ,ephemeral: true});
+                else
+                {
+                    await interactionCopy.reply({content:"このサーバーでは/createchanが許可されているカテゴリがありません。\n管理者権限を持つ人が/addcategoryを実行することで/createchanが有効になります。",ephemeral:true});
+                }
                 
             }
 
