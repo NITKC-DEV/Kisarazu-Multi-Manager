@@ -113,7 +113,7 @@ module.exports =
                 
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
                 if (msg) console.log ("Send a message: " + msg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
-                if (attachFiles) for (const file of attachFiles) console.log ("Send a file\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
+                if (attachFiles) for (const file of attachFiles) console.log ("Send a file: " + file.url + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (msg||attachFiles[1])interaction.guild.channels.cache.get (interaction.channelId).send ({content: msg,files: attachFiles});
             },
         },
