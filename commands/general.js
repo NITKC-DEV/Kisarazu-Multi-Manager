@@ -3,24 +3,6 @@ const packageVer = require('../package.json')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 
-const moment = require('moment');
-const commands = require("../botmain");
-function monthsAndDaysBetween(startUnix, endUnix) {
-    const startDate = moment.unix(startUnix);
-    const endDate = moment.unix(endUnix);
-
-    let monthDiff = endDate.diff(startDate, 'months');
-    let dayDiff = endDate.diff(startDate, 'days') % 30;
-
-    // Handle cases where end date is in a later month but has a lower day value
-    if (endDate.date() < startDate.date()) {
-        monthDiff -= 1;
-        dayDiff = moment.duration(endDate.diff(startDate.clone().subtract(monthDiff, 'months'), 'days')).asDays();
-    }
-
-    return [monthDiff,dayDiff];
-}
-
 module.exports =
     [
         {
