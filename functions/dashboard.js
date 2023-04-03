@@ -48,13 +48,13 @@ function diffInMonthsAndDays(from, to) {
     return [ months, days ];
 }
 
-exports.generation = async function func(client) {
+exports.generation = async function func(guild) {
     /*現在時刻を取得*/
     const date = new Date();
     const time = date.toFormat('YYYY年 MM月DD日 HH24:MI:SS')
 
     /*bot及びユーザーの人数を取得*/
-    const members = await client.guild.members.fetch({withPresences: true});
+    const members = await guild.members.fetch({withPresences: true});
     const user = members.filter(member => member.user.bot === false).size;
     const online = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
     const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
@@ -107,15 +107,15 @@ exports.generation = async function func(client) {
     const endOfTheYear = Date.UTC(year, 2, 31, 23, 59, 59);
     const remainingYear = (endOfTheYear - now);
     const remainingProportion = 20 - (remainingYear / 31557600000 * 20);
-    let bar = `|`;
+    let bar = `[`;
     for (let i = 0; i < Math.floor(remainingProportion); i++) {
         bar += `#`;
     }
     bar += `#`
     for (let i = 0; i < 20 - Math.floor(remainingProportion); i++) {
-        bar += ` `;
+        bar += `-`;
     }
-    bar += `| ${Math.floor((remainingProportion / 2) * 100) / 10}% DONE`
+    bar += `] ${Math.floor((remainingProportion / 2) * 100) / 10}% DONE`
 
     /*天気取得*/
     const weatherData = await getWeather();
@@ -144,42 +144,34 @@ exports.generation = async function func(client) {
     let weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
 
     fs.writeFileSync(configPath, JSON.stringify(data, null, "\t"))
-    return new EmbedBuilder()
-        .setColor(0x00A0EA)
-        .setTitle('NIT,Kisarazu College 22s ダッシュボード')
-        .setAuthor({
-            name: "木更津22s統合管理BOT",
-            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC22s/bot-main'
-        })
-        .addFields([
-            {
-                name: '更新時刻',
-                value: `\`\`\`${time}\`\`\``,
-            },
-            {
-                name: 'サーバーの人数',
-                value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
-            },
-            {
-                name: 'BOT台数',
-                value: `\`\`\`導入台数${client.guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
-            },
-            {
-                name: '次の定期テスト',
-                value: `\`\`\`${test}\`\`\``,
-            },
-            {
-                name: '今年度残り',
-                value: `\`\`\`${Math.floor(remainingYear / 86400000)}日\n${bar}\`\`\``,
+    return [
+        {
+            name: '更新時刻',
+            value: `\`\`\`${time}\`\`\``,
+        },
+        {
+            name: 'サーバーの人数',
+            value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
+        },
+        {
+            name: 'BOT台数',
+            value: `\`\`\`導入台数${guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
+        },
+        {
+            name: '次の定期テスト',
+            value: `\`\`\`${test}\`\`\``,
+        },
+        {
+            name: '今年度残り',
+            value: `\`\`\`\n${bar}\`\`\``,
 
-            },
-            {
-                name: '千葉の天気(Powered by 気象庁)',
-                value: `\`\`\`${weather}\`\`\``,
+        },
+        {
+            name: '千葉の天気(Powered by 気象庁)',
+            value: `\`\`\`${weather}\`\`\``,
 
-            }
-        ])
-        .setTimestamp()
-        .setFooter({text: 'Developed by NITKC22s server Admin'});
+        }
+    ]
+
+
 }

@@ -12,7 +12,18 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
-                const embed = await dashboard.generation(interaction)
+                const field = await dashboard.generation(interaction.guild)
+                const embed = new EmbedBuilder()
+                    .setColor(0x00A0EA)
+                    .setTitle('NIT,Kisarazu College 22s ダッシュボード')
+                    .setAuthor({
+                        name: "木更津22s統合管理BOT",
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                        url: 'https://github.com/NITKC22s/bot-main'
+                    })
+                    .addFields(field)
+                    .setTimestamp()
+                    .setFooter({text: 'Developed by NITKC22s server Admin'});
                 await interaction.reply({ embeds: [embed] });
             },
         },
@@ -75,6 +86,38 @@ module.exports =
                 else{
                     await interaction.reply({content:"どっか〜ん　するから、1~4の中で指定してくれ", ephemeral: true })
                 }
+
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('auto-dashboard')
+                .setDescription('自動更新されるダッシュボードを選択')
+                .setDefaultMemberPermissions(1<<3)
+                .addStringOption(option =>
+                    option
+                        .setName('ダッシュボードid')
+                        .setDescription('メッセージIDを入力')
+                        .setRequired(true)
+                )
+                .addStringOption(option =>
+                    option
+                        .setName('チャンネルid')
+                        .setDescription('チャンネルIDを入力')
+                        .setRequired(true)
+                )
+                .addStringOption(option =>
+                    option
+                        .setName('ギルドid')
+                        .setDescription('ギルドIDを入力')
+                        .setRequired(true)
+                ),
+
+            async execute(interaction) {
+                const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
+                data.dashboard = [interaction.options.data[0].value,interaction.options.data[1].value,interaction.options.data[2].value]
+                fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t"))
+                await interaction.reply({ content: `メッセージID:${data.dashboard[0]} を、自動更新ダッシュボードに設定しました。`, ephemeral: true });
 
             },
         },
