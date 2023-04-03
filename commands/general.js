@@ -123,8 +123,7 @@ module.exports =
                             case 'n':
                                 sendingMsg+='\n';
                                 i++;
-                                break
-                            
+                                break;                            
                         }
                     }
                     else sendingMsg+=receivedMsg[i];
