@@ -55,10 +55,7 @@ module.exports=
                         ephemeral: true
                     });
                 }
-                else
-                {
-                    await interactionCopy.reply({content:"このサーバーでは/createchanが許可されているカテゴリがありません。\n管理者権限を持つ人が/addcategoryを実行することで/createchanが有効になります。",ephemeral:true});
-                }
+                else await interactionCopy.reply({content:"このサーバーでは/createchanが許可されているカテゴリがありません。\n管理者権限を持つ人が/addcategoryを実行することで/createchanが有効になります。",ephemeral:true});
                 
             }
 
@@ -161,20 +158,30 @@ module.exports=
             
             async execute(interactionCopy)
             {
-                //ActionRowBuilder作成
-                let DCR= interactionCopy.options.getString("チャンネルとロールの削除");
-                const selectCategory=new ActionRowBuilder()
-                    .addComponents(
-                        new StringSelectMenuBuilder()
-                            .setPlaceholder("カテゴリを選択")
-                            .setCustomId("remCat")
-                            .addOptions(
-                                {label:"全てのカテゴリを削除する",value:"ALL"+DCR},
-                                ...ccconfig.guilds.find(server => server.ID===interactionCopy.guild.id).categories.map(category =>({label:category.name,value:category.ID+DCR}))
-                            )
-                    )
-                
-                await interactionCopy.reply({ content:"削除するカテゴリを指定してください。", components: [selectCategory] ,ephemeral: true});
+                if(ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId)&&ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId).categories.length>=1)
+                {//ActionRowBuilder作成
+                    let DCR = interactionCopy.options.getString ("チャンネルとロールの削除");
+                    const selectCategory = new ActionRowBuilder ()
+                        .addComponents (
+                            new StringSelectMenuBuilder ()
+                                .setPlaceholder ("カテゴリを選択")
+                                .setCustomId ("remCat")
+                                .addOptions (
+                                    {label: "全てのカテゴリを削除する", value: "ALL" + DCR},
+                                    ...ccconfig.guilds.find (server => server.ID === interactionCopy.guild.id).categories.map (category => ({
+                                        label: category.name,
+                                        value: category.ID + DCR
+                                    }))
+                                )
+                        )
+    
+                    await interactionCopy.reply ({
+                        content: "削除するカテゴリを指定してください。",
+                        components: [selectCategory],
+                        ephemeral: true
+                    });
+                }
+                else await interactionCopy.reply({content:"このサーバーには登録されているカテゴリがありません。\n/addcategoryを実行することでカテゴリが追加されます。",ephemeral:true});
             }
         }
     ]
