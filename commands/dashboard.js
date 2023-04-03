@@ -12,18 +12,7 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
-                const Fields = await dashboard.generation(interaction)
-                const embed = new EmbedBuilder()
-                    .setColor(0x00A0EA)
-                    .setTitle('NIT,Kisarazu College 22s ダッシュボード')
-                    .setAuthor({
-                        name: "木更津22s統合管理BOT",
-                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
-                    })
-                    .addFields(Fields)
-                    .setTimestamp()
-                    .setFooter({text: 'Developed by NITKC22s server Admin'});
+                const embed = await dashboard.generation(interaction)
                 await interaction.reply({ embeds: [embed] });
             },
         },
