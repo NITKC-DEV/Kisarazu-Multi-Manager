@@ -3,23 +3,42 @@ const packageVer = require('../package.json')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 
-const moment = require('moment');
-const commands = require("../botmain");
-function monthsAndDaysBetween(startUnix, endUnix) {
-    const startDate = moment.unix(startUnix);
-    const endDate = moment.unix(endUnix);
+/*天気取得*/
 
-    let monthDiff = endDate.diff(startDate, 'months');
-    let dayDiff = endDate.diff(startDate, 'days') % 30;
 
-    // Handle cases where end date is in a later month but has a lower day value
-    if (endDate.date() < startDate.date()) {
-        monthDiff -= 1;
-        dayDiff = moment.duration(endDate.diff(startDate.clone().subtract(monthDiff, 'months'), 'days')).asDays();
+/*日数カウント*/
+function diffInMonthsAndDays(from, to) {
+    if(from > to) {
+        [from, to] = [to, from];
+    }
+    const fromDate = new Date(from);
+    let toDate = new Date(to);
+    let months=0,days=0;
+    let daysInMonth;
+    if (toDate.getFullYear() % 4 === 0 && toDate.getFullYear() % 4 !== 0) {
+        daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30]; /*前の月が何日であるかのリスト*/
+    } else if (toDate.getFullYear() % 400 === 0) {
+        daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30];
+    } else {
+        daysInMonth = [31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30];
     }
 
-    return [monthDiff,dayDiff];
+    if(toDate.getFullYear() - fromDate.getFullYear() >= 1) { /*12ヶ月以上あるなら、その分加算*/
+        months += (toDate.getFullYear() - fromDate.getFullYear() - 1) *12
+    }
+    months += 12 * (toDate.getFullYear() - fromDate.getFullYear()) + (toDate.getMonth() - fromDate.getMonth())
+
+    if(fromDate.getDate() > toDate.getDate()) {
+        days = daysInMonth[toDate.getMonth()] - fromDate.getDate() + toDate.getDate()
+        months -= 1;
+    }
+    else{
+        days = toDate.getDate() - fromDate.getDate();
+    }
+
+    return [ months, days ];
 }
+
 
 module.exports =
     [
@@ -78,13 +97,35 @@ module.exports =
                     }
                     else{
                         test = `${data.nextTest[0][0]}年${data.nextTest[0][1]}月${data.nextTest[0][2]}日〜${data.nextTest[0][3]}月${data.nextTest[0][4]}日`
-                        day = monthsAndDaysBetween(now/1000, UNIXtest/1000)
-                        test += `(${day[0]}ヶ月${day[1]}日後)`
+                        let day = diffInMonthsAndDays(now, UNIXtest)
+                        test += `(${day[0]}ヶ月と${day[1]}日後)`
                     }
                 }
 
+                /*今年度残り日数計算*/
+                let year;
+                if(date.getMonth() < 3) {
+                    year = date.getFullYear();
+                }
+                else{
+                    year = date.getFullYear() + 1;
+                }
+                const endOfTheYear = Date.UTC(year,2,31,23,59,59);
+                const remainingYear = (endOfTheYear - now);
+                const remainingProportion = 20 - (remainingYear / 31557600000 * 20);
+                let bar = `|`;
+                for(let i = 0; i <Math.floor(remainingProportion); i++){
+                    bar += `#`;
+                }
+                bar += `#`
+                for(let i=0;i < 20 - Math.floor(remainingProportion); i++){
+                    bar += ` `;
+                }
+                    bar += `| ${Math.floor((remainingProportion / 2) * 100) / 10}% DONE`
 
 
+
+                console.log(weatherAPI)
 
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
@@ -113,10 +154,15 @@ module.exports =
                                 value: `\`\`\`${test}\`\`\``,
                             },
                             {
-                                name: '実行環境',
-                                value: 'node.js v18.9.0\ndiscord.js v' + version,
+                                name: '今年度残り',
+                                value: `\`\`\`${ Math.floor(remainingYear / 86400000)}日\n${bar}\`\`\``,
 
                             },
+                            {
+                                name: '千葉の天気(Powered by 気象庁)',
+                                value: `\`\`\`${weather}\`\`\``,
+
+                            }
                         ]
                     )
                     .setTimestamp()
