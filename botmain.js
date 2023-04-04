@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder, Events,Message,ActionRowBuilder,SelectMenuBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder, Events,Message,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
 const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
@@ -64,7 +64,7 @@ client.on("interactionCreate", async (interaction) => {
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
-    if (!interaction.isSelectMenu ()) return;
+    if (!interaction.isStringSelectMenu()) return;
 
     // /createchanでのカテゴリ選択の受け取り
     if (interaction.customId === "selectCat")
@@ -101,7 +101,7 @@ client.on(Events.InteractionCreate, async interaction =>
             {
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
-                        new SelectMenuBuilder()
+                        new StringSelectMenuBuilder()
                             .setCustomId("mkRole")
                             .addOptions
                             (
