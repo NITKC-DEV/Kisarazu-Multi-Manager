@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder} = require('discord.js')
 const  timetableBuilder  = require('../timetable/timetableUtils')
 const Classes = require('../timetable/timetables.json')
 const fs = require('fs');

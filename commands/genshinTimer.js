@@ -123,10 +123,10 @@ module.exports =
                         .setRequired(true)
                 ),
             async execute(interaction) {
-                if (interaction.options.getString('スコア') == 33.4  ) {
+                if (interaction.options.getString('スコア') === `33.4`  ) {
                     await interaction.reply('なんでや！阪神関係ないやろ！');
                 }
-                else if (interaction.options.getString('スコア') == 44.5  ) {
+                else if (interaction.options.getString('スコア') === `44.5`  ) {
                     await interaction.reply('あてぃし！？');
                 }
                 else if (interaction.options.getString('スコア') < 30  ) {

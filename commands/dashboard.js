@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder , version, Client, GatewayIntentBits, Partials} = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 
