@@ -52,5 +52,5 @@ Discord.jsで書かれています。
 
 開発：kokastar
 
-**再配布・再利用禁止**  
+**再配布及び再利用禁止**  
 **Don't redistribution and reuse**
