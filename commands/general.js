@@ -3,6 +3,7 @@ const packageVer = require('../package.json');
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 
+
 module.exports =
     [
         {
@@ -70,6 +71,14 @@ module.exports =
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
                 await interaction.reply({ embeds: [embed] });
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('ping')
+                .setDescription('このBOTのpingを測定します'),
+            async execute(interaction) {
+                await interaction.reply( `Ping : ${interaction.client.ws.ping}ms` );
             },
         },
         {
