@@ -24,11 +24,14 @@ const client = new Client({
     partials: [Partials.Channel],
 });
 module.exports.client=client;
+const system = require('./functions/logsystem.js');
+
 
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 module.exports = client.commands;
+
 
 
 /*スラッシュコマンド登録*/
@@ -41,8 +44,14 @@ client.once("ready", async () => {
         }
 
     }
-    console.log("Ready!");
+    //console.log("Ready!");
+    system.log("Ready!");
 });
+
+
+//const log = client.channels.cache.get("1092835771880325242");
+
+
 
 /*実際の動作*/
 client.on("interactionCreate", async (interaction) => {
@@ -511,6 +520,8 @@ cron.schedule('*/1  * * * *', async () => {
     const dashboardGuild = client.guilds.cache.get(config.dashboard[2]); /*ギルド情報取得*/
     const channel = client.channels.cache.get(config.dashboard[1]); /*チャンネル情報取得*/
 
+    system.log("ダッシュボード更新",client.channels.cache.get("1092835771880325242"));
+
     const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
     channel.messages.fetch(config.dashboard[0])
         .then((dashboard) => {
@@ -531,7 +542,9 @@ cron.schedule('*/1  * * * *', async () => {
         .catch((error) => {
             console.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
         });
+
 });
+
 
 
 client.login(config.token);
