@@ -10,7 +10,7 @@ module.exports =
 
         {
             data: new SlashCommandBuilder()
-                .setName('genshintimer')
+                .setName('genshin-timer')
                 .setDescription('About genshin-timer discord bot'),
             async execute(interaction) {
                 const about = new EmbedBuilder()

@@ -83,7 +83,7 @@ module.exports =
         },
         {
             data: new SlashCommandBuilder()
-                .setName('secretmsg')
+                .setName('secret-msg')
                 .setDescription('実行したチャンネルにbotが代理で送信します')
                 .addStringOption(option =>
                     option

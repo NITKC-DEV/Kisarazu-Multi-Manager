@@ -10,7 +10,7 @@ module.exports=
         {
             //スラッシュコマンドの定義
             data:new SlashCommandBuilder()
-                .setName("createchan")
+                .setName("create-chan")
                 .setDescription("チャンネルの作成")
                 //チャンネル名を入力 -> string
                 .addStringOption(option =>
@@ -52,7 +52,7 @@ module.exports=
         {
             //カテゴリ登録用スラッシュコマンド
             data: new SlashCommandBuilder ()
-                .setName ("addcategory")
+                .setName ("add-category")
                 .setDescription ("/CreateChanによってチャンネルの作成ができるカテゴリにこのカテゴリを追加します")
                 .addNumberOption (option =>
                     option
@@ -131,7 +131,7 @@ module.exports=
         },
         {
             data: new SlashCommandBuilder ()
-                .setName("removecategory")
+                .setName("remove-category")
                 .setDescription ("/addchategoryによって登録されたカテゴリの登録を解除します")
                 .setDefaultMemberPermissions(1<<3)
                 .addStringOption(option =>
