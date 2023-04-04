@@ -7,7 +7,7 @@ Discord.jsで書かれています。
 ## 開発者
 ### [kokastar](https://github.com/starkoka)
 役割：開発リーダー  
-制作：[Genshin-Timer](https://github.com/starkoka/Genshin-Timer)、help・aboutコマンド、時間割機能、自習室機能  
+制作：[Genshin-Timer](https://github.com/starkoka/Genshin-Timer)、help・aboutコマンド、時間割機能、
 
 ### [Naotiki](https://github.com/naotiki)
 役割：開発者・マージ最高責任者  
@@ -32,15 +32,15 @@ Discord.jsで書かれています。
 
 開発：kokastar・Naotiki
 
-### 自習室機能
-設定されたボイスチャットに入っている時間を勉強時間とみなし、そのデータを見ることができる機能です。  　　
-
-開発：kokastar
-
 ### チャンネル作成機能
 コマンドを実行することで、その人に権限を与えることなく特定のカテゴリ内にチャンネルを作れます。また、そのチャンネルに対応したロールも自動作成されます。  　　
 
 開発：Kouro・Naotiki
+
+### シークレットメッセージ機能
+コマンドを実行し、その引数にメッセージや画像を指定することで、そのチャンネルにBOTが代理でメッセージを送ってくれます。
+
+開発：kokastar・Kouro
 
 **再配布・再利用禁止**  
 **Don't redistribution and reuse**
