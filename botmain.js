@@ -4,6 +4,7 @@ let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
 const Classes = require('./timetable/timetables.json');
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+const dashboard = require('./functions/dashboard.js');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
@@ -17,7 +18,8 @@ const client = new Client({
         GatewayIntentBits.GuildMembers,
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
-        GatewayIntentBits.MessageContent
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildPresences
     ],
     partials: [Partials.Channel],
 });
@@ -58,6 +60,7 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
+
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
@@ -502,6 +505,32 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
         (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
             .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
     }
+});
+
+cron.schedule('*/1  * * * *', async () => {
+    const dashboardGuild = client.guilds.cache.get(config.dashboard[2]); /*ギルド情報取得*/
+    const channel = client.channels.cache.get(config.dashboard[1]); /*チャンネル情報取得*/
+
+    const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+    channel.messages.fetch(config.dashboard[0])
+        .then((dashboard) => {
+            const newEmbed = new EmbedBuilder()
+                .setColor(0x00A0EA)
+                .setTitle('NIT,Kisarazu College 22s ダッシュボード')
+                .setAuthor({
+                    name: "木更津22s統合管理BOT",
+                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                    url: 'https://github.com/NITKC22s/bot-main'
+                })
+                .addFields(field)
+                .setTimestamp()
+                .setFooter({text: 'Developed by NITKC22s server Admin'});
+
+            dashboard.edit({embeds: [newEmbed]});
+        })
+        .catch((error) => {
+            console.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
+        });
 });
 
 
