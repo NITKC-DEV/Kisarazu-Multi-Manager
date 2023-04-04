@@ -11,6 +11,7 @@ async function getWeather() {
         const response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
         return response.data;
     } catch (error) {
+        console.error("天気を取得できませんでした");
         return null;
     }
 }
@@ -119,30 +120,36 @@ exports.generation = async function func(guild) {
 
     /*天気取得*/
     const weatherData = await getWeather();
-    let todayMax;
-    let todayMin;
-    if (weatherData.forecasts[0].date === data.weather[0][0]) {
-        todayMax = data.weather[0][1];
-        todayMin = data.weather[0][2];
-    } else {
-        data.weather[0] = data.weather[1];
-
+    let weather;
+    if (!weatherData) {
+        weather = "天気を取得できませんでした"
+    }
+    else{
+        let todayMax;
+        let todayMin;
         if (weatherData.forecasts[0].date === data.weather[0][0]) {
             todayMax = data.weather[0][1];
             todayMin = data.weather[0][2];
         } else {
-            todayMax = `---`;
-            todayMin = `---`;
+            data.weather[0] = data.weather[1];
+
+            if (weatherData.forecasts[0].date === data.weather[0][0]) {
+                todayMax = data.weather[0][1];
+                todayMin = data.weather[0][2];
+            } else {
+                todayMax = `---`;
+                todayMin = `---`;
+            }
         }
+
+        data.weather[1] = [weatherData.forecasts[1].date, weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+
+        const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`]
+        const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`]
+
+        weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
+
     }
-
-    data.weather[1] = [weatherData.forecasts[1].date, weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
-
-    const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`]
-    const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`]
-
-    let weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
-
     fs.writeFileSync(configPath, JSON.stringify(data, null, "\t"))
     return [
         {
