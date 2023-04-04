@@ -3,6 +3,7 @@ const packageVer = require('../package.json');
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 
+
 module.exports =
     [
         {
@@ -74,7 +75,15 @@ module.exports =
         },
         {
             data: new SlashCommandBuilder()
-                .setName('secretmsg')
+                .setName('ping')
+                .setDescription('このBOTのpingを測定します'),
+            async execute(interaction) {
+                await interaction.reply( `Ping : ${interaction.client.ws.ping}ms` );
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('secret-msg')
                 .setDescription('実行したチャンネルにbotが代理で送信します')
                 .addStringOption(option =>
                     option
