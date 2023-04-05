@@ -137,6 +137,8 @@ module.exports =
                     }
                     else sendingMsg+=receivedMsg[i];
                 }
+
+                sendingMsg = sendingMsg.trim();
     
                 /***
                  * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
