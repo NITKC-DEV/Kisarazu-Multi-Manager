@@ -10,6 +10,7 @@ const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
+const {configPath} = require("./environmentConfig");
 dotenv.config();
 const client = new Client({
     intents: [
@@ -501,11 +502,11 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 cron.schedule('*/1  * * * *', async () => {
-    const dashboardGuild = client.guilds.cache.get(config.dashboard[2]); /*ギルド情報取得*/
-    const channel = client.channels.cache.get(config.dashboard[1]); /*チャンネル情報取得*/
-
+    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
+    const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
     const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-    channel.messages.fetch(config.dashboard[0])
+    channel.messages.fetch(data.dashboard[0])
         .then((dashboard) => {
             const newEmbed = new EmbedBuilder()
                 .setColor(0x00A0EA)
