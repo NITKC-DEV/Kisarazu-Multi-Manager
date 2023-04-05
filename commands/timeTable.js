@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, EmbedBuilder } = require('discord.js')
+const { SlashCommandBuilder} = require('discord.js')
 const  timetableBuilder  = require('../timetable/timetableUtils')
 const Classes = require('../timetable/timetables.json')
 const fs = require('fs');
@@ -67,7 +67,7 @@ module.exports = [
     },
     {
         data: new SlashCommandBuilder()
-            .setName('ttswitcher')
+            .setName('tt-switcher')
             .setDescription('時間割定期送信のON/OFFを切り替えます')
             .setDefaultMemberPermissions(1<<3)
             .addBooleanOption(option =>
