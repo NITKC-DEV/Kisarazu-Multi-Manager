@@ -1,16 +1,12 @@
+//モジュール読み込み
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
-const config = require('./environmentConfig')
-let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
-const Classes = require('./timetable/timetables.json');
-const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
-const dashboard = require('./functions/dashboard.js');
-const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-require('date-utils');
+const dotenv = require('dotenv');
 dotenv.config();
+require('date-utils');
 global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -23,18 +19,23 @@ global.client = new Client({
     ],
     partials: [Partials.Channel],
 });
-//module.exports.client=client;
+
+//configファイル読み込み
+const config = require('./environmentConfig')
+let ccconfig=require("./CCConfig.json");
+const Classes = require('./timetable/timetables.json');
+
+
+//関数読み込み
+const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 
-
+//スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 module.exports = client.commands;
-
-
-
-/*スラッシュコマンド登録*/
 client.once("ready", async () => {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -47,12 +48,7 @@ client.once("ready", async () => {
     system.log("Ready!");
 });
 
-
-//const log = client.channels.cache.get("1092835771880325242");
-
-
-
-/*実際の動作*/
+/*Readyイベント*/
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) {
         return;
