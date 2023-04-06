@@ -1,6 +1,7 @@
 const { SlashCommandBuilder,ActionRowBuilder,StringSelectMenuBuilder}=require("discord.js");
 let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
+const system = require('../functions/logsystem.js');
 
 
 
