@@ -1,6 +1,7 @@
 const { SlashCommandBuilder,ActionRowBuilder,StringSelectMenuBuilder}=require("discord.js");
 let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
+const system = require('../functions/logsystem.js');
 
 
 
@@ -121,7 +122,7 @@ module.exports=
                     fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
                 } catch (e)
                 {
-                    console.log (e);
+                    system.log (e);
                     await interactionCopy.reply("データの保存に失敗しました\nやり直してください");
                     return;
                 }

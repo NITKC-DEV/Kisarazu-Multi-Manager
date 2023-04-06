@@ -3,6 +3,7 @@ const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 
 const dashboard = require('../functions/dashboard.js');
+const system = require('../functions/logsystem.js');
 
 module.exports =
     [

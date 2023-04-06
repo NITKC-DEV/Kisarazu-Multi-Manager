@@ -1,13 +1,29 @@
 const {EmbedBuilder, Client, GatewayIntentBits, Partials} = require("discord.js");
 const config = require("../environmentConfig");
-const client = require('../botmain.js').client;
 
-exports.log = function func(message) {
-    console.log(message);
+exports.log = async function func(message,title) {
+    console.log(`${title ?? "システムログ"} ----\n ${message.trim()}\n--------\n`);
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
-        .setTitle(message)
+        .setTitle(title ?? "システムログ")
+        .setDescription(message)
         .setTimestamp()
         .setFooter({ text: 'Discord Log System' });
-    client.channels.cache.get("1092835771880325242").send({ embeds: [embed] })
+
+    const channel = await client.channels.fetch(config.logSystem)
+    channel.send({embeds: [embed]})
 }
+
+
+exports.error = async function func(message,title) {
+    console.error(`${title ?? "エラー"} ----\n ${message.trim()}\n--------\n`);
+    const embed = new EmbedBuilder()
+        .setColor(0xFF0000)
+        .setTitle(title ?? "エラー")
+        .setDescription(message)
+        .setTimestamp()
+        .setFooter({ text: 'Discord Log System' });
+    const channel = await client.channels.fetch(config.logSystem)
+    channel.send({embeds: [embed]})
+}
+

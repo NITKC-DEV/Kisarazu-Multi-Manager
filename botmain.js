@@ -11,7 +11,7 @@ const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
-const client = new Client({
+global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -23,7 +23,7 @@ const client = new Client({
     ],
     partials: [Partials.Channel],
 });
-module.exports.client=client;
+//module.exports.client=client;
 const system = require('./functions/logsystem.js');
 
 
@@ -44,7 +44,6 @@ client.once("ready", async () => {
         }
 
     }
-    //console.log("Ready!");
     system.log("Ready!");
 });
 
@@ -61,11 +60,11 @@ client.on("interactionCreate", async (interaction) => {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) return;
-    console.log("SlashCommand : "+command.data.name);
+    system.log(command.data.name,"SlashCommand");
     try {
         await command.execute(interaction);
     } catch (error) {
-        console.error(error);
+        system.error(error);
         await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
@@ -100,7 +99,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
                 return;
             }
@@ -149,7 +148,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -179,7 +178,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -234,7 +233,7 @@ client.on(Events.InteractionCreate, async interaction =>
                         }
                         catch(e)
                         {
-                            console.log(e);
+                            system.log(e);
                         }
 
                     }
@@ -253,7 +252,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
                 } catch (e)
                 {
-                    console.log (e);
+                    system.log (e);
                     await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                     return;
                 }
@@ -298,7 +297,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     }
                     catch(e)
                     {
-                        console.log(e);
+                        system.log(e);
                     }
                 }
             }
@@ -312,7 +311,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
                 } catch (e)
                 {
-                    console.log (e);
+                    system.log (e);
                     await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                     return;
                 }
@@ -494,7 +493,7 @@ cron.schedule('0 5 * * *', () => {
         client.channels.cache.get(config.daily).send({ embeds: [sixteenth] })
     }
 
-    console.log('デイリー通知送信完了')
+    system.log('デイリー通知送信完了')
 });
 
 
@@ -520,8 +519,6 @@ cron.schedule('*/1  * * * *', async () => {
     const dashboardGuild = client.guilds.cache.get(config.dashboard[2]); /*ギルド情報取得*/
     const channel = client.channels.cache.get(config.dashboard[1]); /*チャンネル情報取得*/
 
-    system.log("ダッシュボード更新",client.channels.cache.get("1092835771880325242"));
-
     const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
     channel.messages.fetch(config.dashboard[0])
         .then((dashboard) => {
@@ -540,7 +537,7 @@ cron.schedule('*/1  * * * *', async () => {
             dashboard.edit({embeds: [newEmbed]});
         })
         .catch((error) => {
-            console.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
+            system.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
         });
 
 });
