@@ -1,7 +1,7 @@
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 const axios = require('axios');
-
+const system = require('../functions/logsystem.js');
 
 /*天気取得*/
 async function getWeather() {

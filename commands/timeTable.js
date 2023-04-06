@@ -3,6 +3,7 @@ const  timetableBuilder  = require('../timetable/timetableUtils')
 const Classes = require('../timetable/timetables.json')
 const fs = require('fs');
 const {configPath}=require("../environmentConfig")
+const system = require('../functions/logsystem.js');
 module.exports = [
     {
         data: new SlashCommandBuilder()
