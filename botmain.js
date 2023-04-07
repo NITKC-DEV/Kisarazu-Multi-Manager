@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder, SlashCommandBuilder, Events,Message,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
 const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
@@ -10,6 +10,7 @@ const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
+const {configPath} = require("./environmentConfig");
 dotenv.config();
 const client = new Client({
     intents: [
@@ -192,12 +193,9 @@ client.on(Events.InteractionCreate, async interaction =>
     if(interaction.customId==="remCat")
     {
         //ccconfig内のguildsの実行ギルドのインデックスを取得
-        let indGuild=-1;
-        for(let i=0;i<ccconfig.guilds.length;i++)
-        {
-            if(ccconfig.guilds[1].ID===interaction.guild.id)indGuild=i;
-        }
-        if(indGuild===-1)
+        const indGuild=ccconfig.guilds.findIndex(guild=>guild.ID===interaction.guildId);
+        //存在し得ないはず...念のため
+        if(!indGuild)
         {
             await interaction.update({ content:"このサーバーは登録されていません", components: []});
             return;
@@ -260,12 +258,8 @@ client.on(Events.InteractionCreate, async interaction =>
         else
         {
             //選択されたカテゴリのインデックスを取得
-            let indCategory=-1
-            for(let i = 1; i <ccconfig.guilds[indGuild].categories.length; i++)
-            {
-                if(ccconfig.guilds[indGuild].categories[i].ID===interaction.values[0].split("/")[0])indCategory=i;
-            }
-            if(indCategory===-1)
+            const indCategory=ccconfig.guilds[indGuild].categories.findIndex(cat=>cat.ID===interaction.values[0].split("/")[0]);
+            if(!indCategory)
             {
                 await interaction.update ({content:"データエラーです\nやり直してください",components:[]});
                 return;
@@ -508,11 +502,11 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 cron.schedule('*/1  * * * *', async () => {
-    const dashboardGuild = client.guilds.cache.get(config.dashboard[2]); /*ギルド情報取得*/
-    const channel = client.channels.cache.get(config.dashboard[1]); /*チャンネル情報取得*/
-
+    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
+    const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
     const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-    channel.messages.fetch(config.dashboard[0])
+    channel.messages.fetch(data.dashboard[0])
         .then((dashboard) => {
             const newEmbed = new EmbedBuilder()
                 .setColor(0x00A0EA)
