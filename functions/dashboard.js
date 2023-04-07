@@ -1,5 +1,3 @@
-const { SlashCommandBuilder, EmbedBuilder , version, Client, GatewayIntentBits, Partials} = require('discord.js')
-const packageVer = require('../package.json')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 const axios = require('axios');
@@ -23,7 +21,7 @@ function diffInMonthsAndDays(from, to) {
     }
     const fromDate = new Date(from);
     let toDate = new Date(to);
-    let months=0,days=0;
+    let months=0,days;
     let daysInMonth;
     if (toDate.getFullYear() % 4 === 0 && toDate.getFullYear() % 4 !== 0) {
         daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30]; /*前の月が何日であるかのリスト*/

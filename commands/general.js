@@ -55,7 +55,7 @@ module.exports =
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.1.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\n',
+                                value: '[Genshin-timer Discord BOT v2.1.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能',
                             },
                             {
                                 name: 'ソースコード',
@@ -63,7 +63,7 @@ module.exports =
                             },
                             {
                                 name: '実行環境',
-                                value: 'node.js v18.9.0\ndiscord.js v' + version,
+                                value: 'node.js v' + process.versions.node + `\n discord.js v` + version,
 
                             },
                         ]
@@ -83,7 +83,7 @@ module.exports =
         },
         {
             data: new SlashCommandBuilder()
-                .setName('secretmsg')
+                .setName('secret-msg')
                 .setDescription('実行したチャンネルにbotが代理で送信します')
                 .addStringOption(option =>
                     option
@@ -137,6 +137,8 @@ module.exports =
                     }
                     else sendingMsg+=receivedMsg[i];
                 }
+
+                sendingMsg = sendingMsg.trim();
     
                 /***
                  * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
@@ -149,7 +151,7 @@ module.exports =
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
                 if (sendingMsg) console.log ("Send a message: " + sendingMsg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (attachFiles) for (const file of attachFiles) console.log ("Send a file: " + file.url + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
-                if (sendingMsg||attachFiles[1])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
+                if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
                 
                 //5秒カウントダウンしたのちに返信を削除
                 for(let i=5;i>0;i--)

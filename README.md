@@ -1,7 +1,7 @@
 # 木更津22s統合管理BOT
 ## 概要
 木更津高専22sの学年非公式Discordサーバーである「NIT,Kisarazu College 22s Server」に導入されている、NITKC22s 統合管理BOTのソースコードです。  
-Discord.jsで書かれています。  
+Discord.jsで書かれています。
 
 
 ## 開発者
@@ -11,11 +11,11 @@ Discord.jsで書かれています。
 
 ### [Naotiki](https://github.com/naotiki)
 役割：開発者・マージ最高責任者  
-制作：deploy-commandsツール、スラッシュコマンドの分離、時間割機能の最適化、チャンネル作成機能  
+制作：deploy-commandsツール、スラッシュコマンドの分離、時間割機能の最適化、チャンネル作成機能
 
 ### [KouRo](https://github.com/Kou-Ro)
 役割：開発者  
-制作：チャンネル作成機能  
+制作：チャンネル作成機能
 
 ### [NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)
 役割：開発者・デザイナー  
@@ -42,5 +42,15 @@ Discord.jsで書かれています。
 
 開発：kokastar・Kouro
 
-**再配布・再利用禁止**  
+### ダッシュボード機能
+コマンドを実行すると、サーバーの情報などを確認できます。具体的には、時刻・サーバーの人数・BOT台数・次の定期テストまでの日数・今年度の残り日数・今日の千葉の天気　を確認できます。
+
+更に、毎分更新するダッシュボードを設定することもできます(1つのみ)
+
+### pingコマンド機能
+応答時間を返します。
+
+開発：kokastar
+
+**再配布及び再利用禁止**  
 **Don't redistribution and reuse**
