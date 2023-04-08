@@ -69,7 +69,7 @@ exports.generation = async function func(guild) {
         }
         data.nextTest[3] = [0, 0, 0, 0, 0]
     } else {
-        UNIXtest = Date.UTC(data.nextTest[0][0], data.nextTest[0][1] - 1, data.nextTest[0][2], 8, 50, 0);
+        UNIXtest = Date.UTC(data.nextTest[0][0], data.nextTest[0][1] - 1, data.nextTest[0][2], 0, 0, 0);
         testStart = Date.UTC(data.nextTest[0][0], data.nextTest[0][1] - 1, data.nextTest[0][2], 0, 0, 0);
         testEnd = Date.UTC(data.nextTest[0][0], data.nextTest[0][3] - 1, data.nextTest[0][4], 15, 0, 0);
         if (now > testStart) {
@@ -114,7 +114,7 @@ exports.generation = async function func(guild) {
     for (let i = 0; i < 20 - Math.floor(remainingProportion); i++) {
         bar += `-`;
     }
-    bar += `] ${Math.floor((remainingProportion / 2) * 100) / 10}% DONE`
+    bar += `] ${Math.floor((remainingProportion / 2) * 100) / 10}% done`
 
     /*天気取得*/
     const weatherData = await getWeather();
