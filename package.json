@@ -8,6 +8,7 @@
     "dotenv": "^16.0.2",
     "enquirer": "^2.3.6",
     "moment": "^2.29.4",
+    "mongodb": "^5.2.0",
     "node-cron": "^3.0.2"
   },
   "name": "nitkc-main",

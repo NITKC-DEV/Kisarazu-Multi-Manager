@@ -4,6 +4,9 @@ const {configPath} = require("../environmentConfig");
 
 const dashboard = require('../functions/dashboard.js');
 const system = require('../functions/logsystem.js');
+const db = require('../functions/db.js');
+const {MongoClient, ServerApiVersion} = require("mongodb");
+const config = require("../environmentConfig");
 
 module.exports =
     [
@@ -73,16 +76,16 @@ module.exports =
 
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
-                    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
-                    data.nextTest[interaction.options.data[5].value-1] = [
+                    db.editTest(
                         interaction.options.data[0].value,
                         interaction.options.data[1].value,
                         interaction.options.data[2].value,
                         interaction.options.data[3].value,
-                        interaction.options.data[4].value
-                    ]
-                    fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t")) //ここで書き出し
-                    await interaction.reply({ content: `今年度${interaction.options.data[5].value}回目のテストを${data.nextTest[interaction.options.data[5].value-1][0]}年${data.nextTest[interaction.options.data[5].value-1][1]}月${data.nextTest[interaction.options.data[5].value-1][2]}日〜${data.nextTest[interaction.options.data[5].value-1][3]}月${data.nextTest[interaction.options.data[5].value-1][4]}日に設定しました`, ephemeral: true });
+                        interaction.options.data[4].value,
+                        interaction.options.data[5].value
+                    );
+
+                    await interaction.reply({ content: `今年度${interaction.options.data[5].value}回目のテストを${interaction.options.data[0].value}年${interaction.options.data[1].value}月${interaction.options.data[2].value}日〜${interaction.options.data[3].value}月${interaction.options.data[4].value}日に設定しました`, ephemeral: true });
                 }
                 else{
                     await interaction.reply({content:"どっか〜ん　するから、1~4の中で指定してくれ", ephemeral: true })

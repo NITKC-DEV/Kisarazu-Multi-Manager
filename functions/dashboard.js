@@ -2,6 +2,8 @@ const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 const axios = require('axios');
 const system = require('../functions/logsystem.js');
+const {MongoClient, ServerApiVersion} = require("mongodb");
+const config = require("../environmentConfig");
 
 /*天気取得*/
 async function getWeather() {
@@ -60,6 +62,12 @@ exports.generation = async function func(guild) {
 
     /*定期テスト*/
     const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+    const collection = dbClient.db("main").collection("nextTest");
+
+    console.log(await collection.find({quarter: "1"}).toArray())
+
+
     let test, UNIXtest, testStart, testEnd;
     let now = Date.now() + 32400000;
     if (data.nextTest[0][0] === 0) {
