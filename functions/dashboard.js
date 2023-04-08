@@ -167,12 +167,12 @@ exports.generation = async function func(guild) {
             value: `\`\`\`${test}\`\`\``,
         },
         {
-            name: '今年度残り',
+            name: '今年度の進捗',
             value: `\`\`\`\n${bar}\`\`\``,
 
         },
         {
-            name: '千葉の天気(Powered by 気象庁)',
+            name: '千葉の天気　(Powered by 気象庁)',
             value: `\`\`\`${weather}\`\`\``,
 
         }
