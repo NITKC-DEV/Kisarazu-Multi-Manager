@@ -2,6 +2,7 @@ const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
 const packageVer = require('../package.json');
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
+const commands = require("../botmain");
 
 
 module.exports =
@@ -55,7 +56,7 @@ module.exports =
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.1.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能',
+                                value: '[Genshin-timer Discord BOT v2.1.1](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能',
                             },
                             {
                                 name: 'ソースコード',
@@ -117,29 +118,44 @@ module.exports =
                 const date = new Date ();
                 const currentTime = date.toFormat ('YYYY年 MM/DD HH24:MI:SS');
                 let sendingMsg='';
-                
                 //改行とバクスラのエスケープ処理
                 if(receivedMsg)for(let i=0;i<receivedMsg.length;i++)
                 {
-                    if(receivedMsg[i]==='\\')
+                    if (receivedMsg[i] === '\\')
                     {
-                        switch (receivedMsg[i+1])
+                        switch (receivedMsg[i + 1])
                         {
                             case '\\':
-                                sendingMsg+='\\';
+                                sendingMsg += '\\';
                                 i++;
                                 break;
                             case 'n':
-                                sendingMsg+='\n';
+                                sendingMsg += '\n';
                                 i++;
-                                break;                            
+                                break;
                         }
                     }
-                    else sendingMsg+=receivedMsg[i];
+                    else sendingMsg += receivedMsg[i];
                 }
 
                 sendingMsg = sendingMsg.trim();
-    
+
+                if(sendingMsg.length >2000)
+                {
+                    await interaction.reply({content:"2000文字を超える内容は送信できません",ephemeral:true,});
+                    return;
+                }
+
+                const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
+                for(let attachment of attachFiles)
+                {
+                    if(attachment.size>8388608)
+                    {
+                        await interaction.reply({content:"サイズが8MBを超えるファイルは添付できません。通常のメッセージであれば25MBまでなら添付することができます。",ephemeral:true});
+                        return;
+                    }
+                }
+
                 /***
                  * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
                  * @param time 返信が削除されるまでの残り時間
@@ -147,12 +163,11 @@ module.exports =
                  */
                 const replyOptions=time=>{return{content: channelName + 'にメッセージを代理で送信します\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
                 await interaction.reply (replyOptions(5));
-    
-                const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
+
                 if (sendingMsg) console.log ("Send a message: " + sendingMsg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (attachFiles) for (const file of attachFiles) console.log ("Send a file: " + file.url + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
-                
+
                 //5秒カウントダウンしたのちに返信を削除
                 for(let i=5;i>0;i--)
                 {
