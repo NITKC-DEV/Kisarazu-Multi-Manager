@@ -76,14 +76,18 @@ module.exports =
 
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
-                    db.editTest(
-                        interaction.options.data[0].value,
-                        interaction.options.data[1].value,
-                        interaction.options.data[2].value,
-                        interaction.options.data[3].value,
-                        interaction.options.data[4].value,
-                        interaction.options.data[5].value
-                    );
+                    db.updateDB(
+                        "main","nextTest",String(interaction.options.data[5].value),
+                        {
+                            $set: {
+                                year: String(interaction.options.data[0].value),
+                                month1: String(interaction.options.data[1].value),
+                                day1: String(interaction.options.data[2].value),
+                                month2: String(interaction.options.data[3].value),
+                                day2: String(interaction.options.data[4].value)
+                            },
+                        }
+                    )
 
                     await interaction.reply({ content: `今年度${interaction.options.data[5].value}回目のテストを${interaction.options.data[0].value}年${interaction.options.data[1].value}月${interaction.options.data[2].value}日〜${interaction.options.data[3].value}月${interaction.options.data[4].value}日に設定しました`, ephemeral: true });
                 }
