@@ -4,6 +4,7 @@ const axios = require('axios');
 const system = require('../functions/logsystem.js');
 const {MongoClient, ServerApiVersion} = require("mongodb");
 const config = require("../environmentConfig");
+const db = require("../functions/db.js");
 
 /*天気取得*/
 async function getWeather() {
@@ -61,25 +62,21 @@ exports.generation = async function func(guild) {
     const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
 
     /*定期テスト*/
-    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
-    const collection = dbClient.db("main").collection("nextTest");
-
-    console.log(await collection.find({quarter: "1"}).toArray())
-
+    const jsonData = JSON.parse(fs.readFileSync(configPath, 'utf8'))
+    const data = await db.getDatabase("main","nextTest","1");
 
     let test, UNIXtest, testStart, testEnd;
     let now = Date.now() + 32400000;
-    if (data.nextTest[0][0] === 0) {
+    if (data[0].year === 0) {
         test = "現在設定されている次のテストはありません。"
         for (let i = 0; i < 3; i++) {
             data.nextTest[i] = data.nextTest[i + 1]
         }
         data.nextTest[3] = [0, 0, 0, 0, 0]
     } else {
-        UNIXtest = Date.UTC(data.nextTest[0][0], data.nextTest[0][1] - 1, data.nextTest[0][2], 8, 50, 0);
-        testStart = Date.UTC(data.nextTest[0][0], data.nextTest[0][1] - 1, data.nextTest[0][2], 0, 0, 0);
-        testEnd = Date.UTC(data.nextTest[0][0], data.nextTest[0][3] - 1, data.nextTest[0][4], 15, 0, 0);
+        UNIXtest = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1, 8, 50, 0);
+        testStart = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1,  0, 0, 0);
+        testEnd = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1,  15, 0, 0);
         if (now > testStart) {
             if (now > testEnd) { /*テストが終了してたら*/
                 for (let i = 0; i < 3; i++) {
@@ -98,7 +95,7 @@ exports.generation = async function func(guild) {
                 }
             }
         } else {
-            test = `${data.nextTest[0][0]}年${data.nextTest[0][1]}月${data.nextTest[0][2]}日〜${data.nextTest[0][3]}月${data.nextTest[0][4]}日`
+            test = `${data[0].year}年${data[0].month1}月${data[0].day1}日〜${data[0].month2}月${data[0].day2}日`
             let day = diffInMonthsAndDays(now, UNIXtest)
             test += `(${day[0]}ヶ月と${day[1]}日後)`
         }
@@ -133,22 +130,22 @@ exports.generation = async function func(guild) {
     else{
         let todayMax;
         let todayMin;
-        if (weatherData.forecasts[0].date === data.weather[0][0]) {
-            todayMax = data.weather[0][1];
-            todayMin = data.weather[0][2];
+        if (weatherData.forecasts[0].date === jsonData.weather[0][0]) {
+            todayMax = jsonData.weather[0][1];
+            todayMin = jsonData.weather[0][2];
         } else {
-            data.weather[0] = data.weather[1];
+            jsonData.weather[0] = jsonData.weather[1];
 
-            if (weatherData.forecasts[0].date === data.weather[0][0]) {
-                todayMax = data.weather[0][1];
-                todayMin = data.weather[0][2];
+            if (weatherData.forecasts[0].date === jsonData.weather[0][0]) {
+                todayMax = jsonData.weather[0][1];
+                todayMin = jsonData.weather[0][2];
             } else {
                 todayMax = `---`;
                 todayMin = `---`;
             }
         }
 
-        data.weather[1] = [weatherData.forecasts[1].date, weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+        jsonData.weather[1] = [weatherData.forecasts[1].date, weatherData.forecasts[1].temperature.max.celsius ?? `---`, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
 
         const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`]
         const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`]
@@ -156,7 +153,7 @@ exports.generation = async function func(guild) {
         weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
 
     }
-    fs.writeFileSync(configPath, JSON.stringify(data, null, "\t"))
+    fs.writeFileSync(configPath, JSON.stringify(jsonData, null, "\t"))
     return [
         {
             name: '更新時刻',

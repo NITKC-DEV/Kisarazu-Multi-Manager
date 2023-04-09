@@ -3,28 +3,41 @@ const config = require('../environmentConfig')
 
 const system = require('../functions/logsystem.js');
 
-exports.editTest = async function run(year, month1,day1,month2,day2,quarter) {
+/***
+ * データベースからデータを取得する
+ * @param dbName 取得先データベース名
+ * @param collectionName 取得先コレクション名
+ * @param label labelキーのフィルター
+ * @returns オブジェクト型の配列
+ */
+
+exports.getDatabase = async function (dbName,collectionName,label) {
+    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+    const collection = dbClient.db(dbName).collection(collectionName);
+
+    return await collection.find({label: label}).toArray()
+}
+
+/***
+ * データベースからデータを取得する
+ * @param dbName 取得先データベース名
+ * @param collectionName 取得先コレクション名
+ * @param label labelキーのフィルター
+ * @param update update operatorを用いた更新内容の記述
+ */
+exports.updateDB = async function run(dbName,collectionName,label,update) {
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     try {
-        const database = dbClient.db("main");
-        const collection = database.collection("nextTest");
+        const database = dbClient.db(dbName);
+        const collection = database.collection(collectionName);
 
         const result = await collection.updateOne(
             {
-                quarter: String(quarter)
+                label: label
             },
-            {
-                $set: {
-                    year: String(year),
-                    month1: String(month1),
-                    day1: String(day1),
-                    month2: String(month2),
-                    day2: String(day2),
-                    quarter:String(quarter)
-                },
-            }
+            update
         )
-        system.log(`nextTestを更新 : ${result.upsertedId}`,`db操作実行`);
+        system.log(`${dbName}.${collectionName}を更新`,`db操作実行`);
     } finally {
         await dbClient.close();
     }
