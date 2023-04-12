@@ -2,7 +2,6 @@ const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
 const packageVer = require('../package.json');
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
-const commands = require("../botmain");
 
 
 module.exports =
