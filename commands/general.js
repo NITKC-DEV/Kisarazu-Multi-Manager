@@ -136,9 +136,8 @@ module.exports =
                     }
                     else sendingMsg += receivedMsg[i];
                 }
-
+                
                 sendingMsg = sendingMsg.trim();
-
                 if(sendingMsg.length >2000)
                 {
                     await interaction.reply({content:"2000文字を超える内容は送信できません",ephemeral:true,});
@@ -154,7 +153,6 @@ module.exports =
                         return;
                     }
                 }
-
                 /***
                  * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
                  * @param time 返信が削除されるまでの残り時間
@@ -162,7 +160,7 @@ module.exports =
                  */
                 const replyOptions=time=>{return{content: channelName + 'にメッセージを代理で送信します\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
                 await interaction.reply (replyOptions(5));
-
+                
                 if (sendingMsg) console.log ("Send a message: " + sendingMsg + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (attachFiles) for (const file of attachFiles) console.log ("Send a file: " + file.url + "\nby " + interaction.user.username + "#" + interaction.user.discriminator + " in " + channelName + " at " + currentTime + "\n");
                 if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
