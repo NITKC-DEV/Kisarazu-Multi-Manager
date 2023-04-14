@@ -80,10 +80,32 @@ exports.generation = async function func(guild) {
         if (now > testStart) {
             if (now > testEnd) { /*テストが終了してたら*/
                 for (let i = 0; i < 3; i++) {
-                    data.nextTest[i] = data.nextTest[i + 1]
+                    db.updateDB(
+                        "main","nextTest",String(i),
+                        {
+                            $set: {
+                                year: String(data[i+1].year),
+                                month1: String(data[i+1].month1),
+                                day1: String(data[i+1].day1),
+                                month2: String(data[i+1].month2),
+                                day2: String(data[i+1].day2)
+                            },
+                        }
+                    )
                 }
-                data.nextTest[3] = [0, 0, 0, 0, 0]
-                if (data.nextTest[0][0] === 0) {
+                db.updateDB(
+                    "main","nextTest","3",
+                    {
+                        $set: {
+                            year: "0",
+                            month1: "0",
+                            day1: "0",
+                            month2: "0",
+                            day2: "0"
+                        },
+                    }
+                )
+                if (data[0].year === "0") {
                     test = "現在設定されている次のテストはありません。"
                 }
             } else {
