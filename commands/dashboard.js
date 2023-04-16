@@ -77,7 +77,7 @@ module.exports =
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
                     db.updateDB(
-                        "main","nextTest",String(interaction.options.data[5].value),
+                        "main","nextTest",{label:String(interaction.options.data[5].value)},
                         {
                             $set: {
                                 year: String(interaction.options.data[0].value),

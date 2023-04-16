@@ -63,16 +63,16 @@ exports.generation = async function func(guild) {
 
     /*定期テスト*/
     const jsonData = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-    const data = await db.getDatabase("main","nextTest","1");
+    const data = await db.getDatabase("main","nextTest",{label: {$in:["1","2","3","4"]}});
 
     let test, UNIXtest, testStart, testEnd;
     let now = Date.now() + 32400000;
     if (data[0].year === 0) {
         test = "現在設定されている次のテストはありません。"
         for (let i = 0; i < 3; i++) {
-            data.nextTest[i] = data.nextTest[i + 1]
+            data[0].nextTest[i] = data[0].nextTest[i + 1]
         }
-        data.nextTest[3] = [0, 0, 0, 0, 0]
+        data[0].nextTest[3] = [0, 0, 0, 0, 0]
     } else {
         UNIXtest = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1, 8, 50, 0);
         testStart = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1,  0, 0, 0);
@@ -81,14 +81,14 @@ exports.generation = async function func(guild) {
             if (now > testEnd) { /*テストが終了してたら*/
                 for (let i = 0; i < 3; i++) {
                     db.updateDB(
-                        "main","nextTest",String(i),
+                        "main","nextTest",{label:"1"},
                         {
                             $set: {
-                                year: String(data[i+1].year),
-                                month1: String(data[i+1].month1),
-                                day1: String(data[i+1].day1),
-                                month2: String(data[i+1].month2),
-                                day2: String(data[i+1].day2)
+                                year: 1,
+                                month1: 1,
+                                day1: 1,
+                                month2: 1,
+                                day2: 1
                             },
                         }
                     )
