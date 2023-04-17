@@ -183,11 +183,11 @@ exports.generation = async function func(guild) {
         },
         {
             name: 'サーバーの人数',
-            value: `\`\`\`参加人数${user}人　/　現在オンライン${online}人\`\`\``,
+            value: `\`\`\`現在オンライン${online}人　/　参加人数${user}人\`\`\``,
         },
         {
             name: 'BOT台数',
-            value: `\`\`\`導入台数${guild.memberCount - user}台 / 稼働中${botOnline}台\`\`\``,
+            value: `\`\`\`稼働中${botOnline}台 / 導入台数${guild.memberCount - user}台 \`\`\``,
         },
         {
             name: '次の定期テスト',
