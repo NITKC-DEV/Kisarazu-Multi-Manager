@@ -76,25 +76,33 @@ exports.generation = async function func(guild) {
     } else {
         UNIXtest = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1, 8, 50, 0);
         testStart = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1,  0, 0, 0);
-        testEnd = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1,  15, 0, 0);
+        testEnd = Date.UTC(data[0].year, data[0].month2 - 1, data[0].day2,  15, 0, 0);
         if (now > testStart) {
             if (now > testEnd) { /*テストが終了してたら*/
+                if (data[1].year === "0") {
+                    test = "現在設定されている次のテストはありません。";
+                }
+                else{
+                    test = `${data[1].year}年${data[1].month1}月${data[1].day1}日〜${data[1].month2}月${data[1].day2}日`
+                    let day = diffInMonthsAndDays(now, UNIXtest)
+                    test += `(${day[0]}ヶ月と${day[1]}日後)`
+                }
                 for (let i = 0; i < 3; i++) {
                     db.updateDB(
-                        "main","nextTest",{label:"1"},
+                        "main","nextTest",{label:String(i)},
                         {
                             $set: {
-                                year: 1,
-                                month1: 1,
-                                day1: 1,
-                                month2: 1,
-                                day2: 1
+                                year: String(data[i+1].year),
+                                month1: String(data[i+1].month1),
+                                day1: String(data[i+1].day1),
+                                month2: String(data[i+1].month2),
+                                day2: String(data[i+1].day2)
                             },
                         }
                     )
                 }
                 db.updateDB(
-                    "main","nextTest","3",
+                    "main","nextTest",{label:"4"},
                     {
                         $set: {
                             year: "0",
@@ -105,14 +113,12 @@ exports.generation = async function func(guild) {
                         },
                     }
                 )
-                if (data[0].year === "0") {
-                    test = "現在設定されている次のテストはありません。"
-                }
-            } else {
+            }
+            else {
                 if (now > testEnd - 86400000) { /*最終日なら*/
                     test = 'テスト最終日です'
                 } else {
-                    test = `テスト${Math.floor((now - testStart) / 86400000 + 1)}日目です(〜${data.nextTest[0][3]}月${data.nextTest[0][4]}日)`
+                    test = `テスト${Math.floor((now - testStart) / 86400000 + 1)}日目です(〜${data[0].month2}月${data[0].day2}日)`
 
                 }
             }
