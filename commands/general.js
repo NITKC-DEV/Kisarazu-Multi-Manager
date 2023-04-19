@@ -111,14 +111,42 @@ module.exports =
 
             async execute (interaction)
             {
-                const receivedMsg = interaction.options.getString ('メッセージ');
+                let receivedMsg = interaction.options.getString ('メッセージ');
                 const attachedFile1 = interaction.options.getAttachment ('添付ファイル1');
                 const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
                 const attachedFile3 = interaction.options.getAttachment ('添付ファイル3');
                 const channelName = interaction.guild.channels.cache.get (interaction.channelId).name;
-                const date = new Date ();
-                const currentTime = date.toFormat ('YYYY年 MM/DD HH24:MI:SS');
                 let sendingMsg='';
+                
+                //ロールメンション時パーミッション確認と除外処理
+                if(!interaction.memberPermissions.has(1n<<17n))
+                {
+                    const roleMentions= receivedMsg.match(/(?<!\\)<@&\d+>/g);
+                    if(roleMentions)
+                    {
+                        for(const roleMention of roleMentions)
+                        {
+                            const role = interaction.guild.roles.cache.find(readRole=>readRole.id===roleMention.match(/\d+/)[0]);
+                            if(role&&!role.mentionable)
+                            {
+                                receivedMsg=receivedMsg.replace(roleMention,"@"+role.name);
+                            }
+                            
+                        }
+                    }
+                    const everyoneMention=receivedMsg.search(/@everyone/);
+                    if(everyoneMention+1)
+                    {
+                        const rg=new RegExp("(?<!`)@everyone(?<!`)","g");
+                        receivedMsg=receivedMsg.replace(rg,"\`@everyone\`\0");
+                    }
+                    const hereMention = receivedMsg.search(/@here/);
+                    if(hereMention+1)
+                    {
+                        const rg=new RegExp("(?<!`)@here(?<!`)","g");
+                        receivedMsg=receivedMsg.replace(rg,"\`@here\`\0");
+                    }
+                }
                 
                 //改行とバクスラのエスケープ処理
                 if(receivedMsg)for(let i=0;i<receivedMsg.length;i++)
