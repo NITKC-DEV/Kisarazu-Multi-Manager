@@ -37,3 +37,5 @@ exports.updateDB = async function run(dbName,collectionName,filter,update) {
         await dbClient.close();
     }
 }
+
+//引数の詳細については、mongodbの公式ドキュメントを参照すること
