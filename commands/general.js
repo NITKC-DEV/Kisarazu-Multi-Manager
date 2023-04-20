@@ -133,13 +133,13 @@ module.exports =
                         }
                     }
                     const everyoneMention=receivedMsg.search(/@everyone/);
-                    if(everyoneMention+1)
+                    if(everyoneMention!=-1)
                     {
                         const rg=new RegExp("(?<!`)@everyone(?<!`)","g");
                         receivedMsg=receivedMsg.replace(rg,"\`@everyone\`\0");
                     }
                     const hereMention = receivedMsg.search(/@here/);
-                    if(hereMention+1)
+                    if(hereMention!=-1)
                     {
                         const rg=new RegExp("(?<!`)@here(?<!`)","g");
                         receivedMsg=receivedMsg.replace(rg,"\`@here\`\0");
