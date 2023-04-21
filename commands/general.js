@@ -114,7 +114,10 @@ module.exports =
                 const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
                 const attachedFile3 = interaction.options.getAttachment ('添付ファイル3');
                 const channelName = interaction.guild.channels.cache.get (interaction.channelId).name;
+                const date = new Date();
+                const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
                 let sendingMsg='';
+                
                 
                 //ロールメンション時パーミッション確認と除外処理
                 if(!interaction.memberPermissions.has(1n<<17n))
