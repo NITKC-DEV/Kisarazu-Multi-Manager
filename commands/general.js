@@ -118,7 +118,6 @@ module.exports =
                 const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
                 let sendingMsg='';
                 
-                
                 //ロールメンション時パーミッション確認と除外処理
                 if(!interaction.memberPermissions.has(1n<<17n))
                 {
@@ -136,13 +135,13 @@ module.exports =
                         }
                     }
                     const everyoneMention=receivedMsg.search(/@everyone/);
-                    if(everyoneMention!=-1)
+                    if(everyoneMention!==-1)
                     {
                         const rg=new RegExp("(?<!`)@everyone(?<!`)","g");
                         receivedMsg=receivedMsg.replace(rg,"\`@everyone\`\0");
                     }
                     const hereMention = receivedMsg.search(/@here/);
-                    if(hereMention!=-1)
+                    if(hereMention!==-1)
                     {
                         const rg=new RegExp("(?<!`)@here(?<!`)","g");
                         receivedMsg=receivedMsg.replace(rg,"\`@here\`\0");
@@ -157,7 +156,7 @@ module.exports =
                         switch (receivedMsg[i + 1])
                         {
                             case '\\':
-                                sendingMsg += '\\';
+                                sendingMsg += '\\\\';
                                 i++;
                                 break;
                             case 'n':
