@@ -1,0 +1,9 @@
+root: true
+extends:
+  - "eslint:recommended"
+  - "airbnb-base"
+  - "prettier"
+env:
+  es2021: true
+parserOptions:
+  ecmaVersion: 2021
