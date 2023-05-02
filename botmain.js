@@ -42,7 +42,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith
 client.commands = new Collection();
 module.exports = client.commands;
 
-/*スラッシュコマンド登録*/
+/* スラッシュコマンド登録 */
 client.once("ready", async () => {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -54,7 +54,7 @@ client.once("ready", async () => {
     console.log("Ready!");
 });
 
-/*実際の動作*/
+/* 実際の動作 */
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) {
         return;
@@ -71,19 +71,19 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
-//SelectMenu受け取り
+// SelectMenu受け取り
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isStringSelectMenu()) return;
 
     // /createchanでのカテゴリ選択の受け取り
     if (interaction.customId === "selectCat") {
-        //キャンセル受付
+        // キャンセル受付
         if (interaction.values[0] === "0000000000000000000") {
             await interaction.update({ content: "キャンセルされました", components: [] });
         }
-        //カテゴリ受付
+        // カテゴリ受付
         else {
-            //チャンネル作成
+            // チャンネル作成
 
             let newChannel = await interaction.guild.channels.create({
                 name: interaction.message.content.split(" ")[0],
@@ -91,7 +91,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 reason: "木更津22s統合管理BOTの操作により作成",
             });
 
-            //作成チャンネル情報記録
+            // 作成チャンネル情報記録
             ccconfig.guilds
                 .find((guild) => guild.ID === interaction.guild.id)
                 .categories.find((category) => category.ID === interaction.values[0]).channels[
@@ -105,7 +105,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 createTime: Date.now(),
             };
 
-            //json書き込み
+            // json書き込み
             const ccjson = JSON.stringify(ccconfig);
             try {
                 fs.writeFileSync("CCConfig.json", ccjson, "utf8");
@@ -115,7 +115,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 return;
             }
 
-            //ロール作成許可時にロール作成をするかを問うSelectMenu作成
+            // ロール作成許可時にロール作成をするかを問うSelectMenu作成
             if (
                 ccconfig.guilds
                     .find((guild) => guild.ID === interaction.guild.id)
@@ -136,11 +136,11 @@ client.on(Events.InteractionCreate, async (interaction) => {
             }
         }
     }
-    //ロール作成受け取り
+    // ロール作成受け取り
     if (interaction.customId === "mkRole") {
-        //作成
+        // 作成
         if (interaction.values[0].split("/")[2] === "1") {
-            //ロール作成
+            // ロール作成
             const newRole = await interaction.guild.roles.create({
                 name: ccconfig.guilds
                     .find((guild) => guild.ID === interaction.guild.id)
@@ -151,7 +151,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 reason: "木更津22s統合管理BOTの操作により作成",
             });
 
-            //作成ロール情報記録
+            // 作成ロール情報記録
             const newData = { roleID: newRole.id, roleName: newRole.name };
             ccconfig.guilds
                 .find((guild) => guild.ID === interaction.guild.id)
@@ -166,7 +166,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
                 .categories.find((category) => category.ID === interaction.values[0].split("/")[0])
                 .channels.find((channel) => channel.ID === interaction.values[0].split("/")[1]).roleName = newData.roleName;
 
-            //json記録
+            // json記録
             const ccjson = JSON.stringify(ccconfig);
             try {
                 fs.writeFileSync("CCConfig.json", ccjson, "utf8");
@@ -189,15 +189,15 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
             await interaction.update({ content: "ロールを作成して終了しました", components: [] });
         }
-        //作成しない
+        // 作成しない
         else {
-            //作成しなかったことを記録
+            // 作成しなかったことを記録
             ccconfig.guilds
                 .find((guild) => guild.ID === interaction.guild.id)
                 .categories.find((category) => category.ID === interaction.values[0].split("/")[0])
                 .channels.find((channel) => channel.ID === interaction.values[0].split("/")[1]).thereRole = false;
 
-            //json記録
+            // json記録
             const ccjson = JSON.stringify(ccconfig);
             try {
                 fs.writeFileSync("CCConfig.json", ccjson, "utf8");
@@ -221,29 +221,29 @@ client.on(Events.InteractionCreate, async (interaction) => {
             await interaction.update({ content: "ロールを作成せずに終了しました", components: [] });
         }
     }
-    //カテゴリ削除受け取り
+    // カテゴリ削除受け取り
     if (interaction.customId === "remCat") {
-        //ccconfig内のguildsの実行ギルドのインデックスを取得
+        // ccconfig内のguildsの実行ギルドのインデックスを取得
         const indGuild = ccconfig.guilds.findIndex((guild) => guild.ID === interaction.guildId);
-        //存在し得ないはず...念のため
+        // 存在し得ないはず...念のため
         if (!indGuild) {
             await interaction.update({ content: "このサーバーは登録されていません", components: [] });
             return;
         }
-        //全削除
+        // 全削除
         if (interaction.values[0].split("/")[0] === "ALL") {
-            //チャンネルとロールの削除
+            // チャンネルとロールの削除
             if (interaction.values[0].split("/")[1] === "t") {
                 for (let i = 1; i < ccconfig.guilds[indGuild].categories.length; i++) {
                     for (let j = 1; j < ccconfig.guilds[indGuild].categories[i].channels.length; j++) {
-                        //エラー起きやすそうだからtry文
+                        // エラー起きやすそうだからtry文
                         try {
-                            //チャンネル削除
+                            // チャンネル削除
                             await interaction.guild.channels.delete(
                                 ccconfig.guilds[indGuild].categories[i].channels[j].ID,
                                 "木更津22s統合管理BOTの操作により削除"
                             );
-                            //対応ロール存在時にロール削除
+                            // 対応ロール存在時にロール削除
                             if (ccconfig.guilds[indGuild].categories[i].channels[j].thereRole) {
                                 await interaction.guild.roles.delete(
                                     ccconfig.guilds[indGuild].categories[i].channels[j].roleID,
@@ -256,12 +256,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
                     }
                 }
             }
-            //ccconfigからカテゴリの情報を削除
+            // ccconfigからカテゴリの情報を削除
             ccconfig.guilds[indGuild] = {
                 ID: interaction.guild.id,
                 categories: [{ ID: "0000000000000000000", name: "キャンセル", allowRole: false, channels: [] }],
             };
-            //jsonに書き込み
+            // jsonに書き込み
             const ccjson = JSON.stringify(ccconfig);
             try {
                 fs.writeFileSync("CCConfig.json", ccjson, "utf8");
@@ -273,30 +273,30 @@ client.on(Events.InteractionCreate, async (interaction) => {
 
             await interaction.update({ content: "削除しました", components: [] });
         }
-        //キャンセル選択時
+        // キャンセル選択時
         else if (interaction.values[0].split("/")[0] === "0000000000000000000") {
             await interaction.update({ content: "キャンセルされました", components: [] });
         }
-        //個別削除時
+        // 個別削除時
         else {
-            //選択されたカテゴリのインデックスを取得
+            // 選択されたカテゴリのインデックスを取得
             const indCategory = ccconfig.guilds[indGuild].categories.findIndex((cat) => cat.ID === interaction.values[0].split("/")[0]);
             if (!indCategory) {
                 await interaction.update({ content: "データエラーです\nやり直してください", components: [] });
                 return;
             }
 
-            //チャンネルとロールの削除時
+            // チャンネルとロールの削除時
             if (interaction.values[0].split("/")[1] === "t") {
                 for (let i = 1; i < ccconfig.guilds[indGuild].categories[indCategory].channels.length; i++) {
-                    //エラー起きそうだから(以下略
+                    // エラー起きそうだから(以下略
                     try {
-                        //カテゴリ内のチャンネル削除
+                        // カテゴリ内のチャンネル削除
                         await interaction.guild.channels.delete(
                             ccconfig.guilds[indGuild].categories[indCategory].channels[i].ID,
                             "木更津22s統合管理BOTの操作により削除"
                         );
-                        //対応するロールが存在するときにロールを削除
+                        // 対応するロールが存在するときにロールを削除
                         if (ccconfig.guilds[indGuild].categories[indCategory].channels[i].thereRole) {
                             await interaction.guild.roles.delete(
                                 ccconfig.guilds[indGuild].categories[indCategory].channels[i].roleID,
@@ -308,10 +308,10 @@ client.on(Events.InteractionCreate, async (interaction) => {
                     }
                 }
             }
-            //ccconfigから当該カテゴリの情報をまるまる削除
+            // ccconfigから当該カテゴリの情報をまるまる削除
             ccconfig.guilds[indGuild].categories.splice(indCategory, 1);
 
-            //jsonに書き込み
+            // jsonに書き込み
             const ccjson = JSON.stringify(ccconfig);
             try {
                 fs.writeFileSync("CCConfig.json", ccjson, "utf8");
@@ -326,12 +326,12 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 
-/*TxtEasterEgg*/
+/* TxtEasterEgg */
 client.on("messageCreate", (message) => {
     TxtEasterEgg.func(message);
 });
 
-/*原神デイリー通知*/
+/* 原神デイリー通知 */
 cron.schedule("0 5 * * *", () => {
     const daily = {
         color: 0x27668d,
@@ -354,7 +354,7 @@ cron.schedule("0 5 * * *", () => {
     let date = dt.getDate();
     const genshinColor = 0x27668d;
     if (dayofweek === 1) {
-        /*月曜日*/
+        /* 月曜日 */
         const monday = {
             color: genshinColor,
             title: "新しい週が始まりました",
@@ -395,7 +395,7 @@ cron.schedule("0 5 * * *", () => {
     }
 
     if (dayofweek === 4) {
-        /*木曜日*/
+        /* 木曜日 */
         const thursday = {
             color: genshinColor,
             title: "木曜日になりました",
@@ -412,7 +412,7 @@ cron.schedule("0 5 * * *", () => {
     }
 
     if (dayofweek === 5) {
-        /*金曜日*/
+        /* 金曜日 */
         const friday = {
             color: genshinColor,
             title: "金曜日になりました",
@@ -433,7 +433,7 @@ cron.schedule("0 5 * * *", () => {
     }
 
     if (dayofweek === 6) {
-        /*土曜日*/
+        /* 土曜日 */
         const saturday = {
             color: genshinColor,
             title: "土曜日になりました",
@@ -449,7 +449,7 @@ cron.schedule("0 5 * * *", () => {
         client.channels.cache.get(config.daily).send({ embeds: [saturday] });
     }
     if (date % 3 === 0) {
-        /*3の倍数の日*/
+        /* 3の倍数の日 */
         const multiple = {
             color: genshinColor,
             title: "アイテム購入リセット",
@@ -459,7 +459,7 @@ cron.schedule("0 5 * * *", () => {
         client.channels.cache.get(config.daily).send({ embeds: [multiple] });
     }
     if (date % 3 === 1) {
-        /*3の倍数+1の日*/
+        /* 3の倍数+1の日 */
         const multiple2 = {
             color: genshinColor,
             title: "アイテム購入リセット",
@@ -470,7 +470,7 @@ cron.schedule("0 5 * * *", () => {
     }
 
     if (date === 1) {
-        /*毎月1日*/
+        /* 毎月1日 */
         const first = {
             color: genshinColor,
             title: "1日になりました",
@@ -490,7 +490,7 @@ cron.schedule("0 5 * * *", () => {
         client.channels.cache.get(config.daily).send({ embeds: [first] });
     }
     if (date === 16) {
-        /*毎月16日*/
+        /* 毎月16日 */
         const sixteenth = {
             color: genshinColor,
             title: "16日になりました",
@@ -511,7 +511,7 @@ cron.schedule("0 5 * * *", () => {
 
 cron.schedule("0 20 * * 0,1,2,3,4", async () => {
     let dayOfWeek = new Date().getDay() + 1;
-    //timetable == trueのとき
+    // timetable == trueのとき
     let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable;
     if (timetable === true) {
         await (client.channels.cache.get(config.M) ?? (await client.channels.fetch(config.M))).send({
@@ -534,9 +534,9 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
 
 cron.schedule("*/1  * * * *", async () => {
     const data = JSON.parse(fs.readFileSync(configPath, "utf8"));
-    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
-    const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
-    const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /* ギルド情報取得 */
+    const channel = client.channels.cache.get(data.dashboard[1]); /* チャンネル情報取得 */
+    const field = await dashboard.generation(dashboardGuild); /* フィールド生成 */
     channel.messages
         .fetch(data.dashboard[0])
         .then((dashboard) => {
