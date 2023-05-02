@@ -11,7 +11,7 @@ const {
     StringSelectMenuBuilder,
 } = require("discord.js");
 const config = require("./environmentConfig");
-let ccconfig = require("./CCConfig.json");
+const ccconfig = require("./CCConfig.json");
 const timetableBuilder = require("./timetable/timetableUtils");
 const Classes = require("./timetable/timetables.json");
 const TxtEasterEgg = require("./functions/TxtEasterEgg.js");
@@ -85,7 +85,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
         else {
             // チャンネル作成
 
-            let newChannel = await interaction.guild.channels.create({
+            const newChannel = await interaction.guild.channels.create({
                 name: interaction.message.content.split(" ")[0],
                 parent: interaction.values[0],
                 reason: "木更津22s統合管理BOTの操作により作成",
@@ -349,9 +349,9 @@ cron.schedule("0 5 * * *", () => {
         },
     };
     client.channels.cache.get(config.daily).send({ embeds: [daily] });
-    let dt = new Date();
-    let dayofweek = dt.getDay();
-    let date = dt.getDate();
+    const dt = new Date();
+    const dayofweek = dt.getDay();
+    const date = dt.getDate();
     const genshinColor = 0x27668d;
     if (dayofweek === 1) {
         /* 月曜日 */
@@ -510,9 +510,9 @@ cron.schedule("0 5 * * *", () => {
 });
 
 cron.schedule("0 20 * * 0,1,2,3,4", async () => {
-    let dayOfWeek = new Date().getDay() + 1;
+    const dayOfWeek = new Date().getDay() + 1;
     // timetable == trueのとき
-    let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable;
+    const timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable;
     if (timetable === true) {
         await (client.channels.cache.get(config.M) ?? (await client.channels.fetch(config.M))).send({
             embeds: [timetableBuilder(Classes.M, dayOfWeek)],
