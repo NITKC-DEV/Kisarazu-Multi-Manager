@@ -10,9 +10,9 @@ const {
     ActionRowBuilder,
     StringSelectMenuBuilder,
 } = require("discord.js");
-const config = require("./environmentConfig");
+const config = require("./environmentConfig.js");
 const ccconfig = require("./CCConfig.json");
-const timetableBuilder = require("./timetable/timetableUtils");
+const timetableBuilder = require("./timetable/timetableUtils.js");
 const Classes = require("./timetable/timetables.json");
 const TxtEasterEgg = require("./functions/TxtEasterEgg.js");
 const dashboard = require("./functions/dashboard.js");
@@ -21,7 +21,7 @@ const path = require("path");
 const fs = require("fs");
 const cron = require("node-cron");
 require("date-utils");
-const { configPath } = require("./environmentConfig");
+const { configPath } = require("./environmentConfig.js");
 dotenv.config();
 const client = new Client({
     intents: [
