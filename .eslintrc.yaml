@@ -9,3 +9,6 @@ parserOptions:
   ecmaVersion: 2021
 rules:
   no-console: off
+  no-plusplus:
+    - error
+    - allowForLoopAfterthoughts: true
