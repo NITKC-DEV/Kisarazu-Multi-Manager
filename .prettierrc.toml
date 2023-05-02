@@ -1,0 +1,13 @@
+tabWidth = 4
+printWidth = 140
+
+##### 実験用 #####
+
+# https://prettier.io/docs/en/options.html#jsx-quotes
+insertPragma = true
+endOfLine = "lf" #git関連と併せて確認する必要あり
+embeddedLanguageFormatting = "auto"
+
+[[overrides]]
+files = ["*.json", "*.md"]
+options.tabWidth = 2
