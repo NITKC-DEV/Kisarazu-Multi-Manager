@@ -21,3 +21,17 @@ rules:
   "import/extensions":
     - warn
     - always
+  "import/order":
+    - warn
+    - groups:
+        - builtin
+        - external
+        - internal
+        - parent
+        - index
+        - sibling
+      newlines-between: always
+      alphabetize:
+        order: asc
+
+  ##### 実験用 #####

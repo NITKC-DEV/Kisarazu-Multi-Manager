@@ -1,5 +1,8 @@
 /** @format */
 
+const fs = require("fs");
+const path = require("path");
+
 const {
     Client,
     GatewayIntentBits,
@@ -10,18 +13,17 @@ const {
     ActionRowBuilder,
     StringSelectMenuBuilder,
 } = require("discord.js");
-const config = require("./environmentConfig.js");
+const dotenv = require("dotenv");
+const cron = require("node-cron");
+
 const ccconfig = require("./CCConfig.json");
-const timetableBuilder = require("./timetable/timetableUtils.js");
-const Classes = require("./timetable/timetables.json");
+const config = require("./environmentConfig.js");
+const { configPath } = require("./environmentConfig.js");
 const TxtEasterEgg = require("./functions/TxtEasterEgg.js");
 const dashboard = require("./functions/dashboard.js");
-const dotenv = require("dotenv");
-const path = require("path");
-const fs = require("fs");
-const cron = require("node-cron");
+const timetableBuilder = require("./timetable/timetableUtils.js");
+const Classes = require("./timetable/timetables.json");
 require("date-utils");
-const { configPath } = require("./environmentConfig.js");
 dotenv.config();
 const client = new Client({
     intents: [
