@@ -24,6 +24,8 @@ const dashboard = require("./functions/dashboard.js");
 const timetableBuilder = require("./timetable/timetableUtils.js");
 const Classes = require("./timetable/timetables.json");
 require("date-utils");
+
+
 dotenv.config();
 const client = new Client({
     intents: [

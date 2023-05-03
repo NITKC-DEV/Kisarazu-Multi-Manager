@@ -33,5 +33,6 @@ rules:
       newlines-between: always
       alphabetize:
         order: asc
-
-  ##### 実験用 #####
+  "import/newline-after-import":
+    - warn
+    - count: 2
