@@ -18,10 +18,13 @@ rules:
     - error
     - allowForLoopAfterthoughts: true
   spaced-comment: warn
-  "import/extensions":
+
+  # eslint-plugin-import
+  # cf. https://github.com/import-js/eslint-plugin-import
+  import/extensions:
     - warn
     - always
-  "import/order":
+  import/order:
     - warn
     - groups:
         - builtin
@@ -33,6 +36,6 @@ rules:
       newlines-between: always
       alphabetize:
         order: asc
-  "import/newline-after-import":
+  import/newline-after-import:
     - warn
     - count: 2
