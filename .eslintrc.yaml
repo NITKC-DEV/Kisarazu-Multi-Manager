@@ -41,4 +41,3 @@ rules:
         order: asc
   import/newline-after-import:
     - warn
-    - count: 2
