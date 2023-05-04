@@ -66,7 +66,7 @@ client.on("interactionCreate", async (interaction) => {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) return;
-    console.log("SlashCommand : " + command.data.name);
+    console.log(`SlashCommand : ${command.data.name}`);
     try {
         await command.execute(interaction);
     } catch (error) {
@@ -129,8 +129,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
                     new StringSelectMenuBuilder()
                         .setCustomId("mkRole")
                         .addOptions(
-                            { label: "作成する", value: interaction.values[0] + "/" + newChannel.id + "/1" },
-                            { label: "作成しない", value: interaction.values[0] + "/" + newChannel.id + "/0" }
+                            { label: "作成する", value: `${interaction.values[0]}/${newChannel.id}/1` },
+                            { label: "作成しない", value: `${interaction.values[0]}/${newChannel.id}/0` }
                         )
                 );
 
@@ -180,8 +180,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
                     new SelectMenuBuilder()
                         .setCustomId("mkRole")
                         .addOptions(
-                            { label: "作成する", value: interaction.values[0] + "/" + newChannel.id + "/1" },
-                            { label: "作成しない", value: interaction.values[0] + "/" + newChannel.id + "/0" }
+                            { label: "作成する", value: `${interaction.values[0]}/${newChannel.id}/1` },
+                            { label: "作成しない", value: `${interaction.values[0]}/${newChannel.id}/0` }
                         )
                 );
                 await interaction.update({
@@ -211,8 +211,8 @@ client.on(Events.InteractionCreate, async (interaction) => {
                     new SelectMenuBuilder()
                         .setCustomId("mkRole")
                         .addOptions(
-                            { label: "作成する", value: interaction.values[0] + "/" + newChannel.id + "/1" },
-                            { label: "作成しない", value: interaction.values[0] + "/" + newChannel.id + "/0" }
+                            { label: "作成する", value: `${interaction.values[0]}/${newChannel.id}/1` },
+                            { label: "作成しない", value: `${interaction.values[0]}/${newChannel.id}/0` }
                         )
                 );
                 await interaction.update({
