@@ -1,3 +1,6 @@
+# ESLint
+# cf. https://eslint.org
+
 root: true
 extends:
   - "eslint:recommended"
