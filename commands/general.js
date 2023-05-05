@@ -145,7 +145,7 @@ module.exports = [
             }
 
             const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter((file) => file);
-            for (let attachment of attachFiles) {
+            for (const attachment of attachFiles) {
                 if (attachment.size > 8388608) {
                     await interaction.reply({
                         content:

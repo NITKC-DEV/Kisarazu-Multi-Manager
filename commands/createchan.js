@@ -4,7 +4,7 @@ const fs = require("fs");
 
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 
-let ccconfig = require("../CCConfig.json");
+const ccconfig = require("../CCConfig.json");
 
 // ここから先の[]が"../botmain.js/スラッシュコマンド登録"にてcommandsに代入
 module.exports = [
@@ -158,7 +158,7 @@ module.exports = [
                 ccconfig.guilds.find((guild) => guild.ID === interactionCopy.guildId).categories.length >= 1
             ) {
                 // ActionRowBuilder作成
-                let DCR = interactionCopy.options.getString("チャンネルとロールの削除");
+                const DCR = interactionCopy.options.getString("チャンネルとロールの削除");
                 const selectCategory = new ActionRowBuilder().addComponents(
                     new StringSelectMenuBuilder()
                         .setPlaceholder("カテゴリを選択")

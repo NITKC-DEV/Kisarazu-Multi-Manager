@@ -41,9 +41,9 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            let dt = new Date();
+            const dt = new Date();
             let dayOfWeek = dt.getDay();
-            let hours = dt.getHours();
+            const hours = dt.getHours();
             if (interaction.options.getString("曜日") === "1") {
                 dayOfWeek = 1;
             } else if (interaction.options.getString("曜日") === "2") {
