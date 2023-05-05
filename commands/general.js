@@ -22,7 +22,7 @@ module.exports = [
                     url: "https://github.com/NITKC22s/bot-main",
                 })
                 .setDescription("現在実装されているコマンド一覧です")
-                .addFields(commands.map((e) => ({ name: "/" + e.data.name, value: e.data.description })))
+                .addFields(commands.map((e) => ({ name: `/${e.data.name}`, value: e.data.description })))
                 .setTimestamp()
                 .setFooter({ text: "Developed by NITKC22s server Admin" });
             await interaction.reply({ embeds: [embed] });
@@ -43,7 +43,7 @@ module.exports = [
                 .addFields([
                     {
                         name: "バージョン情報",
-                        value: "v" + packageVer.version,
+                        value: `v${packageVer.version}`,
                     },
                     {
                         name: "開発者",
@@ -59,7 +59,7 @@ module.exports = [
                     },
                     {
                         name: "実行環境",
-                        value: "node.js v" + process.versions.node + `\n discord.js v` + version,
+                        value: `node.js v${process.versions.node}\n discord.js v${version}`,
                     },
                 ])
                 .setTimestamp()
@@ -105,7 +105,7 @@ module.exports = [
                     for (const roleMention of roleMentions) {
                         const role = interaction.guild.roles.cache.find((readRole) => readRole.id === roleMention.match(/\d+/)[0]);
                         if (role && !role.mentionable) {
-                            receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
+                            receivedMsg = receivedMsg.replace(roleMention, `@${role.name}`);
                         }
                     }
                 }
@@ -162,7 +162,7 @@ module.exports = [
              */
             const replyOptions = (time) => {
                 return {
-                    content: channelName + "にメッセージを代理で送信します\n(このメッセージは" + time + "秒後に自動で削除されます)",
+                    content: `${channelName}にメッセージを代理で送信します\n(このメッセージは${time}秒後に自動で削除されます)`,
                     ephemeral: true,
                 };
             };
@@ -170,32 +170,12 @@ module.exports = [
 
             if (sendingMsg)
                 console.log(
-                    "Send a message: " +
-                        sendingMsg +
-                        "\nby " +
-                        interaction.user.username +
-                        "#" +
-                        interaction.user.discriminator +
-                        " in " +
-                        channelName +
-                        " at " +
-                        currentTime +
-                        "\n"
+                    `Send a message: ${sendingMsg}\nby ${interaction.user.username}#${interaction.user.discriminator} in ${channelName} at ${currentTime}\n`
                 );
             if (attachFiles)
                 for (const file of attachFiles)
                     console.log(
-                        "Send a file: " +
-                            file.url +
-                            "\nby " +
-                            interaction.user.username +
-                            "#" +
-                            interaction.user.discriminator +
-                            " in " +
-                            channelName +
-                            " at " +
-                            currentTime +
-                            "\n"
+                        `Send a file: ${file.url}\nby ${interaction.user.username}#${interaction.user.discriminator} in ${channelName} at ${currentTime}\n`
                     );
             if (sendingMsg || attachFiles[0])
                 interaction.guild.channels.cache.get(interaction.channelId).send({

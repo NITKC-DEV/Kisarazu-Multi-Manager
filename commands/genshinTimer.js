@@ -110,22 +110,22 @@ module.exports = [
             } else if (interaction.options.getString("スコア") === `44.5`) {
                 await interaction.reply("あてぃし！？");
             } else if (interaction.options.getString("スコア") < 30) {
-                await interaction.reply("スコア" + interaction.options.getString("スコア") + "は流石に経験値にしようか:)");
+                await interaction.reply(`スコア${interaction.options.getString("スコア")}は流石に経験値にしようか:)`);
             } else if (interaction.options.getString("スコア") < 40) {
-                await interaction.reply("スコア" + interaction.options.getString("スコア") + "、時計/杯/冠なら強いんじゃない〜?");
+                await interaction.reply(`スコア${interaction.options.getString("スコア")}、時計/杯/冠なら強いんじゃない〜?`);
             } else if (interaction.options.getString("スコア") < 50) {
-                await interaction.reply("スコア" + interaction.options.getString("スコア") + "って強くない？");
+                await interaction.reply(`スコア${interaction.options.getString("スコア")}って強くない？`);
             } else if (interaction.options.getString("スコア") < 60) {
                 await interaction.reply(
-                    "スコア" + interaction.options.getString("スコア") + "だとぉ？:face_with_symbols_over_mouth: ふざけるなぁ:sparkler:"
+                    `スコア${interaction.options.getString("スコア")}だとぉ？:face_with_symbols_over_mouth: ふざけるなぁ:sparkler:`
                 );
             } else if (interaction.options.getString("スコア") < 60.4) {
-                await interaction.reply("スコア" + interaction.options.getString("スコア") + "ってまじで言ってる？？？え？？？？");
+                await interaction.reply(`スコア${interaction.options.getString("スコア")}ってまじで言ってる？？？え？？？？`);
             } else if (interaction.options.getString("スコア") < 0) {
-                await interaction.reply("スコア" + interaction.options.getString("スコア") + "ってなんだよ、負の値じゃんwww");
+                await interaction.reply(`スコア${interaction.options.getString("スコア")}ってなんだよ、負の値じゃんwww`);
             } else {
                 await interaction.reply(
-                    "スコア" + interaction.options.getString("スコア") + "ってなんだよ、嘘つくな:face_with_symbols_over_mouth:"
+                    `スコア${interaction.options.getString("スコア")}ってなんだよ、嘘つくな:face_with_symbols_over_mouth:`
                 );
             }
         },

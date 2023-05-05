@@ -49,7 +49,7 @@ module.exports = [
                 }
 
                 await interactionCopy.reply({
-                    content: channelNameSpaceChanged + " を作成するカテゴリを指定してください。",
+                    content: `${channelNameSpaceChanged} を作成するカテゴリを指定してください。`,
                     components: [selectCategory],
                     ephemeral: true,
                 });
@@ -164,7 +164,7 @@ module.exports = [
                         .setPlaceholder("カテゴリを選択")
                         .setCustomId("remCat")
                         .addOptions(
-                            { label: "全てのカテゴリを削除する", value: "ALL" + DCR },
+                            { label: "全てのカテゴリを削除する", value: `ALL${DCR}` },
                             ...ccconfig.guilds
                                 .find((server) => server.ID === interactionCopy.guild.id)
                                 .categories.map((category) => ({

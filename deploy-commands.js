@@ -76,7 +76,7 @@ async function run() {
             const selected = await new MultiSelect({
                 name: "value",
                 message: "対象のコマンドを<space>で選択、<a>で全選択、<i>で反転",
-                choices: data.map((e) => ({ name: "/" + e.name, value: e.id })),
+                choices: data.map((e) => ({ name: `/${e.name}`, value: e.id })),
                 result(commands) {
                     return Object.entries(this.map(commands));
                 },

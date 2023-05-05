@@ -80,7 +80,7 @@ module.exports = [
             date.timetable = interaction.options.data[0].value;
             fs.writeFileSync(configPath, JSON.stringify(date, null, "\t")); // ここで書き出し
             await interaction.reply({
-                content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました",
+                content: `時間割定期通知機能を${interaction.options.data[0].value}に設定しました`,
                 ephemeral: true,
             });
         },
