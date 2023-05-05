@@ -44,7 +44,7 @@ async function run() {
         message: "モードを選んでください",
         choices: ["登録(更新)", "削除", "キャンセル"],
     }).run();
-    if (mode == "キャンセル") {
+    if (mode === "キャンセル") {
         return;
     }
 
