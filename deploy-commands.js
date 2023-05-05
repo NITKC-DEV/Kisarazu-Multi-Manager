@@ -9,14 +9,14 @@ console.log(config);
 // ./commands/ ディレクトリ内を探索
 const commands = [];
 const commandsPath = path.join(__dirname, "commands");
-//.jsを検索
+// .jsを検索
 const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
 for (const file of commandFiles) {
-    //ファイルの数だけ
+    // ファイルの数だけ
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
     for (let i = 0; i < command.length; i++) {
-        //各コマンドを配列にぶちこむ
+        // 各コマンドを配列にぶちこむ
         commands.push(command[i].data.toJSON());
     }
 }
@@ -26,7 +26,7 @@ const rest = new REST({ version: "10" }).setToken(config.token);
 const { Select, MultiSelect, Toggle } = require("enquirer");
 
 async function run() {
-    //GETで現在登録されているのを取得
+    // GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client, config.server));
     console.log("---コマンド一覧---");
     for (const command of data) {
@@ -48,7 +48,7 @@ async function run() {
     switch (mode) {
         case "登録(更新)": {
             console.log("---追加コマンド---");
-            //差分を確認
+            // 差分を確認
             for (const filterElement of commands.filter((v) => !data.map((e) => e.name).includes(v.name))) {
                 console.log(`/${filterElement.name}`);
                 console.log(`  ${filterElement.description}`);

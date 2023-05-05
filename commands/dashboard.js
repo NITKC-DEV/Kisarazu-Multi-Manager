@@ -47,7 +47,7 @@ module.exports = [
 
         async execute(interaction) {
             if (interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5) {
-                const data = JSON.parse(fs.readFileSync(configPath, "utf8")); //ここで読み取り
+                const data = JSON.parse(fs.readFileSync(configPath, "utf8")); // ここで読み取り
                 data.nextTest[interaction.options.data[5].value - 1] = [
                     interaction.options.data[0].value,
                     interaction.options.data[1].value,
@@ -55,7 +55,7 @@ module.exports = [
                     interaction.options.data[3].value,
                     interaction.options.data[4].value,
                 ];
-                fs.writeFileSync(configPath, JSON.stringify(data, null, "\t")); //ここで書き出し
+                fs.writeFileSync(configPath, JSON.stringify(data, null, "\t")); // ここで書き出し
                 await interaction.reply({
                     content: `今年度${interaction.options.data[5].value}回目のテストを${
                         data.nextTest[interaction.options.data[5].value - 1][0]
@@ -81,7 +81,7 @@ module.exports = [
             .addStringOption((option) => option.setName("ギルドid").setDescription("ギルドIDを入力").setRequired(true)),
 
         async execute(interaction) {
-            const data = JSON.parse(fs.readFileSync(configPath, "utf8")); //ここで読み取り
+            const data = JSON.parse(fs.readFileSync(configPath, "utf8")); // ここで読み取り
             data.dashboard = [interaction.options.data[0].value, interaction.options.data[1].value, interaction.options.data[2].value];
             fs.writeFileSync(configPath, JSON.stringify(data, null, "\t"));
             await interaction.reply({

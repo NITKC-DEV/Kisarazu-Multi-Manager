@@ -95,7 +95,7 @@ module.exports = [
             const currentTime = date.toFormat("YYYY年 MM/DD HH24:MI:SS");
             let sendingMsg = "";
 
-            //ロールメンション時パーミッション確認と除外処理
+            // ロールメンション時パーミッション確認と除外処理
             if (!interaction.memberPermissions.has(1n << 17n)) {
                 const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
                 if (roleMentions) {
@@ -118,7 +118,7 @@ module.exports = [
                 }
             }
 
-            //改行とバクスラのエスケープ処理
+            // 改行とバクスラのエスケープ処理
             if (receivedMsg)
                 for (let i = 0; i < receivedMsg.length; i++) {
                     if (receivedMsg[i] === "\\") {
@@ -152,7 +152,7 @@ module.exports = [
                     return;
                 }
             }
-            /***
+            /**
              * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
              * @param time 返信が削除されるまでの残り時間
              * @returns {{ephemeral: boolean, content: string}} メッセージと本人にしか表示させない構成でオブジェクトを返す
@@ -200,7 +200,7 @@ module.exports = [
                     files: attachFiles,
                 });
 
-            //5秒カウントダウンしたのちに返信を削除
+            // 5秒カウントダウンしたのちに返信を削除
             for (let i = 5; i > 0; i--) {
                 await interaction.editReply(replyOptions(i));
                 await setTimeout(1000);

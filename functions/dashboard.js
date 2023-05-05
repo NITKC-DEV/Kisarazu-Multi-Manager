@@ -4,7 +4,7 @@ const fs = require("fs");
 const { configPath } = require("../environmentConfig");
 const axios = require("axios");
 
-/*天気取得*/
+/* 天気取得 */
 async function getWeather() {
     try {
         const response = await axios.get("https://weather.tsukumijima.net/api/forecast/city/120010");
@@ -15,7 +15,7 @@ async function getWeather() {
     }
 }
 
-/*日数カウント*/
+/* 日数カウント */
 function diffInMonthsAndDays(from, to) {
     if (from > to) {
         [from, to] = [to, from];
@@ -26,7 +26,7 @@ function diffInMonthsAndDays(from, to) {
         days;
     let daysInMonth;
     if (toDate.getFullYear() % 4 === 0 && toDate.getFullYear() % 4 !== 0) {
-        daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30]; /*前の月が何日であるかのリスト*/
+        daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30]; /* 前の月が何日であるかのリスト */
     } else if (toDate.getFullYear() % 400 === 0) {
         daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30];
     } else {
@@ -34,7 +34,7 @@ function diffInMonthsAndDays(from, to) {
     }
 
     if (toDate.getFullYear() - fromDate.getFullYear() >= 1) {
-        /*12ヶ月以上あるなら、その分加算*/
+        /* 12ヶ月以上あるなら、その分加算 */
         months += (toDate.getFullYear() - fromDate.getFullYear() - 1) * 12;
     }
     months += 12 * (toDate.getFullYear() - fromDate.getFullYear()) + (toDate.getMonth() - fromDate.getMonth());
@@ -50,17 +50,17 @@ function diffInMonthsAndDays(from, to) {
 }
 
 exports.generation = async function func(guild) {
-    /*現在時刻を取得*/
+    /* 現在時刻を取得 */
     const date = new Date();
     const time = date.toFormat("YYYY年 MM月DD日 HH24:MI:SS");
 
-    /*bot及びユーザーの人数を取得*/
+    /* bot及びユーザーの人数を取得 */
     const members = await guild.members.fetch({ withPresences: true });
     const user = members.filter((member) => member.user.bot === false).size;
     const online = members.filter((member) => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
     const botOnline = members.filter((member) => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
 
-    /*定期テスト*/
+    /* 定期テスト */
     const data = JSON.parse(fs.readFileSync(configPath, "utf8"));
     let test, UNIXtest, testStart, testEnd;
     let now = Date.now() + 32400000;
@@ -76,7 +76,7 @@ exports.generation = async function func(guild) {
         testEnd = Date.UTC(data.nextTest[0][0], data.nextTest[0][3] - 1, data.nextTest[0][4], 15, 0, 0);
         if (now > testStart) {
             if (now > testEnd) {
-                /*テストが終了してたら*/
+                /* テストが終了してたら */
                 for (let i = 0; i < 3; i++) {
                     data.nextTest[i] = data.nextTest[i + 1];
                 }
@@ -86,7 +86,7 @@ exports.generation = async function func(guild) {
                 }
             } else {
                 if (now > testEnd - 86400000) {
-                    /*最終日なら*/
+                    /* 最終日なら */
                     test = "テスト最終日です";
                 } else {
                     test = `テスト${Math.floor((now - testStart) / 86400000 + 1)}日目です(〜${data.nextTest[0][3]}月${
@@ -101,7 +101,7 @@ exports.generation = async function func(guild) {
         }
     }
 
-    /*今年度残り日数計算*/
+    /* 今年度残り日数計算 */
     let year;
     if (date.getMonth() < 3) {
         year = date.getFullYear();
@@ -121,7 +121,7 @@ exports.generation = async function func(guild) {
     }
     bar += `] ${Math.floor((remainingProportion / 2) * 100) / 10}% DONE`;
 
-    /*天気取得*/
+    /* 天気取得 */
     const weatherData = await getWeather();
     let weather;
     if (!weatherData) {
