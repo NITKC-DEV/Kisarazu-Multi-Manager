@@ -1,10 +1,13 @@
 /** @format */
 
-const { SlashCommandBuilder } = require("discord.js");
-const timetableBuilder = require("../timetable/timetableUtils");
-const Classes = require("../timetable/timetables.json");
 const fs = require("fs");
-const { configPath } = require("../environmentConfig");
+
+const { SlashCommandBuilder } = require("discord.js");
+
+const { configPath } = require("../environmentConfig.js");
+const timetableBuilder = require("../timetable/timetableUtils.js");
+const Classes = require("../timetable/timetables.json");
+
 module.exports = [
     {
         data: new SlashCommandBuilder()

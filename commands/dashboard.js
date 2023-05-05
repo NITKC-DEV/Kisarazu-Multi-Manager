@@ -1,9 +1,10 @@
 /** @format */
 
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
 const fs = require("fs");
-const { configPath } = require("../environmentConfig");
 
+const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+
+const { configPath } = require("../environmentConfig.js");
 const dashboard = require("../functions/dashboard.js");
 
 module.exports = [

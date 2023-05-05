@@ -1,15 +1,18 @@
 /** @format */
 
-const { SlashCommandBuilder, EmbedBuilder, version } = require("discord.js");
-const packageVer = require("../package.json");
 const { setTimeout } = require("node:timers/promises");
+
+const { SlashCommandBuilder, EmbedBuilder, version } = require("discord.js");
+
+const packageVer = require("../package.json");
+
 require("date-utils");
 
 module.exports = [
     {
         data: new SlashCommandBuilder().setName("help").setDescription("このBOTのヘルプを表示します"),
         async execute(interaction) {
-            const commands = require("../botmain");
+            const commands = require("../botmain.js");
             const embed = new EmbedBuilder()
                 .setColor(0x00a0ea)
                 .setTitle("ヘルプ")

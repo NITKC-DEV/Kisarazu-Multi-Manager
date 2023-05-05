@@ -1,9 +1,12 @@
 /** @format */
 
 const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
-const config = require("../environmentConfig");
 const dotenv = require("dotenv");
+
+const config = require("../environmentConfig.js");
+
 require("date-utils");
+
 dotenv.config();
 
 module.exports = [

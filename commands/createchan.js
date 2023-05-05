@@ -1,8 +1,10 @@
 /** @format */
 
-const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
-let ccconfig = require("../CCConfig.json");
 const fs = require("fs");
+
+const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
+
+let ccconfig = require("../CCConfig.json");
 
 // ここから先の[]が"../botmain.js/スラッシュコマンド登録"にてcommandsに代入
 module.exports = [

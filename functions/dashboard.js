@@ -1,8 +1,10 @@
 /** @format */
 
 const fs = require("fs");
-const { configPath } = require("../environmentConfig");
+
 const axios = require("axios");
+
+const { configPath } = require("../environmentConfig.js");
 
 /* 天気取得 */
 async function getWeather() {
@@ -21,9 +23,9 @@ function diffInMonthsAndDays(from, to) {
         [from, to] = [to, from];
     }
     const fromDate = new Date(from);
-    let toDate = new Date(to);
-    let months = 0,
-        days;
+    const toDate = new Date(to);
+    let months = 0;
+    let days;
     let daysInMonth;
     if (toDate.getFullYear() % 4 === 0 && toDate.getFullYear() % 4 !== 0) {
         daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30]; /* 前の月が何日であるかのリスト */
@@ -62,8 +64,11 @@ exports.generation = async function func(guild) {
 
     /* 定期テスト */
     const data = JSON.parse(fs.readFileSync(configPath, "utf8"));
-    let test, UNIXtest, testStart, testEnd;
-    let now = Date.now() + 32400000;
+    let test;
+    let UNIXtest;
+    let testStart;
+    let testEnd;
+    const now = Date.now() + 32400000;
     if (data.nextTest[0][0] === 0) {
         test = "現在設定されている次のテストはありません。";
         for (let i = 0; i < 3; i++) {
@@ -84,19 +89,15 @@ exports.generation = async function func(guild) {
                 if (data.nextTest[0][0] === 0) {
                     test = "現在設定されている次のテストはありません。";
                 }
+            } else if (now > testEnd - 86400000) {
+                /* 最終日なら */
+                test = "テスト最終日です";
             } else {
-                if (now > testEnd - 86400000) {
-                    /* 最終日なら */
-                    test = "テスト最終日です";
-                } else {
-                    test = `テスト${Math.floor((now - testStart) / 86400000 + 1)}日目です(〜${data.nextTest[0][3]}月${
-                        data.nextTest[0][4]
-                    }日)`;
-                }
+                test = `テスト${Math.floor((now - testStart) / 86400000 + 1)}日目です(〜${data.nextTest[0][3]}月${data.nextTest[0][4]}日)`;
             }
         } else {
             test = `${data.nextTest[0][0]}年${data.nextTest[0][1]}月${data.nextTest[0][2]}日〜${data.nextTest[0][3]}月${data.nextTest[0][4]}日`;
-            let day = diffInMonthsAndDays(now, UNIXtest);
+            const day = diffInMonthsAndDays(now, UNIXtest);
             test += `(${day[0]}ヶ月と${day[1]}日後)`;
         }
     }

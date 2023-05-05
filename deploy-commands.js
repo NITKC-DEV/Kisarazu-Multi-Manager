@@ -2,9 +2,13 @@
 
 const fs = require("node:fs");
 const path = require("node:path");
+
 const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord.js");
-const config = require("./environmentConfig");
+const { Select, MultiSelect, Toggle } = require("enquirer");
+
+const config = require("./environmentConfig.js");
+
 console.log(config);
 // ./commands/ ディレクトリ内を探索
 const commands = [];
@@ -23,7 +27,6 @@ for (const file of commandFiles) {
 
 // Discord API通信準備 トークン設定
 const rest = new REST({ version: "10" }).setToken(config.token);
-const { Select, MultiSelect, Toggle } = require("enquirer");
 
 async function run() {
     // GETで現在登録されているのを取得
