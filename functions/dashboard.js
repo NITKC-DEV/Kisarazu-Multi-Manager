@@ -89,7 +89,7 @@ exports.generation = async function func(guild) {
                 }
                 for (let i = 0; i < 3; i++) {
                     db.updateDB(
-                        "main","nextTest",{label:String(i)},
+                        "main","nextTest",{label:String(i+1)},
                         {
                             $set: {
                                 year: String(data[i+1].year),
