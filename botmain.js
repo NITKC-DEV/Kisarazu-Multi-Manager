@@ -64,7 +64,7 @@ client.on("interactionCreate", async (interaction) => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        system.error("スラッシュコマンド実行時エラー");
+        system.error("スラッシュコマンド実行時エラー : " + command.data.name);
         await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
