@@ -62,7 +62,6 @@ exports.generation = async function func(guild) {
     const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
 
     /*定期テスト*/
-    const jsonData = JSON.parse(fs.readFileSync(configPath, 'utf8'))
     const data = await db.getDatabase("main","nextTest",{label: {$in:["1","2","3","4"]}});
 
     let test, UNIXtest, testStart, testEnd;
@@ -201,7 +200,6 @@ exports.generation = async function func(guild) {
         weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
 
     }
-    fs.writeFileSync(configPath, JSON.stringify(jsonData, null, "\t"))
     return [
         {
             name: '更新時刻',
