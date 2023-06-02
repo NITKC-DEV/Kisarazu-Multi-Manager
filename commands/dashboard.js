@@ -16,8 +16,13 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
-                const embed = await dashboard.generation(interaction.guild)
-                await interaction.reply({ embeds: [embed] });
+                if(interaction.guild === undefined || interaction.guild === null){
+                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
+                }
+                else{
+                    const embed = await dashboard.generation(interaction.guild)
+                    await interaction.reply({ embeds: [embed] });
+                }
             },
         },
         {
