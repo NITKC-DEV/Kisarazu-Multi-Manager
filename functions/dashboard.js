@@ -1,9 +1,4 @@
-const fs = require("fs");
-const {configPath} = require("../environmentConfig");
 const axios = require('axios');
-const system = require('../functions/logsystem.js');
-const {MongoClient, ServerApiVersion} = require("mongodb");
-const config = require("../environmentConfig");
 const db = require("../functions/db.js");
 const {EmbedBuilder} = require("discord.js");
 
