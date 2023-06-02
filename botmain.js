@@ -64,7 +64,7 @@ client.on("interactionCreate", async (interaction) => {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
-        system.error("スラッシュコマンド実行時エラー : " + command.data.name);
+        await system.error("スラッシュコマンド実行時エラー : " + command.data.name);
         await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
@@ -348,21 +348,9 @@ cron.schedule('*/1  * * * *', async () => {
     const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
     const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
     const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
-    const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+    const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
     channel.messages.fetch(data.dashboard[0])
         .then((dashboard) => {
-            const newEmbed = new EmbedBuilder()
-                .setColor(0x00A0EA)
-                .setTitle('NIT,Kisarazu College 22s ダッシュボード')
-                .setAuthor({
-                    name: "木更津22s統合管理BOT",
-                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
-                })
-                .addFields(field)
-                .setTimestamp()
-                .setFooter({text: 'Developed by NITKC22s server Admin'});
-
             dashboard.edit({embeds: [newEmbed]});
         })
         .catch((error) => {
