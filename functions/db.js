@@ -1,6 +1,5 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const config = require('../environmentConfig')
-
 const system = require('../functions/logsystem.js');
 
 /***
@@ -10,7 +9,6 @@ const system = require('../functions/logsystem.js');
  * @param filter フィルターを指定
  * @returns Array型
  */
-
 exports.getDatabase = async function (dbName,collectionName,filter) {
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     const collection = dbClient.db(dbName).collection(collectionName);
