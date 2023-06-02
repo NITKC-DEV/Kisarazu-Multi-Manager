@@ -7,3 +7,4 @@ yarn.lock
 /CCConfig.json
 /.fleet/settings.json
 /timetable/timetables.json
+*/announcement.js
