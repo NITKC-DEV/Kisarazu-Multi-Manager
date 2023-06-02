@@ -8,7 +8,7 @@ const system = require('../functions/logsystem.js');
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
  * @param filter フィルターを指定
- * @returns オブジェクト型の配列
+ * @returns Array型
  */
 
 exports.getDatabase = async function (dbName,collectionName,filter) {
@@ -19,10 +19,10 @@ exports.getDatabase = async function (dbName,collectionName,filter) {
 }
 
 /***
- * データベースからデータを取得する
+ * データベースを更新する
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
- * @param filter フィルターを指定
+ * @param filter 更新対象のフィルターを指定
  * @param update update operatorを用いた更新内容の記述
  */
 exports.updateDB = async function run(dbName,collectionName,filter,update) {
