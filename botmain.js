@@ -1,18 +1,13 @@
+//モジュール読み込み
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
-const config = require('./environmentConfig')
-let ccconfig=require("./CCConfig.json");
 const timetableBuilder  = require('./timetable/timetableUtils');
-const Classes = require('./timetable/timetables.json');
-const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
-const dashboard = require('./functions/dashboard.js');
-const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-require('date-utils');
-const {configPath} = require("./environmentConfig");
+const dotenv = require('dotenv');
 dotenv.config();
-const client = new Client({
+require('date-utils');
+global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -24,15 +19,26 @@ const client = new Client({
     ],
     partials: [Partials.Channel],
 });
-module.exports.client=client;
 
+//configファイル読み込み
+const config = require('./environmentConfig')
+let ccconfig=require("./CCConfig.json");
+const Classes = require('./timetable/timetables.json');
+const {configPath} = require("./environmentConfig");
+
+
+//関数読み込み
+const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+const dashboard = require('./functions/dashboard.js');
+const system = require('./functions/logsystem.js');
+const genshin = require('./functions/genshin.js');
+
+
+//スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 module.exports = client.commands;
-
-
-/*スラッシュコマンド登録*/
 client.once("ready", async () => {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -42,10 +48,10 @@ client.once("ready", async () => {
         }
 
     }
-    console.log("Ready!");
+    system.log("Ready!");
 });
 
-/*実際の動作*/
+/*Readyイベント*/
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) {
         return;
@@ -53,11 +59,12 @@ client.on("interactionCreate", async (interaction) => {
     const command = interaction.client.commands.get(interaction.commandName);
 
     if (!command) return;
-    console.log("SlashCommand : "+command.data.name);
+    system.log(command.data.name,"SlashCommand");
     try {
         await command.execute(interaction);
     } catch (error) {
         console.error(error);
+        system.error("スラッシュコマンド実行時エラー");
         await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
     }
 });
@@ -92,7 +99,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
                 return;
             }
@@ -141,7 +148,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -171,7 +178,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -223,7 +230,7 @@ client.on(Events.InteractionCreate, async interaction =>
                         }
                         catch(e)
                         {
-                            console.log(e);
+                            system.log(e);
                         }
 
                     }
@@ -242,7 +249,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
                 } catch (e)
                 {
-                    console.log (e);
+                    system.log (e);
                     await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                     return;
                 }
@@ -283,7 +290,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     }
                     catch(e)
                     {
-                        console.log(e);
+                        system.log(e);
                     }
                 }
             }
@@ -297,7 +304,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
                 } catch (e)
                 {
-                    console.log (e);
+                    system.log (e);
                     await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                     return;
                 }
@@ -314,172 +321,8 @@ client.on('messageCreate', message => {
 
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
-    const daily = {
-        color: 0x27668D,
-        title: 'デイリー更新',
-        author: {
-            name: 'Genshin-timer',
-            icon_url: 'https://pbs.twimg.com/media/FcdR7aIaIAE75Uu?format=png&name=large',
-            url: 'https://github.com/starkoka/Genshin-Timer',
-        },
-        description: 'デイリーが更新されました。忘れずに4つ+追加報酬を受け取りましょう\n\n',
-        timestamp: new Date().toISOString(),
-        footer: {
-            text: 'Developed by @kokastar_studio',
-            icon_url: 'https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg',
-        },
-    };
-    client.channels.cache.get(config.daily).send({ embeds: [daily] })
-    let dt = new Date();
-    let dayofweek = dt.getDay();
-    let date = dt.getDate();
-    const genshinColor = 0x27668D;
-    if (dayofweek === 1) { /*月曜日*/
-        const monday = {
-            color: genshinColor,
-            title: '新しい週が始まりました',
-            description: '新しい週が始まり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n週ボスリセット',
-                    value: '風魔龍・トワリン、アンドリアス、「公子」、若陀龍王、「淑女」、禍津御建鳴神命、七葉寂照秘密主の報酬が再度受け取れるようになりました。\nまた、樹脂半減回数がリセットされました。',
-                },
-                {
-                    name: '​\n評判任務更新',
-                    value: 'モンド、璃月、稲妻、スメール各国の評判任務が更新されました。\n',
-                },
-                {
-                    name: '​\n「緋紅の願い」リセット',
-                    value: 'ドラゴンスパインのクエスト「緋紅の願い」が再挑戦できるようになりました。\n',
-                },
-                {
-                    name: '​\nアイテム購入回数リセット',
-                    value: '加工済み食材・洞天百貨宝貨・四方八方の網の購入回数がリセットされました。\n',
-                },
-                {
-                    name: '​\n木材変転回数リセット',
-                    value: '木材変転の上限回数がリセットされました。\n',
-                },
-                {
-                    name: '​\n週間限定ギフトパック購入回数リセット',
-                    value: '週間限定ギフトパックの購入上限回数がリセットされました。\n',
-                },
-                {
-                    name: '​\n七聖召喚ウィークリーゲスト対戦リセット',
-                    value: '七聖召喚のウィークリーゲスト対戦がリセットされました\n',
-                }
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [monday] })
-    }
-
-    if (dayofweek === 4) { /*木曜日*/
-        const thursday = {
-            color: genshinColor,
-            title: '木曜日になりました',
-            description: '木曜日になり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n聖遺物購入回数リセット',
-                    value: '聖遺物の購入回数上限がリセットされました',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [thursday] })
-    }
-
-    if (dayofweek === 5) { /*金曜日*/
-        const friday = {
-            color: genshinColor,
-            title: '金曜日になりました',
-            description: '金曜日になり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n「緋紅の願い」リセット',
-                    value: 'ドラゴンスパインのクエスト「緋紅の願い」が再挑戦できるようになりました。\n',
-                },
-                {
-                    name: '​\n周回する壺の精霊出現',
-                    value: '自分の塵歌壺内で商品を購入可能になりました(日曜日まで)',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [friday] })
-    }
-
-    if (dayofweek === 6) { /*土曜日*/
-        const saturday = {
-            color: genshinColor,
-            title: '土曜日になりました',
-            description: '土曜日になり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n他人の壺の精霊で購入可能に',
-                    value: '他人のの塵歌壺内で商品を購入可能になりました。(日曜日まで)',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [saturday] })
-    }
-    if (date % 3 === 0) { /*3の倍数の日*/
-        const multiple = {
-            color: genshinColor,
-            title: 'アイテム購入リセット',
-            description: '博来・長順以外の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n',
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [multiple] })
-    }
-    if (date % 3 === 1) { /*3の倍数+1の日*/
-        const multiple2 = {
-            color: genshinColor,
-            title: 'アイテム購入リセット',
-            description: '博来・長順の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n',
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [multiple2] })
-    }
-
-    if (date === 1) { /*毎月1日*/
-        const first = {
-            color: genshinColor,
-            title: '1日になりました',
-            description: '月が変わり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n螺旋リセット',
-                    value: '螺旋9~12層がリセットされました。',
-                },
-                {
-                    name: '​\nスター交換ラインナップ更新・リセット',
-                    value: 'スターライト交換のラインナップが更新されました。\nまた、スターライト交換・スターダスト交換の購入回数上限がリセットされました。',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [first] })
-    }
-    if (date === 16) { /*毎月16日*/
-        const sixteenth = {
-            color: genshinColor,
-            title: '16日になりました',
-            description: '月の後半に入り、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n螺旋リセット',
-                    value: '螺旋9~12層がリセットされました。',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [sixteenth] })
-    }
-
-    console.log('デイリー通知送信完了')
+    genshin.daily();
+    system.log('デイリー通知送信完了');
 });
 
 
@@ -523,9 +366,11 @@ cron.schedule('*/1  * * * *', async () => {
             dashboard.edit({embeds: [newEmbed]});
         })
         .catch((error) => {
-            console.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
+            system.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
         });
+
 });
+
 
 
 client.login(config.token);
