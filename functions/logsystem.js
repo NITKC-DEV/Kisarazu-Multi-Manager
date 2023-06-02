@@ -23,10 +23,10 @@ exports.error = async function func(message,title) {
         .setDescription(message)
         .setTimestamp()
         .setFooter({ text: 'Discord Log System' });
-    let channel = await client.channels.fetch(config.logSystem)
-    channel.send({embeds: [embed]})
+    const logChannel = await client.channels.fetch(config.logSystem)
+    const errorChannel = await client.channels.fetch(config.errorSystem)
 
-    channel = await client.channels.fetch(config.errorSystem)
-    channel.send({embeds: [embed]})
+    logChannel.send({embeds: [embed]})
+    errorChannel.send({embeds: [embed]})
 }
 
