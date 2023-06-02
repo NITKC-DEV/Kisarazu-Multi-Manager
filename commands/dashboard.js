@@ -1,13 +1,8 @@
 const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
-
 const dashboard = require('../functions/dashboard.js');
-const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
-const {MongoClient, ServerApiVersion} = require("mongodb");
-const config = require("../environmentConfig");
-
 module.exports =
     [
         {
