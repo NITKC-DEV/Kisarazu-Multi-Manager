@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const config = require('../environmentConfig')
 const system = require('../functions/logsystem.js');
+const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 
 /***
  * データベースからデータを取得する
@@ -24,7 +25,6 @@ exports.getDatabase = async function (dbName,collectionName,filter) {
  * @param update update operatorを用いた更新内容の記述
  */
 exports.updateDB = async function run(dbName,collectionName,filter,update) {
-    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     try {
         const database = dbClient.db(dbName);
         const collection = database.collection(collectionName);
@@ -32,7 +32,7 @@ exports.updateDB = async function run(dbName,collectionName,filter,update) {
         const result = await collection.updateOne(filter,update)
         system.log(`${dbName}.${collectionName}を更新`,`db操作実行`);
     } finally {
-        await dbClient.close();
+
     }
 }
 
@@ -44,7 +44,7 @@ exports.updateDB = async function run(dbName,collectionName,filter,update) {
  * @param object 追加するレコード(オブジェクト型)
  */
 exports.add = async function run(dbName,collectionName,object) {
-    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+
     try {
         const database = dbClient.db(dbName);
         const collection = database.collection(collectionName);
@@ -52,7 +52,7 @@ exports.add = async function run(dbName,collectionName,object) {
         const result = await collection.insertOne(object);
         system.log(`${dbName}.${collectionName}にレコード追加`,`db操作実行`);
     } finally {
-        await dbClient.close();
+
     }
 }
 
