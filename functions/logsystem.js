@@ -11,7 +11,7 @@ exports.log = async function func(message,title) {
         .setFooter({ text: 'Discord Log System' });
 
     const channel = await client.channels.fetch(config.logSystem)
-    channel.send({embeds: [embed]})
+    await channel.send({embeds: [embed]})
 }
 
 
@@ -26,7 +26,7 @@ exports.error = async function func(message,title) {
     const logChannel = await client.channels.fetch(config.logSystem)
     const errorChannel = await client.channels.fetch(config.errorSystem)
 
-    logChannel.send({embeds: [embed]})
-    errorChannel.send({embeds: [embed]})
+    await logChannel.send({embeds: [embed]})
+    await errorChannel.send({embeds: [embed]})
 }
 

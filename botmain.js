@@ -65,7 +65,11 @@ client.on("interactionCreate", async (interaction) => {
     } catch (error) {
         console.error(error);
         await system.error("スラッシュコマンド実行時エラー : " + command.data.name);
-        await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        try{
+            await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        } catch(error){
+            await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        }
     }
 });
 
