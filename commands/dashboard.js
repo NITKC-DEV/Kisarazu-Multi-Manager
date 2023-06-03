@@ -98,10 +98,12 @@ module.exports =
                 await interaction.deferReply({ ephemeral: true })
                 const data = await db.getDatabase("main","dashboard",{guild:String(interaction.guildId)});
                 if(data.length > 0){
-                    console.log("存在する")
+                    const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+                    await reply.react('⭕');
+                    await reply.react('❌');
                 }
                 else{
-                    const embed = await dashboard.generation(interaction.guild)
+                    const embed = await dashboard.generation(interaction.guild);
                     const board = await interaction.channel.send({ embeds: [embed] });
                     await db.add("main","dashboard",{
                         guild: String(interaction.guildId),
