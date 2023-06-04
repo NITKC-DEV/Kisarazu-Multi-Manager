@@ -33,7 +33,8 @@ const {configPath} = require("./environmentConfig");
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
-const genshin = require('./functions/genshin.js');
+const genshin = require('./functions/genshin.js')
+const db = require('./functions/db.js');
 
 
 //スラッシュコマンド登録
@@ -351,17 +352,20 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 cron.schedule('*/1  * * * *', async () => {
-    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
-    const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
-    const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-    channel.messages.fetch(data.dashboard[0])
-        .then((dashboard) => {
-            dashboard.edit({embeds: [newEmbed]});
-        })
-        .catch((error) => {
-            system.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
-        });
+
+    const data = await db.getDatabase("main","dashboard",{board:{$nin:["none"]}});
+    for(let i=0;i<data.length;i++){
+        const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
+        const channel = client.channels.cache.get(data[i].channel); /*チャンネル情報取得*/
+        const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+        channel.messages.fetch(data[i].board)
+            .then((dashboard) => {
+                dashboard.edit({embeds: [newEmbed]});
+            })
+            .catch((error) => {
+                system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした: ${error}`);
+            });
+    }
 
 });
 
