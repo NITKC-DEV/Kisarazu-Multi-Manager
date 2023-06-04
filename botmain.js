@@ -353,7 +353,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 
 cron.schedule('*/1  * * * *', async () => {
 
-    const data = await db.getDatabase("main","dashboard",{board:{$nin:["none"]}});
+    const data = await db.find("main","dashboard",{});
     for(let i=0;i<data.length;i++){
         const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
         const channel = client.channels.cache.get(data[i].channel); /*チャンネル情報取得*/
@@ -362,8 +362,9 @@ cron.schedule('*/1  * * * *', async () => {
             .then((dashboard) => {
                 dashboard.edit({embeds: [newEmbed]});
             })
-            .catch((error) => {
-                system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`);
+            .catch(async (error) => {
+                await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`);
+                await db.delete("main", "dashboard", {channel: data[i].channel});
             });
     }
 
