@@ -68,7 +68,7 @@ module.exports =
 
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
-                    db.updateDB(
+                    db.update(
                         "main","nextTest",{label:String(interaction.options.data[5].value)},
                         {
                             $set: {
@@ -98,7 +98,7 @@ module.exports =
             async execute(interaction) {
                 const reply = await interaction.deferReply()
                 let replyOptions;
-                const data = await db.getDatabase("main","dashboard",{guild:String(interaction.guildId)});
+                const data = await db.find("main","dashboard",{guild:String(interaction.guildId)});
                 if(data.length > 0){
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
                     await reply.react('⭕');
@@ -119,7 +119,7 @@ module.exports =
                         await interaction.editReply("生成中...")
                         const embed = await dashboard.generation(interaction.guild);
                         const board = await interaction.channel.send({ embeds: [embed] });
-                        db.updateDB("main","dashboard",{guild:String(interaction.guildId)}, {
+                        await db.update("main","dashboard",{guild:String(interaction.guildId)}, {
                             $set:{
                                 guild: String(interaction.guildId),
                                 channel: String(interaction.channelId),
@@ -137,7 +137,7 @@ module.exports =
                 else{
                     const embed = await dashboard.generation(interaction.guild);
                     const board = await interaction.channel.send({ embeds: [embed] });
-                    await db.add("main","dashboard",{
+                    await db.insert("main","dashboard",{
                         guild: String(interaction.guildId),
                         channel: String(interaction.channelId),
                         board: String(board.id)
