@@ -13,12 +13,13 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
+                const reply = await interaction.deferReply()
                 if(interaction.guild === undefined || interaction.guild === null){
-                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
+                    await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                 }
                 else{
                     const embed = await dashboard.generation(interaction.guild)
-                    await interaction.reply({ embeds: [embed] });
+                    await interaction.editReply({ embeds: [embed] });
                 }
             },
         },
@@ -121,6 +122,7 @@ module.exports =
                         db.updateDB("main","dashboard",{guild:String(interaction.guildId)}, {
                             $set:{
                                 guild: String(interaction.guildId),
+                                channel: String(interaction.channelId),
                                 board: String(board.id)
                             }
                         })
@@ -137,6 +139,7 @@ module.exports =
                     const board = await interaction.channel.send({ embeds: [embed] });
                     await db.add("main","dashboard",{
                         guild: String(interaction.guildId),
+                        channel: String(interaction.channelId),
                         board: String(board.id)
                     })
                     replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
