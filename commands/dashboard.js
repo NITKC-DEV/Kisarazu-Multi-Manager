@@ -95,12 +95,22 @@ module.exports =
                 .setDefaultMemberPermissions(1<<3),
 
             async execute(interaction) {
-                await interaction.deferReply({ ephemeral: true })
+                await interaction.deferReply()
+                let replyOptions;
                 const data = await db.getDatabase("main","dashboard",{guild:String(interaction.guildId)});
                 if(data.length > 0){
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
                     await reply.react('⭕');
                     await reply.react('❌');
+                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
+                        .then(collected => {
+                            if(reply.reaction.emoji.name === '⭕'){
+                                console.log("まる")
+                            }
+                            else{
+                                console.log("ばつ")
+                            }
+                        })
                 }
                 else{
                     const embed = await dashboard.generation(interaction.guild);
@@ -109,15 +119,16 @@ module.exports =
                         guild: String(interaction.guildId),
                         board: String(board.id)
                     })
-                    const replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
-                    await interaction.editReply(replyOptions(5));
-                    //5秒カウントダウンしたのちに返信を削除
-                    for(let i=5;i>0;i--){
-                        await interaction.editReply(replyOptions(i));
-                        await setTimeout(1000);
-                    }
-                    await interaction.deleteReply();
+                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+
                 }
+                await interaction.editReply(replyOptions(5));
+                //5秒カウントダウンしたのちに返信を削除
+                for(let i=5;i>0;i--){
+                    await interaction.editReply(replyOptions(i));
+                    await setTimeout(1000);
+                }
+                await interaction.deleteReply();
 
 
 

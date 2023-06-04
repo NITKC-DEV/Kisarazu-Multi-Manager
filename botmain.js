@@ -15,7 +15,9 @@ global.client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildPresences
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.GuildMessageReactions
     ],
     partials: [Partials.Channel],
 });
@@ -63,12 +65,12 @@ client.on("interactionCreate", async (interaction) => {
     try {
         await command.execute(interaction);
     } catch (error) {
-        console.error(error);
-        await system.error("スラッシュコマンド実行時エラー : " + command.data.name);
+        await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
         try{
             await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
         } catch(error){
-            await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+            const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+            await reply.reactions.removeAll()
         }
     }
 });
