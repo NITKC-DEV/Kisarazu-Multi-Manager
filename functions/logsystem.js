@@ -26,7 +26,6 @@ exports.log = async function func(message,title) {
  * @param title エラーメッセージのタイトル。省略可
  */
 exports.error = async function func(message,error,title) {
-    console.error(`${title ?? "エラー"} ----\n ${message.trim()}\n\n${error.stack}\n\n--------\n`);
     const embed = new EmbedBuilder()
         .setColor(0xFF0000)
         .setTitle(title ?? "エラー")
@@ -38,10 +37,15 @@ exports.error = async function func(message,error,title) {
 
     await logChannel.send({embeds: [embed]});
     await errorChannel.send({embeds: [embed]});
-    if(error.stack !== undefined && error.stack !== null){
-        await logChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
-        await errorChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
+    try{
+        console.error(`${title ?? "エラー"} ----\n ${message.trim()}\n\n${error.stack}\n\n--------\n`);
+        if(error.stack !== undefined && error.stack !== null){
+            await logChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
+            await errorChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
+        }
     }
-
+    catch{
+        console.error(`${title ?? "エラー"} ----\n ${message.trim()}\n--------\n`);
+    }
 }
 

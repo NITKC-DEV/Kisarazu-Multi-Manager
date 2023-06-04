@@ -363,7 +363,7 @@ cron.schedule('*/1  * * * *', async () => {
                 dashboard.edit({embeds: [newEmbed]});
             })
             .catch((error) => {
-                system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした: ${error}`);
+                system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`);
             });
     }
 
