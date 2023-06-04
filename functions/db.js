@@ -30,7 +30,7 @@ exports.updateDB = async function run(dbName,collectionName,filter,update) {
         const collection = database.collection(collectionName);
 
         const result = await collection.updateOne(filter,update)
-        system.log(`${dbName}.${collectionName}を更新`,`db操作実行`);
+        system.log(`${dbName}.${collectionName}を更新`,`DB更新実行`);
     } finally {
 
     }
@@ -50,7 +50,7 @@ exports.add = async function run(dbName,collectionName,object) {
         const collection = database.collection(collectionName);
 
         const result = await collection.insertOne(object);
-        system.log(`${dbName}.${collectionName}にレコード追加`,`db操作実行`);
+        system.log(`${dbName}.${collectionName}にレコード追加`,`DB追加実行`);
     } finally {
 
     }
