@@ -55,7 +55,7 @@ exports.insert = async function run(dbName, collectionName, object) {
     }
 }
 /***
- * データベースにレコードを追加する
+ * データベースにレコードを削除する
  * @param dbName 削除元データベース名
  * @param collectionName 削除元コレクション名
  * @param filter 削除対象のフィルターを指定

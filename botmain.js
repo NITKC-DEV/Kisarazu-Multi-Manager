@@ -52,6 +52,7 @@ client.once("ready", async () => {
 
     }
     system.log("Ready!");
+    await system.warn("oyaoya",undefined,"てすとえら〜(いとてき)");
 });
 
 /*Readyイベント*/
@@ -69,7 +70,7 @@ client.on("interactionCreate", async (interaction) => {
         await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
         try{
             await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
-        } catch(error){
+        } catch{
             const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
             await reply.reactions.removeAll()
         }
@@ -363,7 +364,7 @@ cron.schedule('*/1  * * * *', async () => {
                 dashboard.edit({embeds: [newEmbed]});
             })
             .catch(async (error) => {
-                await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`);
+                await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
                 await db.delete("main", "dashboard", {channel: data[i].channel});
             });
     }

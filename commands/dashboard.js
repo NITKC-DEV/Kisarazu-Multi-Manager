@@ -152,14 +152,6 @@ module.exports =
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();
-
-
-
-                /*
-                data.dashboard = [interaction.options.data[0].value,interaction.options.data[1].value,interaction.options.data[2].value]
-                fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t"))
-                await interaction.reply({ content: `メッセージID:${data.dashboard[0]} を、自動更新ダッシュボードに設定しました。`, ephemeral: true });
-                */
             },
         },
     ]
