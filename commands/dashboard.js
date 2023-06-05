@@ -3,6 +3,8 @@ const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 const dashboard = require('../functions/dashboard.js');
 const db = require('../functions/db.js');
+const system = require("../functions/logsystem");
+const {setTimeout} = require("node:timers/promises");
 module.exports =
     [
         {
@@ -11,12 +13,13 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
+                const reply = await interaction.deferReply()
                 if(interaction.guild === undefined || interaction.guild === null){
-                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
+                    await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                 }
                 else{
                     const embed = await dashboard.generation(interaction.guild)
-                    await interaction.reply({ embeds: [embed] });
+                    await interaction.editReply({ embeds: [embed] });
                 }
             },
         },
@@ -65,7 +68,7 @@ module.exports =
 
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
-                    db.updateDB(
+                    db.update(
                         "main","nextTest",{label:String(interaction.options.data[5].value)},
                         {
                             $set: {
@@ -89,33 +92,66 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('auto-dashboard')
-                .setDescription('自動更新されるダッシュボードを選択')
-                .setDefaultMemberPermissions(1<<3)
-                .addStringOption(option =>
-                    option
-                        .setName('ダッシュボードid')
-                        .setDescription('メッセージIDを入力')
-                        .setRequired(true)
-                )
-                .addStringOption(option =>
-                    option
-                        .setName('チャンネルid')
-                        .setDescription('チャンネルIDを入力')
-                        .setRequired(true)
-                )
-                .addStringOption(option =>
-                    option
-                        .setName('ギルドid')
-                        .setDescription('ギルドIDを入力')
-                        .setRequired(true)
-                ),
+                .setDescription('自動更新されるダッシュボードを生成')
+                .setDefaultMemberPermissions(1<<3),
 
             async execute(interaction) {
-                const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
-                data.dashboard = [interaction.options.data[0].value,interaction.options.data[1].value,interaction.options.data[2].value]
-                fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t"))
-                await interaction.reply({ content: `メッセージID:${data.dashboard[0]} を、自動更新ダッシュボードに設定しました。`, ephemeral: true });
+                const reply = await interaction.deferReply()
+                let replyOptions;
+                const data = await db.find("main","dashboard",{guild:String(interaction.guildId)});
+                if(data.length > 0){
+                    const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+                    await reply.react('⭕');
+                    await reply.react('❌');
+                    let flag = -1;
 
+                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
+                        .then(collected => {
+                            if(reply.reactions.cache.at(0).count === 2){
+                                flag = 0;
+                            }
+                            else if(reply.reactions.cache.at(1).count === 2){
+                                flag = 1;
+                            }
+                        })
+                    await reply.reactions.removeAll();
+                    if(flag === 0){
+                        await interaction.editReply("生成中...")
+                        const embed = await dashboard.generation(interaction.guild);
+                        const board = await interaction.channel.send({ embeds: [embed] });
+                        await db.update("main","dashboard",{guild:String(interaction.guildId)}, {
+                            $set:{
+                                guild: String(interaction.guildId),
+                                channel: String(interaction.channelId),
+                                board: String(board.id)
+                            }
+                        })
+
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    }
+                    else if(flag === 1){
+                        await reply.reactions.removeAll();
+                        replyOptions=time=>{return{content: '生成をキャンセルしました\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    }
+                }
+                else{
+                    const embed = await dashboard.generation(interaction.guild);
+                    const board = await interaction.channel.send({ embeds: [embed] });
+                    await db.insert("main","dashboard",{
+                        guild: String(interaction.guildId),
+                        channel: String(interaction.channelId),
+                        board: String(board.id)
+                    })
+                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+
+                }
+                await interaction.editReply(replyOptions(5));
+                //5秒カウントダウンしたのちに返信を削除
+                for(let i=5;i>0;i--){
+                    await interaction.editReply(replyOptions(i));
+                    await setTimeout(1000);
+                }
+                await interaction.deleteReply();
             },
         },
     ]

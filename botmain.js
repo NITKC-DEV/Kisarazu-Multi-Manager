@@ -15,7 +15,9 @@ global.client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildPresences
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.GuildMessageReactions
     ],
     partials: [Partials.Channel],
 });
@@ -32,6 +34,7 @@ const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
+const db = require('./functions/db.js');
 
 
 //スラッシュコマンド登録
@@ -63,9 +66,13 @@ client.on("interactionCreate", async (interaction) => {
     try {
         await command.execute(interaction);
     } catch (error) {
-        console.error(error);
-        await system.error("スラッシュコマンド実行時エラー : " + command.data.name);
-        await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
+        try{
+            await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        } catch{
+            const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+            await reply.reactions.removeAll()
+        }
     }
 });
 
@@ -345,17 +352,21 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 cron.schedule('*/1  * * * *', async () => {
-    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
-    const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
-    const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-    channel.messages.fetch(data.dashboard[0])
-        .then((dashboard) => {
-            dashboard.edit({embeds: [newEmbed]});
-        })
-        .catch((error) => {
-            system.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
-        });
+
+    const data = await db.find("main","dashboard",{});
+    for(let i=0;i<data.length;i++){
+        const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
+        const channel = client.channels.cache.get(data[i].channel); /*チャンネル情報取得*/
+        const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+        channel.messages.fetch(data[i].board)
+            .then((dashboard) => {
+                dashboard.edit({embeds: [newEmbed]});
+            })
+            .catch(async (error) => {
+                await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
+                await db.delete("main", "dashboard", {channel: data[i].channel});
+            });
+    }
 
 });
 

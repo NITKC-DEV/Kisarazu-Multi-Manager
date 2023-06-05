@@ -58,7 +58,7 @@ exports.generation = async function func(guild) {
     const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
 
     /*定期テスト*/
-    const data = await db.getDatabase("main","nextTest",{label: {$in:["1","2","3","4"]}});
+    const data = await db.find("main","nextTest",{label: {$in:["1","2","3","4"]}});
 
     let test, UNIXtest, testStart, testEnd;
     let now = Date.now() + 32400000;
@@ -83,7 +83,7 @@ exports.generation = async function func(guild) {
                     test += `(${day[0]}ヶ月と${day[1]}日後)`
                 }
                 for (let i = 0; i < 3; i++) {
-                    db.updateDB(
+                    db.update(
                         "main","nextTest",{label:String(i+1)},
                         {
                             $set: {
@@ -96,7 +96,7 @@ exports.generation = async function func(guild) {
                         }
                     )
                 }
-                db.updateDB(
+                db.update(
                     "main","nextTest",{label:"4"},
                     {
                         $set: {
@@ -153,7 +153,7 @@ exports.generation = async function func(guild) {
     else{
         let todayMax;
         let todayMin;
-        const weatherCache = await db.getDatabase("main","weatherCache",{label: {$in:["0","1"]}}); /*天気のキャッシュを取得*/
+        const weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}}); /*天気のキャッシュを取得*/
 
         if (weatherData.forecasts[0].date === weatherCache[0].day) {
             todayMax = weatherCache[0].max;
@@ -167,7 +167,7 @@ exports.generation = async function func(guild) {
                 todayMax = `---`;
                 todayMin = `---`;
             }
-            await db.updateDB(  /*日付を1日動かす*/
+            await db.update(  /*日付を1日動かす*/
                 "main", "weatherCache", {label: "0"},
                 {
                     $set: {
@@ -179,7 +179,7 @@ exports.generation = async function func(guild) {
             )
         }
 
-        db.updateDB(  /*明日の天気のキャッシュを更新*/
+        db.update(  /*明日の天気のキャッシュを更新*/
             "main","weatherCache",{label:"1"},
             {
                 $set: {
