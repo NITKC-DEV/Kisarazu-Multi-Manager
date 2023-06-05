@@ -52,7 +52,6 @@ client.once("ready", async () => {
 
     }
     system.log("Ready!");
-    await system.warn("oyaoya",undefined,"てすとえら〜(いとてき)");
 });
 
 /*Readyイベント*/
