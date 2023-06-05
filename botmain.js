@@ -31,6 +31,7 @@ const {configPath} = require("./environmentConfig");
 
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+const birthday = require('./functions/birthday.js');
 const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
