@@ -10,8 +10,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @param filter フィルターを指定
  * @returns Array型
  */
-exports.getDatabase = async function (dbName,collectionName,filter) {
-    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+exports.find = async function (dbName, collectionName, filter) {
     const collection = dbClient.db(dbName).collection(collectionName);
 
     return await collection.find(filter).toArray()
@@ -24,15 +23,15 @@ exports.getDatabase = async function (dbName,collectionName,filter) {
  * @param filter 更新対象のフィルターを指定
  * @param update update operatorを用いた更新内容の記述
  */
-exports.updateDB = async function run(dbName,collectionName,filter,update) {
+exports.update = async function run(dbName, collectionName, filter, update) {
     try {
         const database = dbClient.db(dbName);
         const collection = database.collection(collectionName);
 
         const result = await collection.updateOne(filter,update)
-        system.log(`${dbName}.${collectionName}を更新`,`db操作実行`);
-    } finally {
-
+        await system.log(`${dbName}.${collectionName}を更新`,`DB更新実行`);
+    } catch(err) {
+        await system.error(`${dbName}.${collectionName}を更新できませんでした`,err,`DB更新失敗`);
     }
 }
 
@@ -43,16 +42,34 @@ exports.updateDB = async function run(dbName,collectionName,filter,update) {
  * @param collectionName 追加先コレクション名
  * @param object 追加するレコード(オブジェクト型)
  */
-exports.add = async function run(dbName,collectionName,object) {
+exports.insert = async function run(dbName, collectionName, object) {
 
     try {
         const database = dbClient.db(dbName);
         const collection = database.collection(collectionName);
 
         const result = await collection.insertOne(object);
-        system.log(`${dbName}.${collectionName}にレコード追加`,`db操作実行`);
-    } finally {
+        await system.log(`${dbName}.${collectionName}にレコード追加`,`DB追加実行`);
+    } catch(err) {
+        await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`,err,`DB追加失敗`);
+    }
+}
+/***
+ * データベースにレコードを削除する
+ * @param dbName 削除元データベース名
+ * @param collectionName 削除元コレクション名
+ * @param filter 削除対象のフィルターを指定
+ */
+exports.delete = async function run(dbName,collectionName,filter) {
 
+    try {
+        const database = dbClient.db(dbName);
+        const collection = database.collection(collectionName);
+
+        const result = await collection.deleteOne(filter);
+        await system.log(`${dbName}.${collectionName}からレコード削除`,`DBレコード削除実行`);
+    } catch(err) {
+        await system.error(`${dbName}.${collectionName}からレコードを削除できませんでした`,err,`DB削除失敗`);
     }
 }
 
