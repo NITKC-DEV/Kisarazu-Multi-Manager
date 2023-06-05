@@ -53,6 +53,7 @@ client.once("ready", async () => {
 
     }
     system.log("Ready!");
+
 });
 
 /*Readyイベント*/
@@ -326,6 +327,12 @@ client.on(Events.InteractionCreate, async interaction =>
 client.on('messageCreate', message => {
     TxtEasterEgg.func(message);
 })
+
+/*誕生日通知*/
+cron.schedule('0 0 * * *', () => {
+    birthday.func();
+    system.log('誕生日お祝い！');
+});
 
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
