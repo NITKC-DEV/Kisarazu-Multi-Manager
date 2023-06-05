@@ -33,7 +33,7 @@ const {configPath} = require("./environmentConfig");
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
-const genshin = require('./functions/genshin.js')
+const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
 
 
