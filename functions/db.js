@@ -11,7 +11,6 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @returns Array型
  */
 exports.find = async function (dbName, collectionName, filter) {
-    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     const collection = dbClient.db(dbName).collection(collectionName);
 
     return await collection.find(filter).toArray()
