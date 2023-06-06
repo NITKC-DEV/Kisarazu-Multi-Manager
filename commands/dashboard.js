@@ -104,7 +104,7 @@ module.exports =
                     system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
                     return;
                 }
-                let data = await db.find("main","guildData",{guild:String(interaction.guildId),board:{$nin:["undefined"]}}); /*自動更新対象のボードがあるかどうか確認*/
+                let data = await db.find("main","guildData",{guild:String(interaction.guildId),board:{$nin:["0000000000000000000"]}}); /*自動更新対象のボードがあるかどうか確認*/
                 if(data.length > 0){
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
                     await reply.react('⭕');

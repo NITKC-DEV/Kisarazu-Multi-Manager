@@ -361,7 +361,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 
 cron.schedule('*/1  * * * *', async () => {
 
-    const data = await db.find("main","guildData",{board: {$nin:["undefined"]}});
+    const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
     if(data.length === 0){
         system.warn("ダッシュボードの自動更新対象がありません。");
     }
@@ -377,8 +377,8 @@ cron.schedule('*/1  * * * *', async () => {
                 await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
                 await db.update("main", "guildData", {channel: data[i].channel},{
                     $set:{
-                        boardChannel: "undefined",
-                        board: "undefined"
+                        boardChannel: "0000000000000000000",
+                        board: "0000000000000000000"
                     }});
             });
     }
