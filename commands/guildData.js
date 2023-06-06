@@ -1,14 +1,18 @@
-const {SlashCommandBuilder} = require('discord.js');
+const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
-
+const guildData = require('../functions/guildDataSet.js');
+const commands = require("../botmain");
+const packageVer = require("../package.json");
+const dashboard = require("../functions/dashboard");
+const {setTimeout} = require("node:timers/promises");
 
 module.exports =
     [
         {
             data: new SlashCommandBuilder()
                 .setName('guilddata')
-                .setDescription('サーバー情報を登録します。詳細は/adminhelp 参照')
+                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelp 参照')
                 .setDefaultMemberPermissions(1<<3)
                 .addIntegerOption(option =>
                     option
@@ -77,45 +81,189 @@ module.exports =
                         .setRequired(false)
                 ),
             async execute(interaction) {
-                const data = await db.find("main","guildData",{guild: String(interaction.guildId)});
-                if(data.length > 0) {
-                    await db.update("main","guildData",{guild: String(interaction.guildId)},{
-                        $set:{
-                            guild: String(interaction.guildId),
-                            grade: String(interaction.options.getInteger("学年") ?? data[0].grade),
-                            announce: String((interaction.options.getChannel("アナウンスチャンネル") ?? {id:data[0].announce}).id),
-                            main: String((interaction.options.getChannel("メインチャンネル") ?? {id:data[0].main}).id),
-                            mChannel: String((interaction.options.getChannel("m科チャンネル") ?? {id:data[0].mChannel}).id),
-                            mRole: String((interaction.options.getRole("m科ロール") ?? {id:data[0].mRole}).id),
-                            eChannel: String((interaction.options.getChannel("e科チャンネル") ?? {id:data[0].eChannel}).id),
-                            eRole: String((interaction.options.getRole("e科ロール") ?? {id:data[0].eRole}).id),
-                            dChannel: String((interaction.options.getChannel("d科チャンネル") ?? {id:data[0].dChannel}).id),
-                            dRole: String((interaction.options.getRole("d科ロール") ?? {id:data[0].dRole}).id),
-                            jChannel: String((interaction.options.getChannel("j科チャンネル") ?? {id:data[0].jChannel}).id),
-                            jRole: String((interaction.options.getRole("j科ロール") ?? {id:data[0].jRole}).id),
-                            cChannel: String((interaction.options.getChannel("c科チャンネル") ?? {id:data[0].cChannel}).id),
-                            cRole: String((interaction.options.getRole("c科ロール") ?? {id:data[0].cRole}).id),
+                const reply = await interaction.deferReply({ephemeral: true});
+                const olddata = await db.find("main","guildData",{guild: String(interaction.guildId)});
+                const object = {
+                    guild: interaction.guildId,
+                    grade: interaction.options.getInteger("学年"),
+                    announce:  (interaction.options.getChannel("アナウンスチャンネル") ?? {id: undefined}).id,
+                    main:  (interaction.options.getChannel("メインチャンネル") ?? {id: undefined}).id,
+                    mChannel:  (interaction.options.getChannel("m科チャンネル") ?? {id: undefined}).id,
+                    mRole:  (interaction.options.getRole("m科ロール") ?? {id: undefined}).id,
+                    eChannel:  (interaction.options.getChannel("e科チャンネル") ?? {id: undefined}).id,
+                    eRole:  (interaction.options.getRole("e科ロール") ?? {id: undefined}).id,
+                    dChannel:  (interaction.options.getChannel("d科チャンネル") ?? {id: undefined}).id,
+                    dRole:  (interaction.options.getRole("d科ロール") ?? {id: undefined}).id,
+                    jChannel:  (interaction.options.getChannel("j科チャンネル") ?? {id: undefined}).id,
+                    jRole:  (interaction.options.getRole("j科ロール") ?? {id: undefined}).id,
+                    cChannel:  (interaction.options.getChannel("c科チャンネル") ?? {id: undefined}).id,
+                    cRole:  (interaction.options.getRole("c科ロール") ?? {id: undefined}).id
+                }
+                await guildData.updateOrInsert(interaction.guildId, object);
+                const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
+                const embed = new EmbedBuilder()
+                    .setColor(0x00A0EA)
+                    .setTitle('GuildData')
+                    .setAuthor({
+                        name: "木更津22s統合管理BOT",
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                        url: 'https://github.com/NITKC22s/bot-main'
+                    })
+                    .setDescription('GuildDataを更新しました。')
+                    .addFields(
+                        {
+                            name: '全般',
+                            value: `学年：${newData[0].grade}年入学` +
+                                `\nアナウンスチャンネル：<#${newData[0].announce}>` +
+                                `\nメインチャンネル：<#${newData[0].main}>`,
+                        },
+                        {
+                            name: 'M科',
+                            value: `M科チャンネル：<#${newData[0].mChannel}>` +
+                                `\nM科ロール：<@&${newData[0].mRole}>`,
+                        },
+                        {
+                            name: 'E科',
+                            value: `E科チャンネル：<#${newData[0].eChannel}>` +
+                                `\nE科ロール：<@&${newData[0].eRole}>`,
+                        },
+                        {
+                            name: 'D科',
+                            value: `D科チャンネル：<#${newData[0].dChannel}>` +
+                                `\nD科ロール：<@&${newData[0].dRole}>`,
+                        },
+                        {
+                            name: 'J科',
+                            value: `J科チャンネル：<#${newData[0].jChannel}>` +
+                                `\nJ科ロール：<@&${newData[0].jRole}>`,
+                        },
+                        {
+                            name: 'C科',
+                            value: `C科チャンネル：<#${newData[0].cChannel}>` +
+                                `\nC科ロール：<@&${newData[0].cRole}>`,
+                        },
+                    )
+                    .setTimestamp()
+                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                await interaction.editReply({ embeds: [embed] ,ephemeral: true});
+            }
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('config-reset')
+                .setDescription('サーバー情報をリセットします。詳細は/adminhelp 参照')
+                .setDefaultMemberPermissions(1<<3),
+            async execute(interaction) {
+                await interaction.deferReply()
+                const reply = await interaction.editReply("この操作を実行すると、時間割定期通知機能・時間割定期通知機能以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+
+                await reply.react('⭕');
+                await reply.react('❌');
+                let flag = -1;
+
+                await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
+                    .then(collected => {
+                        if(reply.reactions.cache.at(0).count === 2){
+                            flag = 0;
                         }
-                    });
+                        else if(reply.reactions.cache.at(1).count === 2){
+                            flag = 1;
+                        }
+                    })
+                await reply.reactions.removeAll();
+                let replyOptions;
+                if(flag === 0){
+                    await interaction.editReply("削除中...")
+                    await guildData.reset(interaction.guildId);
+                    replyOptions=time=>{return{content: '削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                }
+                else if(flag === 1){
+                    await reply.reactions.removeAll();
+                    replyOptions=time=>{return{content: '操作をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                }
+                await interaction.editReply(replyOptions(5));
+                //5秒カウントダウンしたのちに返信を削除
+                for(let i=5;i>0;i--){
+                    await interaction.editReply(replyOptions(i));
+                    await setTimeout(1000);
+                }
+                await interaction.deleteReply();
+
+            }
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('config')
+                .setDescription('現在設定されている内容を表示します。詳細は/adminhelp 参照'),
+            async execute(interaction) {
+                const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
+                let dashboard,timetable;
+                if(newData[0].board !== undefined){
+                    dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
                 }
                 else{
-                    await db.insert("main","guildData",{
-                        guild: String(interaction.guildId),
-                        grade: String(interaction.options.getInteger("学年") ?? "undefined"),
-                        announce: String((interaction.options.getChannel("アナウンスチャンネル") ?? {id: "undefined"}).id),
-                        main: String((interaction.options.getChannel("メインチャンネル") ?? {id:"undefined"}).id),
-                        mChannel: String((interaction.options.getChannel("m科チャンネル") ?? {id:"undefined"}).id),
-                        mRole: String((interaction.options.getRole("m科ロール") ?? {id:"undefined"}).id),
-                        eChannel: String((interaction.options.getChannel("e科チャンネル") ?? {id:"undefined"}).id),
-                        eRole: String((interaction.options.getRole("e科ロール") ?? {id:"undefined"}).id),
-                        dChannel: String((interaction.options.getChannel("d科チャンネル") ?? {id:"undefined"}).id),
-                        dRole: String((interaction.options.getRole("d科ロール") ?? {id:"undefined"}).id),
-                        jChannel: String((interaction.options.getChannel("j科チャンネル") ?? {id:"undefined"}).id),
-                        jRole: String((interaction.options.getRole("j科ロール") ?? {id:"undefined"}).id),
-                        cChannel: String((interaction.options.getChannel("c科チャンネル") ?? {id:"undefined"}).id),
-                        cRole: String((interaction.options.getRole("c科ロール") ?? {id:"undefined"}).id),
-                    });
+                    dashboard = `ダッシュボードの自動更新は設定されていません。`
                 }
+                if(newData[0].timetable === true){
+                    timetable = "時間割を定期的に通知します。";
+                }
+                else{
+                    timetable = "時間割の定期通知は停止されています。";
+                }
+
+                const embed = new EmbedBuilder()
+                    .setColor(0x00A0EA)
+                    .setTitle('ギルド情報')
+                    .setAuthor({
+                        name: "木更津22s統合管理BOT",
+                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                        url: 'https://github.com/NITKC22s/bot-main'
+                    })
+                    .setDescription('GuildDataSystemに登録されている情報一覧です。')
+                    .addFields(
+                        {
+                            name: '全般',
+                            value: `学年：${newData[0].grade}年入学` +
+                                `\nアナウンスチャンネル：<#${newData[0].announce}>` +
+                                `\nメインチャンネル：<#${newData[0].main}>`,
+                        },
+                        {
+                            name: 'M科',
+                            value: `M科チャンネル：<#${newData[0].mChannel}>` +
+                                `\nM科ロール：<@&${newData[0].mRole}>`,
+                        },
+                        {
+                            name: 'E科',
+                            value: `E科チャンネル：<#${newData[0].eChannel}>` +
+                                `\nE科ロール：<@&${newData[0].eRole}>`,
+                        },
+                        {
+                            name: 'D科',
+                            value: `D科チャンネル：<#${newData[0].dChannel}>` +
+                                `\nD科ロール：<@&${newData[0].dRole}>`,
+                        },
+                        {
+                            name: 'J科',
+                            value: `J科チャンネル：<#${newData[0].jChannel}>` +
+                                `\nJ科ロール：<@&${newData[0].jRole}>`,
+                        },
+                        {
+                            name: 'C科',
+                            value: `C科チャンネル：<#${newData[0].cChannel}>` +
+                                `\nC科ロール：<@&${newData[0].cRole}>`,
+                        },
+                        {
+                            name: 'ダッシュボード',
+                            value: dashboard,
+                        },
+                        {
+                            name: '時間割定期通知',
+                            value: timetable,
+                        },
+                    )
+                    .setTimestamp()
+                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                await interaction.reply({ embeds: [embed] ,ephemeral: true});
             }
         }
     ]
