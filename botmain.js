@@ -361,7 +361,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 
 cron.schedule('*/1  * * * *', async () => {
 
-    const data = await db.find("main","dashboard",{});
+    const data = await db.find("main","guildData",{board: {$nin:[""]}});
     for(let i=0;i<data.length;i++){
         const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
         const channel = client.channels.cache.get(data[i].channel); /*チャンネル情報取得*/

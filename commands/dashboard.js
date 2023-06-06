@@ -98,7 +98,7 @@ module.exports =
             async execute(interaction) {
                 const reply = await interaction.deferReply()
                 let replyOptions;
-                const data = await db.find("main","dashboard",{guild:String(interaction.guildId)});
+                const data = await db.find("main","guildData",{guild:String(interaction.guildId)});
                 if(data.length > 0){
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
                     await reply.react('⭕');
@@ -119,10 +119,10 @@ module.exports =
                         await interaction.editReply("生成中...")
                         const embed = await dashboard.generation(interaction.guild);
                         const board = await interaction.channel.send({ embeds: [embed] });
-                        await db.update("main","dashboard",{guild:String(interaction.guildId)}, {
+                        await db.update("main","guildData",{guild:String(interaction.guildId)}, {
                             $set:{
                                 guild: String(interaction.guildId),
-                                channel: String(interaction.channelId),
+                                boardChannel: String(interaction.channelId),
                                 board: String(board.id)
                             }
                         })
@@ -137,12 +137,12 @@ module.exports =
                 else{
                     const embed = await dashboard.generation(interaction.guild);
                     const board = await interaction.channel.send({ embeds: [embed] });
-                    await db.insert("main","dashboard",{
+                    await db.insert("main","guildData",{
                         guild: String(interaction.guildId),
-                        channel: String(interaction.channelId),
+                        boardChannel: String(interaction.channelId),
                         board: String(board.id)
                     })
-                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guildDataを使って登録してください。\\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
 
                 }
                 await interaction.editReply(replyOptions(5));
