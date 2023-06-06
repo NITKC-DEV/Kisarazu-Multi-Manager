@@ -26,6 +26,9 @@ exports.func = async function func(message) {
         else if(old === 20){
             special = "ついに二十歳、おめでとう！"
         }
-        client.channels.cache.get(config.J).send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`); //現状ギルド問わないのでこれ改修！
+        const guild = await db.find("main","guildData",{guild:String(data[i].guild)});
+        if(guild.length > 0 && guild[0].main !== undefined){
+            client.channels.cache.get(guild[0].main).send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
+        }
     }
 }

@@ -53,6 +53,7 @@ client.once("ready", async () => {
 
     }
     system.log("Ready!");
+    birthday.func();
 
 });
 
@@ -363,7 +364,7 @@ cron.schedule('*/1  * * * *', async () => {
 
     const data = await db.find("main","guildData",{board: {$nin:["undefined"]}});
     if(data.length === 0){
-        system.warn("ダッシュボードの自動更新対象が見つかりませんでした");
+        system.warn("ダッシュボードの自動更新対象がありません。");
     }
     for(let i=0;i<data.length;i++){
         const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
@@ -375,7 +376,11 @@ cron.schedule('*/1  * * * *', async () => {
             })
             .catch(async (error) => {
                 await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
-                await db.delete("main", "guildData", {channel: data[i].channel});
+                await db.update("main", "guildData", {channel: data[i].channel},{
+                    $set:{
+                        boardChannel: "undefined",
+                        board: "undefined"
+                    }});
             });
     }
 
