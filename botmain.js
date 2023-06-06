@@ -361,10 +361,13 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 
 cron.schedule('*/1  * * * *', async () => {
 
-    const data = await db.find("main","guildData",{board: {$nin:[""]}});
+    const data = await db.find("main","guildData",{board: {$nin:["undefined"]}});
+    if(data.length === 0){
+        system.warn("ダッシュボードの自動更新対象が見つかりませんでした");
+    }
     for(let i=0;i<data.length;i++){
         const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
-        const channel = client.channels.cache.get(data[i].channel); /*チャンネル情報取得*/
+        const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
         const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
         channel.messages.fetch(data[i].board)
             .then((dashboard) => {
@@ -372,7 +375,7 @@ cron.schedule('*/1  * * * *', async () => {
             })
             .catch(async (error) => {
                 await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
-                await db.delete("main", "dashboard", {channel: data[i].channel});
+                await db.delete("main", "guildData", {channel: data[i].channel});
             });
     }
 
