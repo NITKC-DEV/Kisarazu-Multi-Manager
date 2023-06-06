@@ -9,6 +9,23 @@ exports.func = async function func(message) {
     });
 
     for(let i = 0; i < data.length; i++){
-        client.channels.cache.get(config.J).send(`<@!${data[i].user}>さん、誕生日おめでとう！`); //現状ギルド問わないのでこれ改修！
+        let special = "";
+        let old = date.getFullYear() - data[i].year;
+        if(old < 0){
+            special = "...どうやって登録を...?"
+        }
+        else if(old === 0){
+            special = "今日この世に生まれてくるのか、おめでとう！"
+        }
+        else if(old === 9){
+            special = "1/2成人おめでとう！"
+        }
+        else if(old === 18){
+            special = "そして成人おめでとう！"
+        }
+        else if(old === 20){
+            special = "ついに二十歳、おめでとう！"
+        }
+        client.channels.cache.get(config.J).send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`); //現状ギルド問わないのでこれ改修！
     }
 }
