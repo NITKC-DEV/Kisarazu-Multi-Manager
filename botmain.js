@@ -35,6 +35,7 @@ const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
+const axios = require("axios");
 
 
 //スラッシュコマンド登録
@@ -331,6 +332,26 @@ cron.schedule('0 5 * * *', () => {
     genshin.daily();
     system.log('デイリー通知送信完了');
 });
+
+/*天気キャッシュ取得*/
+cron.schedule('5 5,11,17 * * *', async () => {
+    let response;
+    try {
+        response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
+    } catch (error) {
+        console.error("天気を取得できませんでした");
+        response = null;
+    }
+
+    if(response != null){
+        await db.update("main", "weatherCache", {label: "最新の天気予報"}, {
+            $set: {
+                response: response
+            }
+        });
+    }
+});
+
 
 
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
