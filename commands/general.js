@@ -16,7 +16,7 @@ module.exports =
                     .setColor(0x00A0EA)
                     .setTitle('ヘルプ')
                     .setAuthor({
-                        name: "木更津22s統合管理BOT",
+                        name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
@@ -38,7 +38,7 @@ module.exports =
                     .setColor(0x00A0EA)
                     .setTitle('NITKC統合管理BOT概要')
                     .setAuthor({
-                        name: "木更津22s統合管理BOT",
+                        name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
@@ -59,7 +59,7 @@ module.exports =
                             },
                             {
                                 name: 'ソースコード',
-                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津22s統合管理bot](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: '実行環境',

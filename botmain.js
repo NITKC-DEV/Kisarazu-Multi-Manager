@@ -47,18 +47,23 @@ client.once("ready", async () => {
 
 /*実際の動作*/
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) {
-        return;
-    }
-    const command = interaction.client.commands.get(interaction.commandName);
+    if(interaction.guildId === config.server){
+        if (!interaction.isCommand()) {
+            return;
+        }
 
-    if (!command) return;
-    console.log("SlashCommand : "+command.data.name);
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        console.error(error);
-        await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        const command = interaction.client.commands.get(interaction.commandName);
+        if (!command) return;
+
+        console.log("SlashCommand : "+command.data.name);
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            console.error(error);
+            await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+        }
+    }else{
+        await interaction.reply({ content: '現在スラッシュコマンドはNIT,Kisarazu College 22s Serverのみに限定されています。\n他サーバーでのサービス開始は7月上旬を予定しています。'});
     }
 });
 
@@ -80,7 +85,7 @@ client.on(Events.InteractionCreate, async interaction =>
         {
             //チャンネル作成
 
-            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津22s統合管理BOTの操作により作成"});
+            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津高専統合管理BOTの操作により作成"});
 
             //作成チャンネル情報記録
             ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels[ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels.length]={ID:newChannel.id,name:newChannel.name,creatorID:interaction.user.id,createTime:Date.now()};
@@ -126,7 +131,7 @@ client.on(Events.InteractionCreate, async interaction =>
         if(interaction.values[0].split("/")[2]==="1")
         {
             //ロール作成
-            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津22s統合管理BOTの操作により作成"});
+            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津高専統合管理BOTの操作により作成"});
 
             //作成ロール情報記録
             const newData={roleID:newRole.id,roleName:newRole.name};
@@ -214,11 +219,11 @@ client.on(Events.InteractionCreate, async interaction =>
                         try
                         {
                             //チャンネル削除
-                            await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[i].channels[j].ID, "木更津22s統合管理BOTの操作により削除");
+                            await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[i].channels[j].ID, "木更津高専統合管理BOTの操作により削除");
                             //対応ロール存在時にロール削除
                             if (ccconfig.guilds[indGuild].categories[i].channels[j].thereRole)
                             {
-                                await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[i].channels[j].roleID, "木更津22s統合管理BOTの操作により削除");
+                                await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[i].channels[j].roleID, "木更津高専統合管理BOTの操作により削除");
                             }
                         }
                         catch(e)
@@ -274,11 +279,11 @@ client.on(Events.InteractionCreate, async interaction =>
                     try
                     {
                         //カテゴリ内のチャンネル削除
-                        await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].ID, "木更津22s統合管理BOTの操作により削除");
+                        await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].ID, "木更津高専統合管理BOTの操作により削除");
                         //対応するロールが存在するときにロールを削除
                         if (ccconfig.guilds[indGuild].categories[indCategory].channels[i].thereRole)
                         {
-                            await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].roleID, "木更津22s統合管理BOTの操作により削除");
+                            await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].roleID, "木更津高専統合管理BOTの操作により削除");
                         }
                     }
                     catch(e)
@@ -512,7 +517,7 @@ cron.schedule('*/1  * * * *', async () => {
                 .setColor(0x00A0EA)
                 .setTitle('NIT,Kisarazu College 22s ダッシュボード')
                 .setAuthor({
-                    name: "木更津22s統合管理BOT",
+                    name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                     url: 'https://github.com/NITKC22s/bot-main'
                 })
