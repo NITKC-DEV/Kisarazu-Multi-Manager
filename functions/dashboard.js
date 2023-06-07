@@ -4,13 +4,8 @@ const {EmbedBuilder} = require("discord.js");
 
 /*天気取得*/
 async function getWeather() {
-    try {
-        const response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
-        return response.data;
-    } catch (error) {
-        console.error("天気を取得できませんでした");
-        return null;
-    }
+    const data = await db.find("main","weatherCache",{label: "最新の天気予報"});
+    return data[0].response;
 }
 
 /*日数カウント*/
