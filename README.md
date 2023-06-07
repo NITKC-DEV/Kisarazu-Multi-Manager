@@ -1,4 +1,4 @@
-# 木更津22s統合管理BOT
+# 木更津高専統合管理BOT
 ## 概要
 木更津高専22sの学年非公式Discordサーバーである「NIT,Kisarazu College 22s Server」に導入されている、NITKC22s 統合管理BOTのソースコードです。  
 Discord.jsで書かれています。
