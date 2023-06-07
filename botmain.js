@@ -53,7 +53,6 @@ client.once("ready", async () => {
 
     }
     system.log("Ready!");
-
 });
 
 /*Readyイベント*/
