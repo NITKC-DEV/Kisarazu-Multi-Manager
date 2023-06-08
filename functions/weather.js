@@ -33,7 +33,7 @@ exports.generationDay = async function func(day){
     else if(telop.indexOf("雨") !== -1 || telop.indexOf("霧") !== -1 && telop.indexOf("煙霧") === -1){
         color = "067CFA"
     }
-    else if(telop.indexOf("晴") !== -1){
+    else if(telop.indexOf("晴" && telop.indexOf("煙霧") === -1) !== -1){
         color = "FAA401"
     }
     else{
