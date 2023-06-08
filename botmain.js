@@ -334,7 +334,7 @@ cron.schedule('0 5 * * *', () => {
 });
 
 /*天気キャッシュ取得*/
-cron.schedule('57 5,11,17,12 * * *', async () => {
+cron.schedule('5 5,11,17 * * *', async () => {
     let response;
     try {
         response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
