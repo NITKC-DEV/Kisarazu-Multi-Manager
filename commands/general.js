@@ -3,6 +3,7 @@ const packageVer = require('../package.json');
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 const system = require('../functions/logsystem.js');
+const weather = require('../functions/weather.js');
 
 module.exports =
     [
@@ -109,8 +110,7 @@ module.exports =
                         .setRequired(false)
                 ),
 
-            async execute (interaction)
-            {
+            async execute (interaction) {
                 let receivedMsg = interaction.options.getString ('メッセージ');
                 const attachedFile1 = interaction.options.getAttachment ('添付ファイル1');
                 const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
@@ -204,6 +204,33 @@ module.exports =
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();
-            },
+            }
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('weather')
+                .setDescription('その日の天気を取得します。')
+                .addIntegerOption(option =>
+                    option
+                        .setName('日にち')
+                        .setDescription('日にちを指定します。指定なければ今日の天気になります。')
+                        .setRequired(false)
+                        .addChoices(
+                            { name: '今日', value: 0 },
+                            { name: '明日', value: 1 },
+                            { name: '明後日', value: 2 }
+                        )
+                ),
+            async execute (interaction) {
+                const reply = await interaction.deferReply()
+                let embed;
+                if(interaction.options.getInteger('日にち') === undefined || interaction.options.getInteger('日にち') === null){
+                    embed = await weather.generationDay(0);
+                }
+                else{
+                    embed = await weather.generationDay(interaction.options.getInteger('日にち'));
+                }
+                await interaction.editReply({ embeds: [embed] });
+            }
         }
     ]
