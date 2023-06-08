@@ -18,7 +18,7 @@ module.exports =
                     .setColor(0x00A0EA)
                     .setTitle('ヘルプ')
                     .setAuthor({
-                        name: "木更津22s統合管理BOT",
+                        name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
@@ -40,7 +40,7 @@ module.exports =
                     .setColor(0x00A0EA)
                     .setTitle('NITKC統合管理BOT概要')
                     .setAuthor({
-                        name: "木更津22s統合管理BOT",
+                        name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
@@ -57,11 +57,11 @@ module.exports =
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.1.0](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能',
+                                value: '[Genshin-timer Discord BOT v2.1.1](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能',
                             },
                             {
                                 name: 'ソースコード',
-                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津22s統合管理bot](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: '実行環境',
@@ -111,14 +111,45 @@ module.exports =
 
             async execute (interaction)
             {
-                const receivedMsg = interaction.options.getString ('メッセージ');
+                let receivedMsg = interaction.options.getString ('メッセージ');
                 const attachedFile1 = interaction.options.getAttachment ('添付ファイル1');
                 const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
                 const attachedFile3 = interaction.options.getAttachment ('添付ファイル3');
                 const channelName = interaction.guild.channels.cache.get (interaction.channelId).name;
-                const date = new Date ();
-                const currentTime = date.toFormat ('YYYY年 MM/DD HH24:MI:SS');
+                const date = new Date();
+                const currentTime = date.toFormat('YYYY年 MM/DD HH24:MI:SS');
                 let sendingMsg='';
+                
+                //ロールメンション時パーミッション確認と除外処理
+                if(!interaction.memberPermissions.has(1n<<17n))
+                {
+                    const roleMentions= receivedMsg.match(/(?<!\\)<@&\d+>/g);
+                    if(roleMentions)
+                    {
+                        for(const roleMention of roleMentions)
+                        {
+                            const role = interaction.guild.roles.cache.find(readRole=>readRole.id===roleMention.match(/\d+/)[0]);
+                            if(role&&!role.mentionable)
+                            {
+                                receivedMsg=receivedMsg.replace(roleMention,"@"+role.name);
+                            }
+
+                        }
+                    }
+                    const everyoneMention=receivedMsg.search(/@everyone/);
+                    if(everyoneMention!==-1)
+                    {
+                        const rg=new RegExp("(?<!`)@everyone(?<!`)","g");
+                        receivedMsg=receivedMsg.replace(rg,"\`@everyone\`\0");
+                    }
+                    const hereMention = receivedMsg.search(/@here/);
+                    if(hereMention!==-1)
+                    {
+                        const rg=new RegExp("(?<!`)@here(?<!`)","g");
+                        receivedMsg=receivedMsg.replace(rg,"\`@here\`\0");
+                    }
+                }
+                
                 //改行とバクスラのエスケープ処理
                 if(receivedMsg)for(let i=0;i<receivedMsg.length;i++)
                 {
@@ -127,7 +158,7 @@ module.exports =
                         switch (receivedMsg[i + 1])
                         {
                             case '\\':
-                                sendingMsg += '\\';
+                                sendingMsg += '\\\\';
                                 i++;
                                 break;
                             case 'n':
@@ -140,23 +171,21 @@ module.exports =
                 }
                 
                 sendingMsg = sendingMsg.trim();
-                
                 if(sendingMsg.length >2000)
                 {
                     await interaction.reply({content:"2000文字を超える内容は送信できません",ephemeral:true,});
                     return;
                 }
-                
+
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
                 for(let attachment of attachFiles)
                 {
                     if(attachment.size>8388608)
                     {
-                        await interaction.reply({content:"サイズが8MBを超えるファイルは添付できません",ephemeral:true});
+                        await interaction.reply({content:"サイズが8MBを超えるファイルは添付できません。通常のメッセージであれば25MBまでなら添付することができます。",ephemeral:true});
                         return;
                     }
                 }
-                
                 /***
                  * Interaction[Edit]ReplyOptions型のメッセージ内容を設定する
                  * @param time 返信が削除されるまでの残り時間
@@ -167,7 +196,7 @@ module.exports =
                 if (sendingMsg) system.log (sendingMsg + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
                 if (attachFiles) for (const file of attachFiles) system.log (file.url + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
                 if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
-                
+
                 //5秒カウントダウンしたのちに返信を削除
                 for(let i=5;i>0;i--)
                 {
