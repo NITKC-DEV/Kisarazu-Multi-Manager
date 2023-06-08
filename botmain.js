@@ -1,13 +1,12 @@
-//モジュール読み込み
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
 const timetableBuilder  = require('./timetable/timetableUtils');
+const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-const dotenv = require('dotenv');
-dotenv.config();
 require('date-utils');
-global.client = new Client({
+dotenv.config();
+const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -15,12 +14,11 @@ global.client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildPresences,
-        GatewayIntentBits.DirectMessageReactions,
-        GatewayIntentBits.GuildMessageReactions
+        GatewayIntentBits.GuildPresences
     ],
     partials: [Partials.Channel],
 });
+module.exports.client=client;
 
 //configファイル読み込み
 const config = require('./environmentConfig')
@@ -43,6 +41,9 @@ const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 module.exports = client.commands;
+
+
+/*スラッシュコマンド登録*/
 client.once("ready", async () => {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -52,10 +53,10 @@ client.once("ready", async () => {
         }
 
     }
-    system.log("Ready!");
+    console.log("Ready!");
 });
 
-/*Readyイベント*/
+/*実際の動作*/
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) {
         return;
@@ -107,7 +108,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                system.log (e);
+                console.log (e);
                 await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
                 return;
             }
@@ -156,7 +157,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                system.log (e);
+                console.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -186,7 +187,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                system.log (e);
+                console.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -238,7 +239,7 @@ client.on(Events.InteractionCreate, async interaction =>
                         }
                         catch(e)
                         {
-                            system.log(e);
+                            console.log(e);
                         }
 
                     }
@@ -246,23 +247,23 @@ client.on(Events.InteractionCreate, async interaction =>
             }
             //ccconfigからカテゴリの情報を削除
             ccconfig.guilds[indGuild] =
-                            {
-                                ID: interaction.guild.id,
-                                categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]
-                            };
+                {
+                    ID: interaction.guild.id,
+                    categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]
+                };
             //jsonに書き込み
-                const ccjson = JSON.stringify (ccconfig);
-                try
-                {
-                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-                } catch (e)
-                {
-                    system.log (e);
-                    await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
-                    return;
-                }
+            const ccjson = JSON.stringify (ccconfig);
+            try
+            {
+                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+            } catch (e)
+            {
+                console.log (e);
+                await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
+                return;
+            }
 
-                await interaction.update({content:"削除しました",components:[]});
+            await interaction.update({content:"削除しました",components:[]});
         }
         //キャンセル選択時
         else if(interaction.values[0].split("/")[0]==="0000000000000000000")
@@ -298,7 +299,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     }
                     catch(e)
                     {
-                        system.log(e);
+                        console.log(e);
                     }
                 }
             }
@@ -306,18 +307,18 @@ client.on(Events.InteractionCreate, async interaction =>
             ccconfig.guilds[indGuild].categories.splice(indCategory,1);
 
             //jsonに書き込み
-                const ccjson = JSON.stringify (ccconfig);
-                try
-                {
-                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-                } catch (e)
-                {
-                    system.log (e);
-                    await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
-                    return;
-                }
+            const ccjson = JSON.stringify (ccconfig);
+            try
+            {
+                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+            } catch (e)
+            {
+                console.log (e);
+                await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
+                return;
+            }
 
-                await interaction.update({content:"削除しました",components:[]});
+            await interaction.update({content:"削除しました",components:[]});
         }
     }
 });
@@ -390,7 +391,6 @@ cron.schedule('*/1  * * * *', async () => {
     }
 
 });
-
 
 
 client.login(config.token);
