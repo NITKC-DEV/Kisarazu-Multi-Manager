@@ -334,19 +334,19 @@ cron.schedule('0 5 * * *', () => {
 });
 
 /*天気キャッシュ取得*/
-cron.schedule('5 5,11,17 * * *', async () => {
+cron.schedule('57 5,11,17,12 * * *', async () => {
     let response;
     try {
         response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
     } catch (error) {
-        console.error("天気を取得できませんでした");
+        await system.error("天気を取得できませんでした");
         response = null;
     }
 
     if(response != null){
         await db.update("main", "weatherCache", {label: "最新の天気予報"}, {
             $set: {
-                response: response
+                response: response.data
             }
         });
     }
