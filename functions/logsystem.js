@@ -1,6 +1,7 @@
 const {EmbedBuilder, Client, GatewayIntentBits, Partials} = require("discord.js");
 const config = require("../environmentConfig");
 const {client} = require("../botmain.js");
+
 /***
  * ログをコンソールとdiscordに送信する
  * @param message ログの本文
