@@ -59,24 +59,30 @@ client.once("ready", async () => {
 
 /*実際の動作*/
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) {
-        return;
-    }
-    const command = interaction.client.commands.get(interaction.commandName);
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === false){
+        if (!interaction.isCommand()) {
+            return;
+        }
+        const command = interaction.client.commands.get(interaction.commandName);
 
-    if (!command) return;
-    system.log(command.data.name,"SlashCommand");
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
-        try{
-            await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
-        } catch{
-            const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
-            await reply.reactions.removeAll()
+        if (!command) return;
+        system.log(command.data.name,"SlashCommand");
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
+            try{
+                await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+            } catch{
+                const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+                await reply.reactions.removeAll()
+            }
         }
     }
+    else{
+        await interaction.reply({ content: '現在メンテナンスモード中につき、スラッシュコマンドは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
+    }
+
 });
 
 //SelectMenu受け取り
