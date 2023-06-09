@@ -29,6 +29,7 @@ const {configPath} = require("./environmentConfig");
 
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+const birthday = require('./functions/birthday.js');
 const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
@@ -328,6 +329,12 @@ client.on('messageCreate', message => {
     TxtEasterEgg.func(message);
 })
 
+/*誕生日通知*/
+cron.schedule('0 0 * * *', () => {
+    birthday.func();
+    system.log('誕生日お祝い！');
+});
+
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', () => {
     genshin.daily();
@@ -375,10 +382,13 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 
 cron.schedule('*/1  * * * *', async () => {
 
-    const data = await db.find("main","dashboard",{});
+    const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
+    if(data.length === 0){
+        system.warn("ダッシュボードの自動更新対象がありません。");
+    }
     for(let i=0;i<data.length;i++){
         const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
-        const channel = client.channels.cache.get(data[i].channel); /*チャンネル情報取得*/
+        const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
         const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
         channel.messages.fetch(data[i].board)
             .then((dashboard) => {
@@ -386,7 +396,11 @@ cron.schedule('*/1  * * * *', async () => {
             })
             .catch(async (error) => {
                 await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
-                await db.delete("main", "dashboard", {channel: data[i].channel});
+                await db.update("main", "guildData", {channel: data[i].channel},{
+                    $set:{
+                        boardChannel: "0000000000000000000",
+                        board: "0000000000000000000"
+                    }});
             });
     }
 
