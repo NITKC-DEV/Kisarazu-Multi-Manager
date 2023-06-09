@@ -1,6 +1,9 @@
 const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
 
+const ID_NODATA= "0000000000000000000";
+exports.ID_NODATA = ID_NODATA;
+
 /***
 * Objectテンプレ
  {
@@ -25,7 +28,7 @@ const db = require('../functions/db.js');
 
  更新したい内容のみで良いので、valueに更新後のデータを入れる。
  timetableのみbool、それ以外はstringかint
- 設定されていないときは、文字列型で"0000000000000000000"とする
+ 設定されていないときは、文字列型でID_NODATAとする
 * */
 
 
@@ -62,21 +65,21 @@ exports.updateOrInsert = async function func(guild,object) {
     else{
         await db.insert("main","guildData",{
             guild: String(object.guild),
-            grade: String(object.grade ?? "0000000000000000000"),
-            announce: String(object.announce ?? "0000000000000000000"),
-            main: String(object.main ?? "0000000000000000000"),
-            mChannel: String(object.mChannel ?? "0000000000000000000"),
-            mRole: String(object.mRole ?? "0000000000000000000"),
-            eChannel: String(object.eChannel ?? "0000000000000000000"),
-            eRole: String(object.eRole ?? "0000000000000000000"),
-            dChannel: String(object.dChannel ?? "0000000000000000000"),
-            dRole: String(object.dRole ?? "0000000000000000000"),
-            jChannel: String(object.jChannel ?? "0000000000000000000"),
-            jRole: String(object.jRole ?? "0000000000000000000"),
-            cChannel: String(object.cChannel ?? "0000000000000000000"),
-            cRole: String(object.cRole ?? "0000000000000000000"),
-            boardChannel: String(object.boardChannel ?? "0000000000000000000"),
-            board: String(object.board ?? "0000000000000000000"),
+            grade: String(object.grade ?? ID_NODATA),
+            announce: String(object.announce ?? ID_NODATA),
+            main: String(object.main ?? ID_NODATA),
+            mChannel: String(object.mChannel ?? ID_NODATA),
+            mRole: String(object.mRole ?? ID_NODATA),
+            eChannel: String(object.eChannel ?? ID_NODATA),
+            eRole: String(object.eRole ?? ID_NODATA),
+            dChannel: String(object.dChannel ?? ID_NODATA),
+            dRole: String(object.dRole ?? ID_NODATA),
+            jChannel: String(object.jChannel ?? ID_NODATA),
+            jRole: String(object.jRole ?? ID_NODATA),
+            cChannel: String(object.cChannel ?? ID_NODATA),
+            cRole: String(object.cRole ?? ID_NODATA),
+            boardChannel: String(object.boardChannel ?? ID_NODATA),
+            board: String(object.board ?? ID_NODATA),
             timetable: object.board ?? true
         });
     }
@@ -93,19 +96,19 @@ exports.reset = async function func(guild) {
         await db.update("main", "guildData", {guild: String(guild)}, {
             $set: {
                 guild: String(guild),
-                grade: "0000000000000000000",
-                announce: "0000000000000000000",
-                main: "0000000000000000000",
-                mChannel: "0000000000000000000",
-                mRole: "0000000000000000000",
-                eChannel: "0000000000000000000",
-                eRole: "0000000000000000000",
-                dChannel: "0000000000000000000",
-                dRole: "0000000000000000000",
-                jChannel: "0000000000000000000",
-                jRole: "0000000000000000000",
-                cChannel: "0000000000000000000",
-                cRole: "0000000000000000000",
+                grade: ID_NODATA,
+                announce: ID_NODATA,
+                main: ID_NODATA,
+                mChannel: ID_NODATA,
+                mRole: ID_NODATA,
+                eChannel: ID_NODATA,
+                eRole: ID_NODATA,
+                dChannel: ID_NODATA,
+                dRole: ID_NODATA,
+                jChannel: ID_NODATA,
+                jRole: ID_NODATA,
+                cChannel: ID_NODATA,
+                cRole: ID_NODATA,
             }
         });
     }
