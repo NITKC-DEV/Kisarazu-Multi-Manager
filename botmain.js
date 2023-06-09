@@ -59,7 +59,16 @@ client.once("ready", async () => {
 
 /*実際の動作*/
 client.on("interactionCreate", async (interaction) => {
-    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === false){
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
+            if(config.sugoiTsuyoiHitotachi[i]===interaction.user.id)flag = 1;
+        }
+    }
+    else{
+        flag = 1;
+    }
+    if(flag === 1){
         if (!interaction.isCommand()) {
             return;
         }
@@ -77,8 +86,7 @@ client.on("interactionCreate", async (interaction) => {
                 const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
                 await reply.reactions.removeAll()
             }
-        }
-    }
+        }}
     else{
         await interaction.reply({ content: '現在メンテナンスモード中につき、スラッシュコマンドは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
     }
