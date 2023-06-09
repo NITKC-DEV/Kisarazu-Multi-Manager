@@ -54,7 +54,7 @@ client.once("ready", async () => {
         }
 
     }
-    console.log("Ready!");
+    await system.log("Ready!");
 });
 
 /*実際の動作*/
