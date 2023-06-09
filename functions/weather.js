@@ -41,8 +41,15 @@ exports.generationDay = async function func(day){
     }
 
     let annotation = "",filed
-    if(day === 0 || day === 1){
-        if(day === 0)annotation = "発表データの関係で、気温は前日のデータを使用しています。";
+    if(day === 0){
+        annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
+        filed ={
+            name: '概況',
+            value: `\`\`\`　${data.description.bodyText.trim()}\`\`\``,
+        }
+    }
+    else if(day === 1){
+        annotation = "概況は今日から明日にかけての天気になります。";
         filed ={
             name: '概況',
             value: `\`\`\`　${data.description.bodyText.trim()}\`\`\``,
