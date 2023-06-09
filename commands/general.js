@@ -4,6 +4,9 @@ const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
+const fs = require("fs");
+const {configPath} = require("../environmentConfig");
+const config = require("../environmentConfig");
 
 
 module.exports =
@@ -83,6 +86,53 @@ module.exports =
                 .setDescription('このBOTのpingを測定します'),
             async execute(interaction) {
                 await interaction.reply( `Ping : ${interaction.client.ws.ping}ms` );
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('sudo-maintenancemode')
+                .setDescription('sugoi user do')
+                .setDefaultMemberPermissions(1<<3)
+                .addBooleanOption(option =>
+                    option
+                        .setName('option')
+                        .setDescription('True or False')
+                        .setRequired(true)
+                ),
+            async execute(interaction) {
+                const reply = await interaction.deferReply()
+                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                let flag = 0;
+                for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
+                    if(config.sugoiTsuyoiHitotachi[i]===interaction.user.id)flag = 1;
+                }
+                if(flag === 1){
+                    const reply = await interaction.editReply("あなたはシステム管理者から通常の講習を受けたはずです。\nこれは通常、以下の3点に要約されます:\n    #1) 他人のプライバシーを尊重すること。\n    #2) タイプする前に考えること。\n    #3) 大いなる力には大いなる責任が伴うこと。");
+                    await reply.react('⭕');
+                    await reply.react('❌');
+                    flag = 0;
+
+                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
+                        .then(collected => {
+                            if(reply.reactions.cache.at(0).count === 2){
+                                flag = 1;
+                            }
+                        })
+                    await reply.reactions.removeAll();
+                    if(flag === 1){
+                        config.maintenanceMode = interaction.options.getBoolean('option');
+                        fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
+                        await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
+                        await interaction.editReply( `メンテナンスモードを${config.maintenanceMode}にしました。` );
+                    }
+                    else{
+                        await interaction.editReply( `変更を取りやめました` );
+                    }
+                }
+                else{
+                    await interaction.editReply( `Permission denied : BOT開発者専用コマンドです` );
+                }
+
             },
         },
         {
