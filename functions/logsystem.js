@@ -1,4 +1,4 @@
-const {EmbedBuilder, Client, GatewayIntentBits, Partials} = require("discord.js");
+const {EmbedBuilder} = require("discord.js");
 const config = require("../environmentConfig");
 
 /***
