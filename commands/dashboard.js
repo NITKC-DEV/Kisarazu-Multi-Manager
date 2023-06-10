@@ -100,20 +100,36 @@ module.exports =
                 let replyOptions;
                 const data = await db.find("main","dashboard",{guild:String(interaction.guildId)});
                 if(data.length > 0){
-                    const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+                    const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。");
                     await reply.react('⭕');
                     await reply.react('❌');
-                    let flag = -1;
+                    let flag = -1,otherReact =[0,0];
 
-                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                        .then(collected => {
-                            if(reply.reactions.cache.at(0).count === 2){
-                                flag = 0;
-                            }
-                            else if(reply.reactions.cache.at(1).count === 2){
-                                flag = 1;
-                            }
-                        })
+                    while(flag === -1){
+                        await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 , time: 60_000})
+                            .then(collected => {
+                                if(reply.reactions.cache.at(0).count === 2 + otherReact[0]){
+                                    if(reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id){
+                                        flag = 0;
+                                    }
+                                    else {
+                                        otherReact[0] += 1;
+                                    }
+                                }
+                                else if(reply.reactions.cache.at(1).count === 2 + otherReact[1]){
+                                    if(reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id){
+                                        flag = 1;
+                                    }
+                                    else{
+                                        otherReact[1] += 1;
+                                    }
+
+                                }
+                                else{
+                                    flag = 1;
+                                }
+                            })
+                    }
                     await reply.reactions.removeAll();
                     if(flag === 0){
                         await interaction.editReply("生成中...")
