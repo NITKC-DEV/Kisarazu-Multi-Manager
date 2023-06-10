@@ -1,11 +1,11 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
 const timetableBuilder  = require('./timetable/timetableUtils');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-require('date-utils');
 dotenv.config();
+require('date-utils');
 global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -14,11 +14,12 @@ global.client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildPresences
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.GuildMessageReactions
     ],
     partials: [Partials.Channel],
 });
-module.exports.client=client;
 
 //configファイル読み込み
 const config = require('./environmentConfig')
@@ -34,7 +35,9 @@ const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
-const axios = require("axios");
+const weather = require('./functions/weather.js');
+const {ID_NODATA} = require("./functions/guildDataSet.js");
+
 
 
 //スラッシュコマンド登録
@@ -42,9 +45,6 @@ const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 module.exports = client.commands;
-
-
-/*スラッシュコマンド登録*/
 client.once("ready", async () => {
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -55,9 +55,10 @@ client.once("ready", async () => {
 
     }
     await system.log("Ready!");
+    await weather.update(); //天気更新
 });
 
-/*実際の動作*/
+/*command処理*/
 client.on("interactionCreate", async (interaction) => {
     let flag = 0;
     if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -91,7 +92,6 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
     }
 });
-
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
@@ -118,7 +118,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
                 return;
             }
@@ -167,7 +167,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -197,7 +197,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 const mkRole=new ActionRowBuilder()
                     .addComponents(
                         new SelectMenuBuilder()
@@ -249,7 +249,7 @@ client.on(Events.InteractionCreate, async interaction =>
                         }
                         catch(e)
                         {
-                            console.log(e);
+                            system.log(e);
                         }
 
                     }
@@ -268,7 +268,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                 return;
             }
@@ -309,7 +309,7 @@ client.on(Events.InteractionCreate, async interaction =>
                     }
                     catch(e)
                     {
-                        console.log(e);
+                        system.log(e);
                     }
                 }
             }
@@ -323,7 +323,7 @@ client.on(Events.InteractionCreate, async interaction =>
                 fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
             } catch (e)
             {
-                console.log (e);
+                system.log (e);
                 await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
                 return;
             }
@@ -368,25 +368,11 @@ cron.schedule('0 5 * * *', () => {
 
 /*天気キャッシュ取得*/
 cron.schedule('5 5,11,17 * * *', async () => {
-    let response;
-    try {
-        response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
-    } catch (error) {
-        await system.error("天気を取得できませんでした");
-        response = null;
-    }
-
-    if(response != null){
-        await db.update("main", "weatherCache", {label: "最新の天気予報"}, {
-            $set: {
-                response: response.data
-            }
-        });
-    }
+    await weather.update()
 });
 
 
-
+/*時間割*/
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     let dayOfWeek = new Date().getDay()+1;
     //timetable == trueのとき
@@ -402,6 +388,18 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
             .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
         (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
             .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    }
+});
+
+/*天気*/
+cron.schedule('15 17 * * *', async () => {
+    const embed = await weather.generationDay(1);
+    const data = await db.find("main","guildData",{main:{$nin:[ID_NODATA]}});
+    for(let i = 0; i < data.length; i++) {
+        if(data[i].weather){
+            const channel = await client.channels.fetch(data[i].main);
+            await channel.send({embeds: [embed]});
+        }
     }
 });
 
