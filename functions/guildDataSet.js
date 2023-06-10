@@ -113,4 +113,3 @@ exports.reset = async function func(guild) {
         });
     }
 }
-

@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require('discord.js')
+const {SlashCommandBuilder} = require('discord.js');
 const dashboard = require('../functions/dashboard.js');
 const db = require('../functions/db.js');
 const system = require("../functions/logsystem");
@@ -146,11 +146,11 @@ module.exports =
                             }
                         })
 
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                     else if(flag === 1){
                         await reply.reactions.removeAll();
-                        replyOptions=time=>{return{content: '生成をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: '生成をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                 }
                 else{
@@ -165,7 +165,7 @@ module.exports =
                                 board: String(board.id)
                             }
                         });
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                     else{
                         await db.insert("main","guildData",{
@@ -173,7 +173,7 @@ module.exports =
                             boardChannel: String(interaction.channelId),
                             board: String(board.id)
                         });
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは'+time+'秒後に自動で削除されます)。', ephemeral:true};};
                     }
 
                 }
