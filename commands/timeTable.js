@@ -1,27 +1,17 @@
-const { SlashCommandBuilder} = require('discord.js')
-const  timetableBuilder  = require('../timetable/timetableUtils')
-const Classes = require('../timetable/timetables.json')
+const { SlashCommandBuilder} = require('discord.js');
+const  timetableBuilder  = require('../functions/ttGeneration.js');
+const Classes = require('../timetable/timetables.json');
 const fs = require('fs');
-const {configPath}=require("../environmentConfig")
+const {configPath}=require("../environmentConfig");
 const system = require('../functions/logsystem.js');
+const db = require('../functions/db.js');
+
+
 module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('timetable')
             .setDescription('指定した学科・曜日の時間割を送信します')
-            .addStringOption(option =>
-                option
-                    .setName('学科')
-                    .setDescription('学科を指定します')
-                    .setRequired(true)
-                    .addChoices(
-                        { name: 'M-機械工学科', value: 'M' },
-                        { name: 'E-電気電子工学科', value: 'E' },
-                        { name: 'D-電子制御工学科', value: 'D' },
-                        { name: 'J-情報工学科', value: 'J' },
-                        { name: 'C-環境都市工学科', value: 'C' },
-                    )
-            )
             .addStringOption(option =>
                 option
                     .setName('曜日')
@@ -34,10 +24,36 @@ module.exports = [
                         { name: '木曜日', value: '4' },
                         { name: '金曜日', value: '5' },
                     )
+            )
+            .addStringOption(option =>
+                option
+                    .setName('学科')
+                    .setDescription('学科を指定します')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: 'M-機械工学科', value: '1' },
+                        { name: 'E-電気電子工学科', value: '2' },
+                        { name: 'D-電子制御工学科', value: '3' },
+                        { name: 'J-情報工学科', value: '4' },
+                        { name: 'C-環境都市工学科', value: '5' },
+                    )
+            )
+            .addStringOption(option =>
+                option
+                    .setName('学年')
+                    .setDescription('学年を指定します。')
+                    .setRequired(false)
+                    .addChoices(
+                        { name: '1年生', value: '1' },
+                        { name: '2年生', value: '2' },
+                        { name: '3年生', value: '3' },
+                        { name: '4年生', value: '4' },
+                        { name: '5年生', value: '5' },
+                    )
             ),
 
         async execute(interaction) {
-
+            await interaction.deferReply()
             let dt = new Date();
             let dayOfWeek = dt.getDay();
             let hours = dt.getHours();
@@ -60,10 +76,27 @@ module.exports = [
                 }
             }
 
-            const embed = timetableBuilder(Classes[interaction.options.getString('学科')],dayOfWeek);
+            let grade = interaction.options.getString('学年');
+            if(grade === undefined || grade === null){
+                const guildData = await db.find("main","guildData",{guild:String(interaction.guildId)});
+                grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1
+            }
 
+            if(isNaN(grade)){
+                await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、guilddataコマンドで入学年を登録してもらってください。");
+            }
+            else{
+                const embed = await timetableBuilder.generation(grade,interaction.options.getString('学科'),String(dayOfWeek),);
+                if(embed === 0){
+                    await interaction.editReply("指定したデータは未登録です。");
+                }
+                else if(embed === 1){
 
-            await interaction.reply({ embeds: [embed] });
+                }
+                else{
+                    await interaction.editReply({ embeds: [embed] });
+                }
+            }
         },
     },
     {
