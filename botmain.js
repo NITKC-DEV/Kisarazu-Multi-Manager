@@ -6,7 +6,7 @@ const fs = require('fs');
 const cron = require('node-cron');
 dotenv.config();
 require('date-utils');
-    global.client = new Client({
+global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -60,33 +60,42 @@ client.once("ready", async () => {
 
 /*command処理*/
 client.on("interactionCreate", async (interaction) => {
-    if (!interaction.isCommand()) {
-        return;
-    }
-    const command = interaction.client.commands.get(interaction.commandName);
-
-    if (!command) return;
-    system.log(command.data.name,"SlashCommand");
-    try {
-        await command.execute(interaction);
-    } catch (error) {
-        await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
-        try{
-            await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
-        } catch{
-            const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
-            await reply.reactions.removeAll()
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
+            if(config.sugoiTsuyoiHitotachi[i]===interaction.user.id)flag = 1;
         }
+    }
+    else{
+        flag = 1;
+    }
+    if(flag === 1){
+        if (!interaction.isCommand()) {
+            return;
+        }
+        const command = interaction.client.commands.get(interaction.commandName);
+
+        if (!command) return;
+        system.log(command.data.name,"SlashCommand");
+        try {
+            await command.execute(interaction);
+        } catch (error) {
+            await system.error("スラッシュコマンド実行時エラー : " + command.data.name,error);
+            try{
+                await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+            } catch{
+                const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
+                await reply.reactions.removeAll()
+            }
+        }}
+    else{
+        await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
     }
 });
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
-    if (!interaction.isStringSelectMenu()) return;
-
-    // /createchanでのカテゴリ選択の受け取り
-    if (interaction.customId === "selectCat")
-    {
+    if (interaction.customId === "selectCat"){
         //キャンセル受付
         if(interaction.values[0]==="0000000000000000000")
         {
@@ -326,7 +335,23 @@ client.on(Events.InteractionCreate, async interaction =>
 
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
-    TxtEasterEgg.func(message);
+    /*メンテナンスモード*/
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
+            if(config.sugoiTsuyoiHitotachi[i] === message.author.id)flag = 1;
+        }
+        if(config.client === message.author.id){
+            flag = 1;
+        }
+    }
+    else{
+        flag = 1;
+    }
+
+    if(flag !== 0){
+        TxtEasterEgg.func(message);
+    }
 })
 
 /*誕生日通知*/
@@ -388,25 +413,36 @@ cron.schedule('*/1  * * * *', async () => {
         system.warn("ダッシュボードの自動更新対象がありません。");
     }
     for(let i=0;i<data.length;i++){
-        const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
-        const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
-        const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-        channel.messages.fetch(data[i].board)
-            .then((dashboard) => {
-                dashboard.edit({embeds: [newEmbed]});
-            })
-            .catch(async (error) => {
-                await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
-                await db.update("main", "guildData", {channel: data[i].channel},{
-                    $set:{
-                        boardChannel: "0000000000000000000",
-                        board: "0000000000000000000"
-                    }});
-            });
+        let flag = 0;
+        if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+            if(config.devServer === data[i].guild){
+                flag = 1;
+            }
+        }
+        else{
+            flag = 1;
+        }
+
+        if(flag === 1){
+            const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
+            const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
+            const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+            channel.messages.fetch(data[i].board)
+                .then((dashboard) => {
+                    dashboard.edit({embeds: [newEmbed]});
+                })
+                .catch(async (error) => {
+                    await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
+                    await db.update("main", "guildData", {channel: data[i].channel},{
+                        $set:{
+                            boardChannel: "0000000000000000000",
+                            board: "0000000000000000000"
+                        }});
+                });
+        }
     }
 
 });
-
 
 if (require.main === module){
     client.login(config.token);
