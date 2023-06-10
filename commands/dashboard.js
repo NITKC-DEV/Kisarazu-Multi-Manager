@@ -1,6 +1,9 @@
-const { SlashCommandBuilder} = require('discord.js')
+const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
+const fs = require("fs");
+const {configPath} = require("../environmentConfig");
 const dashboard = require('../functions/dashboard.js');
 const db = require('../functions/db.js');
+const system = require("../functions/logsystem");
 const {setTimeout} = require("node:timers/promises");
 module.exports =
     [
@@ -95,7 +98,12 @@ module.exports =
             async execute(interaction) {
                 const reply = await interaction.deferReply()
                 let replyOptions;
-                const data = await db.find("main","dashboard",{guild:String(interaction.guildId)});
+                if(interaction.guild === undefined || interaction.guild === null){
+                    await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
+                    system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
+                    return;
+                }
+                let data = await db.find("main","guildData",{guild:String(interaction.guildId),board:{$nin:["0000000000000000000"]}}); /*自動更新対象のボードがあるかどうか確認*/
                 if(data.length > 0){
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。");
                     await reply.react('⭕');
@@ -132,10 +140,10 @@ module.exports =
                         await interaction.editReply("生成中...")
                         const embed = await dashboard.generation(interaction.guild);
                         const board = await interaction.channel.send({ embeds: [embed] });
-                        await db.update("main","dashboard",{guild:String(interaction.guildId)}, {
+                        await db.update("main","guildData",{guild:String(interaction.guildId)}, {
                             $set:{
                                 guild: String(interaction.guildId),
-                                channel: String(interaction.channelId),
+                                boardChannel: String(interaction.channelId),
                                 board: String(board.id)
                             }
                         })
@@ -144,18 +152,31 @@ module.exports =
                     }
                     else if(flag === 1){
                         await reply.reactions.removeAll();
-                        replyOptions=time=>{return{content: '生成をキャンセルしました\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: '生成をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
                     }
                 }
                 else{
+                    data = await db.find("main","guildData",{guild:String(interaction.guildId)}); /*guildData作成済みかどうか確認*/
                     const embed = await dashboard.generation(interaction.guild);
                     const board = await interaction.channel.send({ embeds: [embed] });
-                    await db.insert("main","dashboard",{
-                        guild: String(interaction.guildId),
-                        channel: String(interaction.channelId),
-                        board: String(board.id)
-                    })
-                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    if(data.length > 0){
+                        await db.update("main","guildData",{guild:String(interaction.guildId)}, {
+                            $set:{
+                                guild: String(interaction.guildId),
+                                boardChannel: String(interaction.channelId),
+                                board: String(board.id)
+                            }
+                        });
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    }
+                    else{
+                        await db.insert("main","guildData",{
+                            guild: String(interaction.guildId),
+                            boardChannel: String(interaction.channelId),
+                            board: String(board.id)
+                        });
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    }
 
                 }
                 await interaction.editReply(replyOptions(5));
