@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
 const timetableBuilder  = require('./timetable/timetableUtils');
 const dotenv = require('dotenv');
 const path = require('path');
@@ -35,7 +35,8 @@ const dashboard = require('./functions/dashboard.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
-const axios = require("axios");
+const weather = require('./functions/weather.js');
+
 
 
 //スラッシュコマンド登録
@@ -53,9 +54,10 @@ client.once("ready", async () => {
 
     }
     await system.log("Ready!");
+    await weather.update(); //天気更新
 });
 
-/*Readyイベント*/
+/*command処理*/
 client.on("interactionCreate", async (interaction) => {
     if (!interaction.isCommand()) {
         return;
@@ -340,21 +342,7 @@ cron.schedule('0 5 * * *', () => {
 
 /*天気キャッシュ取得*/
 cron.schedule('5 5,11,17 * * *', async () => {
-    let response;
-    try {
-        response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
-    } catch (error) {
-        await system.error("天気を取得できませんでした");
-        response = null;
-    }
-
-    if(response != null){
-        await db.update("main", "weatherCache", {label: "最新の天気予報"}, {
-            $set: {
-                response: response.data
-            }
-        });
-    }
+    await weather.update()
 });
 
 
@@ -404,4 +392,6 @@ cron.schedule('*/1  * * * *', async () => {
 });
 
 
-client.login(config.token);
+if (require.main === module){
+    client.login(config.token);
+}

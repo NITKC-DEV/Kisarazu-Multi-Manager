@@ -1,5 +1,7 @@
 const {EmbedBuilder} = require("discord.js");
 const db = require('../functions/db.js');
+const axios = require("axios");
+const system = require("./logsystem");
 
 /*天気取得*/
 async function getWeather() {
@@ -45,14 +47,14 @@ exports.generationDay = async function func(day){
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
         filed ={
             name: '概況',
-            value: `\`\`\`　${data.description.bodyText.trim()}\`\`\``,
+            value: `\`\`\`　${data.description.text.replace("　","​")}\`\`\``,
         }
     }
     else if(day === 1){
         annotation = "概況は今日から明日にかけての天気になります。";
         filed ={
             name: '概況',
-            value: `\`\`\`　${data.description.bodyText.trim()}\`\`\``,
+            value: `\`\`\`　${data.description.text.replace("　","​")}\`\`\``,
         }
     }
     else{
@@ -79,15 +81,33 @@ exports.generationDay = async function func(day){
             },
             {
                 name: '降水確率',
-                value: `\`\`\`00時~06時：${weather.chanceOfRain.T00_06} | 06時~12時：${weather.chanceOfRain.T06_12}\n12時~18時：${weather.chanceOfRain.T12_18} | 18時~24時：${weather.chanceOfRain.T18_24}\`\`\``,
+                value: `\`\`\`00時~06時：${weather.chanceOfRain.T00_06}\n06時~12時：${weather.chanceOfRain.T06_12}\n12時~18時：${weather.chanceOfRain.T12_18}\n18時~24時：${weather.chanceOfRain.T18_24}\`\`\``,
             },
             {
                 name: 'データ詳細',
-                value: `\`\`\`発表気象台：${data.publishingOffice}\n発表時刻：${data.publicTimeFormatted}\n\n注)${annotation}\`\`\``,
+                value: `\`\`\`${data.publicTimeFormatted} ${data.publishingOffice}より発表\n\n注)${annotation}\`\`\``,
 
             }
         ])
         .setTimestamp()
         .setFooter({text: '気象庁 Japan Meteorological Agency  |  Developed by NITKC22s server Admin'});
 
+}
+
+exports.update = async function func() {
+    let response;
+    try {
+        response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
+    } catch (error) {
+        await system.error("天気を取得できませんでした");
+        response = null;
+    }
+
+    if(response != null){
+        await db.update("main", "weatherCache", {label: "最新の天気予報"}, {
+            $set: {
+                response: response.data
+            }
+        });
+    }
 }
