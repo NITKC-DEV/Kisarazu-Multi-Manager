@@ -6,7 +6,7 @@ const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
-const client = new Client({
+global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -88,7 +88,7 @@ client.on("interactionCreate", async (interaction) => {
             }
         }}
     else{
-        await interaction.reply({ content: '現在メンテナンスモード中につき、スラッシュコマンドは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
+        await interaction.reply({ content: '現在メンテナンスモード中につき、BOTはは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
     }
 
 });
@@ -96,11 +96,7 @@ client.on("interactionCreate", async (interaction) => {
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
-    if (!interaction.isStringSelectMenu()) return;
-
-    // /createchanでのカテゴリ選択の受け取り
-    if (interaction.customId === "selectCat")
-    {
+    if (interaction.customId === "selectCat"){
         //キャンセル受付
         if(interaction.values[0]==="0000000000000000000")
         {
@@ -340,7 +336,23 @@ client.on(Events.InteractionCreate, async interaction =>
 
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
-    TxtEasterEgg.func(message);
+    /*メンテナンスモード*/
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
+            if(config.sugoiTsuyoiHitotachi[i] === message.author.id)flag = 1;
+        }
+        if(config.client === message.author.id){
+            flag = 1;
+        }
+    }
+    else{
+        flag = 1;
+    }
+
+    if(flag !== 0){
+        TxtEasterEgg.func(message);
+    }
 })
 
 /*誕生日通知*/
@@ -401,21 +413,33 @@ cron.schedule('*/1  * * * *', async () => {
         system.warn("ダッシュボードの自動更新対象がありません。");
     }
     for(let i=0;i<data.length;i++){
-        const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
-        const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
-        const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-        channel.messages.fetch(data[i].board)
-            .then((dashboard) => {
-                dashboard.edit({embeds: [newEmbed]});
-            })
-            .catch(async (error) => {
-                await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
-                await db.update("main", "guildData", {channel: data[i].channel},{
-                    $set:{
-                        boardChannel: "0000000000000000000",
-                        board: "0000000000000000000"
-                    }});
-            });
+        let flag = 0;
+        if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+            if(config.devServer === data[i].guild){
+                flag = 1;
+            }
+        }
+        else{
+            flag = 1;
+        }
+
+        if(flag === 1){
+            const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
+            const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
+            const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+            channel.messages.fetch(data[i].board)
+                .then((dashboard) => {
+                    dashboard.edit({embeds: [newEmbed]});
+                })
+                .catch(async (error) => {
+                    await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`,error);
+                    await db.update("main", "guildData", {channel: data[i].channel},{
+                        $set:{
+                            boardChannel: "0000000000000000000",
+                            board: "0000000000000000000"
+                        }});
+                });
+        }
     }
 
 });
