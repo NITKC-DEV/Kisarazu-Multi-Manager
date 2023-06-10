@@ -1,9 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
-const fs = require("fs");
-const {configPath} = require("../environmentConfig");
-
+const {SlashCommandBuilder} = require('discord.js');
 const dashboard = require('../functions/dashboard.js');
-
+const db = require('../functions/db.js');
+const system = require("../functions/logsystem");
+const {setTimeout} = require("node:timers/promises");
 module.exports =
     [
         {
@@ -12,10 +11,9 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
+                const reply = await interaction.deferReply()
                 if(interaction.guild === undefined || interaction.guild === null){
                     await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
-                    system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
-                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                 }
                 else{
                     const embed = await dashboard.generation(interaction.guild)
@@ -68,16 +66,20 @@ module.exports =
 
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
-                    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
-                    data.nextTest[interaction.options.data[5].value-1] = [
-                        interaction.options.data[0].value,
-                        interaction.options.data[1].value,
-                        interaction.options.data[2].value,
-                        interaction.options.data[3].value,
-                        interaction.options.data[4].value
-                    ]
-                    fs.writeFileSync(configPath, JSON.stringify(data,null ,"\t")) //ここで書き出し
-                    await interaction.reply({ content: `今年度${interaction.options.data[5].value}回目のテストを${data.nextTest[interaction.options.data[5].value-1][0]}年${data.nextTest[interaction.options.data[5].value-1][1]}月${data.nextTest[interaction.options.data[5].value-1][2]}日〜${data.nextTest[interaction.options.data[5].value-1][3]}月${data.nextTest[interaction.options.data[5].value-1][4]}日に設定しました`, ephemeral: true });
+                    db.update(
+                        "main","nextTest",{label:String(interaction.options.data[5].value)},
+                        {
+                            $set: {
+                                year: String(interaction.options.data[0].value),
+                                month1: String(interaction.options.data[1].value),
+                                day1: String(interaction.options.data[2].value),
+                                month2: String(interaction.options.data[3].value),
+                                day2: String(interaction.options.data[4].value)
+                            },
+                        }
+                    )
+
+                    await interaction.reply({ content: `今年度${interaction.options.data[5].value}回目のテストを${interaction.options.data[0].value}年${interaction.options.data[1].value}月${interaction.options.data[2].value}日〜${interaction.options.data[3].value}月${interaction.options.data[4].value}日に設定しました`, ephemeral: true });
                 }
                 else{
                     await interaction.reply({content:"どっか〜ん　するから、1~4の中で指定してくれ", ephemeral: true })
@@ -88,26 +90,8 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('auto-dashboard')
-                .setDescription('自動更新されるダッシュボードを選択')
-                .setDefaultMemberPermissions(1<<3)
-                .addStringOption(option =>
-                    option
-                        .setName('ダッシュボードid')
-                        .setDescription('メッセージIDを入力')
-                        .setRequired(true)
-                )
-                .addStringOption(option =>
-                    option
-                        .setName('チャンネルid')
-                        .setDescription('チャンネルIDを入力')
-                        .setRequired(true)
-                )
-                .addStringOption(option =>
-                    option
-                        .setName('ギルドid')
-                        .setDescription('ギルドIDを入力')
-                        .setRequired(true)
-                ),
+                .setDescription('自動更新されるダッシュボードを生成')
+                .setDefaultMemberPermissions(1<<3),
 
             async execute(interaction) {
                 const reply = await interaction.deferReply()
@@ -119,20 +103,36 @@ module.exports =
                 }
                 let data = await db.find("main","guildData",{guild:String(interaction.guildId),board:{$nin:["0000000000000000000"]}}); /*自動更新対象のボードがあるかどうか確認*/
                 if(data.length > 0){
-                    const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n現在の自動更新を止めて新たに生成する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+                    const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。");
                     await reply.react('⭕');
                     await reply.react('❌');
-                    let flag = -1;
+                    let flag = -1,otherReact =[0,0];
 
-                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                        .then(collected => {
-                            if(reply.reactions.cache.at(0).count === 2){
-                                flag = 0;
-                            }
-                            else if(reply.reactions.cache.at(1).count === 2){
-                                flag = 1;
-                            }
-                        })
+                    while(flag === -1){
+                        await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 , time: 60_000})
+                            .then(collected => {
+                                if(reply.reactions.cache.at(0).count === 2 + otherReact[0]){
+                                    if(reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id){
+                                        flag = 0;
+                                    }
+                                    else {
+                                        otherReact[0] += 1;
+                                    }
+                                }
+                                else if(reply.reactions.cache.at(1).count === 2 + otherReact[1]){
+                                    if(reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id){
+                                        flag = 1;
+                                    }
+                                    else{
+                                        otherReact[1] += 1;
+                                    }
+
+                                }
+                                else{
+                                    flag = 1;
+                                }
+                            })
+                    }
                     await reply.reactions.removeAll();
                     if(flag === 0){
                         await interaction.editReply("生成中...")
@@ -146,11 +146,11 @@ module.exports =
                             }
                         })
 
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                     else if(flag === 1){
                         await reply.reactions.removeAll();
-                        replyOptions=time=>{return{content: '生成をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: '生成をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                 }
                 else{
@@ -165,7 +165,7 @@ module.exports =
                                 board: String(board.id)
                             }
                         });
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                     else{
                         await db.insert("main","guildData",{
@@ -173,7 +173,7 @@ module.exports =
                             boardChannel: String(interaction.channelId),
                             board: String(board.id)
                         });
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは'+time+'秒後に自動で削除されます)。', ephemeral:true};};
                     }
 
                 }
