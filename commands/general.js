@@ -62,7 +62,7 @@ module.exports =
                             },
                             {
                                 name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.1.1](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能',
+                                value: '[Genshin-timer Discord BOT v2.1.1](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能\n誕生日お祝い機能',
                             },
                             {
                                 name: 'ソースコード',
