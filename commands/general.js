@@ -7,7 +7,6 @@ const weather = require('../functions/weather.js');
 const db = require('../functions/db.js');
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
-const config = require("../environmentConfig");
 
 
 module.exports =

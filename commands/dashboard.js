@@ -1,9 +1,6 @@
-const { SlashCommandBuilder, EmbedBuilder} = require('discord.js')
-const fs = require("fs");
-const {configPath} = require("../environmentConfig");
+const { SlashCommandBuilder} = require('discord.js')
 const dashboard = require('../functions/dashboard.js');
 const db = require('../functions/db.js');
-const system = require("../functions/logsystem");
 const {setTimeout} = require("node:timers/promises");
 module.exports =
     [
