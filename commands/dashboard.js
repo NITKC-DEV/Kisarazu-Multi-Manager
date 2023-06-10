@@ -1,4 +1,4 @@
-const {SlashCommandBuilder} = require('discord.js')
+const {SlashCommandBuilder} = require('discord.js');
 const dashboard = require('../functions/dashboard.js');
 const db = require('../functions/db.js');
 const system = require("../functions/logsystem");
