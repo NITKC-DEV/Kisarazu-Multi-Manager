@@ -195,7 +195,7 @@ exports.generation = async function func(guild) {
         .setColor(0x00A0EA)
         .setTitle(guild.name + '  ダッシュボード')
         .setAuthor({
-            name: "木更津22s統合管理BOT",
+            name: "木更津高専統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
             url: 'https://github.com/NITKC22s/bot-main'
         })

@@ -1,13 +1,11 @@
-const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
 
 const ID_NODATA= "0000000000000000000";
 exports.ID_NODATA = ID_NODATA;
 
 /***
-* Objectテンプレ
+ * Objectテンプレ
  {
-            guild: ,
             grade: ,
             announce: ,
             main: ,
@@ -23,13 +21,14 @@ exports.ID_NODATA = ID_NODATA;
             cRole: ,
             boardChannel: ,
             board: ,
-            timetable:
+            timetable: ,
+            weather:
  }
 
- 更新したい内容のみで良いので、valueに更新後のデータを入れる。
- timetableのみbool、それ以外はstringかint
+ 更新したい内容のみで良いので、valueに更新後のデータを入れる。guildは不要
+ timetableとweatherがbool、それ以外はstringかint
  設定されていないときは、文字列型でID_NODATAとする
-* */
+ * */
 
 
 /***
@@ -42,7 +41,6 @@ exports.updateOrInsert = async function func(guild,object) {
     if(data.length > 0) {
         await db.update("main","guildData",{guild: String(guild)},{
             $set:{
-                guild: String(object.guild),
                 grade: String(object.grade ?? data[0].grade),
                 announce: String(object.announce ?? data[0].announce),
                 main: String(object.main ?? data[0].main),
@@ -58,13 +56,14 @@ exports.updateOrInsert = async function func(guild,object) {
                 cRole: String(object.cRole ?? data[0].cRole),
                 boardChannel: String(object.boardChannel ?? data[0].boardChannel),
                 board: String(object.board ?? data[0].board),
-                timetable: object.board ?? data[0].timetable
+                timetable: object.timetable ?? data[0].timetable,
+                weather: object.weather ?? data[0].weather
             }
         });
     }
     else{
         await db.insert("main","guildData",{
-            guild: String(object.guild),
+            guild: String(guild),
             grade: String(object.grade ?? ID_NODATA),
             announce: String(object.announce ?? ID_NODATA),
             main: String(object.main ?? ID_NODATA),
@@ -80,7 +79,8 @@ exports.updateOrInsert = async function func(guild,object) {
             cRole: String(object.cRole ?? ID_NODATA),
             boardChannel: String(object.boardChannel ?? ID_NODATA),
             board: String(object.board ?? ID_NODATA),
-            timetable: object.board ?? true
+            timetable: object.board ?? true,
+            weather: object.board ?? true
         });
     }
 }
