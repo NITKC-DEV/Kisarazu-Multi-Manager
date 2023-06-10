@@ -90,7 +90,6 @@ client.on("interactionCreate", async (interaction) => {
     else{
         await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
     }
-
 });
 
 //SelectMenu受け取り
