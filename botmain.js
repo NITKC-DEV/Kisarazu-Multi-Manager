@@ -36,6 +36,7 @@ const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
 const weather = require('./functions/weather.js');
+const {ID_NODATA} = require("./functions/guildDataSet");
 
 
 
@@ -346,8 +347,9 @@ cron.schedule('5 5,11,17 * * *', async () => {
 });
 
 
-
+/*時間割*/
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
+
     let dayOfWeek = new Date().getDay()+1;
     //timetable == trueのとき
     let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable
@@ -362,6 +364,18 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
             .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
         (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
             .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    }
+
+
+});
+
+/*天気*/
+cron.schedule('0 20 * * *', async () => {
+    const embed = await weather.generationDay(1);
+    const data = await db.find("main","guildData",{main:{$nin:[ID_NODATA]}});
+    for(let i = 0; i < data.length; i++) {
+        const channel = await client.channels.fetch(data[i].main);
+        await channel.send({embeds: [embed]});
     }
 });
 
