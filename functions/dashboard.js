@@ -106,9 +106,9 @@ exports.generation = async function func(guild) {
             }
             else {
                 if (now > testEnd - 86400000) { /*最終日なら*/
-                    test = 'テスト最終日です'
+                    test = '本日はテスト期間最終日です'
                 } else {
-                    test = `テスト${Math.floor((now - testStart) / 86400000 + 1)}日目です(〜${data[0].month2}月${data[0].day2}日)`
+                    test = `本日はテスト期間です(〜${data[0].month2}月${data[0].day2}日)`
 
                 }
             }
