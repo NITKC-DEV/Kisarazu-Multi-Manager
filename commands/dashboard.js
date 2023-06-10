@@ -1,7 +1,6 @@
 const {SlashCommandBuilder} = require('discord.js');
 const dashboard = require('../functions/dashboard.js');
 const db = require('../functions/db.js');
-const system = require("../functions/logsystem");
 const {setTimeout} = require("node:timers/promises");
 module.exports =
     [
@@ -141,11 +140,11 @@ module.exports =
                             }
                         })
 
-                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                     else if(flag === 1){
                         await reply.reactions.removeAll();
-                        replyOptions=time=>{return{content: '生成をキャンセルしました\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                        replyOptions=time=>{return{content: '生成をキャンセルしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                     }
                 }
                 else{
@@ -156,8 +155,7 @@ module.exports =
                         channel: String(interaction.channelId),
                         board: String(board.id)
                     })
-                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
-
+                    replyOptions=time=>{return{content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは'+time+'秒後に自動で削除されます。)', ephemeral:true};};
                 }
                 await interaction.editReply(replyOptions(5));
                 //5秒カウントダウンしたのちに返信を削除
