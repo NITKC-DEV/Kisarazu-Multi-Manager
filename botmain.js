@@ -406,5 +406,6 @@ cron.schedule('*/1  * * * *', async () => {
 
 });
 
-
-client.login(config.token);
+if (require.main === module){
+    client.login(config.token);
+}
