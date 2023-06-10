@@ -6,7 +6,7 @@ const fs = require('fs');
 const cron = require('node-cron');
 require('date-utils');
 dotenv.config();
-const client = new Client({
+global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -407,4 +407,6 @@ cron.schedule('*/1  * * * *', async () => {
 });
 
 
-client.login(config.token);
+if (require.main === module){
+    client.login(config.token);
+}
