@@ -370,12 +370,14 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 /*天気*/
-cron.schedule('0 20 * * *', async () => {
+cron.schedule('15 17 * * *', async () => {
     const embed = await weather.generationDay(1);
     const data = await db.find("main","guildData",{main:{$nin:[ID_NODATA]}});
     for(let i = 0; i < data.length; i++) {
-        const channel = await client.channels.fetch(data[i].main);
-        await channel.send({embeds: [embed]});
+        if(data[i].weather){
+            const channel = await client.channels.fetch(data[i].main);
+            await channel.send({embeds: [embed]});
+        }
     }
 });
 

@@ -5,6 +5,7 @@ require('date-utils');
 const system = require('../functions/logsystem.js');
 const weather = require('../functions/weather.js');
 const db = require('../functions/db.js');
+const guildDate = require('../functions/guildDataSet.js')
 
 
 module.exports =
@@ -308,5 +309,22 @@ module.exports =
                 }
                 await interaction.editReply({ embeds: [embed] });
             }
-        }
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('weather-switcher')
+                .setDescription('天気定期送信のON/OFFを切り替えます')
+                .setDefaultMemberPermissions(1<<3)
+                .addBooleanOption(option =>
+                    option
+                        .setName('options')
+                        .setDescription('定期実行の可否を指定します')
+                        .setRequired(true)
+                ),
+
+            async execute(interaction) {
+                await guildDate.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
+                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
+            },
+        },
     ]
