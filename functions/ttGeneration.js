@@ -71,7 +71,7 @@ exports.generation = async function func(grade,department,day,change) {
             }
 
             field.push({
-                name:subject[0].title,
+                name:`${subject[0].title}`,
                 value:`\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``
             })
         }
