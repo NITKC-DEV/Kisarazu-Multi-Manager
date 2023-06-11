@@ -29,7 +29,7 @@ module.exports = [
                 option
                     .setName('学科')
                     .setDescription('学科を指定します')
-                    .setRequired(true)
+                    .setRequired(false)
                     .addChoices(
                         { name: 'M-機械工学科', value: '1' },
                         { name: 'E-電気電子工学科', value: '2' },
