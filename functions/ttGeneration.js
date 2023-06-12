@@ -24,6 +24,8 @@ const departmentData = [
 
 const dayName = ["月","火","水","木","金"];
 
+const time = ["1-2限：08:50 - 10:25\n","3-4限：10:35 - 12:10\n","5-6限：13:00 - 14:35\n","7-8限：14:45 - 16:15"];
+
 /***
  * 時間割データを生成する
  * @param grade 学年を1~5で指定
@@ -43,6 +45,7 @@ exports.generation = async function func(grade,department,day,change) {
 
     if(data.length > 0){
         let field = [];
+        let dailyComment="";
         for(let i = 0; i < data[0].timetable.length; i++){
             const subject = await db.find("main","syllabusData",{subject_id:`${grade}${department}${data[0].timetable[i].name}`});
             let professor = "";
@@ -70,14 +73,24 @@ exports.generation = async function func(grade,department,day,change) {
                 comment = `\n備考　　：${data[0].timetable[i].comment}`
             }
 
+            if(subject[0].title === "HR" || subject[0].title === "課題学習時間"){
+                dailyComment += "7限  ：14:45 - 15:30\n"
+            }
+            else if(subject[0].title !== "空きコマ") {
+                dailyComment += `${time[i]}`;
+            }
+
             field.push({
                 name:subject[0].title,
                 value:`\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``
             })
         }
+        if(data[0].comment !== ""){
+            data[0].comment = "--------------------\n" + data[0].comment;
+        }
         field.push({
             name:"授業時間・備考",
-            value:`\`\`\`1-2限：08:50 - 10:25\n3-4限：10:35 - 12:10\n5-6限：13:00 - 14:35\n7-8限：14:45 - 16:15\`\`\``
+            value:`\`\`\`${dailyComment}${data[0].comment}\`\`\``
         })
 
         return new EmbedBuilder()
