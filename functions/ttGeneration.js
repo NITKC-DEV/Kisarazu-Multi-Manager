@@ -1,4 +1,4 @@
-const {EmbedBuilder} = require("discord.js");
+const {EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder} = require("discord.js");
 const db = require("./db.js");
 const system = require("./logsystem.js");
 const commands = require("../botmain");
@@ -109,4 +109,41 @@ exports.generation = async function func(grade,department,day,change) {
     else{
         return 0;
     }
+}
+
+/***
+ * 時間割データを生成する
+ * @param interaction セレクトメニューのinteraction
+ * @param type 0ならスラッシュコマンドからの呼び出し、1ならセレクトメニューからの呼び出し
+ */
+
+exports.addException = async function func(interaction,type) {
+    const select = new StringSelectMenuBuilder()
+        .setCustomId(`add-exception${interaction.options.getString('変更日')}`)
+        .setPlaceholder('教科を選択')
+        .addOptions(
+            new StringSelectMenuOptionBuilder()
+                .setLabel('管理者向けコマンドについて')
+                .setDescription('管理者向けコマンドの一覧です。')
+                .setValue('0'),
+            new StringSelectMenuOptionBuilder()
+                .setLabel('このBOTの運営とサポートについて')
+                .setDescription('BOTの運営とサポートについてです。運営情報や、不具合・要望などはここから。')
+                .setValue('1'),
+            new StringSelectMenuOptionBuilder()
+                .setLabel('このBOTの運営とサポートについてw')
+                .setDescription('BOTの運営とサポートについてです。運営情報や、不具合・要望などはここから。')
+                .setValue('3'),
+            new StringSelectMenuOptionBuilder()
+                .setLabel('このBOTの運営とサポートについてww')
+                .setDescription('BOTの運営とサポートについてです。運営情報や、不具合・要望などはここから。')
+                .setValue('4'),
+            new StringSelectMenuOptionBuilder()
+                .setLabel('このBOTの運営とサポートについてwww')
+                .setDescription('BOTの運営とサポートについてです。運営情報や、不具合・要望などはここから。')
+                .setValue('5'),
+        );
+
+    const row = new ActionRowBuilder()
+        .addComponents(select);
 }
