@@ -131,6 +131,66 @@ module.exports = [
             await interaction.reply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
         },
     },
+    {
+        data: new SlashCommandBuilder()
+            .setName('addException')
+            .setDescription('授業変更、及び定期テスト等を登録します。')
+            .setDefaultMemberPermissions(1<<3)
+            .addBooleanOption(option =>
+                option
+                    .setName('定期テスト')
+                    .setDescription('定期テストとして登録するにはTrueを選択してください。')
+                    .setRequired(true)
+            )
+            .addStringOption(option =>
+                option
+                    .setName('学科')
+                    .setDescription('学科を指定します')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: 'M-機械工学科', value: '1' },
+                        { name: 'E-電気電子工学科', value: '2' },
+                        { name: 'D-電子制御工学科', value: '3' },
+                        { name: 'J-情報工学科', value: '4' },
+                        { name: 'C-環境都市工学科', value: '5' },
+                    )
+            )
+            .addStringOption(option =>
+                option
+                    .setName('学年')
+                    .setDescription('学年を指定します。')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: '1年生', value: '1' },
+                        { name: '2年生', value: '2' },
+                        { name: '3年生', value: '3' },
+                        { name: '4年生', value: '4' },
+                        { name: '5年生', value: '5' },
+                    )
+            )
+            .addIntegerOption(option =>
+                option
+                    .setName('変更日')
+                    .setDescription('授業変更する日を、月×100+日でいれてください。例)12月14日→1214')
+                    .setRequired(true)
+            )
+            .addStringOption(option =>
+                option
+                    .setName('曜日')
+                    .setDescription('元データとする曜日をいれてください。')
+                    .setRequired(false)
+                    .addChoices(
+                        { name: '月曜日', value: '1' },
+                        { name: '火曜日', value: '2' },
+                        { name: '水曜日', value: '3' },
+                        { name: '木曜日', value: '4' },
+                        { name: '金曜日', value: '5' },
+                    )
+            ),
+
+        async execute(interaction) {
+        }
+    }
 
 
 ]
