@@ -1,5 +1,5 @@
-const { SlashCommandBuilder} = require('discord.js');
-const  timetableBuilder  = require('../functions/ttGeneration.js');
+const { SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder} = require('discord.js');
+const  timetable  = require('../functions/ttGeneration.js');
 const Classes = require('../timetable/timetables.json');
 const fs = require('fs');
 const {configPath}=require("../environmentConfig");
@@ -53,7 +53,7 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await interaction.deferReply()
+            await interaction.deferReply();
             let dt = new Date();
             let dayOfWeek = dt.getDay();
             let hours = dt.getHours();
@@ -99,7 +99,7 @@ module.exports = [
                 await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えてguilddataコマンドで学科ロールを登録してもらってください。");
             }
             else{
-                const embed = await timetableBuilder.generation(grade,department,String(dayOfWeek),);
+                const embed = await timetable.generation(grade,department,String(dayOfWeek),);
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }
@@ -133,7 +133,7 @@ module.exports = [
     },
     {
         data: new SlashCommandBuilder()
-            .setName('addException')
+            .setName('add-exception')
             .setDescription('授業変更、及び定期テスト等を登録します。')
             .setDefaultMemberPermissions(1<<3)
             .addBooleanOption(option =>
@@ -189,6 +189,13 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            await interaction.reply({ content: "DMに時間割変更メニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・木更津高専統合管理BOTをブロックしている", ephemeral: true });
+            await timetable.addException(interaction,0);
+            /*
+            メモ：時間割を完成させるまでは0 + 日付　で検索避けをしてエラー回避
+            カスタムidの先頭に適当な文字をいれて、何限目の編集をしてるか取得できるように
+            カスタムidの末尾に日付をいれて、いつの編集をしてるかをわかるように
+             */
         }
     }
 

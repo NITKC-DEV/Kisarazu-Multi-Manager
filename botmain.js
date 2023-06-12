@@ -31,6 +31,7 @@ const {configPath} = require("./environmentConfig");
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const birthday = require('./functions/birthday.js');
 const dashboard = require('./functions/dashboard.js');
+const timetable = require('./functions/ttGeneration.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
@@ -83,6 +84,11 @@ client.on("interactionCreate", async (interaction) => {
 client.on(Events.InteractionCreate, async interaction =>
 {
     if (!interaction.isStringSelectMenu()) return;
+
+    //timetable用 customIDに引数を埋め込むため、一致で検索
+    if(interaction.customId.match(/add-exception/)){
+        await timetable.addException(interaction,1);
+    }
 
     // /createchanでのカテゴリ選択の受け取り
     if (interaction.customId === "selectCat")
