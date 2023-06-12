@@ -76,6 +76,16 @@ module.exports = [
                 }
             }
 
+            let department = interaction.options.getString('学科');
+            if(department === undefined || department === null){
+                const guildData = await db.find("main","guildData",{guild:String(interaction.guildId)});
+                if(interaction.member._roles.includes(guildData[0].mRole))department = '1';
+                else if(interaction.member._roles.includes(guildData[0].eRole))department = '2';
+                else if(interaction.member._roles.includes(guildData[0].dRole))department = '3';
+                else if(interaction.member._roles.includes(guildData[0].jRole))department = '4';
+                else if(interaction.member._roles.includes(guildData[0].cRole))department = '5';
+            }
+
             let grade = interaction.options.getString('学年');
             if(grade === undefined || grade === null){
                 const guildData = await db.find("main","guildData",{guild:String(interaction.guildId)});
@@ -85,8 +95,11 @@ module.exports = [
             if(isNaN(grade)){
                 await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、guilddataコマンドで入学した年を登録してもらってください。");
             }
+            else if(department === null){
+                await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えてguilddataコマンドで学科ロールを登録してもらってください。");
+            }
             else{
-                const embed = await timetableBuilder.generation(grade,interaction.options.getString('学科'),String(dayOfWeek),);
+                const embed = await timetableBuilder.generation(grade,department,String(dayOfWeek),);
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }
