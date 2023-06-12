@@ -75,6 +75,10 @@ exports.generation = async function func(grade,department,day,change) {
                 value:`\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``
             })
         }
+        field.push({
+            name:"授業時間・備考",
+            value:`\`\`\`1-2限：08:50 - 10:25\n3-4限：10:35 - 12:10\n5-6限：13:00 - 14:35\n7-8限：14:45 - 16:15\`\`\``
+        })
 
         return new EmbedBuilder()
             .setColor(departmentData[parseFloat(department)-1].color)
