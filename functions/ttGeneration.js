@@ -121,10 +121,20 @@ exports.addExceptionAdd = async function func(interaction) {
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
+    const period = interaction.customId.slice(-1);
     const date = interaction.customId.substring(3,interaction.customId.match(/add-exception/).index) + '0';
 
-    const originalData = await db.find("main","timetableData",{grade:grade,department:department,day: day});
-    console.log(originalData[0]);
+    let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
+    if(data.length === 0){
+        data = await db.find("main","timetableData",{grade:grade,department:department,day: day});
+    }
+
+
+    delete data[0]._id;
+    data[0].day = date;
+    data[0].timetable[parseInt(period)] = {name:interaction.values[0],comment:""};
+    await db.updateOrInsert("main","timetableData",{day:date},data[0]);
+
 }
 
 /***
