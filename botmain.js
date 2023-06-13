@@ -80,6 +80,17 @@ client.on("interactionCreate", async (interaction) => {
     }
 });
 
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isButton()) return;
+
+    if((interaction.customId.match(/addCommentTentativeTimetable/) ?? {index:false}).index > 0){
+        await timetable.addExceptionUpdate(interaction);
+    }/*
+    if((interaction.customId.match(/updateTimetable/) ?? {index:false}).index > 0){
+        await timetable.addExceptionUpdate(interaction);
+    }*/
+});
+
 //SelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction =>
 {
@@ -88,9 +99,6 @@ client.on(Events.InteractionCreate, async interaction =>
     //timetable用 customIDに引数を埋め込むため、一致で検索
     if((interaction.customId.match(/add-exception/) ?? {index:false}).index > 0){
         await timetable.addExceptionAdd(interaction);
-    }
-    if((interaction.customId.match(/updateTimetable/) ?? {index:false}).index > 0){
-        await timetable.addExceptionUpdate(interaction);
     }
 
     // /createchanでのカテゴリ選択の受け取り
