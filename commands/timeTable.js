@@ -1,10 +1,30 @@
-const { SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder} = require('discord.js');
+const {SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder, EmbedBuilder,ButtonBuilder} = require('discord.js');
 const  timetable  = require('../functions/ttGeneration.js');
 const Classes = require('../timetable/timetables.json');
 const fs = require('fs');
 const {configPath}=require("../environmentConfig");
 const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
+const commands = require("../botmain");
+
+const departmentData = [
+    {
+        name:"機械工学科",
+        color: "00A0EA"
+    },{
+        name:"電気電子工学科",
+        color: "D64E5A"
+    },{
+        name:"電子制御工学科",
+        color: "865DC0"
+    },{
+        name:"情報工学科",
+        color: "CAAB0D"
+    },{
+        name:"環境工学科",
+        color: "1E9B50"
+    }
+];
 
 
 module.exports = [
@@ -178,7 +198,7 @@ module.exports = [
                 option
                     .setName('曜日')
                     .setDescription('元データとする曜日をいれてください。')
-                    .setRequired(false)
+                    .setRequired(true)
                     .addChoices(
                         { name: '月曜日', value: '1' },
                         { name: '火曜日', value: '2' },
@@ -189,8 +209,43 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await interaction.reply({ content: "DMに時間割変更メニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・木更津高専統合管理BOTをブロックしている", ephemeral: true });
-            await timetable.addException(interaction,0);
+            let select = [];
+            const defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('曜日'))});
+            const subject = await db.find("main","syllabusData",{subject_id:`${interaction.options.getString('学年')}${interaction.options.getString('学科')}`})
+
+            let options=[];
+            for(let i = 0;i<subject.length;i++){
+                options.push({label: subject[i].title, value: String(i)});
+            }
+
+            for(let i = 0; i < 4;i++){
+                select[i] = new StringSelectMenuBuilder()
+                    .setCustomId(`add-exception${i}${interaction.options.getInteger('変更日')}`)
+                    .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択(未選択時：${(defaultData[0].timetable[i] ?? {name:"授業なし"}).name})`)
+                    .addOptions(
+                        options
+                    );
+            }
+
+            const embed = new EmbedBuilder()
+                .setColor(0x00A0EA)
+                .setTitle(`授業変更・定期テスト登録 - ${departmentData[parseFloat(interaction.options.getString('学科'))-1].name}${interaction.options.getString('学年')}年 ${Math.floor(interaction.options.getInteger('変更日')/100)}月${Math.floor(interaction.options.getInteger('変更日')%100)}日`)
+                .setAuthor({
+                    name: "木更津高専統合管理BOT",
+                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                    url: 'https://github.com/NITKC22s/bot-main'
+                })
+                .setDescription('教科を選択してください。\n入力が終わったら、登録ボタンを押してください。')
+                .setTimestamp()
+                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+            const button = new ButtonBuilder({
+                custom_id: 'a cool button',
+                style: 1,
+                label: '登録！'
+            });
+
+            await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}], ephemeral: true });
             /*
             メモ：時間割を完成させるまでは0 + 日付　で検索避けをしてエラー回避
             カスタムidの先頭に適当な文字をいれて、何限目の編集をしてるか取得できるように
