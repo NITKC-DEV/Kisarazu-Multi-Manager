@@ -1,4 +1,4 @@
-const {EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder} = require("discord.js");
+const {EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, TextInputBuilder,ModalBuilder} = require("discord.js");
 const db = require("./db.js");
 const system = require("./logsystem.js");
 const commands = require("../botmain");
@@ -138,10 +138,31 @@ exports.addExceptionAdd = async function func(interaction) {
 }
 
 /***
- * 臨時時間割データを登録
+ * 臨時時間割データにコメントを追加
  * @param interaction ボタンのinteraction
  */
 //カスタムID命名規則　${変更日時4ケタ or 3ケタ文字列}updateTimetable${テストモード可否}
 exports.addExceptionUpdate = async function func(interaction) {
+    const modal = new ModalBuilder()
+        .setCustomId('コメントを追加')
+        .setTitle('モーダルウィンドウのテスト');
+    const textInput = new TextInputBuilder({
+        custom_id: interaction.customId.replace("addCommentTentativeTimetable","updateTimetable"),
+        label: 'コメントを追加(例:〇〇のため、△△日の□□と授業入れ替え)',
+        style: 1,
+    });
 
+    const input = new ActionRowBuilder().addComponents(textInput);
+    modal.addComponents(input);
+    await interaction.showModal(modal);
 }
+
+/***
+ * 臨時時間割データを登録
+ * @param interaction ボタンのinteraction
+ */
+//カスタムID命名規則　${変更日時4ケタ or 3ケタ文字列}updateTimetable${テストモード可否}
+/*
+exports.addExceptionUpdate = async function func(interaction) {
+
+}*/

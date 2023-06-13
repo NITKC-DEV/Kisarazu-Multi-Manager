@@ -243,7 +243,7 @@ module.exports = [
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
 
             const button = new ButtonBuilder({
-                custom_id: `${interaction.options.getInteger('変更日')}updateTimetable${interaction.options.getInteger('授業変更')}`,
+                custom_id: `${interaction.options.getInteger('変更日')}addCommentTentativeTimetable${interaction.options.getInteger('授業変更')}`,
                 style: 1,
                 label: '登録！'
             });
