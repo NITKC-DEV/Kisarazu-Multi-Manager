@@ -1,4 +1,7 @@
-const {SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder, EmbedBuilder,ButtonBuilder} = require('discord.js');
+const {SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder, EmbedBuilder,ButtonBuilder,
+    ModalBuilder,
+    TextInputBuilder
+} = require('discord.js');
 const  timetable  = require('../functions/ttGeneration.js');
 const Classes = require('../timetable/timetables.json');
 const fs = require('fs');
@@ -247,8 +250,34 @@ module.exports = [
                 style: 1,
                 label: '登録！'
             });
+            const modal = new ModalBuilder()
+                .setCustomId('mailSend')
+                .setTitle('メール送信');
 
-            await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}], ephemeral: true });
+            const fromInput = new TextInputBuilder()
+                .setCustomId('fromInput')
+                .setLabel("送信元")
+                .setStyle(1);
+
+            const toInput = new TextInputBuilder()
+                .setCustomId('toInput')
+                .setLabel("送信先")
+                .setStyle(1);
+
+            const subjectInput = new TextInputBuilder()
+                .setCustomId('subjectInput')
+                .setLabel("件名")
+                .setStyle(1);
+
+            const htmlInput = new TextInputBuilder()
+                .setCustomId('htmlInput')
+                .setLabel("内容")
+                .setStyle(1);
+
+            modal.addComponents(new ActionRowBuilder().addComponents(fromInput), new ActionRowBuilder().addComponents(toInput), new ActionRowBuilder().addComponents(subjectInput), new ActionRowBuilder().addComponents(htmlInput));
+
+            await interaction.showModal(modal);
+            await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
             /*
             メモ：時間割を完成させるまでは0 + 日付　で検索避けをしてエラー回避
             カスタムidの先頭に適当な文字をいれて、何限目の編集をしてるか取得できるように

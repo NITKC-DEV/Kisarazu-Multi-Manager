@@ -143,20 +143,30 @@ exports.addExceptionAdd = async function func(interaction) {
  */
 //カスタムID命名規則　${変更日時4ケタ or 3ケタ文字列}updateTimetable${テストモード可否}
 exports.addExceptionUpdate = async function func(interaction) {
-    const modal = new ModalBuilder()
-        .setCustomId('コメントを追加')
-        .setTitle('モーダルウィンドウのテスト');
+    const embed = new EmbedBuilder()
+        .setColor(0x00A0EA)
+        .setTitle(`授業変更・定期テスト登録`)
+        .setAuthor({
+            name: "木更津高専統合管理BOT",
+            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+            url: 'https://github.com/NITKC22s/bot-main'
+        })
+        .setDescription('コメントを入力してください。。\n入力が終わったら、登録ボタンを押してください。')
+        .setTimestamp()
+        .setFooter({ text: 'Developed by NITKC22s server Admin' });
     const textInput = new TextInputBuilder({
         custom_id: interaction.customId.replace("addCommentTentativeTimetable","updateTimetable"),
         label: 'コメントを追加(例:〇〇のため、△△日の□□と授業入れ替え)',
         style: 1,
     });
 
-    const input = new ActionRowBuilder().addComponents(textInput);
-    modal.addComponents(input);
-    await interaction.showModal(modal);
+    const channel = client.channels.cache.get(interaction.message.channelId);
+    await channel.messages.fetch(interaction.message.id)
+        .then((message) => {
+            message.edit({ embeds:[embed],components: [{type:4,components:[textInput]}], ephemeral: true });
+        })
 }
-
+// - ${departmentData[parseFloat(interaction.options.getString('学科'))-1].name}${interaction.options.getString('学年')}年 ${Math.floor(interaction.options.getInteger('変更日')/100)}月${Math.floor(interaction.options.getInteger('変更日')%100)}日`
 /***
  * 臨時時間割データを登録
  * @param interaction ボタンのinteraction
