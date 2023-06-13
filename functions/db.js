@@ -1,6 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
 const config = require('../environmentConfig')
 const system = require('../functions/logsystem.js');
+const db = require('./db.js')
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 
 /***
@@ -54,6 +55,29 @@ exports.insert = async function run(dbName, collectionName, object) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`,err,`DB追加失敗`);
     }
 }
+
+/***
+ * filterにレコードが見つかればそれをsetで更新し、見つからなけれレコードを追加する
+ * @param dbName 追加先データベース名
+ * @param collectionName 追加先コレクション名
+ * @param filter 更新対象のフィルターを指定
+ * @param object 追加するレコード(オブジェクト型)
+ */
+exports.updateOrInsert = async function run(dbName, collectionName,filter, object) {
+
+    try {
+        const data = await db.find(dbName,collectionName,object);
+        if(data.length > 0){
+            await db.update(dbName, collectionName, filter,{$set: object});
+        }
+        else{
+            await db.insert(dbName, collectionName, object)
+        }
+    } catch(err) {
+        await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`,err,`DB追加失敗`);
+    }
+}
+
 /***
  * データベースにレコードを削除する
  * @param dbName 削除元データベース名

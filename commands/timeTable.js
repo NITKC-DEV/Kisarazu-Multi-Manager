@@ -156,11 +156,15 @@ module.exports = [
             .setName('add-exception')
             .setDescription('授業変更、及び定期テスト等を登録します。')
             .setDefaultMemberPermissions(1<<3)
-            .addBooleanOption(option =>
+            .addStringOption(option =>
                 option
-                    .setName('定期テスト')
-                    .setDescription('定期テストとして登録するにはTrueを選択してください。')
+                    .setName('モード')
+                    .setDescription('モード選択')
                     .setRequired(true)
+                    .addChoices(
+                        { name: '定期テスト', value: '0' },
+                        { name: '授業変更', value: '1' }
+                    )
             )
             .addStringOption(option =>
                 option
@@ -220,7 +224,7 @@ module.exports = [
 
             for(let i = 0; i < 4;i++){
                 select[i] = new StringSelectMenuBuilder()
-                    .setCustomId(`add-exception${i}${interaction.options.getInteger('変更日')}`)
+                    .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}add-exception${i}`)
                     .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択(未選択時：${(defaultData[0].timetable[i] ?? {name:"授業なし"}).name})`)
                     .addOptions(
                         options
@@ -240,7 +244,7 @@ module.exports = [
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
 
             const button = new ButtonBuilder({
-                custom_id: 'a cool button',
+                custom_id: `${interaction.options.getInteger('変更日')}updateTimetable${interaction.options.getInteger('授業変更')}`,
                 style: 1,
                 label: '登録！'
             });

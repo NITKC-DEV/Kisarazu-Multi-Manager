@@ -112,19 +112,26 @@ exports.generation = async function func(grade,department,day,change) {
 }
 
 /***
- * 時間割データを生成する
+ * 臨時時間割データを追加 or 生成
  * @param interaction セレクトメニューのinteraction
- * @param type 0ならスラッシュコマンドからの呼び出し、1ならセレクトメニューからの呼び出し
  */
 
-exports.addException = async function func(interaction,type) {
-    switch(type){
-        case 0:
+//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時4ケタ or 3ケタ文字列}add-exception${変更コマ(0~3)}
+exports.addExceptionAdd = async function func(interaction) {
+    const grade = interaction.customId[0];
+    const department = interaction.customId[1];
+    const day = interaction.customId[2];
+    const date = interaction.customId.substring(3,interaction.customId.match(/add-exception/).index) + '0';
 
-            break;
+    const originalData = await db.find("main","timetableData",{grade:grade,department:department,day: day});
+    console.log(originalData[0]);
+}
 
-        case 1:
+/***
+ * 臨時時間割データを登録
+ * @param interaction ボタンのinteraction
+ */
+//カスタムID命名規則　${変更日時4ケタ or 3ケタ文字列}updateTimetable${テストモード可否}
+exports.addExceptionUpdate = async function func(interaction) {
 
-            break;
-    }
 }
