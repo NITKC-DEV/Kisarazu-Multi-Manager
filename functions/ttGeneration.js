@@ -47,7 +47,7 @@ exports.generation = async function func(grade,department,day,change) {
         let field = [];
         let dailyComment="";
         for(let i = 0; i < data[0].timetable.length; i++){
-            const subject = await db.find("main","syllabusData",{subject_id:`${grade}${department}${data[0].timetable[i].name}`});
+            const subject = await db.find("main","syllabusData",{title:data[0].timetable[i].name,subject_id:`${grade}${department}`});
             let professor = "";
             if(0<subject[0].professor.length){
                 professor += "担当教員："
