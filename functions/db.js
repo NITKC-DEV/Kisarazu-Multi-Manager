@@ -97,4 +97,13 @@ exports.delete = async function run(dbName,collectionName,filter) {
     }
 }
 
+/***
+ * データベースを閉じる(今は使わないのでコメントアウト中)
+ */
+/*
+exports.close = async function close(){
+    await dbClient.close();
+    await system.log("close");
+}
+*/
 //引数の詳細については、mongodbの公式ドキュメントを参照すること
