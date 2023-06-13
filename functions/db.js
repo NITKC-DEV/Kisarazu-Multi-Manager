@@ -12,7 +12,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @returns Array型
  */
 exports.find = async function (dbName, collectionName, filter) {
-    const collection = dbClient.db(dbName).collection(collectionName);
+    const collection = await dbClient.db(dbName).collection(collectionName);
 
     return await collection.find(filter).toArray()
 }
@@ -26,8 +26,8 @@ exports.find = async function (dbName, collectionName, filter) {
  */
 exports.update = async function run(dbName, collectionName, filter, update) {
     try {
-        const database = dbClient.db(dbName);
-        const collection = database.collection(collectionName);
+        const database = await dbClient.db(dbName);
+        const collection = await database.collection(collectionName);
 
         const result = await collection.updateOne(filter,update)
         await system.log(`${dbName}.${collectionName}を更新`,`DB更新実行`);
@@ -46,8 +46,8 @@ exports.update = async function run(dbName, collectionName, filter, update) {
 exports.insert = async function run(dbName, collectionName, object) {
 
     try {
-        const database = dbClient.db(dbName);
-        const collection = database.collection(collectionName);
+        const database = await dbClient.db(dbName);
+        const collection = await database.collection(collectionName);
 
         const result = await collection.insertOne(object);
         await system.log(`${dbName}.${collectionName}にレコード追加`,`DB追加実行`);
@@ -66,7 +66,7 @@ exports.insert = async function run(dbName, collectionName, object) {
 exports.updateOrInsert = async function run(dbName, collectionName,filter, object) {
 
     try {
-        const data = await db.find(dbName,collectionName,object);
+        const data = await db.find(dbName,collectionName,filter);
         if(data.length > 0){
             await db.update(dbName, collectionName, filter,{$set: object});
         }
@@ -87,8 +87,8 @@ exports.updateOrInsert = async function run(dbName, collectionName,filter, objec
 exports.delete = async function run(dbName,collectionName,filter) {
 
     try {
-        const database = dbClient.db(dbName);
-        const collection = database.collection(collectionName);
+        const database = await dbClient.db(dbName);
+        const collection = await database.collection(collectionName);
 
         const result = await collection.deleteOne(filter);
         await system.log(`${dbName}.${collectionName}からレコード削除`,`DBレコード削除実行`);

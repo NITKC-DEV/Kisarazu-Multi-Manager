@@ -219,9 +219,8 @@ module.exports = [
 
             let options=[];
             for(let i = 0;i<subject.length;i++){
-                options.push({label: subject[i].title, value: String(i)});
+                options.push({label: subject[i].title, value: subject[i].title});
             }
-
             for(let i = 0; i < 4;i++){
                 select[i] = new StringSelectMenuBuilder()
                     .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}add-exception${i}`)
