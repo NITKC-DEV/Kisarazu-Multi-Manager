@@ -79,16 +79,23 @@ client.on("interactionCreate", async (interaction) => {
         }
     }
 });
-
+//Button入力受け取り
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
 
+    //timetable用 customIDに引数を埋め込むため、一致で検索
     if((interaction.customId.match(/addCommentTentativeTimetable/) ?? {index:false}).index > 0){
         await timetable.addCommentTentativeTimetable(interaction);
-    }/*
-    if((interaction.customId.match(/updateTimetable/) ?? {index:false}).index > 0){
+    }
+});
+
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isModalSubmit()) return;
+
+    //timetable用 customIDに引数を埋め込むため、一致で検索
+    if ((interaction.customId.match(/addExceptionUpdate/) ?? {index: false}).index > 0) {
         await timetable.addExceptionUpdate(interaction);
-    }*/
+    }
 });
 
 //SelectMenu受け取り
