@@ -84,7 +84,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
 
     if((interaction.customId.match(/addCommentTentativeTimetable/) ?? {index:false}).index > 0){
-        await timetable.addExceptionUpdate(interaction);
+        await timetable.addCommentTentativeTimetable(interaction);
     }/*
     if((interaction.customId.match(/updateTimetable/) ?? {index:false}).index > 0){
         await timetable.addExceptionUpdate(interaction);
@@ -97,7 +97,7 @@ client.on(Events.InteractionCreate, async interaction =>
     if (!interaction.isStringSelectMenu()) return;
 
     //timetable用 customIDに引数を埋め込むため、一致で検索
-    if((interaction.customId.match(/add-exception/) ?? {index:false}).index > 0){
+    if((interaction.customId.match(/addExceptionAdd/) ?? {index:false}).index > 0){
         await timetable.addExceptionAdd(interaction);
     }
 

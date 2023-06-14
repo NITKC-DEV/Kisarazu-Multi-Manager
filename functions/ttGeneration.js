@@ -122,7 +122,7 @@ exports.addExceptionAdd = async function func(interaction) {
     const department = interaction.customId[1];
     const day = interaction.customId[2];
     const period = interaction.customId.slice(-1);
-    const date = interaction.customId.substring(3,interaction.customId.match(/add-exception/).index) + '0';
+    const date = interaction.customId.substring(3,interaction.customId.match(/addExceptionAdd/).index) + '0';
 
     let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
     if(data.length === 0){
@@ -141,9 +141,38 @@ exports.addExceptionAdd = async function func(interaction) {
  * 臨時時間割データにコメントを追加
  * @param interaction ボタンのinteraction
  */
-//カスタムID命名規則　${変更日時4ケタ or 3ケタ文字列}updateTimetable${テストモード可否}
-exports.addExceptionUpdate = async function func(interaction) {
-    const embed = new EmbedBuilder()
+//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時4ケタ or 3ケタ文字列}addCommentTentativeTimetable${テストモード可否}
+exports.addCommentTentativeTimetable = async function func(interaction) {
+    const grade = interaction.customId[0];
+    const department = interaction.customId[1];
+    const period = interaction.customId.slice(-1);
+    const date = interaction.customId.substring(2,interaction.customId.match(/addCommentTentativeTimetable/).index) + '0';
+
+    let data = await db.find("main","timetableData",{day:date});
+
+    const modal = new ModalBuilder()
+        .setCustomId('mailSend')
+        .setTitle(`${Math.floor(date/1000)}月${Math.floor(date%1000/10)}日 - コメントを追加`);
+
+    for(let i = 0; i < data[0].timetable.length;i++){
+        const input = new TextInputBuilder()
+            .setCustomId(`${data}textInputTentativeTimetable${grade}${department}${i}`)
+            .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録`)
+            .setRequired(false)
+            .setStyle(1);
+        modal.addComponents(new ActionRowBuilder().addComponents(input));
+    }
+    const input = new TextInputBuilder()
+        .setCustomId(`${data}textInputTentativeTimetable${grade}${department}${5}`)
+        .setLabel(`${Math.floor(date/1000)}月${Math.floor(date%1000/10)}日の時間割にコメントを登録`)
+        .setStyle(1);
+    modal.addComponents(new ActionRowBuilder().addComponents(input));
+
+    //modal.addComponents(new ActionRowBuilder().addComponents(fromInput), new ActionRowBuilder().addComponents(toInput), new ActionRowBuilder().addComponents(subjectInput), new ActionRowBuilder().addComponents(htmlInput));
+
+    await interaction.showModal(modal);
+
+    /*const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`授業変更・定期テスト登録`)
         .setAuthor({
@@ -163,8 +192,8 @@ exports.addExceptionUpdate = async function func(interaction) {
     const channel = client.channels.cache.get(interaction.message.channelId);
     await channel.messages.fetch(interaction.message.id)
         .then((message) => {
-            message.edit({ embeds:[embed],components: [{type:4,components:[textInput]}], ephemeral: true });
-        })
+            message.edit({embeds:[embed]});
+        })*/
 }
 // - ${departmentData[parseFloat(interaction.options.getString('学科'))-1].name}${interaction.options.getString('学年')}年 ${Math.floor(interaction.options.getInteger('変更日')/100)}月${Math.floor(interaction.options.getInteger('変更日')%100)}日`
 /***
