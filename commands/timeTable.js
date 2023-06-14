@@ -226,7 +226,7 @@ module.exports = [
             }
             for(let i = 0; i < 4;i++){
                 select[i] = new StringSelectMenuBuilder()
-                    .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}add-exception${i}`)
+                    .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}addExceptionAdd${i}`)
                     .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択(未選択時：${(defaultData[0].timetable[i] ?? {name:"授業なし"}).name})`)
                     .addOptions(
                         options
@@ -246,37 +246,10 @@ module.exports = [
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
 
             const button = new ButtonBuilder({
-                custom_id: `${interaction.options.getInteger('変更日')}addCommentTentativeTimetable${interaction.options.getInteger('授業変更')}`,
+                custom_id: `${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getInteger('変更日')}addCommentTentativeTimetable${interaction.options.getInteger('授業変更')}`,
                 style: 1,
                 label: '登録！'
             });
-            const modal = new ModalBuilder()
-                .setCustomId('mailSend')
-                .setTitle('メール送信');
-
-            const fromInput = new TextInputBuilder()
-                .setCustomId('fromInput')
-                .setLabel("送信元")
-                .setStyle(1);
-
-            const toInput = new TextInputBuilder()
-                .setCustomId('toInput')
-                .setLabel("送信先")
-                .setStyle(1);
-
-            const subjectInput = new TextInputBuilder()
-                .setCustomId('subjectInput')
-                .setLabel("件名")
-                .setStyle(1);
-
-            const htmlInput = new TextInputBuilder()
-                .setCustomId('htmlInput')
-                .setLabel("内容")
-                .setStyle(1);
-
-            modal.addComponents(new ActionRowBuilder().addComponents(fromInput), new ActionRowBuilder().addComponents(toInput), new ActionRowBuilder().addComponents(subjectInput), new ActionRowBuilder().addComponents(htmlInput));
-
-            await interaction.showModal(modal);
             await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
             /*
             メモ：時間割を完成させるまでは0 + 日付　で検索避けをしてエラー回避
