@@ -138,7 +138,7 @@ exports.addExceptionAdd = async function func(interaction) {
 }
 
 /***
- * 臨時時間割データにコメントを追加
+ * 臨時時間割データにコメントを追加し本登録
  * @param interaction ボタンのinteraction
  */
 //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時4ケタ or 3ケタ文字列}addCommentTentativeTimetable${テストモード可否}
@@ -151,7 +151,7 @@ exports.addCommentTentativeTimetable = async function func(interaction) {
     let data = await db.find("main","timetableData",{day:date});
 
     const modal = new ModalBuilder()
-        .setCustomId('mailSend')
+        .setCustomId(`${data}textInputModalTimetable${grade}${department}`)
         .setTitle(`${Math.floor(date/1000)}月${Math.floor(date%1000/10)}日 - コメントを追加`);
 
     for(let i = 0; i < data[0].timetable.length;i++){
@@ -163,45 +163,19 @@ exports.addCommentTentativeTimetable = async function func(interaction) {
         modal.addComponents(new ActionRowBuilder().addComponents(input));
     }
     const input = new TextInputBuilder()
-        .setCustomId(`${data}textInputTentativeTimetable${grade}${department}${5}`)
+        .setCustomId(`${data}textInputTentativeTimetable${grade}${department}5`)
         .setLabel(`${Math.floor(date/1000)}月${Math.floor(date%1000/10)}日の時間割にコメントを登録`)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
-
-    //modal.addComponents(new ActionRowBuilder().addComponents(fromInput), new ActionRowBuilder().addComponents(toInput), new ActionRowBuilder().addComponents(subjectInput), new ActionRowBuilder().addComponents(htmlInput));
-
     await interaction.showModal(modal);
-
-    /*const embed = new EmbedBuilder()
-        .setColor(0x00A0EA)
-        .setTitle(`授業変更・定期テスト登録`)
-        .setAuthor({
-            name: "木更津高専統合管理BOT",
-            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC22s/bot-main'
+    const filter = (mInteraction) => mInteraction.customId === `${data}textInputModalTimetable${grade}${department}`;
+    interaction.awaitModalSubmit({ filter, time: 360000 })
+        .then(async mInteraction => {
+            await mInteraction.deferReply();
+            let inputTxt = [];
+            for (let i = 0; i < data[0].timetable.length; i++) {
+                inputTxt[i] = mInteraction.fields.getTextInputValue(`${data}textInputTentativeTimetable${grade}${department}${i}`);
+            }
+            let comment = mInteraction.fields.getTextInputValue(`${data}textInputTentativeTimetable${grade}${department}${i}`)
         })
-        .setDescription('コメントを入力してください。。\n入力が終わったら、登録ボタンを押してください。')
-        .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC22s server Admin' });
-    const textInput = new TextInputBuilder({
-        custom_id: interaction.customId.replace("addCommentTentativeTimetable","updateTimetable"),
-        label: 'コメントを追加(例:〇〇のため、△△日の□□と授業入れ替え)',
-        style: 1,
-    });
-
-    const channel = client.channels.cache.get(interaction.message.channelId);
-    await channel.messages.fetch(interaction.message.id)
-        .then((message) => {
-            message.edit({embeds:[embed]});
-        })*/
 }
-// - ${departmentData[parseFloat(interaction.options.getString('学科'))-1].name}${interaction.options.getString('学年')}年 ${Math.floor(interaction.options.getInteger('変更日')/100)}月${Math.floor(interaction.options.getInteger('変更日')%100)}日`
-/***
- * 臨時時間割データを登録
- * @param interaction ボタンのinteraction
- */
-//カスタムID命名規則　${変更日時4ケタ or 3ケタ文字列}updateTimetable${テストモード可否}
-/*
-exports.addExceptionUpdate = async function func(interaction) {
-
-}*/
