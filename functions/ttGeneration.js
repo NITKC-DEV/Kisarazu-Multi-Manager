@@ -116,13 +116,13 @@ exports.generation = async function func(grade,department,day,change) {
  * @param interaction セレクトメニューのinteraction
  */
 
-//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時4ケタ or 3ケタ文字列}add-exception${変更コマ(0~3)}
-exports.addExceptionAdd = async function func(interaction) {
+//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${変更コマ(0~3)}
+exports.setNewTimetableData = async function func(interaction) {
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
     const period = interaction.customId.slice(-1);
-    const date = interaction.customId.substring(3,interaction.customId.match(/addExceptionAdd/).index) + '0';
+    const date = interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index) + '00';
 
     let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
     if(data.length === 0){
@@ -141,41 +141,50 @@ exports.addExceptionAdd = async function func(interaction) {
  * 臨時時間割データにコメントを追加し本登録
  * @param interaction ボタンのinteraction
  */
-//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時4ケタ or 3ケタ文字列}addCommentTentativeTimetable${テストモード可否}
-exports.addCommentTentativeTimetable = async function func(interaction) {
+//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
+exports.showNewTimetableModal = async function func(interaction) {
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const period = interaction.customId.slice(-1);
-    const date = interaction.customId.substring(2,interaction.customId.match(/addCommentTentativeTimetable/).index) + '0';
+    const date = interaction.customId.substring(2,interaction.customId.match(/changeTimetableButton/).index);
 
-    let data = await db.find("main","timetableData",{day:date});
+    let data = await db.find("main","timetableData",{day:date + '00'});
 
     const modal = new ModalBuilder()
-        .setCustomId(`${data}textInputModalTimetable${grade}${department}`)
-        .setTitle(`${Math.floor(date/1000)}月${Math.floor(date%1000/10)}日 - コメントを追加`);
+        .setCustomId(`${data}commentInputNewTimetableModal${grade}${department}`)
+        .setTitle(`${Math.floor(date/10000)}月${Math.floor(date%10000/100)}日 - コメントを追加`);
 
     for(let i = 0; i < data[0].timetable.length;i++){
         const input = new TextInputBuilder()
-            .setCustomId(`${data}textInputTentativeTimetable${grade}${department}${i}`)
+            .setCustomId(`${data}commentInputNewTimetable${grade}${department}${i}`)
             .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録`)
             .setRequired(false)
             .setStyle(1);
         modal.addComponents(new ActionRowBuilder().addComponents(input));
     }
     const input = new TextInputBuilder()
-        .setCustomId(`${data}textInputTentativeTimetable${grade}${department}5`)
-        .setLabel(`${Math.floor(date/1000)}月${Math.floor(date%1000/10)}日の時間割にコメントを登録`)
+        .setCustomId(`${data}commentInputNewTimetable${grade}${department}5`)
+        .setLabel(`${Math.floor(date/10000)}月${Math.floor(date%10000/100)}日の時間割にコメントを登録`)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
-    const filter = (mInteraction) => mInteraction.customId === `${data}textInputModalTimetable${grade}${department}`;
+    const filter = (mInteraction) => mInteraction.customId === `${data}commentInputNewTimetableModal${grade}${department}`;
+
     interaction.awaitModalSubmit({ filter, time: 360000 })
         .then(async mInteraction => {
-            await mInteraction.deferReply();
-            let inputTxt = [];
+            let inputTxt = [],comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
-                inputTxt[i] = mInteraction.fields.getTextInputValue(`${data}textInputTentativeTimetable${grade}${department}${i}`);
+                inputTxt[i] = mInteraction.fields.getTextInputValue(`${data}commentInputNewTimetable${grade}${department}${i}`);
             }
-            let comment = mInteraction.fields.getTextInputValue(`${data}textInputTentativeTimetable${grade}${department}${i}`)
+            comment = mInteraction.fields.getTextInputValue(`${data}commentInputNewTimetable${grade}${department}5`);
+
+
+            for(let i = 0; i < data[0].timetable.length;i++){
+                data[0].timetable[i].comment = inputTxt[i];
+            }
+            data[0].comment = comment;
+            data[0].day = date;
+            delete data[0]._id;
+            await db.updateOrInsert("main","timetableData",{day:date + '00'},data[0]);
         })
 }

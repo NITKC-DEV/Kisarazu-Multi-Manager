@@ -84,17 +84,8 @@ client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
 
     //timetable用 customIDに引数を埋め込むため、一致で検索
-    if((interaction.customId.match(/addCommentTentativeTimetable/) ?? {index:false}).index > 0){
-        await timetable.addCommentTentativeTimetable(interaction);
-    }
-});
-
-client.on(Events.InteractionCreate, async interaction => {
-    if (!interaction.isModalSubmit()) return;
-
-    //timetable用 customIDに引数を埋め込むため、一致で検索
-    if ((interaction.customId.match(/addExceptionUpdate/) ?? {index: false}).index > 0) {
-        await timetable.addExceptionUpdate(interaction);
+    if((interaction.customId.match(/changeTimetableButton/) ?? {index:false}).index > 0){
+        await timetable.showNewTimetableModal(interaction);
     }
 });
 
@@ -104,8 +95,8 @@ client.on(Events.InteractionCreate, async interaction =>
     if (!interaction.isStringSelectMenu()) return;
 
     //timetable用 customIDに引数を埋め込むため、一致で検索
-    if((interaction.customId.match(/addExceptionAdd/) ?? {index:false}).index > 0){
-        await timetable.addExceptionAdd(interaction);
+    if((interaction.customId.match(/changeTimetableSelectMenu/) ?? {index:false}).index > 0){
+        await timetable.setNewTimetableData(interaction);
     }
 
     // /createchanでのカテゴリ選択の受け取り
@@ -426,6 +417,7 @@ cron.schedule('*/1  * * * *', async () => {
                         board: "0000000000000000000"
                     }});
             });
+
     }
 
 });
