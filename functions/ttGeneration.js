@@ -153,7 +153,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const modal = new ModalBuilder()
         .setCustomId(`${data}commentInputNewTimetableModal${grade}${department}`)
         .setTitle(`${Math.floor(date/100)}月${Math.floor(date%100)}日 - コメントを追加`);
-121400
+
     for(let i = 0; i < data[0].timetable.length;i++){
         const input = new TextInputBuilder()
             .setCustomId(`${data}commentInputNewTimetable${grade}${department}${i}`)
@@ -180,7 +180,7 @@ exports.showNewTimetableModal = async function func(interaction) {
 
 
             for(let i = 0; i < data[0].timetable.length;i++){
-                data[0].timetable[i].comment = inputTxt[i];
+                if(inputTxt[i]!=="" && inputTxt[i]!==undefined)data[0].timetable[i].comment = inputTxt[i];
             }
             data[0].comment = comment;
             data[0].day = date;
