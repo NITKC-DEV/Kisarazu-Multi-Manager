@@ -246,7 +246,7 @@ module.exports = [
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
 
             const button = new ButtonBuilder({
-                custom_id: `${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getInteger('変更日')}changeTimetableButton${interaction.options.getInteger('授業変更')}`,
+                custom_id: `${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getInteger('変更日')}changeTimetableButton${interaction.options.getString('モード')}`,
                 style: 1,
                 label: '登録！'
             });

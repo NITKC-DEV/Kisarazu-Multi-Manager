@@ -145,15 +145,15 @@ exports.setNewTimetableData = async function func(interaction) {
 exports.showNewTimetableModal = async function func(interaction) {
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
-    const period = interaction.customId.slice(-1);
+    const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2,interaction.customId.match(/changeTimetableButton/).index);
 
     let data = await db.find("main","timetableData",{day:date + '00'});
 
     const modal = new ModalBuilder()
         .setCustomId(`${data}commentInputNewTimetableModal${grade}${department}`)
-        .setTitle(`${Math.floor(date/10000)}月${Math.floor(date%10000/100)}日 - コメントを追加`);
-
+        .setTitle(`${Math.floor(date/100)}月${Math.floor(date%100)}日 - コメントを追加`);
+121400
     for(let i = 0; i < data[0].timetable.length;i++){
         const input = new TextInputBuilder()
             .setCustomId(`${data}commentInputNewTimetable${grade}${department}${i}`)
@@ -164,7 +164,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     }
     const input = new TextInputBuilder()
         .setCustomId(`${data}commentInputNewTimetable${grade}${department}5`)
-        .setLabel(`${Math.floor(date/10000)}月${Math.floor(date%10000/100)}日の時間割にコメントを登録`)
+        .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを登録`)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
@@ -184,6 +184,12 @@ exports.showNewTimetableModal = async function func(interaction) {
             }
             data[0].comment = comment;
             data[0].day = date;
+            if(mode === '0'){
+                data[0].test = true;
+            }
+            else{
+                data[0].test = false;
+            }
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{day:date + '00'},data[0]);
         })
