@@ -223,6 +223,10 @@ module.exports = [
 
                 if(defaultData[0] === undefined){
                     defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('曜日'))});
+                    if(defaultData[0] === undefined){
+                        interaction.reply({content:"その学科・曜日のデータは登録されていません。", ephemeral: true});
+                        return ;
+                    }
                 }
             }
 
@@ -236,10 +240,15 @@ module.exports = [
             for(let i = 0; i < 4;i++){
                 select[i] = new StringSelectMenuBuilder()
                     .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
-                    .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択(未選択時：${(defaultData[0].timetable[i] ?? {name:"授業なし"}).name})`)
+                    .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択`)
                     .addOptions(
                         options
                     );
+            }
+
+            let subjects="";
+            for(let i=0;i<defaultData[0].timetable.length;i++){
+                subjects += `${2*i+1}-${2*i+2}限：` + defaultData[0].timetable[i].name + '\n';
             }
 
             const embed = new EmbedBuilder()
@@ -250,7 +259,11 @@ module.exports = [
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                     url: 'https://github.com/NITKC22s/bot-main'
                 })
-                .setDescription('教科を選択してください。\n入力が終わったら、登録ボタンを押してください。')
+                .setDescription(`教科を選択してください。\n入力が終わったら、登録ボタンを押してください。`)
+                .addFields({
+                    name:`現在登録済みの時間割`,
+                    value:`\`\`\`${subjects}\`\`\``
+                })
                 .setTimestamp()
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
 

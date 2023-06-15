@@ -2,6 +2,8 @@ const {EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, Act
 const db = require("./db.js");
 const system = require("./logsystem.js");
 const commands = require("../botmain");
+const dashboard = require("./dashboard");
+const {setTimeout} = require("node:timers/promises");
 
 const departmentData = [
     {
@@ -118,6 +120,8 @@ exports.generation = async function func(grade,department,day,change) {
 
 //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${変更コマ(0~3)}
 exports.setNewTimetableData = async function func(interaction) {
+    await interaction.deferReply();
+
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
@@ -128,12 +132,48 @@ exports.setNewTimetableData = async function func(interaction) {
     if(data.length === 0){
         data = await db.find("main","timetableData",{grade:grade,department:department,day: day});
     }
-
-
     delete data[0]._id;
     data[0].day = date;
     data[0].timetable[parseInt(period)] = {name:interaction.values[0],comment:""};
+
+    let subjects="";
+    for(let i=0;i<data[0].timetable.length;i++){
+        subjects += `${2*i+1}-${2*i+2}限：` + data[0].timetable[i].name + '\n';
+    }
+
+    const embed = new EmbedBuilder()
+        .setColor(0x00A0EA)
+        .setTitle(`授業変更・定期テスト登録 - ${departmentData[parseFloat(department)-1].name}${grade}年 ${Math.floor(date/10000)}月${Math.floor(date%10000/100)}日`)
+        .setAuthor({
+            name: "木更津高専統合管理BOT",
+            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+            url: 'https://github.com/NITKC22s/bot-main'
+        })
+        .setDescription(`教科を選択してください。\n入力が終わったら、登録ボタンを押してください。`)
+        .addFields({
+            name:`現在選択済みの時間割`,
+            value:`\`\`\`${subjects}\`\`\``
+        })
+        .setTimestamp()
+        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+
+    const channel = client.channels.cache.get(interaction.message.channelId);
+    channel.messages.fetch(interaction.message.id)
+        .then((message) => {
+            message.edit({embeds: [embed],comments: message.comments});
+        })
+        .catch(error => {
+
+        });
     await db.updateOrInsert("main","timetableData",{day:date},data[0]);
+
+    replyOptions=time=>{return{content: '上記メッセージの「現在登録済みの時間割」欄を更新しました\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+    await interaction.editReply(replyOptions(5));
+    for(let i=5;i>0;i--){
+        await interaction.editReply(replyOptions(i));
+        await setTimeout(1000);
+    }
+    await interaction.deleteReply();
 
 }
 
@@ -143,6 +183,7 @@ exports.setNewTimetableData = async function func(interaction) {
  */
 //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
 exports.showNewTimetableModal = async function func(interaction) {
+
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const mode = interaction.customId.slice(-1);
@@ -192,5 +233,23 @@ exports.showNewTimetableModal = async function func(interaction) {
             }
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{day:date},data[0]);
+
+            const channel = client.channels.cache.get(interaction.message.channelId);
+            channel.messages.fetch(interaction.message.id)
+                .then((message) => {
+                    message.delete();
+                })
+                .catch(error => {
+
+                });
+            replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+            await mInteraction.reply(replyOptions(5));
+            for(let i=5;i>0;i--){
+                await mInteraction.editReply(replyOptions(i));
+                await setTimeout(1000);
+            }
+            await mInteraction.deleteReply();
+
+
         })
 }
