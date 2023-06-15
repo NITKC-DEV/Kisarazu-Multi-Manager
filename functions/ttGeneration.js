@@ -191,6 +191,6 @@ exports.showNewTimetableModal = async function func(interaction) {
                 data[0].test = false;
             }
             delete data[0]._id;
-            await db.updateOrInsert("main","timetableData",{day:date + '00'},data[0]);
+            await db.updateOrInsert("main","timetableData",{day:date},data[0]);
         })
 }
