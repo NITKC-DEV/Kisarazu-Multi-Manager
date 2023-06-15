@@ -204,7 +204,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('曜日')
-                    .setDescription('元データとする曜日をいれてください。')
+                    .setDescription('変更日のデータがなかった場合にコピーする曜日を選択。')
                     .setRequired(true)
                     .addChoices(
                         { name: '月曜日', value: '1' },
@@ -217,7 +217,16 @@ module.exports = [
 
         async execute(interaction) {
             let select = [];
-            const defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('曜日'))});
+            let defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日')) + '00'});
+            if(defaultData[0] === undefined){
+                defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日'))});
+
+                if(defaultData[0] === undefined){
+                    defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('曜日'))});
+                }
+            }
+
+
             const subject = await db.find("main","syllabusData",{subject_id:`${interaction.options.getString('学年')}${interaction.options.getString('学科')}`})
 
             let options=[];
