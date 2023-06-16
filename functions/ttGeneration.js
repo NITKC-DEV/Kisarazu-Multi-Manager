@@ -27,6 +27,7 @@ const departmentData = [
 const dayName = ["月","火","水","木","金"];
 
 const time = ["1-2限：08:50 - 10:25\n","3-4限：10:35 - 12:10\n","5-6限：13:00 - 14:35\n","7-8限：14:45 - 16:15"];
+const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
 
 /***
  * 時間割データを生成する
@@ -36,77 +37,138 @@ const time = ["1-2限：08:50 - 10:25\n","3-4限：10:35 - 12:10\n","5-6限：13
  * @param change 授業変更を加味する場合はTrue(来週限定)
  * @returns Embed(存在しない場合0、エラーの場合は-1)
  */
-exports.generation = async function func(grade,department,day,change) {
+exports.generation = async function func(grade,department,day,change = true) {
     let data;
     if(change){
+        let date = new Date();
+        let nowDay = date.getDay(); //今日
+        let nextDay = parseFloat(day) - nowDay; //対象の曜日は何日後?
+        if(0 > nextDay){nextDay += 7}
 
+        date.setDate(date.getDate() + nextDay);//対象の日を取得
+        data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(date.getMonth()+1)+ String(date.getDate())});
+        if(data.length === 0)data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
     }
     else{
          data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
     }
 
     if(data.length > 0){
-        let field = [];
-        let dailyComment="";
-        for(let i = 0; i < data[0].timetable.length; i++){
-            const subject = await db.find("main","syllabusData",{title:data[0].timetable[i].name,subject_id:`${grade}${department}`});
-            let professor = "";
-            if(0<subject[0].professor.length){
-                professor += "担当教員："
+        if(data[0].test){
+            let field = [];
+            let dailyComment="";
+            for(let i = 0; i < data[0].timetable.length; i++){
+                let comment = "";
+                if(data[0].timetable[i].comment !== ""){
+                    comment = `備考　　：${data[0].timetable[i].comment}`
+                }
+
+                let subjectComment;
+                if(data[0].timetable[i].name === "空きコマ"){
+                    subjectComment = "このコマに試験は設定されていません";
+                }
+                else{
+                    subjectComment = examTime[i];
+                }
+
+                if(comment !== ""){
+                    field.push({
+                        name:data[0].timetable[i].name,
+                        value:`\`\`\`試験時間：${subjectComment}${comment}\`\`\``
+                    })
+                }
+                else{
+                    field.push({
+                        name:data[0].timetable[i].name,
+                        value:`\`\`\`試験時間：${subjectComment}\`\`\``
+                    })
+                }
+
+            }
+            if(data[0].comment !== ""){
+                field.push({
+                    name:"備考",
+                    value:`\`\`\`${data[0].comment}\`\`\``
+                })
             }
 
-            for(let j=0;j<subject[0].professor.length;j++){
-                professor += subject[0].professor[j];
-                if(subject[0].professor[j+1] !== undefined){
-                    if(j%2 === 0){
-                        professor += "・";
-                    }
-                    else{
-                        professor += "\n　　　　　";
+
+            return new EmbedBuilder()
+                .setColor(departmentData[parseFloat(department)-1].color)
+                .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${data[0].day/100 | 0}月${data[0].day%100}日定期テスト時間割`)
+                .setAuthor({
+                    name: "木更津高専統合管理BOT",
+                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                    url: 'https://github.com/NITKC22s/bot-main'
+                })
+                .setDescription(`${data[0].day/100 | 0}月${data[0].day%100}日の定期テスト時間割です。\n※教室やテスト日程に変更がある場合があります。`)
+                .addFields(field)
+                .setTimestamp()
+                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+        }
+        else{
+            let field = [];
+            let dailyComment="";
+            for(let i = 0; i < data[0].timetable.length; i++){
+                const subject = await db.find("main","syllabusData",{title:data[0].timetable[i].name,subject_id:`${grade}${department}`});
+                let professor = "";
+                if(0<subject[0].professor.length){
+                    professor += "担当教員："
+                }
+
+                for(let j=0;j<subject[0].professor.length;j++){
+                    professor += subject[0].professor[j];
+                    if(subject[0].professor[j+1] !== undefined){
+                        if(j%2 === 0){
+                            professor += "・";
+                        }
+                        else{
+                            professor += "\n　　　　　";
+                        }
                     }
                 }
-            }
 
-            if(0<subject[0].professor.length){
-                professor += "\n"
-            }
-            let comment = "";
-            if(data[0].timetable[i].comment !== ""){
-                comment = `\n備考　　：${data[0].timetable[i].comment}`
-            }
+                if(0<subject[0].professor.length){
+                    professor += "\n"
+                }
+                let comment = "";
+                if(data[0].timetable[i].comment !== ""){
+                    comment = `\n備考　　：${data[0].timetable[i].comment}`
+                }
 
-            if(subject[0].title === "HR" || subject[0].title === "課題学習時間"){
-                dailyComment += "7限  ：14:45 - 15:30\n"
-            }
-            else if(subject[0].title !== "空きコマ") {
-                dailyComment += `${time[i]}`;
-            }
+                if(subject[0].title === "HR" || subject[0].title === "課題学習時間"){
+                    dailyComment += "7限  ：14:45 - 15:30\n"
+                }
+                else if(subject[0].title !== "空きコマ") {
+                    dailyComment += `${time[i]}`;
+                }
 
+                field.push({
+                    name:subject[0].title,
+                    value:`\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``
+                })
+            }
+            if(data[0].comment !== ""){
+                data[0].comment = "--------------------\n" + data[0].comment;
+            }
             field.push({
-                name:subject[0].title,
-                value:`\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``
+                name:"授業時間・備考",
+                value:`\`\`\`${dailyComment}${data[0].comment}\`\`\``
             })
-        }
-        if(data[0].comment !== ""){
-            data[0].comment = "--------------------\n" + data[0].comment;
-        }
-        field.push({
-            name:"授業時間・備考",
-            value:`\`\`\`${dailyComment}${data[0].comment}\`\`\``
-        })
 
-        return new EmbedBuilder()
-            .setColor(departmentData[parseFloat(department)-1].color)
-            .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${dayName[parseFloat(day)-1]}曜日の時間割`)
-            .setAuthor({
-                name: "木更津高専統合管理BOT",
-                iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                url: 'https://github.com/NITKC22s/bot-main'
-            })
-            .setDescription(`${dayName[parseFloat(day)-1]}曜日の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
-            .addFields(field)
-            .setTimestamp()
-            .setFooter({ text: 'Developed by NITKC22s server Admin' });
+            return new EmbedBuilder()
+                .setColor(departmentData[parseFloat(department)-1].color)
+                .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${dayName[parseFloat(day)-1]}曜日の時間割`)
+                .setAuthor({
+                    name: "木更津高専統合管理BOT",
+                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                    url: 'https://github.com/NITKC22s/bot-main'
+                })
+                .setDescription(`${dayName[parseFloat(day)-1]}曜日の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
+                .addFields(field)
+                .setTimestamp()
+                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+        }
     }
     else{
         return 0;
