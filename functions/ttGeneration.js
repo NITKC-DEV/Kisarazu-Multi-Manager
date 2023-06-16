@@ -1,8 +1,5 @@
-const {EmbedBuilder, StringSelectMenuBuilder, StringSelectMenuOptionBuilder, ActionRowBuilder, TextInputBuilder,ModalBuilder} = require("discord.js");
+const {EmbedBuilder, ActionRowBuilder, TextInputBuilder,ModalBuilder} = require("discord.js");
 const db = require("./db.js");
-const system = require("./logsystem.js");
-const commands = require("../botmain");
-const dashboard = require("./dashboard");
 const {setTimeout} = require("node:timers/promises");
 
 const departmentData = [
@@ -71,17 +68,19 @@ exports.generation = async function func(grade,department,day,change = true) {
                     subjectComment = examTime[i];
                 }
 
-                if(comment !== ""){
-                    field.push({
-                        name:data[0].timetable[i].name,
-                        value:`\`\`\`試験時間：${subjectComment}${comment}\`\`\``
-                    })
-                }
-                else{
-                    field.push({
-                        name:data[0].timetable[i].name,
-                        value:`\`\`\`試験時間：${subjectComment}\`\`\``
-                    })
+                if(i <= 2){
+                    if(comment !== ""){
+                        field.push({
+                            name:data[0].timetable[i].name,
+                            value:`\`\`\`試験時間：${subjectComment}${comment}\`\`\``
+                        })
+                    }
+                    else{
+                        field.push({
+                            name:data[0].timetable[i].name,
+                            value:`\`\`\`試験時間：${subjectComment}\`\`\``
+                        })
+                    }
                 }
 
             }
