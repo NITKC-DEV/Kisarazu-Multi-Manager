@@ -228,14 +228,8 @@ exports.setNewTimetableData = async function func(interaction) {
 
         });
     await db.updateOrInsert("main","timetableData",{day:date},data[0]);
-
-    replyOptions=time=>{return{content: '上記メッセージの「現在登録済みの時間割」欄を更新しました\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
-    await interaction.editReply(replyOptions(5));
-    for(let i=5;i>0;i--){
-        await interaction.editReply(replyOptions(i));
-        await setTimeout(1000);
-    }
     await interaction.deleteReply();
+
 
 }
 
@@ -295,7 +289,7 @@ exports.showNewTimetableModal = async function func(interaction) {
             }
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{day:date},data[0]);
-
+            await db.delete("main","timetableData",{day:date + '00'});
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
                 .then((message) => {
@@ -304,7 +298,7 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .catch(error => {
 
                 });
-            replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+            let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await mInteraction.editReply(replyOptions(i));
