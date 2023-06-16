@@ -1,14 +1,8 @@
-const {SlashCommandBuilder, StringSelectMenuBuilder, ActionRowBuilder, StringSelectMenuOptionBuilder, EmbedBuilder,ButtonBuilder,
-    ModalBuilder,
-    TextInputBuilder
-} = require('discord.js');
+const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder,} = require('discord.js');
 const  timetable  = require('../functions/ttGeneration.js');
-const Classes = require('../timetable/timetables.json');
 const fs = require('fs');
 const {configPath}=require("../environmentConfig");
-const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
-const commands = require("../botmain");
 
 const departmentData = [
     {
@@ -47,6 +41,12 @@ module.exports = [
                         { name: '木曜日', value: '4' },
                         { name: '金曜日', value: '5' },
                     )
+            )
+            .addBooleanOption(option =>
+                option
+                    .setName('授業変更')
+                    .setDescription('授業変更を反映させるかどうか指定します(デフォルト=true)')
+                    .setRequired(false)
             )
             .addStringOption(option =>
                 option
@@ -122,7 +122,7 @@ module.exports = [
                 await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えてguilddataコマンドで学科ロールを登録してもらってください。");
             }
             else{
-                const embed = await timetable.generation(grade,department,String(dayOfWeek),);
+                const embed = await timetable.generation(grade,department,String(dayOfWeek),interaction.options.getBoolean('授業変更'));
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }
@@ -240,7 +240,10 @@ module.exports = [
             for(let i = 0;i<subject.length;i++){
                 options.push({label: subject[i].title, value: subject[i].title});
             }
-            for(let i = 0; i < 4;i++){
+
+            let loop=3;
+            if(interaction.options.getString('モード') === '1')loop++;
+            for(let i = 0; i < loop;i++){
                 select[i] = new StringSelectMenuBuilder()
                     .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
                     .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択`)
@@ -250,7 +253,9 @@ module.exports = [
             }
 
             let subjects="";
-            for(let i=0;i<defaultData[0].timetable.length;i++){
+            loop = defaultData[0].timetable.length
+            if(interaction.options.getString('モード') === '0')loop = Math.min(defaultData[0].timetable.length,3);
+            for(let i=0;i<loop;i++){
                 subjects += `${2*i+1}-${2*i+2}限：` + defaultData[0].timetable[i].name + '\n';
             }
 
@@ -275,7 +280,12 @@ module.exports = [
                 style: 1,
                 label: '登録！'
             });
-            await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
+            if(interaction.options.getString('モード') === '1'){
+                await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
+            }
+            else{
+                await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[button]}]});
+            }
         }
     }
 
