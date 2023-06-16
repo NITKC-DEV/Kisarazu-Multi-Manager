@@ -230,6 +230,9 @@ module.exports = [
                 }
             }
 
+            delete defaultData[0]._id;
+            defaultData[0].day = String(interaction.options.getInteger('変更日')) + '00';
+            await db.updateOrInsert("main","timetableData",{day:String(interaction.options.getInteger('変更日'))},defaultData[0]);
 
             const subject = await db.find("main","syllabusData",{subject_id:`${interaction.options.getString('学年')}${interaction.options.getString('学科')}`})
 
@@ -273,11 +276,6 @@ module.exports = [
                 label: '登録！'
             });
             await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
-            /*
-            メモ：時間割を完成させるまでは0 + 日付　で検索避けをしてエラー回避
-            カスタムidの先頭に適当な文字をいれて、何限目の編集をしてるか取得できるように
-            カスタムidの末尾に日付をいれて、いつの編集をしてるかをわかるように
-             */
         }
     }
 
