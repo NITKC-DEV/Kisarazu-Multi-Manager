@@ -241,23 +241,41 @@ module.exports = [
                 options.push({label: subject[i].title, value: subject[i].title});
             }
 
-            let loop=3;
-            if(interaction.options.getString('モード') === '1')loop++;
-            for(let i = 0; i < loop;i++){
-                select[i] = new StringSelectMenuBuilder()
-                    .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
-                    .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択`)
-                    .addOptions(
-                        options
-                    );
+
+            if(interaction.options.getString('モード') === '1'){
+                for(let i = 0; i < 4;i++){
+                    select[i] = new StringSelectMenuBuilder()
+                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
+                        .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択`)
+                        .addOptions(
+                            options
+                        );
+                }
+            }
+            else{
+                for(let i = 0; i < 3;i++){
+                    select[i] = new StringSelectMenuBuilder()
+                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
+                        .setPlaceholder(`${i+1}コマ目の教科を選択`)
+                        .addOptions(
+                            options
+                        );
+                }
             }
 
+
             let subjects="";
-            loop = defaultData[0].timetable.length
-            if(interaction.options.getString('モード') === '0')loop = Math.min(defaultData[0].timetable.length,3);
-            for(let i=0;i<loop;i++){
-                subjects += `${2*i+1}-${2*i+2}限：` + defaultData[0].timetable[i].name + '\n';
+            if(interaction.options.getString('モード') === '0'){
+                for(let i=0;i<3;i++){
+                    subjects += `${i+1}コマ目：` + defaultData[0].timetable[i].name + '\n';
+                }
             }
+            else{
+                for(let i=0;i<defaultData[0].timetable.length;i++){
+                    subjects += `${2*i+1}-${2*i+2}限：` + defaultData[0].timetable[i].name + '\n';
+                }
+            }
+
 
             const embed = new EmbedBuilder()
                 .setColor(0x00A0EA)
