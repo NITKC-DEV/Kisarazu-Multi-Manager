@@ -53,7 +53,6 @@ exports.generation = async function func(grade,department,day,change = true) {
     if(data.length > 0){
         if(data[0].test){
             let field = [];
-            let dailyComment="";
             for(let i = 0; i < data[0].timetable.length; i++){
                 let comment = "";
                 if(data[0].timetable[i].comment !== ""){
@@ -247,32 +246,32 @@ exports.showNewTimetableModal = async function func(interaction) {
     let data = await db.find("main","timetableData",{day:date + '00'});
 
     const modal = new ModalBuilder()
-        .setCustomId(`${data}commentInputNewTimetableModal${grade}${department}`)
+        .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
         .setTitle(`${Math.floor(date/100)}月${Math.floor(date%100)}日 - コメントを追加`);
 
     for(let i = 0; i < data[0].timetable.length;i++){
         const input = new TextInputBuilder()
-            .setCustomId(`${data}commentInputNewTimetable${grade}${department}${i}`)
+            .setCustomId(`${date}commentInputNewTimetable${grade}${department}${i}`)
             .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録`)
             .setRequired(false)
             .setStyle(1);
         modal.addComponents(new ActionRowBuilder().addComponents(input));
     }
     const input = new TextInputBuilder()
-        .setCustomId(`${data}commentInputNewTimetable${grade}${department}5`)
+        .setCustomId(`${date}commentInputNewTimetable${grade}${department}5`)
         .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを登録`)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
-    const filter = (mInteraction) => mInteraction.customId === `${data}commentInputNewTimetableModal${grade}${department}`;
+    const filter = (mInteraction) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
 
     interaction.awaitModalSubmit({ filter, time: 360000 })
         .then(async mInteraction => {
             let inputTxt = [],comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
-                inputTxt[i] = mInteraction.fields.getTextInputValue(`${data}commentInputNewTimetable${grade}${department}${i}`);
+                inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}${i}`);
             }
-            comment = mInteraction.fields.getTextInputValue(`${data}commentInputNewTimetable${grade}${department}5`);
+            comment = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}5`);
 
 
             for(let i = 0; i < data[0].timetable.length;i++){

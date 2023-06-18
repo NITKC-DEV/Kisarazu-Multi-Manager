@@ -18,6 +18,19 @@ exports.find = async function (dbName, collectionName, filter) {
 }
 
 /***
+ * filterに該当する要素があるかどうか確認する
+ * @param dbName 取得先データベース名
+ * @param collectionName 取得先コレクション名
+ * @param filter フィルターを指定
+ * @returns bool
+ */
+exports.includes = async function (dbName, collectionName, filter) {
+    const collection = await dbClient.db(dbName).collection(collectionName);
+    const data = await collection.find(filter).toArray();
+    return data.length > 0;
+}
+
+/***
  * データベースを更新する
  * @param dbName 更新先データベース名
  * @param collectionName 更新先コレクション名
