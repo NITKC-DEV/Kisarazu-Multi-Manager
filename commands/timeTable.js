@@ -126,7 +126,7 @@ module.exports = [
                 await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えてguilddataコマンドで学科ロールを登録してもらってください。");
             }
             else{
-                const embed = await timetable.generation(grade,department,String(dayOfWeek),interaction.options.getBoolean('授業変更'));
+                const embed = await timetable.generation(grade,department,String(dayOfWeek),interaction.options.getBoolean('授業変更') ?? true);
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }

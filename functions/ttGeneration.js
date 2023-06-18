@@ -35,7 +35,7 @@ const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
  * @returns Embed(存在しない場合0、エラーの場合は-1)
  */
 exports.generation = async function func(grade,department,day,change = true) {
-    let data;
+    let data,dateText;
     if(change){
         let date = new Date();
         let nowDay = date.getDay(); //今日
@@ -44,10 +44,17 @@ exports.generation = async function func(grade,department,day,change = true) {
 
         date.setDate(date.getDate() + nextDay);//対象の日を取得
         data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(date.getMonth()+1)+ String(date.getDate())});
-        if(data.length === 0)data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
+        if(data.length === 0){
+            data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
+            dateText = `${dayName[parseFloat(day)-1]}曜日`
+        }
+        else{
+            dateText = `${date.getMonth()+1}月${date.getDate()}日 (${dayName[parseFloat(day)-1]})`
+        }
     }
     else{
          data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
+         dateText = `${dayName[parseFloat(day)-1]}曜日`
     }
 
     if(data.length > 0){
@@ -156,13 +163,13 @@ exports.generation = async function func(grade,department,day,change = true) {
 
             return new EmbedBuilder()
                 .setColor(departmentData[parseFloat(department)-1].color)
-                .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${dayName[parseFloat(day)-1]}曜日の時間割`)
+                .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${dateText}の時間割`)
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                     url: 'https://github.com/NITKC22s/bot-main'
                 })
-                .setDescription(`${dayName[parseFloat(day)-1]}曜日の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
+                .setDescription(`${dateText}の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
                 .addFields(field)
                 .setTimestamp()
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
