@@ -377,7 +377,7 @@ cron.schedule('5 5,11,17 * * *', async () => {
 
 
 
-cron.schedule('44 16 * * 0,1,2,3,4', async () => {
+cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     const guildData = await db.find("main","guildData",{});
     const date = new Date();
     const year = date.getFullYear();
