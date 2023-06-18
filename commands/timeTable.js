@@ -312,6 +312,56 @@ module.exports = [
     },
     {
         data: new SlashCommandBuilder()
+            .setName('delete-exception')
+            .setDescription('授業変更やテストのデータを削除します。')
+            .setDefaultMemberPermissions(1<<3)
+            .addStringOption(option =>
+                option
+                    .setName('学科')
+                    .setDescription('学科を指定します')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: 'M-機械工学科', value: '1' },
+                        { name: 'E-電気電子工学科', value: '2' },
+                        { name: 'D-電子制御工学科', value: '3' },
+                        { name: 'J-情報工学科', value: '4' },
+                        { name: 'C-環境都市工学科', value: '5' },
+                    )
+            )
+            .addStringOption(option =>
+                option
+                    .setName('学年')
+                    .setDescription('学年を指定します。')
+                    .setRequired(true)
+                    .addChoices(
+                        { name: '1年生', value: '1' },
+                        { name: '2年生', value: '2' },
+                        { name: '3年生', value: '3' },
+                        { name: '4年生', value: '4' },
+                        { name: '5年生', value: '5' },
+                    )
+            )
+            .addIntegerOption(option =>
+                option
+                    .setName('削除日')
+                    .setDescription('削除する日を、月×100+日でいれてください。例)12月14日→1214')
+                    .setRequired(true)
+            ),
+
+        async execute(interaction) {
+            await db.delete("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('削除日'))});
+            await db.delete("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('削除日' + '00'))});
+            let replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+            await interaction.reply(replyOptions(5));
+            for(let i=5;i>0;i--){
+                await interaction.editReply(replyOptions(i));
+                await setTimeout(1000);
+            }
+            await interaction.deleteReply();
+        }
+    },
+    {
+        data: new SlashCommandBuilder()
             .setName('comment-timetable')
             .setDescription('特定の日にコメントを追加します。(明日からの1週間は曜日で指定可)')
             .addStringOption(option =>
@@ -366,9 +416,9 @@ module.exports = [
             const grade = interaction.options.getString('学年');
             const department = interaction.options.getString('学科');
             let data = await db.find("main","timetableData",{grade: grade,department: department,day: String(date)});
-
+            const defaultData = await db.find("main","timetableData",{grade: grade,department: department,day:interaction.options.getString('変更日')});
             if(data.length === 0){
-                data = await db.find("main","timetableData",{grade: grade,department: department,day:interaction.options.getString('変更日')});
+                data = defaultData;
             }
 
 
@@ -379,7 +429,7 @@ module.exports = [
             for(let i = 0; i < data[0].timetable.length;i++){
                 const input = new TextInputBuilder()
                     .setCustomId(`${date}addCommentTimetable${grade}${department}${i}`)
-                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録`)
+                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録(上書きされます)`)
                     .setRequired(false)
                     .setStyle(1);
                 modal.addComponents(new ActionRowBuilder().addComponents(input));
@@ -403,9 +453,16 @@ module.exports = [
 
 
                     for(let i = 0; i < data[0].timetable.length;i++){
-                        if(inputTxt[i]!=="" && inputTxt[i]!==undefined)data[0].timetable[i].comment = inputTxt[i];
+                        if(inputTxt[i]!=="" && inputTxt[i]!==undefined){
+                            if(defaultData[0].timetable[i].comment === ""){
+                                data[0].timetable[i].comment = defaultData[0].timetable[i].comment + `${inputTxt[i]}`;
+                            }
+                            else{
+                                data[0].timetable[i].comment = defaultData[0].timetable[i].comment + `\n　　　　　${inputTxt[i]}`;
+                            }
+                        }
                     }
-                    if(comment!=="" && comment!==undefined)data[0].comment = comment;
+                    if(comment!=="" && comment!==undefined)data[0].comment = defaultData[0].comment + comment;
                     data[0].day = String(date);
                     delete data[0]._id;
 
