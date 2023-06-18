@@ -377,21 +377,37 @@ cron.schedule('5 5,11,17 * * *', async () => {
 
 
 
-cron.schedule('0 20 * * 0,1,2,3,4', async () => {
-    let dayOfWeek = new Date().getDay()+1;
-    //timetable == trueのとき
-    let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable
-    if(timetable === true) {
-        (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
-            .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
-            .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
-            .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
-            .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
-            .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+cron.schedule('44 16 * * 0,1,2,3,4', async () => {
+    const guildData = await db.find("main","guildData",{});
+    const date = new Date();
+    const year = date.getFullYear();
+    const dayOfWeek = date.getDay();
+
+    for(let i = 0; i < guildData.length; i++){
+        const grade = year - parseFloat(guildData[i].grade) + 1;
+        let embed = [];
+        if(0 < grade && grade < 6 ){
+            for(let j= 0;j < 5; j++){
+                embed[j] = await timetable.generation(String(grade),String(j+1),String(dayOfWeek+1),true);
+            }
+            try{if(embed[0]!==0)await (client.channels.cache.get(guildData[i].mChannel) ?? await client.channels.fetch(guildData[i].mChannel)).send({embeds:[embed[0]]})}catch{}
+            try{if(embed[1]!==0)await (client.channels.cache.get(guildData[i].eChannel) ?? await client.channels.fetch(guildData[i].eChannel)).send({embeds:[embed[1]]})}catch{}
+            try{if(embed[2]!==0)await (client.channels.cache.get(guildData[i].dChannel) ?? await client.channels.fetch(guildData[i].dChannel)).send({embeds:[embed[2]]})}catch{}
+            try{if(embed[3]!==0)await (client.channels.cache.get(guildData[i].jChannel) ?? await client.channels.fetch(guildData[i].jChannel)).send({embeds:[embed[3]]})}catch{}
+            try{if(embed[4]!==0)await (client.channels.cache.get(guildData[i].cChannel) ?? await client.channels.fetch(guildData[i].cChannel)).send({embeds:[embed[4]]})}catch{}
+        }
+        else{
+            try{
+                await client.channels.cache.get(guildData[i].main).send("このサーバーの学年の設定をしていない、または正しくないため、時間割定期通知に失敗しました。" +
+                    "\n設定していない場合は、管理者が/guildDataコマンドを使用して設定してください。" +
+                    "\n設定している場合、学年ではなく「入学年」を西暦4ケタで入力しているかどうか確認してください。" +
+                    "\n(この通知をOFFにするには、/tt-switcherコマンドを実行してください。)")
+            }
+            catch{}
+        }
+
+
+
     }
 });
 

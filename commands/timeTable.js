@@ -6,6 +6,7 @@ const  timetable  = require('../functions/ttGeneration.js');
 const fs = require('fs');
 const {configPath}=require("../environmentConfig");
 const db = require('../functions/db.js');
+const guildData = require('../functions/guildDataSet.js')
 const {setTimeout} = require("node:timers/promises");
 
 const departmentData = [
@@ -152,9 +153,7 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            const date = JSON.parse(fs.readFileSync(configPath, 'utf8'))  //ここで読み取り
-            date.timetable = interaction.options.data[0].value
-            fs.writeFileSync(configPath, JSON.stringify(date,null ,"\t")) //ここで書き出し
+            await guildData.updateOrInsert(interaction.guildId,{timetable:interaction.options.data[0].value})
             await interaction.reply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
         },
     },
