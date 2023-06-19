@@ -55,7 +55,7 @@ exports.insert = async function run(dbName, collectionName, object) {
     }
 }
 /***
- * データベースにレコードを削除する
+ * データベースからレコードを削除する
  * @param dbName 削除元データベース名
  * @param collectionName 削除元コレクション名
  * @param filter 削除対象のフィルターを指定
@@ -66,7 +66,7 @@ exports.delete = async function run(dbName,collectionName,filter) {
         const database = dbClient.db(dbName);
         const collection = database.collection(collectionName);
 
-        const result = await collection.deleteOne(filter);
+        const result = await collection.deleteMany(filter);
         await system.log(`${dbName}.${collectionName}からレコード削除`,`DBレコード削除実行`);
     } catch(err) {
         await system.error(`${dbName}.${collectionName}からレコードを削除できませんでした`,err,`DB削除失敗`);
