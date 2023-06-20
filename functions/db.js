@@ -8,7 +8,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
  * @param filter フィルターを指定
- * @returns Array型
+ * @returns {Promise<[Object]>}
  */
 exports.find = async function (dbName, collectionName, filter) {
     const collection = dbClient.db(dbName).collection(collectionName);

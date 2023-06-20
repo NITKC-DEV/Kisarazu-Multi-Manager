@@ -82,7 +82,7 @@ client.on("interactionCreate", async(interaction) => {
         const command = interaction.client.commands.get(interaction.commandName);
         
         if(!command) return;
-        system.log(command.data.name, "SlashCommand");
+            await system.log(command.data.name, "SlashCommand");
         try {
             await command.execute(interaction);
         }
@@ -107,7 +107,10 @@ client.on("interactionCreate", async(interaction) => {
         });
     }
 });
-//SelectMenu受け取り
+
+/***
+ * InteractionCreate受取
+ */
 client.on(Events.InteractionCreate, async interaction => {
     if(interaction.customId === "createChannel") {
         await CreateChan.createChannel(interaction);
@@ -122,6 +125,33 @@ client.on(Events.InteractionCreate, async interaction => {
         await CreateChan.selectDelete(interaction);
     }
 });
+
+client.on(Events.ChannelDelete,async channel=>{
+    if(channel.type===0){
+        await CreateChan.removeDeletedChannelData(channel);
+    }
+    else if(channel.type===4){
+        await CreateChan.removeDeletedCategoryData(channel);
+    }
+    
+});
+
+client.on(Events.ChannelUpdate,async channel=>{
+    if(channel.type===0) {
+        await CreateChan.updateChannelData(channel);
+    }
+    else if(channel.type===4){
+        await CreateChan.updateCategoryData(channel);
+    }
+});
+
+client.on(Events.GuildRoleDelete,async role => {
+    await CreateChan.removeDeletedRoleData(role);
+});
+
+client.on(Events.GuildRoleUpdate, async role => {
+    await CreateChan.updateRoleData(role);
+})
 
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
