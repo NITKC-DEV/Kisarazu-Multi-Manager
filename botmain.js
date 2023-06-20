@@ -1,5 +1,4 @@
 const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
-const timetableBuilder  = require('./timetable/timetableUtils');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
@@ -23,8 +22,6 @@ module.exports.client=client;
 //configファイル読み込み
 const config = require('./environmentConfig')
 let ccconfig=require("./CCConfig.json");
-const Classes = require('./timetable/timetables.json');
-const {configPath} = require("./environmentConfig");
 
 
 //関数読み込み
