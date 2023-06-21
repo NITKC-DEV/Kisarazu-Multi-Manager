@@ -157,6 +157,11 @@ client.on(Events.GuildRoleUpdate, async role => {
     await CreateChan.updateRoleData(role);
 });
 
+//ギルド削除(退出)検知
+client.on(Events.GuildDelete,async guild =>{
+    await CreateChan.deleteGuildData(guild);
+});
+
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
     /*メンテナンスモード*/
