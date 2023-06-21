@@ -308,3 +308,15 @@ exports.updateRoleData = async function(role){
     }
 };
 
+/***
+ * ギルドから抜けたときにDBからその情報を削除する
+ * @param guild 抜けたときのguildオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
+exports.deleteGuildData = async function(guild){
+    const categoryData　= await db.find(dbMain,colCat,{guildID:guild.id});
+    for(const category of categoryData){
+        await db.delete(dbMain,colChan,{categoryID:category.ID});
+    }
+    await db.delete(dbMain,colCat,{guildID:guild.id});
+};
