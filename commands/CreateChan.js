@@ -1,6 +1,6 @@
 const {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
 const db = require("../functions/db.js");
-const dbMain = "main";
+const dbMain = "main";          //データベースmainとコレクションCC-categoryを定数化
 const colCat = "CC-categories";
 
 module.exports =
@@ -17,7 +17,11 @@ module.exports =
                         .setDescription("作成するチャンネル名を指定します")
                         .setRequired(true)
                 ),
-            
+            /***
+             * /add-category で登録されたカテゴリにチャンネルを作成する
+             * @param interaction
+             * @returns {Promise<void>}
+             */
             async execute(interaction) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.guild !== null) {
@@ -25,14 +29,21 @@ module.exports =
                     if(guildCats.length > 0) {
                         const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
                         
+                        //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
                         let selectCategory = new ActionRowBuilder()
                             .addComponents(
                                 new StringSelectMenuBuilder()
                                     .setPlaceholder("カテゴリを選択してください")
                                     .setCustomId("createChannel")
                                     .addOptions(
-                                        ...guildCats.map(data => ({label: data.name, value:JSON.stringify({categoryID:data.ID,channelName:channelName})})),
-                                        {label:"キャンセル",value:JSON.stringify({categoryID:"cancel",channelName:channelName})}
+                                        ...guildCats.map(data => ({
+                                            label: data.name,
+                                            value: JSON.stringify({categoryID: data.ID, channelName: channelName})
+                                        })),
+                                        {
+                                            label: "キャンセル",
+                                            value: JSON.stringify({categoryID: "cancel", channelName: channelName})
+                                        }
                                     )
                             )
                         
@@ -72,7 +83,11 @@ module.exports =
                         )
                 )
                 .setDefaultMemberPermissions(1 << 3),
-            
+            /***
+             * データベースに/create-channelを許可するカテゴリを登録する
+             * @param interaction
+             * @returns {Promise<void>}
+             */
             async execute(interaction) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.channel.type === 0) {
@@ -83,7 +98,7 @@ module.exports =
                             allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")),
                             guildID: interaction.guildId
                         });
-                        await　interaction.editReply({content: "追加しました", ephemeral: true});
+                        await interaction.editReply({content: "追加しました", ephemeral: true});
                     }
                     else {
                         await interaction.editReply({content: "このカテゴリはすでに追加されています", ephemeral: true});
@@ -99,7 +114,11 @@ module.exports =
                 .setName("remove-category")
                 .setDescription("/addchategoryによって登録されたカテゴリの登録を解除します")
                 .setDefaultMemberPermissions(1 << 3),
-            
+            /***
+             * /add-categoryによって登録されたカテゴリの登録を解除する
+             * @param interaction
+             * @returns {Promise<void>}
+             */
             async execute(interaction) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.guild !== null) {
@@ -131,7 +150,7 @@ module.exports =
                     }
                 }
                 else {
-                    interaction.editReply("このコマンドはサーバーでのみ実行できます");
+                    await interaction.editReply("このコマンドはサーバーでのみ実行できます");
                 }
             }
         }

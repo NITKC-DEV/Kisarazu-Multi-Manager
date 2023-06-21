@@ -108,24 +108,25 @@ client.on("interactionCreate", async(interaction) => {
     }
 });
 
-/***
- * InteractionCreate受取
- */
+//StringSelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction => {
-    if(interaction.customId === "createChannel") {
-        await CreateChan.createChannel(interaction);
-    }
-    else if(interaction.customId === "createRole") {
-        await CreateChan.createRole(interaction);
-    }
-    else if(interaction.customId === "removeCategory") {
-        await CreateChan.removeCategory(interaction);
-    }
-    else if(interaction.customId === "selectDelete") {
-        await CreateChan.selectDelete(interaction);
+    if(interaction.isStringSelectMenu()) {
+        if(interaction.customId === "createChannel") {
+            await CreateChan.createChannel(interaction);
+        }
+        else if(interaction.customId === "createRole") {
+            await CreateChan.createRole(interaction);
+        }
+        else if(interaction.customId === "removeCategory") {
+            await CreateChan.removeCategory(interaction);
+        }
+        else if(interaction.customId === "selectDelete") {
+            await CreateChan.selectDelete(interaction);
+        }
     }
 });
 
+//チャンネル(カテゴリ)削除検知
 client.on(Events.ChannelDelete,async channel=>{
     if(channel.type===0){
         await CreateChan.removeDeletedChannelData(channel);
@@ -136,6 +137,7 @@ client.on(Events.ChannelDelete,async channel=>{
     
 });
 
+//チャンネル(カテゴリ)情報変更検知
 client.on(Events.ChannelUpdate,async channel=>{
     if(channel.type===0) {
         await CreateChan.updateChannelData(channel);
@@ -145,13 +147,15 @@ client.on(Events.ChannelUpdate,async channel=>{
     }
 });
 
+//ロール削除検知
 client.on(Events.GuildRoleDelete,async role => {
     await CreateChan.removeDeletedRoleData(role);
 });
 
+//ロール情報変更検知
 client.on(Events.GuildRoleUpdate, async role => {
     await CreateChan.updateRoleData(role);
-})
+});
 
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {

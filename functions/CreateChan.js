@@ -4,8 +4,16 @@ const dbMain = "main";
 const colCat = "CC-categories";
 const colChan = "CC-channels";
 
+/***
+ * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
+ *
+ * ロールを作成するかを問うStringSelectMenuを投げる
+ * @param interaction StringSelectMenuInteractionオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.createChannel = async function(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
+    //ゴリ押しJson文字列をオブジェクト型に変換する
     const receivedValue = JSON.parse(interaction.values[0]);
     
     if(receivedValue.categoryID === "cancel") {
@@ -64,6 +72,11 @@ exports.createChannel = async function(interaction) {
     }
 };
 
+/***
+ * functions/CreateChan.js.createChannel関数から投げられた、ロール作成用のStringSelectMenuの受取
+ * @param interaction StringSelectMenuInteractionオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.createRole = async function(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     const receivedValue = JSON.parse(interaction.values[0]);
@@ -91,6 +104,13 @@ exports.createRole = async function(interaction) {
     }
 };
 
+/***
+ * /remove-categoryによって作成されたStringSelectMenuの受け取る
+ *
+ * チャンネルとロールの削除するかを問うStringSelectMenuを投げる
+ * @param interaction StringSelectMenuInteractionオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.removeCategory = async function(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     switch(interaction.values[0]) {
@@ -116,6 +136,13 @@ exports.removeCategory = async function(interaction) {
     }
 };
 
+/***
+ * functions/CreateChannel.js.removeCategoryから投げられたStringSelectMenuを受け取る
+ *
+ * データを削除し、必要に応じチャンネルトロールを削除する
+ * @param interaction StringSelectMenuInteractionオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.selectDelete = async function(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     if(interaction.values[0] === "Cancel") {
@@ -183,23 +210,50 @@ exports.selectDelete = async function(interaction) {
     }
 };
 
+/***
+ * 与えられた引数からチャンネルを削除する
+ * @param interaction 何かしらのinteraction(使わない実装にもできるけどだるかった)
+ * @param ID チャンネルID
+ * @returns {Promise<void>} void(同期処理)
+ */
 async function channelDelete(interaction, ID) {
     await interaction.guild.channels.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
 }
 
+/***
+ * 与えられた引数からロールを削除する
+ * @param interaction 何かしらのinteraction
+ * @param ID ロールID
+ * @returns {Promise<void>} void(同期処理)
+ */
 async function roleDelete(interaction, ID) {
     await interaction.guild.roles.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
 }
 
+/***
+ * チャンネルが削除されたときにDBから情報を削除する
+ * @param channel チャンネルオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.removeDeletedChannelData = async function(channel) {
     await db.delete(dbMain, colChan, {ID: channel.id})
 };
 
+/***
+ * カテゴリが削除されたときにDBから情報を削除する
+ * @param category カテゴリ(チャンネル)オブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.removeDeletedCategoryData = async function(category) {
     await db.delete(dbMain,colCat,{ID:category.id});
     await db.delete(dbMain, colChan, {categoryID: category.id});
 }
 
+/***
+ * チャンネルの情報が変更されたときにDBの情報を更新する
+ * @param channel 変更を検知したときのchannelオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.updateChannelData = async function(channel) {
     const channelData = await db.find(dbMain, colChan, {ID: channel.id});
     const newChannel = await client.channels.cache.get(channel.id);
@@ -214,6 +268,11 @@ exports.updateChannelData = async function(channel) {
     }
 };
 
+/**
+ * カテゴリの情報が変更されたときにDBの情報を更新する
+ * @param category 変更を検知したときのカテゴリ(チャンネル)オブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.updateCategoryData = async function(category){
     const categoryData = await db.find(dbMain,colCat,{ID:category.id});
     const newCategory = await client.channels.cache.get(category.id);
@@ -224,10 +283,20 @@ exports.updateCategoryData = async function(category){
     }
 };
 
+/***
+ * ロールが削除されたときにDBから情報を削除する
+ * @param role roleオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.removeDeletedRoleData = async function(role){
     await db.update(dbMain,colChan,{roleID:role.id},{$set:{thereRole: false,roleID: "",roleName:""}});
 };
 
+/***
+ * ロールの情報が変更されたときにDBの情報を更新する
+ * @param role 変更を検知したときのroleオブジェクト
+ * @returns {Promise<void>} void(同期処理)
+ */
 exports.updateRoleData = async function(role){
     const channelData = await db.find(dbMain,colChan,{roleID:role.id});
     
@@ -238,3 +307,4 @@ exports.updateRoleData = async function(role){
         }
     }
 };
+
