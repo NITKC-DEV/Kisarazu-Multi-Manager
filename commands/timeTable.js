@@ -202,13 +202,13 @@ module.exports = [
                 option
                     .setName('変更日')
                     .setDescription('授業変更する日を、月×100+日でいれてください。例)12月14日→1214')
-                    .setRequired(false)
+                    .setRequired(true)
             )
             .addStringOption(option =>
                 option
                     .setName('曜日')
                     .setDescription('変更日のデータがなかった場合にコピーする曜日を選択。')
-                    .setRequired(false)
+                    .setRequired(true)
                     .addChoices(
                         { name: '月曜日', value: '1' },
                         { name: '火曜日', value: '2' },
