@@ -207,8 +207,8 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('ベースの曜日')
-                    .setDescription('変更日のデータがなかった場合にコピーする曜日を選択。')
-                    .setRequired(true)
+                    .setDescription('ベースとする曜日を選択')
+                    .setRequired(false)
                     .addChoices(
                         { name: '月曜日', value: '1' },
                         { name: '火曜日', value: '2' },
@@ -220,22 +220,26 @@ module.exports = [
 
         async execute(interaction) {
             let select = [];
-            let defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日')) + '00'}); //変更日のキャッシュデータ
+            let defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('ベースの曜日'))}); //指定したベースデータ
             if(defaultData[0] === undefined){
-                defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日'))}); //変更日のデータ
+                defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日')) + '00'}); //変更日のキャッシュデータ
 
                 if(defaultData[0] === undefined){
-                    defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('曜日'))}); //指定したベースデータ
+                    defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日'))}); //変更日のデータ
+
                     if(defaultData[0] === undefined){
                         let date = new Date();
                         let now = parseFloat(String(date.getMonth()) + String(date.getDate()));
                         if(now > parseFloat(interaction.options.getInteger('変更日'))){
                             date.setDate(date.getFullYear()+1); //来年なので1足す
                         }
-                        
+                        date = new Date(date.getFullYear(), parseInt(interaction.options.getInteger('変更日')/100)-1, parseFloat(interaction.options.getInteger('変更日'))%100);
 
-                        interaction.reply({content:"その学科・曜日のデータは登録されていません。", ephemeral: true});
-                        return ;
+                        defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(date.getDay())}); //指定したベースデータ
+                        if(defaultData[0] === undefined) {
+                            interaction.reply({content: "その学科・曜日のデータは登録されていません。", ephemeral: true});
+                            return;
+                        }
                     }
                 }
             }
