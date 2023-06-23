@@ -22,6 +22,7 @@ global.client = new Client({
 
 //configファイル読み込み
 const config = require('./environmentConfig')
+const {configPath} = require("./environmentConfig");
 let ccconfig=require("./CCConfig.json");
 
 
