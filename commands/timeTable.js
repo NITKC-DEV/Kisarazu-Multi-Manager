@@ -220,6 +220,7 @@ module.exports = [
 
         async execute(interaction) {
             let select = [];
+            let day = "1";
             let defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('ベースの曜日'))}); //指定したベースデータ
             if(defaultData[0] === undefined){
                 defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日')) + '00'}); //変更日のキャッシュデータ
@@ -240,8 +241,14 @@ module.exports = [
                             interaction.reply({content: "その学科・曜日のデータは登録されていません。", ephemeral: true});
                             return;
                         }
+                        else{
+                            day = String(date.getDay());
+                        }
                     }
                 }
+            }
+            else{
+                day = interaction.options.getString('ベースの曜日')
             }
 
             delete defaultData[0]._id;
@@ -259,7 +266,7 @@ module.exports = [
             if(interaction.options.getString('モード') === '1'){
                 for(let i = 0; i < 4;i++){
                     select[i] = new StringSelectMenuBuilder()
-                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
+                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${day}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
                         .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択`)
                         .addOptions(
                             options
@@ -269,7 +276,7 @@ module.exports = [
             else{
                 for(let i = 0; i < 3;i++){
                     select[i] = new StringSelectMenuBuilder()
-                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getString('曜日')}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
+                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${day}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
                         .setPlaceholder(`${i+1}コマ目の教科を選択`)
                         .addOptions(
                             options
