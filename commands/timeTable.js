@@ -246,7 +246,7 @@ module.exports = [
 
             delete defaultData[0]._id;
             defaultData[0].day = String(interaction.options.getInteger('変更日')) + '00';
-            await db.updateOrInsert("main","timetableData",{day:String(interaction.options.getInteger('変更日'))},defaultData[0]);
+            await db.updateOrInsert("main","timetableData",{day:String(interaction.options.getInteger('変更日') + '00')},defaultData[0]);
 
             const subject = await db.find("main","syllabusData",{subject_id:`${interaction.options.getString('学年')}${interaction.options.getString('学科')}`})
 
