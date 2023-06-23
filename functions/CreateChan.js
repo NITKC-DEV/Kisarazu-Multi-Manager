@@ -333,7 +333,7 @@ exports.dataCheck = async function() {
         }
         catch(e) {
             if(e.code === 10004) {
-                await db.delete(dbMain,colChan,{guildID: category.guildID});
+                await db.delete(dbMain, colChan, {guildID: category.guildID});
                 await db.delete(dbMain, colCat, {guildID: category.guildID});
                 continue;
             }
@@ -347,8 +347,8 @@ exports.dataCheck = async function() {
                 await db.delete(dbMain, colChan, {categoryID: category.ID});
                 await db.delete(dbMain, colCat, {ID: category.ID});
             }
-            else if(categoryData.name!== category.name) {
-                await db.update(dbMain,colCat,{ID:category.ID},{$set:{name:categoryData.name}});
+            else if(categoryData.name !== category.name) {
+                await db.update(dbMain, colCat, {ID: category.ID}, {$set: {name: categoryData.name}});
             }
         }
     }
@@ -356,20 +356,26 @@ exports.dataCheck = async function() {
     for(const channel of await db.find(dbMain, colChan, {})) {
         const channelData = await client.channels.cache.get(channel.ID);
         if(channelData === undefined) {
-            await db.delete(dbMain,colChan,{ID:channel.ID});
+            await db.delete(dbMain, colChan, {ID: channel.ID});
             continue;
         }
-        else if(channelData.name !== channel.name){
-            await db.update(dbMain,colChan,{ID:channel.ID},{$set:{name:channelData.name}});
+        else if(channelData.name !== channel.name) {
+            await db.update(dbMain, colChan, {ID: channel.ID}, {$set: {name: channelData.name}});
         }
         
         if(channel.thereRole) {
             const roleData = await (await client.guilds.fetch((await db.find(dbMain, colCat, {ID: channel.categoryID}))[0].guildID)).roles.fetch(channel.roleID);
             if(roleData === null) {
-                await db.update(dbMain,colChan,{ID:channel.ID},{$set:{thereRole:false,roleName:"",roleID:""}});
+                await db.update(dbMain, colChan, {ID: channel.ID}, {
+                    $set: {
+                        thereRole: false,
+                        roleName: "",
+                        roleID: ""
+                    }
+                });
             }
-            else if(roleData.name!==channel.roleName){
-                await db.update(dbMain,colChan,{ID:channel.ID},{$set:{roleName:roleData.name}});
+            else if(roleData.name !== channel.roleName) {
+                await db.update(dbMain, colChan, {ID: channel.ID}, {$set: {roleName: roleData.name}});
             }
         }
     }
