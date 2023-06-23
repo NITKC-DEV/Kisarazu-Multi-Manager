@@ -59,7 +59,8 @@ exports.generation = async function func(grade,department,day,change = true) {
 
     if(data.length > 0){
         if(data[0].test){
-            for(let i=data[0].timetable.length-1; i<data[0].timetable.length; i--){ //末尾の空きコマ削除
+            const siz = data[0].timetable.length;
+            for(let i=siz-1; i>=0; i--){ //末尾の空きコマ削除
                 if(data[0].timetable[i].name === "空きコマ"){
                     data[0].timetable.pop();
                 }
@@ -68,7 +69,8 @@ exports.generation = async function func(grade,department,day,change = true) {
                 }
             }
             if(data[0].timetable.length === 0){
-                data[0].comment = "本日設定された試験はありません。"
+                if(data[0].comment !== "")data[0].comment = "\n" + data[0].comment
+                data[0].comment = "本日設定された試験はありません。" + data[0].comment
             }
 
             let field = [];
@@ -124,6 +126,20 @@ exports.generation = async function func(grade,department,day,change = true) {
                 .setFooter({ text: 'Developed by NITKC22s server Admin' });
         }
         else{
+            const siz = data[0].timetable.length;
+            for(let i=siz-1; i>=0; i--){ //末尾の空きコマ削除
+                if(data[0].timetable[i].name === "空きコマ"){
+                    data[0].timetable.pop();
+                }
+                else{
+                    break;
+                }
+            }
+            if(data[0].timetable.length === 0){
+                if(data[0].comment !== "")data[0].comment = "\n" + data[0].comment
+                data[0].comment = "本日授業はありません。" + data[0].comment
+            }
+
             let field = [];
             let dailyComment="";
             for(let i = 0; i < data[0].timetable.length; i++){
@@ -315,7 +331,9 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .then((message) => {
                     message.delete();
                 })
-                .catch(error => {});
+                .catch(error => {
+
+                });
             let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
