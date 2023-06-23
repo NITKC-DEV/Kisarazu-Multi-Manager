@@ -453,7 +453,7 @@ module.exports = [
             await interaction.showModal(modal);
             const filter = (mInteraction) => mInteraction.customId === `${date}addCommentTimetableModal${grade}${department}`;
 
-            interaction.awaitModalSubmit({ filter, time: 360000 })
+            interaction.awaitModalSubmit({ filter, time: 3600000 })
                 .then(async mInteraction => {
                     let inputTxt = [],comment;
                     for (let i = 0; i < data[0].timetable.length; i++) {
@@ -486,6 +486,7 @@ module.exports = [
                     }
                     await mInteraction.deleteReply();
                 })
+                .catch(error => {})
         }
     }
 

@@ -216,7 +216,7 @@ exports.setNewTimetableData = async function func(interaction) {
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
             url: 'https://github.com/NITKC22s/bot-main'
         })
-        .setDescription(`教科を選択してください。\n入力が終わったら、登録ボタンを押してください。`)
+        .setDescription(`教科を選択してください。\n\n入力が終わったら、登録ボタンを押してください`)
         .addFields({
             name:`現在選択済みの時間割`,
             value:`\`\`\`${subjects}\`\`\``
@@ -272,7 +272,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     await interaction.showModal(modal);
     const filter = (mInteraction) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
 
-    interaction.awaitModalSubmit({ filter, time: 360000 })
+    interaction.awaitModalSubmit({ filter, time: 3600000 })
         .then(async mInteraction => {
             let inputTxt = [],comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
@@ -300,9 +300,7 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .then((message) => {
                     message.delete();
                 })
-                .catch(error => {
-
-                });
+                .catch(error => {});
             let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
@@ -312,5 +310,13 @@ exports.showNewTimetableModal = async function func(interaction) {
             await mInteraction.deleteReply();
 
 
+        })
+        .catch(error => {
+            const channel = client.channels.cache.get(interaction.message.channelId);
+            channel.messages.fetch(interaction.message.id)
+                .then((message) => {
+                    message.delete();
+                })
+                .catch(error => {});
         })
 }
