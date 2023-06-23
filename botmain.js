@@ -412,7 +412,7 @@ cron.schedule('*/1  * * * *', async () => {
 
     const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
     if(data.length === 0){
-        system.warn("ダッシュボードの自動更新対象がありません。");
+        await system.warn("ダッシュボードの自動更新対象がありません。");
     }
     for(let i=0;i<data.length;i++){
         const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
