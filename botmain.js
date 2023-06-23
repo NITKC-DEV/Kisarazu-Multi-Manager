@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-const CreateChan = require("./functions/CreateChan.js");
+const CreateChannel = require("./functions/CreateChan.js");
 dotenv.config();
 require('date-utils');
 global.client = new Client({
@@ -60,8 +60,9 @@ client.once("ready", async() => {
         }
         
     }
-    await system.log("Ready!");
     await weather.update(); //天気更新
+    await CreateChannel.dataCheck();
+    await system.log("Ready!");
 });
 
 /*command処理*/
@@ -112,16 +113,16 @@ client.on("interactionCreate", async(interaction) => {
 client.on(Events.InteractionCreate, async interaction => {
     if(interaction.isStringSelectMenu()) {
         if(interaction.customId === "createChannel") {
-            await CreateChan.createChannel(interaction);
+            await CreateChannel.createChannel(interaction);
         }
         else if(interaction.customId === "createRole") {
-            await CreateChan.createRole(interaction);
+            await CreateChannel.createRole(interaction);
         }
         else if(interaction.customId === "removeCategory") {
-            await CreateChan.removeCategory(interaction);
+            await CreateChannel.removeCategory(interaction);
         }
         else if(interaction.customId === "selectDelete") {
-            await CreateChan.selectDelete(interaction);
+            await CreateChannel.selectDelete(interaction);
         }
     }
 });
@@ -129,10 +130,10 @@ client.on(Events.InteractionCreate, async interaction => {
 //チャンネル(カテゴリ)削除検知
 client.on(Events.ChannelDelete,async channel=>{
     if(channel.type===0){
-        await CreateChan.removeDeletedChannelData(channel);
+        await CreateChannel.removeDeletedChannelData(channel);
     }
     else if(channel.type===4){
-        await CreateChan.removeDeletedCategoryData(channel);
+        await CreateChannel.removeDeletedCategoryData(channel);
     }
     
 });
@@ -140,26 +141,26 @@ client.on(Events.ChannelDelete,async channel=>{
 //チャンネル(カテゴリ)情報変更検知
 client.on(Events.ChannelUpdate,async channel=>{
     if(channel.type===0) {
-        await CreateChan.updateChannelData(channel);
+        await CreateChannel.updateChannelData(channel);
     }
     else if(channel.type===4){
-        await CreateChan.updateCategoryData(channel);
+        await CreateChannel.updateCategoryData(channel);
     }
 });
 
 //ロール削除検知
 client.on(Events.GuildRoleDelete,async role => {
-    await CreateChan.removeDeletedRoleData(role);
+    await CreateChannel.removeDeletedRoleData(role);
 });
 
 //ロール情報変更検知
 client.on(Events.GuildRoleUpdate, async role => {
-    await CreateChan.updateRoleData(role);
+    await CreateChannel.updateRoleData(role);
 });
 
 //ギルド削除(退出)検知
 client.on(Events.GuildDelete,async guild =>{
-    await CreateChan.deleteGuildData(guild);
+    await CreateChannel.deleteGuildData(guild);
 });
 
 /*TxtEasterEgg*/

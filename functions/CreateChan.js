@@ -24,7 +24,7 @@ exports.createChannel = async function(interaction) {
             name: receivedValue.channelName,
             parent: receivedValue.categoryID !== interaction.guildId ? receivedValue.categoryID : null,
             reason: "木更津高専統合管理BOTの/create-channelにより作成",
-            type:0
+            type: 0
         });
         
         await db.insert(dbMain, colChan, {
@@ -245,7 +245,7 @@ exports.removeDeletedChannelData = async function(channel) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.removeDeletedCategoryData = async function(category) {
-    await db.delete(dbMain,colCat,{ID:category.id});
+    await db.delete(dbMain, colCat, {ID: category.id});
     await db.delete(dbMain, colChan, {categoryID: category.id});
 }
 
@@ -273,12 +273,12 @@ exports.updateChannelData = async function(channel) {
  * @param category 変更を検知したときのカテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.updateCategoryData = async function(category){
-    const categoryData = await db.find(dbMain,colCat,{ID:category.id});
+exports.updateCategoryData = async function(category) {
+    const categoryData = await db.find(dbMain, colCat, {ID: category.id});
     const newCategory = await client.channels.cache.get(category.id);
-    if(categoryData.length > 0){
-        if(categoryData[0].name !== newCategory.name){
-            await db.update(dbMain,colCat,{ID:newCategory.id},{$set:{name:newCategory.name}});
+    if(categoryData.length > 0) {
+        if(categoryData[0].name !== newCategory.name) {
+            await db.update(dbMain, colCat, {ID: newCategory.id}, {$set: {name: newCategory.name}});
         }
     }
 };
@@ -288,8 +288,8 @@ exports.updateCategoryData = async function(category){
  * @param role roleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.removeDeletedRoleData = async function(role){
-    await db.update(dbMain,colChan,{roleID:role.id},{$set:{thereRole: false,roleID: "",roleName:""}});
+exports.removeDeletedRoleData = async function(role) {
+    await db.update(dbMain, colChan, {roleID: role.id}, {$set: {thereRole: false, roleID: "", roleName: ""}});
 };
 
 /***
@@ -297,13 +297,13 @@ exports.removeDeletedRoleData = async function(role){
  * @param role 変更を検知したときのroleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.updateRoleData = async function(role){
-    const channelData = await db.find(dbMain,colChan,{roleID:role.id});
+exports.updateRoleData = async function(role) {
+    const channelData = await db.find(dbMain, colChan, {roleID: role.id});
     
-    if(channelData.length > 0){
-        const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch(role.id);
+    if(channelData.length > 0) {
+        const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch("0");
         if(channelData[0].roleName !== newRole.name) {
-            await db.update(dbMain,colChan,{roleID:newRole.id},{$set:{roleName:newRole.name}});
+            await db.update(dbMain, colChan, {roleID: newRole.id}, {$set: {roleName: newRole.name}});
         }
     }
 };
@@ -313,10 +313,64 @@ exports.updateRoleData = async function(role){
  * @param guild 抜けたときのguildオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.deleteGuildData = async function(guild){
-    const categoryData　= await db.find(dbMain,colCat,{guildID:guild.id});
-    for(const category of categoryData){
-        await db.delete(dbMain,colChan,{categoryID:category.ID});
+exports.deleteGuildData = async function(guild) {
+    const categoryData = await db.find(dbMain, colCat, {guildID: guild.id});
+    for(const category of categoryData) {
+        await db.delete(dbMain, colChan, {categoryID: category.ID});
     }
-    await db.delete(dbMain,colCat,{guildID:guild.id});
+    await db.delete(dbMain, colCat, {guildID: guild.id});
+};
+
+/***
+ * ギルド、カテゴリ、チャンネル、ロールの情報を参照し、整合性を確認する
+ * @returns {Promise<void>} void(同期処理)
+ */
+exports.dataCheck = async function() {
+    for(const category of await db.find(dbMain, colCat, {})) {
+        let guildData;
+        try {
+            guildData = await client.guilds.fetch(category.guildID);
+        }
+        catch(e) {
+            if(e.code === 10004) {
+                await db.delete(dbMain,colChan,{guildID: category.guildID});
+                await db.delete(dbMain, colCat, {guildID: category.guildID});
+                continue;
+            }
+            else {
+                throw(e);
+            }
+        }
+        if(category.ID !== category.guildID) {
+            const categoryData = await guildData.channels.cache.get(category.ID);
+            if(categoryData === undefined) {
+                await db.delete(dbMain, colChan, {categoryID: category.ID});
+                await db.delete(dbMain, colCat, {ID: category.ID});
+            }
+            else if(categoryData.name!== category.name) {
+                await db.update(dbMain,colCat,{ID:category.ID},{$set:{name:categoryData.name}});
+            }
+        }
+    }
+    
+    for(const channel of await db.find(dbMain, colChan, {})) {
+        const channelData = await client.channels.cache.get(channel.ID);
+        if(channelData === undefined) {
+            await db.delete(dbMain,colChan,{ID:channel.ID});
+            continue;
+        }
+        else if(channelData.name !== channel.name){
+            await db.update(dbMain,colChan,{ID:channel.ID},{$set:{name:channelData.name}});
+        }
+        
+        if(channel.thereRole) {
+            const roleData = await (await client.guilds.fetch((await db.find(dbMain, colCat, {ID: channel.categoryID}))[0].guildID)).roles.fetch(channel.roleID);
+            if(roleData === null) {
+                await db.update(dbMain,colChan,{ID:channel.ID},{$set:{thereRole:false,roleName:"",roleID:""}});
+            }
+            else if(roleData.name!==channel.roleName){
+                await db.update(dbMain,colChan,{ID:channel.ID},{$set:{roleName:roleData.name}});
+            }
+        }
+    }
 };
