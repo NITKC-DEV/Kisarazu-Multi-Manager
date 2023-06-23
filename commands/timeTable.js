@@ -266,7 +266,7 @@ module.exports = [
             if(interaction.options.getString('モード') === '1'){
                 for(let i = 0; i < 4;i++){
                     select[i] = new StringSelectMenuBuilder()
-                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${day}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
+                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${day}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${interaction.options.getString('モード')}${i}`)
                         .setPlaceholder(`${i*2+1}-${i*2+2}限目の教科を選択`)
                         .addOptions(
                             options
@@ -276,7 +276,7 @@ module.exports = [
             else{
                 for(let i = 0; i < 3;i++){
                     select[i] = new StringSelectMenuBuilder()
-                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${day}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${i}`)
+                        .setCustomId(`${interaction.options.getString('学年')}${interaction.options.getString('学科')}${day}${interaction.options.getInteger('変更日')}changeTimetableSelectMenu${interaction.options.getString('モード')}${i}`)
                         .setPlaceholder(`${i+1}コマ目の教科を選択`)
                         .addOptions(
                             options

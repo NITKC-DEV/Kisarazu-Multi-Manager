@@ -213,13 +213,14 @@ exports.generation = async function func(grade,department,day,change = true) {
  * @param interaction セレクトメニューのinteraction
  */
 
-//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${変更コマ(0~3)}
+//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
 exports.setNewTimetableData = async function func(interaction) {
     await interaction.deferReply();
 
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
+    const mode = interaction.customId.slice(-2,-1);
     const period = interaction.customId.slice(-1);
     const date = interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index) + '00';
 
@@ -234,6 +235,9 @@ exports.setNewTimetableData = async function func(interaction) {
     data[0].day = date;
     data[0].timetable[parseInt(period)] = {name:interaction.values[0],comment:""};
 
+    if(mode === "0" && data[0].timetable.length === 4){
+        data[0].timetable.pop()
+    }
     let subjects="";
     for(let i=0;i<data[0].timetable.length;i++){
         subjects += `${2*i+1}-${2*i+2}限：` + data[0].timetable[i].name + '\n';
