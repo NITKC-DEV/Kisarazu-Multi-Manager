@@ -2,7 +2,6 @@ const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js');
-const commands = require("../botmain");
 const packageVer = require("../package.json");
 const dashboard = require("../functions/dashboard");
 const {setTimeout} = require("node:timers/promises");
