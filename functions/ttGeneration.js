@@ -59,6 +59,18 @@ exports.generation = async function func(grade,department,day,change = true) {
 
     if(data.length > 0){
         if(data[0].test){
+            for(let i=data[0].timetable.length-1; i<data[0].timetable.length; i--){ //末尾の空きコマ削除
+                if(data[0].timetable[i].name === "空きコマ"){
+                    data[0].timetable.pop();
+                }
+                else{
+                    break;
+                }
+            }
+            if(data[0].timetable.length === 0){
+                data[0].comment = "本日設定された試験はありません。"
+            }
+
             let field = [];
             for(let i = 0; i < data[0].timetable.length; i++){
                 let comment = "";
@@ -197,7 +209,10 @@ exports.setNewTimetableData = async function func(interaction) {
 
     let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
     if(data.length === 0){
-        data = await db.find("main","timetableData",{grade:grade,department:department,day: day});
+        data = await db.find("main","timetableData",{grade:grade,department:department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
+        if(data.length === 0){
+            data = await db.find("main","timetableData",{grade:grade,department:department,day: day});
+        }
     }
     delete data[0]._id;
     data[0].day = date;

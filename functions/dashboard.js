@@ -78,21 +78,21 @@ exports.generation = async function func(guild) {
                     test += `(${day[0]}ヶ月と${day[1]}日後)`
                 }
                 for (let i = 0; i < 3; i++) {
-                    db.update(
-                        "main","nextTest",{label:String(i+1)},
+                    await db.update(
+                        "main", "nextTest", {label: String(i + 1)},
                         {
                             $set: {
-                                year: String(data[i+1].year),
-                                month1: String(data[i+1].month1),
-                                day1: String(data[i+1].day1),
-                                month2: String(data[i+1].month2),
-                                day2: String(data[i+1].day2)
+                                year: String(data[i + 1].year),
+                                month1: String(data[i + 1].month1),
+                                day1: String(data[i + 1].day1),
+                                month2: String(data[i + 1].month2),
+                                day2: String(data[i + 1].day2)
                             },
                         }
                     )
                 }
-                db.update(
-                    "main","nextTest",{label:"4"},
+                await db.update(
+                    "main", "nextTest", {label: "4"},
                     {
                         $set: {
                             year: "0",
