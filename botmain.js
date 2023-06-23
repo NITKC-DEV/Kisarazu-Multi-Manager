@@ -342,15 +342,15 @@ client.on('messageCreate', message => {
 })
 
 /*誕生日通知*/
-cron.schedule('0 0 * * *', () => {
+cron.schedule('0 0 * * *', async () => {
     birthday.func();
-    system.log('誕生日お祝い！');
+    await system.log('誕生日お祝い！');
 });
 
 /*原神デイリー通知*/
-cron.schedule('0 5 * * *', () => {
+cron.schedule('0 5 * * *', async () => {
     genshin.daily();
-    system.log('デイリー通知送信完了');
+    await system.log('デイリー通知送信完了');
 });
 
 /*天気キャッシュ取得*/
