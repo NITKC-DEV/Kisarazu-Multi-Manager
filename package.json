@@ -17,10 +17,9 @@
   "main": "botmain.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development node .",
-    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
     "start": "cross-env NODE_ENV=production node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
+    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js"
   },
   "repository": {
     "type": "git",
