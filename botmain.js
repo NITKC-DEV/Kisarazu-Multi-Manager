@@ -343,13 +343,13 @@ client.on('messageCreate', message => {
 
 /*誕生日通知*/
 cron.schedule('0 0 * * *', async () => {
-    birthday.func();
+    await birthday.func();
     await system.log('誕生日お祝い！');
 });
 
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', async () => {
-    genshin.daily();
+    await genshin.daily();
     await system.log('デイリー通知送信完了');
 });
 
