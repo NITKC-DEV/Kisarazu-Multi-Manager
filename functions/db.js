@@ -9,7 +9,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
  * @param filter フィルターを指定
- * @returns Array型
+ * @returns {Promise<WithId<Document>[]>}
  */
 exports.find = async function (dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
@@ -22,7 +22,7 @@ exports.find = async function (dbName, collectionName, filter) {
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
  * @param filter フィルターを指定
- * @returns bool
+ * @returns {Promise<boolean>}
  */
 exports.includes = async function (dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
@@ -36,6 +36,7 @@ exports.includes = async function (dbName, collectionName, filter) {
  * @param collectionName 更新先コレクション名
  * @param filter 更新対象のフィルターを指定
  * @param update update operatorを用いた更新内容の記述
+ * @returns {Promise<void>}
  */
 exports.update = async function run(dbName, collectionName, filter, update) {
     try {
@@ -55,6 +56,7 @@ exports.update = async function run(dbName, collectionName, filter, update) {
  * @param dbName 追加先データベース名
  * @param collectionName 追加先コレクション名
  * @param object 追加するレコード(オブジェクト型)
+ * @returns {Promise<void>}
  */
 exports.insert = async function run(dbName, collectionName, object) {
 
@@ -75,6 +77,7 @@ exports.insert = async function run(dbName, collectionName, object) {
  * @param collectionName 追加先コレクション名
  * @param filter 更新対象のフィルターを指定
  * @param object 追加するレコード(オブジェクト型)
+ * @returns {Promise<void>}
  */
 exports.updateOrInsert = async function run(dbName, collectionName,filter, object) {
 
@@ -96,6 +99,7 @@ exports.updateOrInsert = async function run(dbName, collectionName,filter, objec
  * @param dbName 削除元データベース名
  * @param collectionName 削除元コレクション名
  * @param filter 削除対象のフィルターを指定
+ * @returns {Promise<void>}
  */
 exports.delete = async function run(dbName,collectionName,filter) {
 
@@ -111,12 +115,21 @@ exports.delete = async function run(dbName,collectionName,filter) {
 }
 
 /***
- * データベースを閉じる(今は使わないのでコメントアウト中)
+ *
+ * @returns {Promise<void>}
  */
-/*
+exports.open = async function close(){
+    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+    await system.log("DB - opent");
+}
+
+/***
+ *
+ * @returns {Promise<void>}
+ */
 exports.close = async function close(){
     await dbClient.close();
-    await system.log("close");
+    await system.log("DB - close");
 }
-*/
+
 //引数の詳細については、mongodbの公式ドキュメントを参照すること
