@@ -120,7 +120,7 @@ exports.delete = async function run(dbName,collectionName,filter) {
  */
 exports.open = async function close(){
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
-    await system.log("DB - opent");
+    await system.log("DB - open");
 }
 
 /***
