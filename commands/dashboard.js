@@ -11,7 +11,7 @@ module.exports =
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
-                const reply = await interaction.deferReply()
+                await interaction.deferReply()
                 if(interaction.guild === undefined || interaction.guild === null){
                     await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                 }
@@ -66,8 +66,8 @@ module.exports =
 
             async execute(interaction) {
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
-                    db.update(
-                        "main","nextTest",{label:String(interaction.options.data[5].value)},
+                    await db.update(
+                        "main", "nextTest", {label: String(interaction.options.data[5].value)},
                         {
                             $set: {
                                 year: String(interaction.options.data[0].value),
@@ -94,11 +94,11 @@ module.exports =
                 .setDefaultMemberPermissions(1<<3),
 
             async execute(interaction) {
-                const reply = await interaction.deferReply()
+                await interaction.deferReply()
                 let replyOptions;
                 if(interaction.guild === undefined || interaction.guild === null){
                     await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
-                    system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
+                    await system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
                     return;
                 }
                 let data = await db.find("main","guildData",{guild:interaction.guildId,board:{$nin:["0000000000000000000"]}}); /*自動更新対象のボードがあるかどうか確認*/
@@ -110,7 +110,7 @@ module.exports =
 
                     while(flag === -1){
                         await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 , time: 60_000})
-                            .then(collected => {
+                            .then(() => {
                                 if(reply.reactions.cache.at(0).count === 2 + otherReact[0]){
                                     if(reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id){
                                         flag = 0;
