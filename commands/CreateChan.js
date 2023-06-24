@@ -28,30 +28,37 @@ module.exports =
                     const guildCats = await db.find(dbMain, colCat, {"guildID": interaction.guildId});
                     if(guildCats.length > 0) {
                         const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
-                        
-                        //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
-                        let selectCategory = new ActionRowBuilder()
-                            .addComponents(
-                                new StringSelectMenuBuilder()
-                                    .setPlaceholder("カテゴリを選択してください")
-                                    .setCustomId("createChannel")
-                                    .addOptions(
-                                        ...guildCats.map(data => ({
-                                            label: data.name,
-                                            value: JSON.stringify({categoryID: data.ID, channelName: channelName})
-                                        })),
-                                        {
-                                            label: "キャンセル",
-                                            value: JSON.stringify({categoryID: "cancel", channelName: channelName})
-                                        }
-                                    )
-                            )
-                        
-                        await interaction.editReply({
-                            content: `${channelName}を作成するカテゴリを指定してください`,
-                            components: [selectCategory],
-                            ephemeral: true
-                        });
+                        if(channelName.length > 30) {
+                            //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
+                            const selectCategory = new ActionRowBuilder()
+                                .addComponents(
+                                    new StringSelectMenuBuilder()
+                                        .setPlaceholder("カテゴリを選択してください")
+                                        .setCustomId("createChannel")
+                                        .addOptions(
+                                            ...guildCats.map(data => ({
+                                                label: data.name,
+                                                value: JSON.stringify({categoryID: data.ID, channelName: channelName})
+                                            })),
+                                            {
+                                                label: "キャンセル",
+                                                value: JSON.stringify({categoryID: "cancel", channelName: channelName})
+                                            }
+                                        )
+                                );
+                            
+                            await interaction.editReply({
+                                content: `${channelName}を作成するカテゴリを指定してください`,
+                                components: [selectCategory],
+                                ephemeral: true
+                            });
+                        }
+                        else {
+                            await interaction.editReply({
+                                content: "チャンネル名として指定できる文字数は最大30文字です",
+                                ephemeral: true
+                            });
+                        }
                     }
                     else {
                         await interaction.editReply({
