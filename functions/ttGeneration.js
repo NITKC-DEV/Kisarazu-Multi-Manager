@@ -288,7 +288,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2,interaction.customId.match(/changeTimetableButton/).index);
 
-    const data = await db.find("main","timetableData",{day:date + '00'});
+    let data = await db.find("main","timetableData",{day:date + '00'});
 
     const modal = new ModalBuilder()
         .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
