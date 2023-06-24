@@ -4,27 +4,22 @@
     "@discordjs/rest": "^1.1.0",
     "axios": "^1.3.4",
     "date-utils": "^1.2.21",
-    "discord-api-types": "^0.37.42",
     "discord.js": "^14.9.0",
     "dotenv": "^16.0.2",
     "enquirer": "^2.3.6",
-    "eslint": "^8.39.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.8.0",
     "moment": "^2.29.4",
-    "node-cron": "^3.0.2",
-    "prettier": "^2.8.8"
+    "mongodb": "^5.2.0",
+    "node-cron": "^3.0.2"
   },
   "name": "nitkc-main",
   "description": "",
-  "version": "4.0.5",
+  "version": "4.0.6",
   "main": "botmain.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development node .",
-    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
     "start": "cross-env NODE_ENV=production node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
+    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js"
   },
   "repository": {
     "type": "git",
