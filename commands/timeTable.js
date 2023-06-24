@@ -360,8 +360,8 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日')});
-            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日' + '00')});
+            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
+            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});
             const replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await interaction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
