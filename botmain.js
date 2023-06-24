@@ -1,5 +1,4 @@
 const { Client, GatewayIntentBits, Partials, Collection, Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
-const timetableBuilder  = require('./timetable/timetableUtils');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
@@ -22,16 +21,16 @@ global.client = new Client({
 });
 
 //configファイル読み込み
-const config = require('./environmentConfig')
-let ccconfig=require("./CCConfig.json");
-const Classes = require('./timetable/timetables.json');
-const {configPath} = require("./environmentConfig");
+const config = require('./environmentConfig.js')
+const {configPath} = require("./environmentConfig.js");
+const ccconfig=require("./CCConfig.json");
 
 
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const birthday = require('./functions/birthday.js');
 const dashboard = require('./functions/dashboard.js');
+const timetable = require('./functions/ttGeneration.js');
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
@@ -92,10 +91,29 @@ client.on("interactionCreate", async (interaction) => {
         await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
     }
 });
+
+//Button入力受け取り
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isButton()) return;
+
+    //timetable用 customIDに引数を埋め込むため、一致で検索
+    if((interaction.customId.match(/changeTimetableButton/) ?? {index:false}).index > 0){
+        await timetable.showNewTimetableModal(interaction);
+    }
+});
+
 //SelectMenu受け取り
-client.on(Events.InteractionCreate, async interaction =>
-{
-    if (interaction.customId === "selectCat"){
+client.on(Events.InteractionCreate, async interaction =>{
+    if (!interaction.isStringSelectMenu()) return;
+
+    //timetable用 customIDに引数を埋め込むため、一致で検索
+    if((interaction.customId.match(/changeTimetableSelectMenu/) ?? {index:false}).index > 0){
+        await timetable.setNewTimetableData(interaction);
+    }
+
+    // /createchanでのカテゴリ選択の受け取り
+    if (interaction.customId === "selectCat")
+    {
         //キャンセル受付
         if(interaction.values[0]==="0000000000000000000")
         {
@@ -355,15 +373,15 @@ client.on('messageCreate', message => {
 })
 
 /*誕生日通知*/
-cron.schedule('0 0 * * *', () => {
-    birthday.func();
-    system.log('誕生日お祝い！');
+cron.schedule('0 0 * * *', async () => {
+    await birthday.func();
+    await system.log('誕生日お祝い！');
 });
 
 /*原神デイリー通知*/
-cron.schedule('0 5 * * *', () => {
-    genshin.daily();
-    system.log('デイリー通知送信完了');
+cron.schedule('0 5 * * *', async () => {
+    await genshin.daily();
+    await system.log('デイリー通知送信完了');
 });
 
 /*天気キャッシュ取得*/
@@ -374,20 +392,35 @@ cron.schedule('5 5,11,17 * * *', async () => {
 
 /*時間割*/
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
-    let dayOfWeek = new Date().getDay()+1;
-    //timetable == trueのとき
-    let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable
-    if(timetable === true) {
-        (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
-            .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
-            .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
-            .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
-            .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
-            .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    const guildData = await db.find("main","guildData",{});
+    const date = new Date();
+    const year = date.getFullYear();
+    const dayOfWeek = date.getDay();
+
+    for(let i = 0; i < guildData.length; i++){
+        if(guildData[i].timetable === true){
+            const grade = year - parseFloat(guildData[i].grade) + 1;
+            const embed = [];
+            if(0 < grade && grade < 6 ){
+                for(let j= 0;j < 5; j++){
+                    embed[j] = await timetable.generation(String(grade),String(j+1),String(dayOfWeek+1),true);
+                }
+                try{if(embed[0]!==0 && guildData[i].mChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].mChannel) ?? await client.channels.fetch(guildData[i].mChannel)).send({embeds:[embed[0]]})}catch{}
+                try{if(embed[1]!==0 && guildData[i].eChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].eChannel) ?? await client.channels.fetch(guildData[i].eChannel)).send({embeds:[embed[1]]})}catch{}
+                try{if(embed[2]!==0 && guildData[i].dChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].dChannel) ?? await client.channels.fetch(guildData[i].dChannel)).send({embeds:[embed[2]]})}catch{}
+                try{if(embed[3]!==0 && guildData[i].jChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].jChannel) ?? await client.channels.fetch(guildData[i].jChannel)).send({embeds:[embed[3]]})}catch{}
+                try{if(embed[4]!==0 && guildData[i].cChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].cChannel) ?? await client.channels.fetch(guildData[i].cChannel)).send({embeds:[embed[4]]})}catch{}
+            }
+            else{
+                try{
+                    await client.channels.cache.get(guildData[i].main).send("このサーバーの学年の設定をしていない、または正しくないため、時間割定期通知に失敗しました。" +
+                        "\n設定していない場合は、管理者が/guildDataコマンドを使用して設定してください。" +
+                        "\n設定している場合、学年ではなく「入学年」を西暦4ケタで入力しているかどうか確認してください。" +
+                        "\n(この通知をOFFにするには、/tt-switcherコマンドを実行してください。)")
+                }
+                catch{}
+            }
+        }
     }
 });
 
@@ -407,7 +440,7 @@ cron.schedule('*/1  * * * *', async () => {
 
     const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
     if(data.length === 0){
-        system.warn("ダッシュボードの自動更新対象がありません。");
+        await system.warn("ダッシュボードの自動更新対象がありません。");
     }
     for(let i=0;i<data.length;i++){
         let flag = 0;
