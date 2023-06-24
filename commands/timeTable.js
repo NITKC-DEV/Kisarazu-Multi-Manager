@@ -1,5 +1,5 @@
 const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder,} = require('discord.js');
-const  timetable= require('../functions/ttGeneration.js');
+const timetable= require('../functions/ttGeneration.js');
 const fs = require('fs');
 const {configPath} = require("../environmentConfig");
 const db = require('../functions/db.js');
@@ -34,7 +34,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('曜日')
-                    .setDescription('曜日を指定します。指定なければ次の学校の日になります。')
+                    .setDescription('曜日を指定します。指定がなければ次の学校の日になります')
                     .setRequired(false)
                     .addChoices(
                         { name: '月曜日', value: '1' },
@@ -66,7 +66,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(false)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -154,7 +154,7 @@ module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('add-exception')
-            .setDescription('授業変更、及び定期テスト等を登録します。')
+            .setDescription('授業変更、及び定期テスト等を登録します')
             .setDefaultMemberPermissions(1<<3)
             .addStringOption(option =>
                 option
@@ -182,7 +182,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(true)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -324,7 +324,7 @@ module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('delete-exception')
-            .setDescription('授業変更やテストのデータを削除します。')
+            .setDescription('授業変更やテストのデータを削除します')
             .setDefaultMemberPermissions(1<<3)
             .addStringOption(option =>
                 option
@@ -342,7 +342,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(true)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -391,7 +391,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(true)
                     .addChoices(
                         { name: '1年生', value: '1' },
