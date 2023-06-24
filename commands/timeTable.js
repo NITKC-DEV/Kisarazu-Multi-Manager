@@ -427,8 +427,11 @@ module.exports = [
             const grade = interaction.options.getString('学年');
             const department = interaction.options.getString('学科');
             let data = await db.find("main","timetableData",{grade: grade,department: department,day: String(date)});
-            const defaultData = await db.find("main","timetableData",{grade: grade,department: department,day:interaction.options.getString('変更日')});
-            if(data.length === 0){
+            let defaultData = await db.find("main","timetableData",{grade: grade,department: department,day:interaction.options.getString('変更日')});
+            if(data.length !== 0){
+                defaultData = data;
+            }
+            else{
                 data = defaultData;
             }
 
@@ -440,14 +443,14 @@ module.exports = [
             for(let i = 0; i < data[0].timetable.length;i++){
                 const input = new TextInputBuilder()
                     .setCustomId(`${date}addCommentTimetable${grade}${department}${i}`)
-                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録(上書きされます)`)
+                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録(既存のコメントも含みます)`)
                     .setRequired(false)
                     .setStyle(1);
                 modal.addComponents(new ActionRowBuilder().addComponents(input));
             }
             const input = new TextInputBuilder()
                 .setCustomId(`${date}addCommentTimetable${grade}${department}5`)
-                .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを登録`)
+                .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録(既存のコメントも含みます)`)
                 .setRequired(false)
                 .setStyle(1);
             modal.addComponents(new ActionRowBuilder().addComponents(input));
@@ -464,7 +467,7 @@ module.exports = [
 
 
                     for(let i = 0; i < data[0].timetable.length;i++){
-                        if(inputTxt[i]!=="" && inputTxt[i]!==undefined){
+                        if(inputTxt[i]!=="" && inputTxt[i]!==undefined && (defaultData[0].timetable[i].comment + `${inputTxt[i]}`).length <= 100){
                             if(defaultData[0].timetable[i].comment === ""){
                                 data[0].timetable[i].comment = defaultData[0].timetable[i].comment + `${inputTxt[i]}`;
                             }
@@ -473,7 +476,7 @@ module.exports = [
                             }
                         }
                     }
-                    if(comment!=="" && comment!==undefined)data[0].comment = defaultData[0].comment + comment;
+                    if(comment!=="" && comment!==undefined && (defaultData[0].comment + comment).length <= 100)data[0].comment = defaultData[0].comment + comment;
                     data[0].day = String(date);
                     delete data[0]._id;
 
