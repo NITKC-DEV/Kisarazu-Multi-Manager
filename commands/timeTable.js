@@ -1,7 +1,7 @@
 const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder,} = require('discord.js');
-const  timetable  = require('../functions/ttGeneration.js');
+const  timetable= require('../functions/ttGeneration.js');
 const fs = require('fs');
-const {configPath}=require("../environmentConfig");
+const {configPath} = require("../environmentConfig");
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js')
 const {setTimeout} = require("node:timers/promises");
