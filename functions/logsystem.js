@@ -22,7 +22,7 @@ exports.log = async function func(message,title) {
 /***
  * エラー通知とログをコンソールとdiscordに送信する
  * @param message エラーメッセージの本文
- * @param error エラーコード。error.stackが存在する場合にそれが送られる。省略可
+ * @param error エラーオブジェクト。error.stackが存在する場合にそれが送られる。省略可
  * @param title エラーメッセージのタイトル。省略可
  */
 exports.error = async function func(message,error= {stack:""},title="エラー") {

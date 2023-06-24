@@ -6,5 +6,4 @@ yarn.lock
 /.idea/
 /CCConfig.json
 /.fleet/settings.json
-/timetable/timetables.json
 */announcement.js
