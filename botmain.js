@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
+const { Client, GatewayIntentBits, Partials, Collection, Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
