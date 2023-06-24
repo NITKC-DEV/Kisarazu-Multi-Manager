@@ -405,11 +405,11 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
                 for(let j= 0;j < 5; j++){
                     embed[j] = await timetable.generation(String(grade),String(j+1),String(dayOfWeek+1),true);
                 }
-                try{if(embed[0]!==0)await (client.channels.cache.get(guildData[i].mChannel) ?? await client.channels.fetch(guildData[i].mChannel)).send({embeds:[embed[0]]})}catch{}
-                try{if(embed[1]!==0)await (client.channels.cache.get(guildData[i].eChannel) ?? await client.channels.fetch(guildData[i].eChannel)).send({embeds:[embed[1]]})}catch{}
-                try{if(embed[2]!==0)await (client.channels.cache.get(guildData[i].dChannel) ?? await client.channels.fetch(guildData[i].dChannel)).send({embeds:[embed[2]]})}catch{}
-                try{if(embed[3]!==0)await (client.channels.cache.get(guildData[i].jChannel) ?? await client.channels.fetch(guildData[i].jChannel)).send({embeds:[embed[3]]})}catch{}
-                try{if(embed[4]!==0)await (client.channels.cache.get(guildData[i].cChannel) ?? await client.channels.fetch(guildData[i].cChannel)).send({embeds:[embed[4]]})}catch{}
+                try{if(embed[0]!==0 && guildData[i].mChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].mChannel) ?? await client.channels.fetch(guildData[i].mChannel)).send({embeds:[embed[0]]})}catch{}
+                try{if(embed[1]!==0 && guildData[i].eChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].eChannel) ?? await client.channels.fetch(guildData[i].eChannel)).send({embeds:[embed[1]]})}catch{}
+                try{if(embed[2]!==0 && guildData[i].dChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].dChannel) ?? await client.channels.fetch(guildData[i].dChannel)).send({embeds:[embed[2]]})}catch{}
+                try{if(embed[3]!==0 && guildData[i].jChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].jChannel) ?? await client.channels.fetch(guildData[i].jChannel)).send({embeds:[embed[3]]})}catch{}
+                try{if(embed[4]!==0 && guildData[i].cChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].cChannel) ?? await client.channels.fetch(guildData[i].cChannel)).send({embeds:[embed[4]]})}catch{}
             }
             else{
                 try{
