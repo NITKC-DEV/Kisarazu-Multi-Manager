@@ -32,7 +32,7 @@ const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
  * @param department 学科を1~5で指定
  * @param day 曜日を1~5で指定
  * @param change 授業変更を加味する場合はTrue(来週限定)
- * @returns Embed(存在しない場合0、エラーの場合は-1)
+ * @returns {Promise<number|EmbedBuilder>}
  */
 exports.generation = async function func(grade,department,day,change = true) {
     let data,dateText;
@@ -208,13 +208,16 @@ exports.generation = async function func(grade,department,day,change = true) {
     }
 }
 
+
+
+
 /***
  * 臨時時間割データを追加 or 生成
  * @param interaction セレクトメニューのinteraction
+ * @returns {Promise<void>}
  */
-
-//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
 exports.setNewTimetableData = async function func(interaction) {
+    //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
     await interaction.deferReply();
 
     const grade = interaction.customId[0];
@@ -276,10 +279,10 @@ exports.setNewTimetableData = async function func(interaction) {
 /***
  * 臨時時間割データにコメントを追加し本登録
  * @param interaction ボタンのinteraction
+ * @returns {Promise<void>}
  */
-//カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
 exports.showNewTimetableModal = async function func(interaction) {
-
+    //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const mode = interaction.customId.slice(-1);
