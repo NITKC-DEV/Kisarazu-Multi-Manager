@@ -118,20 +118,17 @@ module.exports = [
             }
 
             if(isNaN(grade)){
-                await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、guilddataコマンドで入学した年を登録してもらってください。");
+                await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、/guilddataで入学した年を登録してもらってください。");
             }
             else if(department === null){
-                await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えてguilddataコマンドで学科ロールを登録してもらってください。");
+                await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えて/guilddataで学科ロールを登録してもらってください。");
             }
             else{
                 const embed = await timetable.generation(grade,department,String(dayOfWeek),interaction.options.getBoolean('授業変更') ?? true);
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }
-                else if(embed === 1){
-
-                }
-                else{
+                else if(embed !== 1){
                     await interaction.editReply({ embeds: [embed] });
                 }
             }
@@ -231,7 +228,7 @@ module.exports = [
                         if(now > parseFloat(interaction.options.getInteger('変更日'))){
                             date.setDate(date.getFullYear()+1); //来年なので1足す
                         }
-                        date = new Date(date.getFullYear(), parseInt(interaction.options.getInteger('変更日')/100)-1, parseFloat(interaction.options.getInteger('変更日'))%100);
+                        date = new Date(date.getFullYear(), interaction.options.getInteger('変更日')/100-1, parseFloat(interaction.options.getInteger('変更日'))%100);
 
                         defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(date.getDay())}); //指定したベースデータ
                         if(defaultData[0] === undefined) {
