@@ -490,6 +490,4 @@ module.exports = [
                 .catch(error => {})
         }
     }
-
-
 ]
