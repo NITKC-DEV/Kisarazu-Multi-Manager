@@ -297,14 +297,14 @@ exports.showNewTimetableModal = async function func(interaction) {
     for(let i = 0; i < data[0].timetable.length;i++){
         const input = new TextInputBuilder()
             .setCustomId(`${date}commentInputNewTimetable${grade}${department}${i}`)
-            .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録`)
+            .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録`)
             .setRequired(false)
             .setStyle(1);
         modal.addComponents(new ActionRowBuilder().addComponents(input));
     }
     const input = new TextInputBuilder()
         .setCustomId(`${date}commentInputNewTimetable${grade}${department}5`)
-        .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを登録`)
+        .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
@@ -320,9 +320,9 @@ exports.showNewTimetableModal = async function func(interaction) {
 
 
             for(let i = 0; i < data[0].timetable.length;i++){
-                if(inputTxt[i]!=="" && inputTxt[i]!==undefined)data[0].timetable[i].comment = inputTxt[i];
+                if(inputTxt[i]!=="" && inputTxt[i]!==undefined && inputTxt[i].length <= 100)data[0].timetable[i].comment = inputTxt[i];
             }
-            data[0].comment = comment;
+            if(comment.length <= 100)data[0].comment = comment;
             data[0].day = date;
             if(mode === '0'){
                 data[0].test = true;
