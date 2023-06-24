@@ -128,7 +128,7 @@ module.exports = [
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }
-                else if(embed !== 1){
+                else if(embed !== -1){
                     await interaction.editReply({ embeds: [embed] });
                 }
             }
