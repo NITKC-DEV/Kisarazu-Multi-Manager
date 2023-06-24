@@ -79,9 +79,9 @@ module.exports = [
 
         async execute(interaction) {
             await interaction.deferReply();
-            let dt = new Date();
+            const dt = new Date();
             let dayOfWeek = dt.getDay();
-            let hours = dt.getHours();
+            const hours = dt.getHours();
             if (interaction.options.getString('曜日') === '1') {
                 dayOfWeek = 1;
             } else if (interaction.options.getString('曜日') === '2') {
@@ -213,7 +213,7 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            let select = [];
+            const select = [];
             let day = "1";
             let defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getString('ベースの曜日')}); //指定したベースデータ
             if(defaultData[0] === undefined){
@@ -224,7 +224,7 @@ module.exports = [
 
                     if(defaultData[0] === undefined){
                         let date = new Date();
-                        let now = parseFloat(String(date.getMonth()) + String(date.getDate()));
+                        const now = parseFloat(String(date.getMonth()) + String(date.getDate()));
                         if(now > parseFloat(interaction.options.getInteger('変更日'))){
                             date.setDate(date.getFullYear()+1); //来年なので1足す
                         }
@@ -251,7 +251,7 @@ module.exports = [
 
             const subject = await db.find("main","syllabusData",{subject_id:`${interaction.options.getString('学年')}${interaction.options.getString('学科')}`})
 
-            let options=[];
+            const options=[];
             for(let i = 0;i<subject.length;i++){
                 options.push({label: subject[i].title, value: subject[i].title});
             }
@@ -362,7 +362,7 @@ module.exports = [
         async execute(interaction) {
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日')});
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日' + '00')});
-            let replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+            const replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await interaction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await interaction.editReply(replyOptions(i));
@@ -416,8 +416,8 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            let nowDate = new Date();
-            let nowDay = nowDate.getDay(); //今日
+            const nowDate = new Date();
+            const nowDay = nowDate.getDay(); //今日
             let nextDay = parseFloat(interaction.options.getString('変更日')) - nowDay; //対象の曜日は何日後?
             if(0 >= nextDay){nextDay += 7}
 
@@ -479,7 +479,7 @@ module.exports = [
 
                     await db.updateOrInsert("main","timetableData",{day:String(date)},data[0]);
 
-                    let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    const replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
                     await mInteraction.reply(replyOptions(5));
                     for(let i=5;i>0;i--){
                         await mInteraction.editReply(replyOptions(i));

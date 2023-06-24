@@ -37,8 +37,8 @@ const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
 exports.generation = async function func(grade,department,day,change = true) {
     let data,dateText;
     if(change){
-        let date = new Date();
-        let nowDay = date.getDay(); //今日
+        const date = new Date();
+        const nowDay = date.getDay(); //今日
         let nextDay = parseFloat(day) - nowDay; //対象の曜日は何日後?
         if(0 > nextDay){nextDay += 7}
 
@@ -73,7 +73,7 @@ exports.generation = async function func(grade,department,day,change = true) {
                 data[0].comment = "本日設定された試験はありません。" + data[0].comment
             }
 
-            let field = [];
+            const field = [];
             for(let i = 0; i < data[0].timetable.length; i++){
                 let comment = "";
                 if(data[0].timetable[i].comment !== ""){
@@ -140,7 +140,7 @@ exports.generation = async function func(grade,department,day,change = true) {
                 data[0].comment = "本日授業はありません。" + data[0].comment
             }
 
-            let field = [];
+            const field = [];
             let dailyComment="";
             for(let i = 0; i < data[0].timetable.length; i++){
                 const subject = await db.find("main","syllabusData",{title:data[0].timetable[i].name,subject_id:`${grade}${department}`});
@@ -288,7 +288,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2,interaction.customId.match(/changeTimetableButton/).index);
 
-    let data = await db.find("main","timetableData",{day:date + '00'});
+    const data = await db.find("main","timetableData",{day:date + '00'});
 
     const modal = new ModalBuilder()
         .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
