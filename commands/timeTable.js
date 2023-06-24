@@ -1,7 +1,5 @@
 const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder,} = require('discord.js');
 const timetable= require('../functions/ttGeneration.js');
-const fs = require('fs');
-const {configPath} = require("../environmentConfig");
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js')
 const {setTimeout} = require("node:timers/promises");
@@ -282,12 +280,12 @@ module.exports = [
             let subjects="";
             if(interaction.options.getString('モード') === '0'){
                 for(let i=0;i<3;i++){
-                    subjects += `${i+1}コマ目：` + defaultData[0].timetable[i].name + '\n';
+                    subjects += `${i+1}コマ目：${defaultData[0].timetable[i].name}\n`;
                 }
             }
             else{
                 for(let i=0;i<defaultData[0].timetable.length;i++){
-                    subjects += `${2*i+1}-${2*i+2}限：` + defaultData[0].timetable[i].name + '\n';
+                    subjects += `${2*i+1}-${2*i+2}限：${defaultData[0].timetable[i].name}\n`;
                 }
             }
 
@@ -404,7 +402,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('変更日')
-                    .setDescription('明日~来週の今日までを曜日で指定します(それ以上は管理者限定)')
+                    .setDescription('明日から来週の今日までの変更したい日を曜日で指定します(それ以上は管理者限定)')
                     .setRequired(true)
                     .addChoices(
                         { name: '月曜日', value: '1' },
@@ -422,12 +420,12 @@ module.exports = [
             if(0 >= nextDay){nextDay += 7}
 
             nowDate.setDate(nowDate.getDate() + nextDay);//対象の日を取得
-            let date = (nowDate.getMonth()+1)*100 + nowDate.getDate();
+            const date = (nowDate.getMonth()+1)*100 + nowDate.getDate();
 
             const grade = interaction.options.getString('学年');
             const department = interaction.options.getString('学科');
-            let data = await db.find("main","timetableData",{grade: grade,department: department,day: String(date)});
-            let defaultData = await db.find("main","timetableData",{grade: grade,department: department,day:interaction.options.getString('変更日')});
+            let data = await db.find("main","timetableData",{grade,department,day: String(date)});
+            let defaultData = await db.find("main","timetableData",{grade,department,day:interaction.options.getString('変更日')});
             if(data.length !== 0){
                 defaultData = data;
             }
@@ -459,7 +457,8 @@ module.exports = [
 
             interaction.awaitModalSubmit({ filter, time: 3600000 })
                 .then(async mInteraction => {
-                    let inputTxt = [],comment;
+                    const inputTxt = [];
+                    let comment;
                     for (let i = 0; i < data[0].timetable.length; i++) {
                         inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}addCommentTimetable${grade}${department}${i}`);
                     }
@@ -476,7 +475,7 @@ module.exports = [
                             }
                         }
                     }
-                    if(comment!=="" && comment!==undefined && (defaultData[0].comment + comment).length <= 100)data[0].comment = defaultData[0].comment + comment;
+                    if(comment!=="" && comment!==undefined && (defaultData[0].comment + comment).length <= 100)data[0].comment = defaultData[0].comment + "\n" + comment;
                     data[0].day = String(date);
                     delete data[0]._id;
 

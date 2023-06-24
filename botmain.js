@@ -21,9 +21,9 @@ global.client = new Client({
 });
 
 //configファイル読み込み
-const config = require('./environmentConfig')
-const {configPath} = require("./environmentConfig");
-let ccconfig=require("./CCConfig.json");
+const config = require('./environmentConfig.js')
+const {configPath} = require("./environmentConfig.js");
+const ccconfig=require("./CCConfig.json");
 
 
 //関数読み込み
@@ -400,7 +400,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
     for(let i = 0; i < guildData.length; i++){
         if(guildData[i].timetable === true){
             const grade = year - parseFloat(guildData[i].grade) + 1;
-            let embed = [];
+            const embed = [];
             if(0 < grade && grade < 6 ){
                 for(let j= 0;j < 5; j++){
                     embed[j] = await timetable.generation(String(grade),String(j+1),String(dayOfWeek+1),true);

@@ -1,7 +1,7 @@
 const { MongoClient, ServerApiVersion } = require("mongodb");
-const config = require('../environmentConfig')
-const system = require('../functions/logsystem.js');
-const db = require('./db.js')
+const config = require('../environmentConfig');
+const system = require('./logsystem.js');
+const db = require('./db.js');
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 
 /***
@@ -14,7 +14,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 exports.find = async function (dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
 
-    return await collection.find(filter).toArray()
+    return await collection.find(filter).toArray();
 }
 
 /***
@@ -43,7 +43,7 @@ exports.update = async function run(dbName, collectionName, filter, update) {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
-        const result = await collection.updateOne(filter,update)
+        const result = await collection.updateOne(filter,update);
         await system.log(`${dbName}.${collectionName}を更新`,`DB更新実行`);
     } catch(err) {
         await system.error(`${dbName}.${collectionName}を更新できませんでした`,err,`DB更新失敗`);
@@ -59,7 +59,6 @@ exports.update = async function run(dbName, collectionName, filter, update) {
  * @returns {Promise<void>}
  */
 exports.insert = async function run(dbName, collectionName, object) {
-
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
@@ -80,14 +79,13 @@ exports.insert = async function run(dbName, collectionName, object) {
  * @returns {Promise<void>}
  */
 exports.updateOrInsert = async function run(dbName, collectionName,filter, object) {
-
     try {
         const data = await db.find(dbName,collectionName,filter);
         if(data.length > 0){
             await db.update(dbName, collectionName, filter,{$set: object});
         }
         else{
-            await db.insert(dbName, collectionName, object)
+            await db.insert(dbName, collectionName, object);
         }
     } catch(err) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`,err,`DB追加失敗`);
@@ -102,7 +100,6 @@ exports.updateOrInsert = async function run(dbName, collectionName,filter, objec
  * @returns {Promise<void>}
  */
 exports.delete = async function run(dbName,collectionName,filter) {
-
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
