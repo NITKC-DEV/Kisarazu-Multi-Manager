@@ -103,7 +103,7 @@ module.exports = [
 
             let department = interaction.options.getString('学科');
             if(department === undefined || department === null){
-                const guildData = await db.find("main","guildData",{guild:String(interaction.guildId)});
+                const guildData = await db.find("main","guildData",{guild:interaction.guildId});
                 if(interaction.member._roles.includes(guildData[0].mRole))department = '1';
                 else if(interaction.member._roles.includes(guildData[0].eRole))department = '2';
                 else if(interaction.member._roles.includes(guildData[0].dRole))department = '3';
@@ -113,7 +113,7 @@ module.exports = [
 
             let grade = interaction.options.getString('学年');
             if(grade === undefined || grade === null){
-                const guildData = await db.find("main","guildData",{guild:String(interaction.guildId)});
+                const guildData = await db.find("main","guildData",{guild:interaction.guildId});
                 grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1
             }
 
@@ -218,12 +218,12 @@ module.exports = [
         async execute(interaction) {
             let select = [];
             let day = "1";
-            let defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getString('ベースの曜日'))}); //指定したベースデータ
+            let defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getString('ベースの曜日')}); //指定したベースデータ
             if(defaultData[0] === undefined){
-                defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日')) + '00'}); //変更日のキャッシュデータ
+                defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('変更日')) + '00'}); //変更日のキャッシュデータ
 
                 if(defaultData[0] === undefined){
-                    defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('変更日'))}); //変更日のデータ
+                    defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('変更日'))}); //変更日のデータ
 
                     if(defaultData[0] === undefined){
                         let date = new Date();
@@ -233,7 +233,7 @@ module.exports = [
                         }
                         date = new Date(date.getFullYear(), parseInt(interaction.options.getInteger('変更日')/100)-1, parseFloat(interaction.options.getInteger('変更日'))%100);
 
-                        defaultData = await db.find("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(date.getDay())}); //指定したベースデータ
+                        defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(date.getDay())}); //指定したベースデータ
                         if(defaultData[0] === undefined) {
                             interaction.reply({content: "その学科・曜日のデータは登録されていません。", ephemeral: true});
                             return;
@@ -363,8 +363,8 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await db.delete("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('削除日'))});
-            await db.delete("main","timetableData",{grade:String(interaction.options.getString('学年')),department:String(interaction.options.getString('学科')),day:String(interaction.options.getInteger('削除日' + '00'))});
+            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日')});
+            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日' + '00')});
             let replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await interaction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
