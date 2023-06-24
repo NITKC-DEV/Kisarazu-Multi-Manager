@@ -229,21 +229,21 @@ exports.setNewTimetableData = async function func(interaction) {
 
     let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
     if(data.length === 0){
-        data = await db.find("main","timetableData",{grade:grade,department:department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
+        data = await db.find("main","timetableData",{grade,department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
         if(data.length === 0){
-            data = await db.find("main","timetableData",{grade:grade,department:department,day: day});
+            data = await db.find("main","timetableData",{grade,department,day: day});
         }
     }
     delete data[0]._id;
     data[0].day = date;
-    data[0].timetable[parseInt(period)] = {name:interaction.values[0],comment:""};
+    data[0].timetable[parseInt(period,10)] = {name:interaction.values[0],comment:""};
 
     if(mode === "0" && data[0].timetable.length === 4){
         data[0].timetable.pop()
     }
     let subjects="";
     for(let i=0;i<data[0].timetable.length;i++){
-        subjects += `${2*i+1}-${2*i+2}限：` + data[0].timetable[i].name + '\n';
+        subjects += `${2*i+1}-${2*i+2}限：${data[0].timetable[i].name}\n`;
     }
 
     const embed = new EmbedBuilder()
@@ -312,7 +312,8 @@ exports.showNewTimetableModal = async function func(interaction) {
 
     interaction.awaitModalSubmit({ filter, time: 3600000 })
         .then(async mInteraction => {
-            let inputTxt = [],comment;
+            const inputTxt = []
+            let comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
                 inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}${i}`);
             }
@@ -324,12 +325,7 @@ exports.showNewTimetableModal = async function func(interaction) {
             }
             if(comment.length <= 100)data[0].comment = comment;
             data[0].day = date;
-            if(mode === '0'){
-                data[0].test = true;
-            }
-            else{
-                data[0].test = false;
-            }
+            data[0].test = mode === '0';
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{day:date},data[0]);
             await db.delete("main","timetableData",{day:date + '00'});
@@ -338,10 +334,8 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .then((message) => {
                     message.delete();
                 })
-                .catch(error => {
-
-                });
-            let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                .catch(() => {});
+            const replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await mInteraction.editReply(replyOptions(i));
@@ -351,7 +345,7 @@ exports.showNewTimetableModal = async function func(interaction) {
 
 
         })
-        .catch(error => {
+        .catch(() => {
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
                 .then((message) => {
