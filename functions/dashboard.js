@@ -171,20 +171,8 @@ exports.generation = async function func(guild) {
                         min: weatherCache[1].min
                     },
                 }
-            )
+            );
         }
-
-        db.update(  /*明日の天気のキャッシュを更新*/
-            "main","weatherCache",{label:"1"},
-            {
-                $set: {
-                    day:weatherData.forecasts[1].date,
-                    max:weatherData.forecasts[1].temperature.max.celsius ?? `---`,
-                    min:weatherData.forecasts[1].temperature.min.celsius ?? `---`
-                },
-            }
-        )
-
         const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`]
         const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`]
 
