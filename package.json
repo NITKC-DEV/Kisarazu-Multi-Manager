@@ -8,6 +8,7 @@
     "dotenv": "^16.0.2",
     "enquirer": "^2.3.6",
     "moment": "^2.29.4",
+    "mongodb": "^5.2.0",
     "node-cron": "^3.0.2"
   },
   "name": "nitkc-main",
@@ -16,10 +17,9 @@
   "main": "botmain.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development node .",
-    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
     "start": "cross-env NODE_ENV=production node .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
+    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js"
   },
   "repository": {
     "type": "git",
