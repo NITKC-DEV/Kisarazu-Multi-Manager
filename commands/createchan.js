@@ -1,6 +1,7 @@
 const { SlashCommandBuilder,ActionRowBuilder,StringSelectMenuBuilder}=require("discord.js");
 let ccconfig=require("../CCConfig.json");
 const fs=require("fs");
+const system = require('../functions/logsystem.js');
 
 
 
@@ -21,44 +22,49 @@ module.exports=
                 ),
 
             //"../botmain.js-l42"より、スラッシュコマンド実行時の情報"interaction"を"interactionCopy"にコピー
-            async execute(interactionCopy)
-            {
-                if(ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId)&&ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId).categories.length>=1)
-                {
-                    //カテゴリ選択用SelectMenu作成
-                    const selectCategory = new ActionRowBuilder ()
-                        .addComponents (
-                            new StringSelectMenuBuilder ()
-                                .setPlaceholder ("カテゴリを選択")
-                                .setCustomId ("selectCat")
-                                .addOptions (
-                                    ...ccconfig.guilds.find (server => server.ID === interactionCopy.guild.id).categories.map (category => ({
-                                        label: category.name,
-                                        value: category.ID
-                                    }))
-                                )
-                        )
-        
-                    //SlashCommandからチャンネル名を受け取り
-                    let channelName = interactionCopy.options.getString ("チャンネル名");
-                    //スペースがあると都合が悪くてチャンネルもどうせスペース使えないのでスペースをハイフンに置き換え
-                    let channelNameSpaceChanged = channelName.replace (" ", "-");
-                    while (channelName !== channelNameSpaceChanged)
-                    {
-                        channelName = channelName.replace (" ", "-");
-                        channelNameSpaceChanged = channelNameSpaceChanged.replace (" ", "-");
+            async execute(interactionCopy) {
+                if (interactionCopy.guildId!==null) {
+                    if (ccconfig.guilds.find (guild => guild.ID === interactionCopy.guildId) && ccconfig.guilds.find (guild => guild.ID === interactionCopy.guildId).categories.length >= 1) {
+                        //カテゴリ選択用SelectMenu作成
+                        const selectCategory = new ActionRowBuilder ()
+                            .addComponents (
+                                new StringSelectMenuBuilder ()
+                                    .setPlaceholder ("カテゴリを選択")
+                                    .setCustomId ("selectCat")
+                                    .addOptions (
+                                        ...ccconfig.guilds.find (server => server.ID === interactionCopy.guild.id).categories.map (category => ({
+                                            label: category.name,
+                                            value: category.ID
+                                        }))
+                                    )
+                            )
+                        
+                        //SlashCommandからチャンネル名を受け取り
+                        let channelName = interactionCopy.options.getString ("チャンネル名");
+                        //スペースがあると都合が悪くてチャンネルもどうせスペース使えないのでスペースをハイフンに置き換え
+                        let channelNameSpaceChanged = channelName.replace (" ", "-");
+                        while (channelName !== channelNameSpaceChanged) {
+                            channelName = channelName.replace (" ", "-");
+                            channelNameSpaceChanged = channelNameSpaceChanged.replace (" ", "-");
+                        }
+                        
+                        await interactionCopy.reply ({
+                            content: channelNameSpaceChanged + " を作成するカテゴリを指定してください。",
+                            components: [selectCategory],
+                            ephemeral: true
+                        });
                     }
-        
-                    await interactionCopy.reply ({
-                        content: channelNameSpaceChanged + " を作成するカテゴリを指定してください。",
-                        components: [selectCategory],
+                    else await interactionCopy.reply ({
+                        content: "このサーバーでは/createchanが許可されているカテゴリがありません。\n管理者権限を持つ人が/addcategoryを実行することで/createchanが有効になります。",
                         ephemeral: true
                     });
+                    
                 }
-                else await interactionCopy.reply({content:"このサーバーでは/createchanが許可されているカテゴリがありません。\n管理者権限を持つ人が/addcategoryを実行することで/createchanが有効になります。",ephemeral:true});
-                
+                else
+                {
+                    interactionCopy.reply("このコマンドはサーバーでのみ実行できます");
+                }
             }
-
         },
         {
             //カテゴリ登録用スラッシュコマンド
@@ -78,66 +84,78 @@ module.exports=
                 )
                 .setDefaultMemberPermissions(1<<3),
         
-            async execute (interactionCopy)
-            {
-                let serverIndex;
-                let categoryIndex;
-                
-                //CCConfig.jsonにギルドのプロファイルがあればその位置を返し、なければ新規作成
-                for (let i = 0; i < ccconfig.guilds.length; i++)
-                {
-                    if (interactionCopy.guild.id === ccconfig.guilds[i].ID)
-                    {
-                        serverIndex=i;
-                        break;
+            async execute (interactionCopy) {
+                if (interactionCopy.guildId !== null) {
+                    let serverIndex;
+                    let categoryIndex;
+                    
+                    //CCConfig.jsonにギルドのプロファイルがあればその位置を返し、なければ新規作成
+                    for (let i = 0; i < ccconfig.guilds.length; i++) {
+                        if (interactionCopy.guild.id === ccconfig.guilds[i].ID) {
+                            serverIndex = i;
+                            break;
+                        }
+                        if (i === ccconfig.guilds.length - 1) {
+                            ccconfig.guilds[ccconfig.guilds.length] =
+                                {
+                                    ID: interactionCopy.guild.id,
+                                    categories: [{
+                                        ID: "0000000000000000000",
+                                        name: "キャンセル",
+                                        allowRole: false,
+                                        channels: []
+                                    }]
+                                };
+                            serverIndex = i + 1;
+                            break;
+                        }
                     }
-                    if (i === ccconfig.guilds.length - 1)
-                    {
-                        ccconfig.guilds[ccconfig.guilds.length] =
-                            {
-                                ID: interactionCopy.guild.id,
-                                categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]};
-                        serverIndex=i+1;
-                        break;
+                    
+                    //CCConfig.jsonにカテゴリのプロファイルがあればすでに登録されている旨を返し、なければ登録
+                    for (let i = 0; i < ccconfig.guilds[serverIndex].categories.length; i++) {
+                        if (interactionCopy.channel.parentId === ccconfig.guilds[serverIndex].categories[i].ID) {
+                            categoryIndex = i;
+                            await interactionCopy.reply ({content: "このカテゴリはすでに追加されています", ephemeral: true});
+                            return;
+                        }
+                        if (i === ccconfig.guilds[serverIndex].categories.length - 1) {
+                            ccconfig.guilds[serverIndex].categories[ccconfig.guilds[serverIndex].categories.length] =
+                                {
+                                    ID: interactionCopy.channel.parentId,
+                                    name: interactionCopy.channel.parent.name,
+                                    allowRole: Boolean (interactionCopy.options.getNumber ("ロールの追加を許可")),
+                                    channels: [{
+                                        ID: "",
+                                        name: "",
+                                        creatorId: "0000000000000000000",
+                                        createTime: 0,
+                                        thereRole: false,
+                                        roleID: "0000000000000000000",
+                                        roleName: ""
+                                    }]
+                                };
+                            categoryIndex = i + 1;
+                            break;
+                        }
                     }
-                }
-                
-                //CCConfig.jsonにカテゴリのプロファイルがあればすでに登録されている旨を返し、なければ登録
-                for(let i=0; i<ccconfig.guilds[serverIndex].categories.length; i++)
-                {
-                    if(interactionCopy.channel.parentId === ccconfig.guilds[serverIndex].categories[i].ID)
-                    {
-                        categoryIndex = i;
-                        await interactionCopy.reply({content:"このカテゴリはすでに追加されています",ephemeral:true});
+                    
+                    //jsonに書き込み
+                    const ccjson = JSON.stringify (ccconfig);
+                    try {
+                        fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
+                    }
+                    catch (e) {
+                        console.log (e);
+                        await interactionCopy.reply ({content: "データの保存に失敗しました\nやり直してください", ephemeral: true});
                         return;
                     }
-                    if(i===ccconfig.guilds[serverIndex].categories.length-1)
-                    {
-                        ccconfig.guilds[serverIndex].categories[ccconfig.guilds[serverIndex].categories.length]=
-                            {
-                                ID: interactionCopy.channel.parentId,
-                                name: interactionCopy.channel.parent.name,
-                                allowRole:Boolean(interactionCopy.options.getNumber ("ロールの追加を許可")),
-                                channels:[{ID:"",name:"",creatorId: "0000000000000000000",createTime: 0 ,thereRole:false,roleID:"0000000000000000000",roleName:""}]
-                            };
-                        categoryIndex =i+1;
-                        break;
-                    }
+                    
+                    await interactionCopy.reply ({content: "追加しました", ephemeral: true});
                 }
-                
-                //jsonに書き込み
-                const ccjson = JSON.stringify (ccconfig);
-                try
+                else
                 {
-                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-                } catch (e)
-                {
-                    console.log (e);
-                    await interactionCopy.reply({content:"データの保存に失敗しました\nやり直してください",ephemeral:true});
-                    return;
+                    interactionCopy.reply("このコマンドはサーバーでのみ実行できます");
                 }
-                
-                await interactionCopy.reply({content:"追加しました",ephemeral:true});
             }
         },
         {
@@ -156,32 +174,39 @@ module.exports=
                         )
                 ),
             
-            async execute(interactionCopy)
-            {
-                if(ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId)&&ccconfig.guilds.find(guild=> guild.ID===interactionCopy.guildId).categories.length>=1)
-                {//ActionRowBuilder作成
-                    let DCR = interactionCopy.options.getString ("チャンネルとロールの削除");
-                    const selectCategory = new ActionRowBuilder ()
-                        .addComponents (
-                            new StringSelectMenuBuilder ()
-                                .setPlaceholder ("カテゴリを選択")
-                                .setCustomId ("remCat")
-                                .addOptions (
-                                    {label: "全てのカテゴリを削除する", value: "ALL" + DCR},
-                                    ...ccconfig.guilds.find (server => server.ID === interactionCopy.guild.id).categories.map (category => ({
-                                        label: category.name,
-                                        value: category.ID + DCR
-                                    }))
-                                )
-                        )
-    
-                    await interactionCopy.reply ({
-                        content: "削除するカテゴリを指定してください。",
-                        components: [selectCategory],
+            async execute(interactionCopy) {
+                if (interactionCopy.guildId !== null) {
+                    if (ccconfig.guilds.find (guild => guild.ID === interactionCopy.guildId) && ccconfig.guilds.find (guild => guild.ID === interactionCopy.guildId).categories.length >= 1) {//ActionRowBuilder作成
+                        let DCR = interactionCopy.options.getString ("チャンネルとロールの削除");
+                        const selectCategory = new ActionRowBuilder ()
+                            .addComponents (
+                                new StringSelectMenuBuilder ()
+                                    .setPlaceholder ("カテゴリを選択")
+                                    .setCustomId ("remCat")
+                                    .addOptions (
+                                        {label: "全てのカテゴリを削除する", value: "ALL" + DCR},
+                                        ...ccconfig.guilds.find (server => server.ID === interactionCopy.guild.id).categories.map (category => ({
+                                            label: category.name,
+                                            value: category.ID + DCR
+                                        }))
+                                    )
+                            )
+                        
+                        await interactionCopy.reply ({
+                            content: "削除するカテゴリを指定してください。",
+                            components: [selectCategory],
+                            ephemeral: true
+                        });
+                    }
+                    else await interactionCopy.reply ({
+                        content: "このサーバーには登録されているカテゴリがありません。\n/addcategoryを実行することでカテゴリが追加されます。",
                         ephemeral: true
                     });
                 }
-                else await interactionCopy.reply({content:"このサーバーには登録されているカテゴリがありません。\n/addcategoryを実行することでカテゴリが追加されます。",ephemeral:true});
+                else
+                {
+                    interactionCopy.reply("このコマンドはサーバーでのみ実行できます");
+                }
             }
         }
     ]
