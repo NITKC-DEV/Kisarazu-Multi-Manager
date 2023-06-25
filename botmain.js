@@ -379,7 +379,7 @@ client.on('messageCreate', message => {
 /*誕生日通知とGuildDataチェック、時間割変更データチェック*/
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
-    await system.log('誕生日お祝い！');
+
 
     await guildData.checkGuild();
     await timetable.deleteData();
