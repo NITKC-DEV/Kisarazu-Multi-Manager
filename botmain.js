@@ -91,7 +91,7 @@ client.on("interactionCreate", async (interaction) => {
     else{
         await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
         const interactionTypeName = ["Ping","ApplicationCommand","MessageComponent","ApplicationCommandAutocomplete","ModalSubmit"]
-        await system.log(`メンテナンスモードに付き${interactionTypeName[interaction.type]}をブロックしました。`, `${interactionTypeName[interaction.type]}をブロック`);
+        await system.log(`メンテナンスモードに付き${interactionTypeName[interaction.type-1]}をブロックしました。`, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
