@@ -40,7 +40,7 @@ module.exports =
                         ],
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
                 await interaction.reply({ embeds: [about] });
             },
         },
