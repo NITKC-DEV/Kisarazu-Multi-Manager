@@ -80,6 +80,10 @@ module.exports =
                         .setRequired(false)
                 ),
             async execute(interaction) {
+                if(interaction.guild === undefined || interaction.guild === null){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 const reply = await interaction.deferReply({ephemeral: true});
                 const olddata = await db.find("main","guildData",{guild: String(interaction.guildId)});
                 const object = {
@@ -153,6 +157,10 @@ module.exports =
                 .setDescription('サーバー情報をリセットします。詳細は/adminhelp 参照')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
+                if(interaction.guild === undefined || interaction.guild === null){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 await interaction.deferReply()
                 const reply = await interaction.editReply("この操作を実行すると、時間割定期通知機能・時間割定期通知機能以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
 
@@ -195,6 +203,10 @@ module.exports =
                 .setName('config')
                 .setDescription('現在設定されている内容を表示します。詳細は/adminhelp 参照'),
             async execute(interaction) {
+                if(interaction.guild === undefined || interaction.guild === null){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
                 let dashboard,timetable;
                 if(newData[0].board !== undefined){
