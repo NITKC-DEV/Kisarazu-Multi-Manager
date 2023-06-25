@@ -392,7 +392,7 @@ cron.schedule('5 5,11 * * *', async () => {
     await weather.update();
 });
 
-cron.schedule('6 17 * * *', async () => {
+cron.schedule('5 17 * * *', async () => {
     await weather.update();
     await weather.catcheUpdate();
 });
