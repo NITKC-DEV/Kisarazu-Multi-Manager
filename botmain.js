@@ -35,6 +35,7 @@ const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
 const weather = require('./functions/weather.js');
+const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
 
 
@@ -375,10 +376,12 @@ client.on('messageCreate', message => {
     }
 })
 
-/*誕生日通知*/
+/*誕生日通知とGuildDataチェック*/
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
     await system.log('誕生日お祝い！');
+
+    await guildData.checkGuild();
 });
 
 /*原神デイリー通知*/

@@ -35,6 +35,7 @@ exports.ID_NODATA = ID_NODATA;
  * GuildDataを更新または新規作成する
  * @param guild guildID
  * @param object 更新データ。guildDataSet.jsにテンプレあり
+ * @returns {Promise<void>}
  */
 exports.updateOrInsert = async function func(guild,object) {
     const data = await db.find("main","guildData",{guild: String(guild)});
@@ -89,6 +90,7 @@ exports.updateOrInsert = async function func(guild,object) {
 /***
  * GuildDataをリセットする(timetable、dashboardは除外)
  * @param guild guildID
+ * @returns {Promise<void>}
  */
 exports.reset = async function func(guild) {
     const data = await db.find("main","guildData",{guild: String(guild)});
@@ -111,5 +113,20 @@ exports.reset = async function func(guild) {
                 cRole: ID_NODATA,
             }
         });
+    }
+}
+
+
+exports.checkGuild = async function func() {
+    const data = await db.find("main","guildData", {});
+    for(let i=0;i<data.length;i++) {
+        try{
+            await client.guilds.fetch(data[i].guild);
+        }
+        catch(err){
+            if(err.code === 10004){ //guildがないよエラーならギルド削除
+                await db.delete("main","guildData",{guild:data[i].guild});
+            }
+        }
     }
 }
