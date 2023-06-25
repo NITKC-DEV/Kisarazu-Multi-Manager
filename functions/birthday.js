@@ -1,5 +1,6 @@
 const db = require('../functions/db.js');
 const config = require("../environmentConfig");
+const system = require("./logsystem");
 
 exports.func = async function func(message) {
     const date = new Date();
@@ -31,4 +32,5 @@ exports.func = async function func(message) {
             client.channels.cache.get(guild[0].main).send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
         }
     }
+    await system.log('誕生日お祝い！');
 }
