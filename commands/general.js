@@ -270,17 +270,17 @@ module.exports =
                     option
                         .setName('年')
                         .setDescription('生まれた年をいれます')
-                        .setRequired(true)
+                        .setRequired(false)
                 ).addIntegerOption(option =>
                     option
                         .setName('月')
                         .setDescription('生まれた月をいれます')
-                        .setRequired(true)
+                        .setRequired(false)
                 ).addIntegerOption(option =>
                     option
                         .setName('日')
                         .setDescription('生まれた日をいれます')
-                        .setRequired(true)
+                        .setRequired(false)
                 ),
 
             async execute (interaction) {
