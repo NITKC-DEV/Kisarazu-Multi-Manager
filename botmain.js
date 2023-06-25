@@ -388,8 +388,13 @@ cron.schedule('0 5 * * *', async () => {
 });
 
 /*天気キャッシュ取得*/
-cron.schedule('5 5,11,17 * * *', async () => {
-    await weather.update()
+cron.schedule('5 5,11 * * *', async () => {
+    await weather.update();
+});
+
+cron.schedule('6 17 * * *', async () => {
+    await weather.update();
+    await weather.catcheUpdate();
 });
 
 
