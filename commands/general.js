@@ -284,7 +284,7 @@ module.exports =
                 ),
 
             async execute (interaction) {
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
@@ -375,7 +375,7 @@ module.exports =
                 ),
 
             async execute(interaction) {
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                     return;
                 }

@@ -80,7 +80,7 @@ module.exports =
                         .setRequired(false)
                 ),
             async execute(interaction) {
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
@@ -157,7 +157,7 @@ module.exports =
                 .setDescription('サーバー情報をリセットします。詳細は/adminhelp 参照')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
@@ -203,7 +203,7 @@ module.exports =
                 .setName('config')
                 .setDescription('現在設定されている内容を表示します。詳細は/adminhelp 参照'),
             async execute(interaction) {
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
