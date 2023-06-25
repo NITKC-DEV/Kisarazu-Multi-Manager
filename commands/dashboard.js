@@ -12,7 +12,7 @@ module.exports =
 
             async execute(interaction) {
                 await interaction.deferReply()
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                 }
                 else{
@@ -96,7 +96,7 @@ module.exports =
             async execute(interaction) {
                 await interaction.deferReply()
                 let replyOptions;
-                if(interaction.guild === undefined || interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                     await system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
                     return;

@@ -68,6 +68,7 @@ client.on("interactionCreate", async (interaction) => {
     else{
         flag = 1;
     }
+
     if(flag === 1){
         if (!interaction.isCommand()) {
             return;
@@ -75,7 +76,7 @@ client.on("interactionCreate", async (interaction) => {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) return;
-        system.log(command.data.name,"SlashCommand");
+        await system.log(command.data.name, "SlashCommand");
         try {
             await command.execute(interaction);
         } catch (error) {
@@ -89,6 +90,8 @@ client.on("interactionCreate", async (interaction) => {
         }}
     else{
         await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
+        const interactionTypeName = ["Ping","ApplicationCommand","MessageComponent","ApplicationCommandAutocomplete","ModalSubmit"]
+        await system.log(`メンテナンスモードに付き${interactionTypeName[interaction.type]}をブロックしました。`, `${interactionTypeName[interaction.type]}をブロック`);
     }
 });
 
