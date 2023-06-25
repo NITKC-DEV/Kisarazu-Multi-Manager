@@ -116,7 +116,10 @@ exports.reset = async function func(guild) {
     }
 }
 
-
+/***
+ * BOTが参加してないGuildのデータを削除
+ * @returns {Promise<void>}
+ */
 exports.checkGuild = async function func() {
     const data = await db.find("main","guildData", {});
     for(let i=0;i<data.length;i++) {
