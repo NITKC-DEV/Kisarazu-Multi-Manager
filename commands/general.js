@@ -18,14 +18,14 @@ module.exports =
                     .setAuthor({
                         name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
+                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                     })
                     .setDescription('現在実装されているコマンド一覧です')
                     .addFields(
                         commands.map(e => ({ name: '/' + e.data.name, value: e.data.description }))
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
                 await interaction.reply({ embeds: [embed] });
             },
         },
@@ -40,7 +40,7 @@ module.exports =
                     .setAuthor({
                         name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
+                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                     })
                     .setDescription('このbotの概要を紹介します')
                     .addFields(
@@ -59,7 +59,7 @@ module.exports =
                             },
                             {
                                 name: 'ソースコード',
-                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: '実行環境',
@@ -69,7 +69,7 @@ module.exports =
                         ]
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
                 await interaction.reply({ embeds: [embed] });
             },
         },
