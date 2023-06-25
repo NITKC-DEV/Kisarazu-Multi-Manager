@@ -111,3 +111,18 @@ exports.update = async function func() {
         });
     }
 }
+
+exports.catcheUpdate = async function func() {
+    const data = await db.find("main","weatherCache",{label:"最新の天気予報"});
+
+    await db.update(  /*明日の天気のキャッシュを更新*/
+        "main", "weatherCache", {label: "1"},
+        {
+            $set: {
+                day: data[0].response.forecasts[1].date,
+                max: data[0].response.forecasts[1].temperature.max.celsius ?? `---`,
+                min: data[0].response.forecasts[1].temperature.min.celsius ?? `---`
+            },
+        }
+    );
+}
