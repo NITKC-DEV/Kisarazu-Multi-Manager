@@ -173,8 +173,8 @@ exports.generation = async function func(guild) {
                 }
             );
         }
-        const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`]
-        const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`]
+        const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+        const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`];
 
         weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
 
