@@ -97,7 +97,8 @@ client.on("interactionCreate", async(interaction) => {
                     content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。',
                     ephemeral: true
                 });
-                await reply.reactions.removeAll();
+                //await reply.reactions.removeAll();
+                //なんかエラー吐くのでとりあえずコメントアウト
             }
         }
     }
