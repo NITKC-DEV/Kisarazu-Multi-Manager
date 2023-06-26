@@ -383,6 +383,8 @@ exports.dataCheck = async function() {
                     continue;
                 }
                 else {
+                    // 意図しない例外の場合、丸め込んでしまうため、そのまま例外をスローして、外でキャッチするため警告を抑制
+                    // noinspection ExceptionCaughtLocallyJS
                     throw(e);
                 }
             }
@@ -399,7 +401,13 @@ exports.dataCheck = async function() {
         }
         
         for(const channel of await db.find(dbMain, colChan, {})) {
+            if((await db.find(dbMain, colCat,{ID:channel.categoryID})).length === 0) {
+                await db.delete(dbMain,colChan,{ID:channel.ID});
+                continue;
+            }
+            
             const channelData = await client.channels.cache.get(channel.ID);
+            
             if(channelData === undefined) {
                 await db.delete(dbMain, colChan, {ID: channel.ID});
                 continue;
