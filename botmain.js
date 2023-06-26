@@ -88,11 +88,12 @@ client.on("interactionCreate", async (interaction) => {
                 const reply = await interaction.editReply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
                 await reply.reactions.removeAll()
             }
-        }}
+        }
+    }
     else{
         await interaction.reply({ content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。', ephemeral: true });
         const interactionTypeName = ["Ping","ApplicationCommand","MessageComponent","ApplicationCommandAutocomplete","ModalSubmit"];
-        await system.log(`メンテナンスモードに付き${interactionTypeName[interaction.type-1]}をブロックしました。`, `${interactionTypeName[interaction.type-1]}をブロック`);
+        await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。`, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
@@ -379,8 +380,6 @@ client.on('messageCreate', message => {
 /*誕生日通知とGuildDataチェック、時間割変更データチェック*/
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
-
-
     await guildData.checkGuild();
     await timetable.deleteData();
 });

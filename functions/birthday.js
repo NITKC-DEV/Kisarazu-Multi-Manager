@@ -1,8 +1,7 @@
-const db = require('../functions/db.js');
-const config = require("../environmentConfig");
-const system = require("./logsystem");
+const db = require('./db.js');
+const system = require("./logsystem.js");
 
-exports.func = async function func(message) {
+exports.func = async function func() {
     const date = new Date();
     const data = await db.find("main", "birthday", {
         month: String(date.getMonth()+1),
@@ -11,7 +10,7 @@ exports.func = async function func(message) {
 
     for(let i = 0; i < data.length; i++){
         let special = "";
-        let old = date.getFullYear() - data[i].year;
+        const old = date.getFullYear() - data[i].year;
         if(old < 0){
             special = "...どうやって登録を...?"
         }

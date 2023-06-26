@@ -1,9 +1,6 @@
 const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
-const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js');
-const packageVer = require("../package.json");
-const dashboard = require("../functions/dashboard");
 const {setTimeout} = require("node:timers/promises");
 
 module.exports =
@@ -11,7 +8,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('guilddata')
-                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelp 参照')
+                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelp 参照してください')
                 .setDefaultMemberPermissions(1<<3)
                 .addIntegerOption(option =>
                     option
@@ -84,8 +81,8 @@ module.exports =
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
-                const reply = await interaction.deferReply({ephemeral: true});
-                const olddata = await db.find("main","guildData",{guild: String(interaction.guildId)});
+                await interaction.deferReply({ephemeral: true});
+                await db.find("main","guildData",{guild: String(interaction.guildId)});
                 const object = {
                     guild: interaction.guildId,
                     grade: interaction.options.getInteger("学年"),
@@ -154,7 +151,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config-reset')
-                .setDescription('サーバー情報をリセットします。詳細は/adminhelp 参照')
+                .setDescription('サーバー情報をリセットします。詳細は/adminhelp を参照してください')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
                 if(!interaction.guild){
@@ -162,7 +159,7 @@ module.exports =
                     return;
                 }
                 await interaction.deferReply()
-                const reply = await interaction.editReply("この操作を実行すると、時間割定期通知機能・時間割定期通知機能以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+                const reply = await interaction.editReply("この操作を実行すると、時間割/天気定期通知機能のON/OFF以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
 
                 await reply.react('⭕');
                 await reply.react('❌');
@@ -201,7 +198,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config')
-                .setDescription('現在設定されている内容を表示します。詳細は/adminhelp 参照'),
+                .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelp 参照してください'),
             async execute(interaction) {
                 if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
