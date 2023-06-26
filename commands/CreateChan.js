@@ -28,7 +28,7 @@ module.exports =
                     const guildCats = await db.find(dbMain, colCat, {"guildID": interaction.guildId});
                     if(guildCats.length > 0) {
                         const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
-                        if(channelName.length > 30) {
+                        if(channelName.length <= 30) {
                             //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
                             const selectCategory = new ActionRowBuilder()
                                 .addComponents(
@@ -119,7 +119,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName("remove-category")
-                .setDescription("/addchategoryによって登録されたカテゴリの登録を解除します")
+                .setDescription("/add-categoryによって登録されたカテゴリの登録を解除します")
                 .setDefaultMemberPermissions(1 << 3),
             /***
              * /add-categoryによって登録されたカテゴリの登録を解除する
