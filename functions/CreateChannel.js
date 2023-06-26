@@ -4,6 +4,7 @@ const dbMain = "main";
 const colCat = "CC-categories";
 const colChan = "CC-channels";
 const system = require("./logsystem");
+const CreateChannel = require("./createchannel.js");
 
 /***
  * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
@@ -36,6 +37,7 @@ exports.createChannel = async function(interaction) {
             return;
         }
         
+        
         await db.insert(dbMain, colChan, {
             ID: createdChannel.id,
             name: createdChannel.name,
@@ -47,6 +49,10 @@ exports.createChannel = async function(interaction) {
             categoryID: receivedValue.categoryID,
             guildID: interaction.guildId
         });
+        
+        if((await db.find(dbMain, colCat, {ID: createdChannel.parentId || createdChannel.guildId})).length === 0) {
+        
+        }
         
         if((await db.find(dbMain, colCat, {ID: receivedValue.categoryID}))[0].allowRole) {
             const createRole = new ActionRowBuilder()
@@ -401,8 +407,8 @@ exports.dataCheck = async function() {
         }
         
         for(const channel of await db.find(dbMain, colChan, {})) {
-            if((await db.find(dbMain, colCat,{ID:channel.categoryID})).length === 0) {
-                await db.delete(dbMain,colChan,{ID:channel.ID});
+            if((await db.find(dbMain, colCat, {ID: channel.categoryID})).length === 0) {
+                await db.delete(dbMain, colChan, {ID: channel.ID});
                 continue;
             }
             
