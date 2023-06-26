@@ -30,7 +30,6 @@ global.client = new Client({
 
 //configファイル読み込み
 const config = require('./environmentConfig')
-let ccconfig = require("./CCConfig.json");
 const Classes = require('./timetable/timetables.json');
 const {configPath} = require("./environmentConfig");
 
