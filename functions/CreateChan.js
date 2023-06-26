@@ -21,12 +21,20 @@ exports.createChannel = async function(interaction) {
         await waitingMessage.edit({content: "キャンセルされました", components: []});
     }
     else {
-        const createdChannel = await interaction.guild.channels.create({
-            name: receivedValue.channelName,
-            parent: receivedValue.categoryID !== interaction.guildId ? receivedValue.categoryID : null,
-            reason: "木更津高専統合管理BOTの/create-channelにより作成",
-            type: 0
-        });
+        let createdChannel;
+        try {
+            createdChannel = await interaction.guild.channels.create({
+                name: receivedValue.channelName,
+                parent: receivedValue.categoryID !== interaction.guildId ? receivedValue.categoryID : null,
+                reason: "木更津高専統合管理BOTの/create-channelにより作成",
+                type: 0
+            });
+        }
+        catch(error) {
+            await waitingMessage.edit({content: "チャンネルの作成に失敗しました", components: []});
+            await system.error("/create-channelチャンネル作成失敗", error);
+            return;
+        }
         
         await db.insert(dbMain, colChan, {
             ID: createdChannel.id,
@@ -83,12 +91,20 @@ exports.createRole = async function(interaction) {
     const receivedValue = JSON.parse(interaction.values[0]);
     
     if(receivedValue.value) {
-        const createdRole = await interaction.guild.roles.create({
-            name: receivedValue.channelName,
-            permissions: BigInt(0),
-            mentionable: true,
-            reason: "木更津高専統合管理BOTの/create-channelにより作成"
-        });
+        let createdRole;
+        try {
+            createdRole = await interaction.guild.roles.create({
+                name: receivedValue.channelName,
+                permissions: BigInt(0),
+                mentionable: true,
+                reason: "木更津高専統合管理BOTの/create-channelにより作成"
+            });
+        }
+        catch(error) {
+            await waitingMessage.edit({content: "ロールの作成に失敗しました", components: []});
+            await system.error("/create-channelロール作成失敗", error);
+            return;
+        }
         
         await db.update(dbMain, colChan, {ID: receivedValue.channelID}, {
             $set: {
@@ -152,7 +168,7 @@ exports.selectDelete = async function(interaction) {
     else {
         const receivedValue = JSON.parse(interaction.values[0]);
         let returnMessage;
-        
+        let errorCount = 0;
         switch(receivedValue.categoryID) {
             case "All":
                 if(receivedValue.value) {
@@ -161,9 +177,22 @@ exports.selectDelete = async function(interaction) {
                         thereRole: channel.thereRole,
                         roleID: channel.roleID
                     }))) {
-                        await channelDelete(interaction, channelData.ID);
-                        if(channelData.thereRole) {
-                            await roleDelete(interaction, channelData.roleID);
+                        try {
+                            await channelDelete(interaction, channelData.ID);
+                        }
+                        catch(error) {
+                            await system.error("/remove-categoryチャンネル削除失敗", error);
+                            errorCount++;
+                        }
+                        
+                        try {
+                            if(channelData.thereRole) {
+                                await roleDelete(interaction, channelData.roleID);
+                            }
+                        }
+                        catch(error) {
+                            await system.error("/remove-categoryロール削除失敗", error);
+                            errorCount++;
                         }
                     }
                 }
@@ -172,7 +201,7 @@ exports.selectDelete = async function(interaction) {
                 await db.delete(dbMain, colCat, {guildID: interaction.guildId});
                 
                 if(receivedValue.value) {
-                    returnMessage = "このサーバーの全てのカテゴリの登録を解除し、それらに作られたチャンネルとロールを全て削除しました";
+                    returnMessage = "このサーバーの全てのカテゴリの登録を解除し、それらに作られたチャンネルとロールを全て削除しました" + errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "";
                 }
                 else {
                     returnMessage = "このサーバーの全てのカテゴリの登録を解除しました";
@@ -187,10 +216,22 @@ exports.selectDelete = async function(interaction) {
                         thereRole: channel.thereRole,
                         roleID: channel.roleID
                     }))) {
-                        await channelDelete(interaction, channelData.ID);
+                        try {
+                            await channelDelete(interaction, channelData.ID);
+                        }
+                        catch(error) {
+                            await system.error("/remove-categoryチャンネル削除失敗", error);
+                            errorCount++;
+                        }
                         
-                        if(channelData.thereRole) {
-                            await channelDelete(interaction, channelData.roleID);
+                        try {
+                            if(channelData.thereRole) {
+                                await channelDelete(interaction, channelData.roleID);
+                            }
+                        }
+                        catch(error) {
+                            await system.error("/remove-categoryロール削除失敗", error);
+                            errorCount++;
                         }
                     }
                 }
@@ -199,7 +240,7 @@ exports.selectDelete = async function(interaction) {
                 await db.delete(dbMain, colCat, {ID: receivedValue.categoryID});
                 
                 if(receivedValue.value) {
-                    returnMessage = catName + "の登録を解除し、そこに作られたチャンネルとロールを全て削除しました";
+                    returnMessage = catName + "の登録を解除し、そこに作られたチャンネルとロールを全て削除しました" + errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "";
                 }
                 else {
                     returnMessage = catName + "の登録を解除しました";
@@ -328,9 +369,9 @@ exports.deleteGuildData = async function(guild) {
  */
 exports.dataCheck = async function() {
     
-    await system.log("開始","createChannelデータベース整合性検証");
+    await system.log("開始", "createChannelデータベース整合性検証");
     try {
-         for(const category of await db.find(dbMain, colCat, {})) {
+        for(const category of await db.find(dbMain, colCat, {})) {
             let guildData;
             try {
                 guildData = await client.guilds.fetch(category.guildID);
@@ -384,9 +425,9 @@ exports.dataCheck = async function() {
             }
         }
     }
-    catch(error){
-        await system.error("異常終了\n再起動推奨",error,"createChannelデータベース整合性検証");
+    catch(error) {
+        await system.error("異常終了\n再起動推奨", error, "createChannelデータベース整合性検証");
         return;
     }
-    await system.log("正常終了","createChannelデータベース整合性検証");
+    await system.log("正常終了", "createChannelデータベース整合性検証");
 };
