@@ -10,7 +10,7 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-const CreateChannel = require("./functions/CreateChan.js");
+const CreateChannel = require("./functions/CreateChannel.js");
 dotenv.config();
 require('date-utils');
 global.client = new Client({

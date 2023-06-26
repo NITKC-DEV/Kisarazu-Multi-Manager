@@ -4,7 +4,6 @@ const dbMain = "main";
 const colCat = "CC-categories";
 const colChan = "CC-channels";
 const system = require("./logsystem");
-const CreateChannel = require("./createchannel.js");
 
 /***
  * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
@@ -50,8 +49,13 @@ exports.createChannel = async function(interaction) {
             guildID: interaction.guildId
         });
         
+        //応答待ったりDB更新してる間にカテゴリの登録が解除されてたときにキャンセルする
         if((await db.find(dbMain, colCat, {ID: createdChannel.parentId || createdChannel.guildId})).length === 0) {
-        
+            await channelDelete(interaction, createdChannel.id);
+            await db.delete(dbMain, colChan,{ID:createdChannel.id});
+            await system.warn("カテゴリ参照失敗");
+            await waitingMessage.edit({content: "このカテゴリは登録されていません", components: []});
+            return;
         }
         
         if((await db.find(dbMain, colCat, {ID: receivedValue.categoryID}))[0].allowRole) {
@@ -88,7 +92,7 @@ exports.createChannel = async function(interaction) {
 };
 
 /***
- * functions/CreateChan.js.createChannel関数から投げられた、ロール作成用のStringSelectMenuの受取
+ * functions/CreateChannel.js.createChannel関数から投げられた、ロール作成用のStringSelectMenuの受取
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
@@ -207,7 +211,7 @@ exports.selectDelete = async function(interaction) {
                 await db.delete(dbMain, colCat, {guildID: interaction.guildId});
                 
                 if(receivedValue.value) {
-                    returnMessage = "このサーバーの全てのカテゴリの登録を解除し、それらに作られたチャンネルとロールを全て削除しました" + errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "";
+                    returnMessage = "このサーバーの全てのカテゴリの登録を解除し、それらに作られたチャンネルとロールを全て削除しました" + (errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "");
                 }
                 else {
                     returnMessage = "このサーバーの全てのカテゴリの登録を解除しました";
@@ -246,7 +250,7 @@ exports.selectDelete = async function(interaction) {
                 await db.delete(dbMain, colCat, {ID: receivedValue.categoryID});
                 
                 if(receivedValue.value) {
-                    returnMessage = catName + "の登録を解除し、そこに作られたチャンネルとロールを全て削除しました" + errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "";
+                    returnMessage = catName + "の登録を解除し、そこに作られたチャンネルとロールを全て削除しました" + (errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "");
                 }
                 else {
                     returnMessage = catName + "の登録を解除しました";
