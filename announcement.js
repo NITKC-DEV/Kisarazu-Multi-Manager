@@ -121,19 +121,22 @@ cron.schedule('*/1  * * * *', async () => {
     if(date.getHours() === sendTime.noticeH && date.getMinutes() === sendTime.noticeM){
         const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
         for(let i = 0; i < data.length; i++) {
+            client.channels.cache.get(data[i].announce).send("@everyone");
             client.channels.cache.get(data[i].announce).send({ embeds: [embed.notice] });
         }
     }
     if(date.getHours() === sendTime.startH && date.getMinutes() === sendTime.startM){
         const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
         for(let i = 0; i < data.length; i++) {
+            client.channels.cache.get(data[i].announce).send("@everyone");
             client.channels.cache.get(data[i].announce).send({ embeds: [embed.start] });
         }
     }
     if(date.getHours() === sendTime.endH && date.getMinutes() === sendTime.endM){
         const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
         for(let i = 0; i < data.length; i++) {
-            client.channels.cache.get(data[i].announce).send({ embeds: [embed.end] });
+            client.channels.cache.get(data[i].announce).send("@everyone");
+            client.channels.cache.get(data[i].announce).send({embeds: [embed.end] });
         }
     }
 
