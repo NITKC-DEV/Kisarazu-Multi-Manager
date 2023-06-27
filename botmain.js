@@ -103,7 +103,6 @@ client.on("interactionCreate", async(interaction) => {
     }
 });
 
-
 //StringSelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction => {
     if(interaction.isStringSelectMenu()) {
