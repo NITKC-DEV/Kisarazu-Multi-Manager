@@ -8,7 +8,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('guilddata')
-                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelp 参照してください')
+                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelpを参照してください')
                 .setDefaultMemberPermissions(1<<3)
                 .addIntegerOption(option =>
                     option
@@ -151,7 +151,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config-reset')
-                .setDescription('サーバー情報をリセットします。詳細は/adminhelp を参照してください')
+                .setDescription('サーバー情報をリセットします。詳細は/adminhelpを参照してください')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
                 if(!interaction.guild){
@@ -198,7 +198,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config')
-                .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelp 参照してください'),
+                .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelp参照してください'),
             async execute(interaction) {
                 if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
