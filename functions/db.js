@@ -93,7 +93,7 @@ exports.updateOrInsert = async function run(dbName, collectionName,filter, objec
 }
 
 /***
- * データベースにレコードを削除する
+ * データベースからレコードを削除する
  * @param dbName 削除元データベース名
  * @param collectionName 削除元コレクション名
  * @param filter 削除対象のフィルターを指定
