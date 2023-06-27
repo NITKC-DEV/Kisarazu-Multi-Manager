@@ -1,9 +1,9 @@
 const {ActionRowBuilder, StringSelectMenuBuilder} = require('discord.js');
-const db = require("../functions/db.js");
+const db = require("./db.js");
 const dbMain = "main";
 const colCat = "CC-categories";
 const colChan = "CC-channels";
-const system = require("./logsystem");
+const system = require("./logsystem.js");
 
 /***
  * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
