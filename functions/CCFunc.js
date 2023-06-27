@@ -92,7 +92,7 @@ exports.createChannel = async function(interaction) {
 };
 
 /***
- * functions/CreateChannel.js.createChannel関数から投げられた、ロール作成用のStringSelectMenuの受取
+ * functions/CCFunc.js.createChannel関数から投げられた、ロール作成用のStringSelectMenuの受取
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
@@ -164,7 +164,7 @@ exports.removeCategory = async function(interaction) {
 };
 
 /***
- * functions/CreateChannel.js.removeCategoryから投げられたStringSelectMenuを受け取る
+ * functions/CCFunc.js.removeCategoryから投げられたStringSelectMenuを受け取る
  *
  * データを削除し、必要に応じチャンネルトロールを削除する
  * @param interaction StringSelectMenuInteractionオブジェクト
