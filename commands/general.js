@@ -284,6 +284,10 @@ module.exports =
                 ),
 
             async execute (interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
                     guild: interaction.guildId
@@ -371,6 +375,10 @@ module.exports =
                 ),
 
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
+                    return;
+                }
                 await guildDate.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
                 await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
             },
