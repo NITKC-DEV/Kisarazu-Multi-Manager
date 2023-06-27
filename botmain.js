@@ -3,7 +3,6 @@ const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-const CreateChannel = require("./functions/CCFunc.js");
 dotenv.config();
 require('date-utils');
 global.client = new Client({
@@ -25,7 +24,6 @@ global.client = new Client({
 const config = require('./environmentConfig.js')
 const {configPath} = require("./environmentConfig.js");
 
-
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const birthday = require('./functions/birthday.js');
@@ -36,7 +34,7 @@ const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
 const weather = require('./functions/weather.js');
 const {ID_NODATA} = require("./functions/guildDataSet.js");
-
+const CreateChannel = require("./functions/CCFunc.js");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
