@@ -198,7 +198,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config')
-                .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelp参照してください'),
+                .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelpを参照してください'),
             async execute(interaction) {
                 if(!interaction.guild){
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
