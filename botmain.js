@@ -48,7 +48,6 @@ client.once("ready", async() => {
         for(let i = 0; i < command.length; i++) {
             client.commands.set(command[i].data.name, command[i]);
         }
-        
     }
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
@@ -83,7 +82,7 @@ client.on("interactionCreate", async(interaction) => {
                 await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true});
             }
             catch {
-                const reply = await interaction.editReply({
+                await interaction.editReply({
                     content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。',
                     ephemeral: true
                 });
@@ -140,7 +139,6 @@ client.on(Events.ChannelDelete,async channel=>{
     else if(channel.type===4){
         await CreateChannel.removeDeletedCategoryData(channel);
     }
-    
 });
 
 //チャンネル(カテゴリ)情報変更検知
@@ -187,7 +185,7 @@ client.on('messageCreate', message => {
     if(flag !== 0) {
         TxtEasterEgg.func(message);
     }
-})
+});
 
 /*誕生日通知*/
 cron.schedule('0 0 * * *', async () => {
@@ -289,7 +287,6 @@ cron.schedule('*/1  * * * *', async () => {
                 });
         }
     }
-    
 });
 
 if(require.main === module) {
