@@ -354,3 +354,11 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .catch(error => {});
         })
 }
+
+exports.deleteData = async function func(){
+    const date = new Date;
+    date.setDate(date.getDate()-1);
+
+    await db.delete("main","timetableData",{day:String(date.getMonth()+1) + String(date.getDate())});
+    await db.delete("main","timetableData",{day:String(String(date.getMonth()+1) + String(date.getDate()) + '00')});
+}

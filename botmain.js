@@ -33,6 +33,7 @@ const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
 const db = require('./functions/db.js');
 const weather = require('./functions/weather.js');
+const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
 
@@ -65,14 +66,15 @@ client.on("interactionCreate", async(interaction) => {
     else {
         flag = 1;
     }
-    if(flag === 1) {
-        if(!interaction.isCommand()) {
+
+    if(flag === 1){
+        if (!interaction.isCommand()) {
             return;
         }
         const command = interaction.client.commands.get(interaction.commandName);
-        
-        if(!command) return;
-            await system.log(command.data.name, "SlashCommand");
+
+        if (!command) return;
+        await system.log(command.data.name, "SlashCommand");
         try {
             await command.execute(interaction);
         }
@@ -96,6 +98,8 @@ client.on("interactionCreate", async(interaction) => {
             content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。',
             ephemeral: true
         });
+        const interactionTypeName = ["Ping","ApplicationCommand","MessageComponent","ApplicationCommandAutocomplete","ModalSubmit"];
+        await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。`, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
@@ -187,10 +191,11 @@ client.on('messageCreate', message => {
     }
 });
 
-/*誕生日通知*/
+/*誕生日通知とGuildDataチェック、時間割変更データチェック*/
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
-    await system.log('誕生日お祝い！');
+    await guildData.checkGuild();
+    await timetable.deleteData();
 });
 
 /*原神デイリー通知*/
@@ -200,8 +205,13 @@ cron.schedule('0 5 * * *', async () => {
 });
 
 /*天気キャッシュ取得*/
-cron.schedule('5 5,11,17 * * *', async() => {
-    await weather.update()
+cron.schedule('5 5,11 * * *', async () => {
+    await weather.update();
+});
+
+cron.schedule('5 17 * * *', async () => {
+    await weather.update();
+    await weather.catcheUpdate();
 });
 
 

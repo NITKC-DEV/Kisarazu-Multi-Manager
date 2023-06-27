@@ -105,7 +105,7 @@ exports.delete = async function run(dbName,collectionName,filter) {
         const collection = await database.collection(collectionName);
 
         const result = await collection.deleteMany(filter);
-        await system.log(`${dbName}.${collectionName}からレコード削除`,`DBレコード削除実行`);
+        await system.log(`${dbName}.${collectionName}からレコード削除(削除されたとは言っていない)`,`DBレコード削除操作実行`);
     } catch(err) {
         await system.error(`${dbName}.${collectionName}からレコードを削除できませんでした`,err,`DB削除失敗`);
     }
