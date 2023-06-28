@@ -60,7 +60,10 @@ client.once("ready", async() => {
         await statusAndMode.status(2,"BOTメンテナンス");
     }
     else{
-        await mode.status(0,"BOT起動完了");
+        const date = new Date();
+        let status=0;
+        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
+        await mode.status(status,"BOT起動完了");
     }
 });
 
@@ -202,7 +205,33 @@ client.on('messageCreate', message => {
 
 /*ステータス更新*/
 cron.schedule('* * * * *', async () => {
-    await mode.status(0,"毎分実行の勝利");
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === false) {
+        const date = new Date();
+        let status=0;
+        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
+        const time = Math.floor(date.getTime() / 1000 / 60)%6
+        switch(time){
+            case 0:
+                await mode.status(status,`$導入数：{client.guilds.cache.size}サーバー`);
+                break;
+            case 1:
+                await mode.status(status,`ヘルプ：/help`);
+                break;
+            case 2:
+                await mode.status(status,`時間割：/timetable`);
+                break;
+            case 3:
+                await mode.status(status,`天気：/weather`);
+                break;
+            case 4:
+                await mode.status(status,`匿名投稿：/secret-msg`);
+                break;
+            case 5:
+                await mode.status(status,`チャンネル作成：/create-channel`);
+                break;
+        }
+    }
+
 });
 
 /*誕生日通知とGuildDataチェック、時間割変更データチェック*/
@@ -271,7 +300,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 /*天気*/
-cron.schedule('15 17 * * *', async() => {
+cron.schedule('0 20 * * *', async() => {
     const embed = await weather.generationDay(1);
     const data = await db.find("main", "guildData", {main: {$nin: [ID_NODATA]}});
     for(let i = 0; i < data.length; i++) {
