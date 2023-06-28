@@ -100,7 +100,7 @@ module.exports = [
             }
 
             let department = interaction.options.getString('学科');
-            if(department === undefined || department === null){
+            if(department === undefined || department === null && interaction.guild !== null){
                 const guildData = await db.find("main","guildData",{guild:interaction.guildId});
                 if(interaction.member._roles.includes(guildData[0].mRole))department = '1';
                 else if(interaction.member._roles.includes(guildData[0].eRole))department = '2';
@@ -110,7 +110,7 @@ module.exports = [
             }
 
             let grade = interaction.options.getString('学年');
-            if(grade === undefined || grade === null){
+            if(grade === undefined || grade === null && interaction.guild !== null){
                 const guildData = await db.find("main","guildData",{guild:interaction.guildId});
                 grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1
             }
@@ -119,7 +119,12 @@ module.exports = [
                 await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、/guilddataで入学した年を登録してもらってください。");
             }
             else if(department === null){
-                await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えて/guilddataで学科ロールを登録してもらってください。");
+                if(interaction.guild === null){
+                    await interaction.editReply("DMでは学科オプション・学年オプションの省略はできません。");
+                }
+                else{
+                    await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えて/guilddataで学科ロールを登録してもらってください。");
+                }
             }
             else{
                 const embed = await timetable.generation(grade,department,String(dayOfWeek),interaction.options.getBoolean('授業変更') ?? true);
