@@ -37,6 +37,7 @@ const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
 const mode = require("./functions/status&mode.js");
+const statusAndMode = require("./functions/status&mode");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
@@ -55,7 +56,12 @@ client.once("ready", async() => {
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
     await system.log("Ready!");
-    await mode.status(0,"BOT起動完了");
+    if(config.maintenanceMode === true){
+        await statusAndMode.status(2,"BOTメンテナンス");
+    }
+    else{
+        await mode.status(0,"BOT起動完了");
+    }
 });
 
 /*command処理*/
