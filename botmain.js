@@ -60,10 +60,7 @@ client.once("ready", async() => {
         await statusAndMode.status(2,"BOTメンテナンス");
     }
     else{
-        const date = new Date();
-        let status=0;
-        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
-        await mode.status(status,"BOT起動完了");
+        await mode.status(0,"BOT起動完了");
     }
 });
 
@@ -212,22 +209,22 @@ cron.schedule('* * * * *', async () => {
         const time = Math.floor(date.getTime() / 1000 / 60)%6
         switch(time){
             case 0:
-                await mode.status(status,`$導入数：{client.guilds.cache.size}サーバー`);
+                await mode.status(0,`導入数：${client.guilds.cache.size}サーバー`);
                 break;
             case 1:
-                await mode.status(status,`ヘルプ：/help`);
+                await mode.status(0,`ヘルプ：/help`);
                 break;
             case 2:
-                await mode.status(status,`時間割：/timetable`);
+                await mode.status(0,`時間割：/timetable`);
                 break;
             case 3:
-                await mode.status(status,`天気：/weather`);
+                await mode.status(0,`天気：/weather`);
                 break;
             case 4:
-                await mode.status(status,`匿名投稿：/secret-msg`);
+                await mode.status(0,`匿名投稿：/secret-msg`);
                 break;
             case 5:
-                await mode.status(status,`チャンネル作成：/create-channel`);
+                await mode.status(0,`チャンネル作成：/create-channel`);
                 break;
         }
     }
