@@ -37,7 +37,7 @@ const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
 const mode = require("./functions/status&mode.js");
-const statusAndMode = require("./functions/status&mode");
+const statusAndMode = require("./functions/status&mode.js");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
@@ -204,13 +204,8 @@ client.on('messageCreate', message => {
 cron.schedule('* * * * *', async () => {
     if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === false) {
         const date = new Date();
-        let status=0;
-        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
         const time = Math.floor(date.getTime() / 1000 / 60)%6
         switch(time){
-            case 0:
-                await mode.status(0,`導入数：${client.guilds.cache.size}サーバー`);
-                break;
             case 1:
                 await mode.status(0,`ヘルプ：/help`);
                 break;
@@ -226,6 +221,8 @@ cron.schedule('* * * * *', async () => {
             case 5:
                 await mode.status(0,`チャンネル作成：/create-channel`);
                 break;
+            default:
+                await mode.status(0,`導入数：${client.guilds.cache.size}サーバー`);
         }
     }
 
