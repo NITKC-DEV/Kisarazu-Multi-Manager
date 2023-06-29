@@ -168,6 +168,7 @@ client.on(Events.GuildRoleUpdate, async role => {
 //ギルド削除(退出)検知
 client.on(Events.GuildDelete,async guild =>{
     await CreateChannel.deleteGuildData(guild);
+    await guildData.checkGuild();
 });
 
 /*TxtEasterEgg*/
