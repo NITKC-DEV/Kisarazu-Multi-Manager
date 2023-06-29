@@ -1,5 +1,8 @@
-const {EmbedBuilder} = require("discord.js");
-const config = require("../environmentConfig");
+
+const fs = require("fs");
+const {configPath} = require("../environmentConfig");
+const system = require("./logsystem");
+const statusAndMode = require("./status&mode");
 
 const statusName = ['online','idle','dnd','invisible'];
 
@@ -19,6 +22,11 @@ exports.status = async function func(status,presence="") {
 }
 
 exports.maintenance = async function (mode){
+    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+    config.maintenanceMode = mode;
+    fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
+    await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
+
     if(mode){
         await statusAndMode.status(2,"BOTメンテナンス");
     }

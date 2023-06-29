@@ -6,7 +6,8 @@ const system = require('../functions/logsystem.js');
 const weather = require('../functions/weather.js');
 const db = require('../functions/db.js');
 const fs = require("fs");
-const {configPath} = require("../environmentConfig");
+const {configPath} = require("../environmentConfig.js");
+const mode = require("../functions/status&mode.js");
 
 
 module.exports =
@@ -113,17 +114,15 @@ module.exports =
                     flag = 0;
 
                     await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                        .then(collected => {
+                        .then(() => {
                             if(reply.reactions.cache.at(0).count === 2){
                                 flag = 1;
                             }
                         })
                     await reply.reactions.removeAll();
                     if(flag === 1){
-                        config.maintenanceMode = interaction.options.getBoolean('option');
-                        fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
-                        await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
-                        await interaction.editReply( `メンテナンスモードを${config.maintenanceMode}にしました。` );
+                        await mode.maintenance(interaction.options.getBoolean('option'));
+                        await interaction.editReply( `メンテナンスモードを${interaction.options.getBoolean('option')}にしました。` );
                     }
                     else{
                         await interaction.editReply( `変更を取りやめました` );
