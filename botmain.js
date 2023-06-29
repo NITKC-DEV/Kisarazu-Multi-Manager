@@ -194,12 +194,23 @@ client.on('messageCreate', message => {
     }
 });
 
+/*ステータス更新*/
+cron.schedule('* * * * *', async () => {
+    await mode.status(0,"毎分実行の勝利");
+});
 
+/*誕生日通知とGuildDataチェック、時間割変更データチェック*/
+cron.schedule('0 0 * * *', async () => {
+    await birthday.func();
+
+});
 
 /*メンテナンスモード*/
 cron.schedule('59 4 * * *', async () => {
+    await mode.maintenance(true);
     await guildData.checkGuild();
     await timetable.deleteData();
+    await mode.maintenance(false);
 });
 
 /*原神デイリー通知*/
