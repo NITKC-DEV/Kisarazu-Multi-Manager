@@ -7,7 +7,7 @@ const weather = require('../functions/weather.js');
 const guildData = require('../functions/guildDataSet.js')
 const db = require('../functions/db.js');
 const fs = require("fs");
-const {configPath} = require("../environmentConfig");
+const {configPath} = require("../environmentConfig.js");
 
 
 module.exports =
