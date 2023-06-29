@@ -23,14 +23,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/NITKC22s/bot-main.git"
+    "url": "git+https://github.com/NITKC-DEV/Kisarazu-Multi-Manager.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/NITKC22s/bot-main/issues"
+    "url": "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues"
   },
-  "homepage": "https://github.com/NITKC22s/bot-main#readme",
+  "homepage": "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager#readme",
   "devDependencies": {
     "cross-env": "^7.0.3"
   }
