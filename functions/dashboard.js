@@ -155,7 +155,8 @@ exports.generation = async function func(guild) {
         if (weatherData.forecasts[0].date === weatherCache[0].day) {
             todayMax = weatherCache[0].max;
             todayMin = weatherCache[0].min;
-        } else {
+        }
+        else {
 
             if (weatherData.forecasts[0].date === weatherCache[1].day) {
                 todayMax = weatherCache[1].max;
