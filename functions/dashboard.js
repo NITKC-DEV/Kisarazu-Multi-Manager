@@ -76,33 +76,35 @@ exports.generation = async function func(guild) {
                     test = `${data[1].year}年${data[1].month1}月${data[1].day1}日〜${data[1].month2}月${data[1].day2}日`
                     let day = diffInMonthsAndDays(now, UNIXtest)
                     test += `(${day[0]}ヶ月と${day[1]}日後)`
-                }
-                for (let i = 0; i < 3; i++) {
+
+                    for (let i = 0; i < 3; i++) {
+                        await db.update(
+                            "main", "nextTest", {label: String(i + 1)},
+                            {
+                                $set: {
+                                    year: String(data[i + 1].year),
+                                    month1: String(data[i + 1].month1),
+                                    day1: String(data[i + 1].day1),
+                                    month2: String(data[i + 1].month2),
+                                    day2: String(data[i + 1].day2)
+                                },
+                            }
+                        )
+                    }
                     await db.update(
-                        "main", "nextTest", {label: String(i + 1)},
+                        "main", "nextTest", {label: "4"},
                         {
                             $set: {
-                                year: String(data[i + 1].year),
-                                month1: String(data[i + 1].month1),
-                                day1: String(data[i + 1].day1),
-                                month2: String(data[i + 1].month2),
-                                day2: String(data[i + 1].day2)
+                                year: "0",
+                                month1: "0",
+                                day1: "0",
+                                month2: "0",
+                                day2: "0"
                             },
                         }
                     )
                 }
-                await db.update(
-                    "main", "nextTest", {label: "4"},
-                    {
-                        $set: {
-                            year: "0",
-                            month1: "0",
-                            day1: "0",
-                            month2: "0",
-                            day2: "0"
-                        },
-                    }
-                )
+
             }
             else {
                 if (now > testEnd - 86400000) { /*最終日なら*/
