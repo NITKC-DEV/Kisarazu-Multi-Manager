@@ -36,6 +36,7 @@ const weather = require('./functions/weather.js');
 const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
+const mode = require("./functions/status&mode.js");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
@@ -43,6 +44,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 client.commands = new Collection();
 module.exports = client.commands;
 client.once("ready", async() => {
+    await mode.status(2,"BOT起動処理");
     for(const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
@@ -53,6 +55,7 @@ client.once("ready", async() => {
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
     await system.log("Ready!");
+    await mode.status(0,"BOT起動完了");
 });
 
 /*command処理*/
@@ -191,9 +194,10 @@ client.on('messageCreate', message => {
     }
 });
 
-/*誕生日通知とGuildDataチェック、時間割変更データチェック*/
-cron.schedule('0 0 * * *', async () => {
-    await birthday.func();
+
+
+/*メンテナンスモード*/
+cron.schedule('59 4 * * *', async () => {
     await guildData.checkGuild();
     await timetable.deleteData();
 });
