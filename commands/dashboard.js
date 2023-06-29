@@ -106,6 +106,8 @@ module.exports =
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。");
                     await reply.react('⭕');
                     await reply.react('❌');
+                    const sleep = waitTime => new Promise( resolve => setTimeout(resolve, waitTime) );
+                    sleep(100);
                     let flag = -1,otherReact =[0,0];
 
                     while(flag === -1){
