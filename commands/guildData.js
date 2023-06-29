@@ -101,6 +101,11 @@ module.exports =
                 }
                 await guildData.updateOrInsert(interaction.guildId, object);
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
+
+                const date = new Date();
+                let description="";
+                if(date.getFullYear()-interaction.options.getInteger("学年") < 0 || date.getFullYear()-interaction.options.getInteger("学年") > 5)description=`\n\n学年の値が少しおかしいようです。\nこのサーバーは本当に今年${date.getFullYear()-interaction.options.getInteger("学年")}年生の集まりですか?\n学年オプションには入学した年を**「西暦で」**いれてください。`
+
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('GuildData')
@@ -109,7 +114,7 @@ module.exports =
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC22s/bot-main'
                     })
-                    .setDescription('GuildDataを更新しました。')
+                    .setDescription(`GuildDataを更新しました。${description}`)
                     .addFields(
                         {
                             name: '全般',
