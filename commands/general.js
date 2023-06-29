@@ -112,6 +112,8 @@ module.exports =
                     await reply.react('⭕');
                     await reply.react('❌');
                     flag = 0;
+                    const sleep = waitTime => new Promise( resolve => setTimeout(resolve, waitTime) );
+                    sleep(100);
 
                     await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
                         .then(() => {
