@@ -204,8 +204,9 @@ module.exports =
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
+                await interaction.deferReply();
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
-                let dashboard,timetable;
+                let dashboard,timetable,weather;
                 if(newData[0].board !== undefined){
                     dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
                 }
@@ -217,6 +218,12 @@ module.exports =
                 }
                 else{
                     timetable = "時間割の定期通知は停止されています。";
+                }
+                if(newData[0].weather === true){
+                    weather = "千葉の天気予報を定期的に通知します。";
+                }
+                else{
+                    weather = "天気予報の定期通知は停止されています。";
                 }
 
                 const embed = new EmbedBuilder()
@@ -268,10 +275,14 @@ module.exports =
                             name: '時間割定期通知',
                             value: timetable,
                         },
+                        {
+                            name: '天気定期通知',
+                            value: weather,
+                        }
                     )
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC22s server Admin' });
-                await interaction.reply({ embeds: [embed] ,ephemeral: true});
+                await interaction.editReply({ embeds: [embed] ,ephemeral: true});
             }
         }
     ]
