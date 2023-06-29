@@ -74,9 +74,12 @@ exports.generation = async function func(guild) {
                 }
                 else{
                     test = `${data[1].year}年${data[1].month1}月${data[1].day1}日〜${data[1].month2}月${data[1].day2}日`
+                    UNIXtest = Date.UTC(data[1].year, data[1].month1 - 1, data[1].day1, 8, 50, 0);
                     let day = diffInMonthsAndDays(now, UNIXtest)
                     test += `(${day[0]}ヶ月と${day[1]}日後)`
+                }
 
+                if(data[0].year !== "0"){
                     for (let i = 0; i < 3; i++) {
                         await db.update(
                             "main", "nextTest", {label: String(i + 1)},
