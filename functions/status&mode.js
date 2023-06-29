@@ -31,6 +31,9 @@ exports.maintenance = async function (mode){
         await statusAndMode.status(2,"BOTメンテナンス");
     }
     else{
-        await statusAndMode.status(0,"メンテナンス完了");
+        const date = new Date();
+        let status=0;
+        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
+        await statusAndMode.status(status,"メンテナンス完了");
     }
 }
