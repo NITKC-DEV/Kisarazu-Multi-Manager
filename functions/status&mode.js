@@ -2,7 +2,7 @@
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 const system = require("./logsystem");
-const statusAndMode = require("./status&mode");
+const statusAndMode = require("./status&mode.js");
 
 const statusName = ['online','idle','dnd','invisible'];
 
@@ -19,12 +19,18 @@ exports.status = async function func(status,presence="") {
         }],
     });
     if(status === 0){
+        let statusData = status;
         const date = new Date();
-        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
+        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)statusData=1;
     }
-    client.user.setStatus(statusName[status]);
+    client.user.setStatus(statusName[statusData]);
 }
 
+/***
+ * メンテナンスモードを切り替えます
+ * @param mode Trueでメンテナンスモード
+ * @returns {Promise<void>}
+ */
 exports.maintenance = async function (mode){
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     config.maintenanceMode = mode;
