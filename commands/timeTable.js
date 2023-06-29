@@ -301,7 +301,7 @@ module.exports = [
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                 })
                 .setDescription(`教科を選択してください。\n入力が終わったら、登録ボタンを押してください。`)
                 .addFields({
@@ -309,7 +309,7 @@ module.exports = [
                     value:`\`\`\`${subjects}\`\`\``
                 })
                 .setTimestamp()
-                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                .setFooter({ text: 'Developed by NITKC-DEV' });
 
             const button = new ButtonBuilder({
                 custom_id: `${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getInteger('変更日')}changeTimetableButton${interaction.options.getString('モード')}`,

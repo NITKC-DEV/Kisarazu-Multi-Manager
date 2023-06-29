@@ -70,7 +70,7 @@ exports.generationDay = async function func(day){
         .setAuthor({
             name: "木更津22s統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC22s/bot-main'
+            url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
         })
         .setDescription(`${data.location.area}エリア ${data.location.prefecture}${data.location.district}-${data.location.city}の${weather.dateLabel}の天気の情報です。`)
         .addFields([
@@ -90,7 +90,7 @@ exports.generationDay = async function func(day){
             }
         ])
         .setTimestamp()
-        .setFooter({text: '気象庁 Japan Meteorological Agency  |  Developed by NITKC22s server Admin'});
+        .setFooter({text: '気象庁 Japan Meteorological Agency  |  Developed by NITKC-DEV'});
 
 }
 
