@@ -9,13 +9,15 @@ async function getWeather() {
     return data[0].response;
 }
 
-function hankaku2Zenkaku(str) {
-    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．]/g, function(s) {
-        if(s === '．'){return `.`;}
+function zenkaku2Hankaku(str) {
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, function(s) {
+        if(s === '．')return `.`;
+        else if(s === '　')return '';
+        else if(s === '海')return " 海"
+        else if(s === '後')return " 後"
         else{return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);}
     });
 }
-
 
 exports.generationDay = async function func(day){
     const data = await getWeather();
@@ -47,14 +49,14 @@ exports.generationDay = async function func(day){
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
         filed ={
             name: '概況',
-            value: `\`\`\`　${data.description.text.replace("　","​")}\`\`\``,
+            value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
     else if(day === 1){
         annotation = "概況は今日から明日にかけての天気になります。";
         filed ={
             name: '概況',
-            value: `\`\`\`　${data.description.text.replace("　","​")}\`\`\``,
+            value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
     else{
@@ -76,8 +78,8 @@ exports.generationDay = async function func(day){
         .addFields([
             filed,
             {
-                name: '気温・風・波',
-                value: `\`\`\`最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃\n\n${weather.detail.wind} 波${hankaku2Zenkaku(weather.detail.wave)}\`\`\``,
+                name: '気温・風',
+                value: `\`\`\`最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃\n\n${zenkaku2Hankaku(weather.detail.wind)}\`\`\``,
             },
             {
                 name: '降水確率',
