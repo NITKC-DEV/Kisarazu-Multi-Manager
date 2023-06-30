@@ -101,6 +101,11 @@ module.exports =
                 }
                 await guildData.updateOrInsert(interaction.guildId, object);
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
+
+                const date = new Date();
+                let description="";
+                if(date.getFullYear()-interaction.options.getInteger("学年") < 0 || date.getFullYear()-interaction.options.getInteger("学年") > 5)description=`\n\n学年の値が少しおかしいようです。\nこのサーバーは本当に今年${date.getFullYear()-interaction.options.getInteger("学年")}年生の集まりですか?\n学年オプションには入学した年を**「西暦で」**いれてください。`
+
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('GuildData')
@@ -109,7 +114,7 @@ module.exports =
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
                         url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                     })
-                    .setDescription('GuildDataを更新しました。')
+                    .setDescription(`GuildDataを更新しました。${description}`)
                     .addFields(
                         {
                             name: '全般',
@@ -204,8 +209,9 @@ module.exports =
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
+                await interaction.deferReply();
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
-                let dashboard,timetable;
+                let dashboard,timetable,weather;
                 if(newData[0].board !== undefined){
                     dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
                 }
@@ -217,6 +223,12 @@ module.exports =
                 }
                 else{
                     timetable = "時間割の定期通知は停止されています。";
+                }
+                if(newData[0].weather === true){
+                    weather = "千葉の天気予報を定期的に通知します。";
+                }
+                else{
+                    weather = "天気予報の定期通知は停止されています。";
                 }
 
                 const embed = new EmbedBuilder()
@@ -268,10 +280,14 @@ module.exports =
                             name: '時間割定期通知',
                             value: timetable,
                         },
+                        {
+                            name: '天気定期通知',
+                            value: weather,
+                        }
                     )
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC-DEV' });
-                await interaction.reply({ embeds: [embed] ,ephemeral: true});
+                await interaction.editReply({ embeds: [embed] ,ephemeral: true});
             }
         }
     ]
