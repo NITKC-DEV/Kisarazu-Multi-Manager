@@ -4,6 +4,7 @@ const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 const system = require('../functions/logsystem.js');
 const weather = require('../functions/weather.js');
+const guildData = require('../functions/guildDataSet.js')
 const db = require('../functions/db.js');
 const fs = require("fs");
 const {configPath} = require("../environmentConfig.js");
@@ -388,7 +389,7 @@ module.exports =
                     await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                     return;
                 }
-                await guildDate.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
+                await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
                 await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
             },
         },
