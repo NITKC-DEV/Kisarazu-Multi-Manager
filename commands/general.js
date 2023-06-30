@@ -6,7 +6,8 @@ const system = require('../functions/logsystem.js');
 const weather = require('../functions/weather.js');
 const db = require('../functions/db.js');
 const fs = require("fs");
-const {configPath} = require("../environmentConfig");
+const {configPath} = require("../environmentConfig.js");
+const mode = require("../functions/statusAndMode.js");
 
 
 module.exports =
@@ -110,20 +111,20 @@ module.exports =
                     const reply = await interaction.editReply("あなたはシステム管理者から通常の講習を受けたはずです。\nこれは通常、以下の3点に要約されます:\n    #1) 他人のプライバシーを尊重すること。\n    #2) タイプする前に考えること。\n    #3) 大いなる力には大いなる責任が伴うこと。");
                     await reply.react('⭕');
                     await reply.react('❌');
+
                     flag = 0;
+                    await setTimeout(100);
 
                     await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                        .then(collected => {
+                        .then(() => {
                             if(reply.reactions.cache.at(0).count === 2){
                                 flag = 1;
                             }
                         })
                     await reply.reactions.removeAll();
                     if(flag === 1){
-                        config.maintenanceMode = interaction.options.getBoolean('option');
-                        fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
-                        await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
-                        await interaction.editReply( `メンテナンスモードを${config.maintenanceMode}にしました。` );
+                        await mode.maintenance(interaction.options.getBoolean('option'));
+                        await interaction.editReply( `メンテナンスモードを${interaction.options.getBoolean('option')}にしました` );
                     }
                     else{
                         await interaction.editReply( `変更を取りやめました` );
