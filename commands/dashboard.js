@@ -58,8 +58,8 @@ module.exports =
                 )
                 .addIntegerOption(option =>
                     option
-                        .setName('四半期')
-                        .setDescription('何番目のテストか入力(1~4)')
+                        .setName('テスト回')
+                        .setDescription('何回後のテストか入力(1~4)')
                         .setRequired(true)
                 ),
 
@@ -106,7 +106,10 @@ module.exports =
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。");
                     await reply.react('⭕');
                     await reply.react('❌');
-                    let flag = -1,otherReact =[0,0];
+
+                    let flag = -1
+                    const otherReact =[0,0];
+                    await setTimeout(100);
 
                     while(flag === -1){
                         await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 , time: 60_000})
