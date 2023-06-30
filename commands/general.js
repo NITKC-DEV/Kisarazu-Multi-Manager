@@ -122,8 +122,8 @@ module.exports =
                     if(flag === 1){
                         config.maintenanceMode = interaction.options.getBoolean('option');
                         fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
-                        await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
-                        await interaction.editReply( `メンテナンスモードを${config.maintenanceMode}にしました。` );
+                        await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました`,"メンテナンスモード変更");
+                        await interaction.editReply( `メンテナンスモードを${config.maintenanceMode}にしました` );
                     }
                     else{
                         await interaction.editReply( `変更を取りやめました` );
@@ -312,7 +312,7 @@ module.exports =
                     await interaction.reply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`, ephemeral: true });
                 }
                 else{
-                    await interaction.reply({ content: "誕生日を正しい数字で設定してください。", ephemeral: true });
+                    await interaction.reply({ content: "誕生日を正しい数字で設定してください", ephemeral: true });
                 }
             }
         },
@@ -346,7 +346,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('weather')
-                .setDescription('その日の天気を取得します。')
+                .setDescription('その日の天気を取得します')
                 .addIntegerOption(option =>
                     option
                         .setName('日にち')
