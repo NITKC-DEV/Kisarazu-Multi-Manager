@@ -12,9 +12,9 @@ async function getWeather() {
 function zenkaku2Hankaku(str) {
     return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, function(s) {
         if(s === '．')return `.`;
-        else if(s === '　')return '';
-        else if(s === '海')return " 海"
-        else if(s === '後')return " 後"
+        if(s === '　')return '';
+        if(s === '海')return " 海"
+        if(s === '後')return " 後"
         else{return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);}
     });
 }
