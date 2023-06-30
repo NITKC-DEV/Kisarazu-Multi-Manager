@@ -118,12 +118,12 @@ exports.generation = async function func(grade,department,day,change = true) {
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                 })
                 .setDescription(`${data[0].day/100 | 0}月${data[0].day%100}日の定期テスト時間割です。\n※教室やテスト日程に変更がある場合があります。`)
                 .addFields(field)
                 .setTimestamp()
-                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                .setFooter({ text: 'Developed by NITKC-DEV' });
         }
         else{
             const siz = data[0].timetable.length;
@@ -195,12 +195,12 @@ exports.generation = async function func(grade,department,day,change = true) {
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                 })
                 .setDescription(`${dateText}の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
                 .addFields(field)
                 .setTimestamp()
-                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                .setFooter({ text: 'Developed by NITKC-DEV' });
         }
     }
     else{
@@ -252,7 +252,7 @@ exports.setNewTimetableData = async function func(interaction) {
         .setAuthor({
             name: "木更津高専統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC22s/bot-main'
+            url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
         })
         .setDescription(`教科を選択してください。\n\n入力が終わったら、登録ボタンを押してください`)
         .addFields({
@@ -260,7 +260,7 @@ exports.setNewTimetableData = async function func(interaction) {
             value:`\`\`\`${subjects}\`\`\``
         })
         .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+        .setFooter({ text: 'Developed by NITKC-DEV' });
 
     const channel = client.channels.cache.get(interaction.message.channelId);
     channel.messages.fetch(interaction.message.id)
