@@ -58,8 +58,8 @@ module.exports =
                 )
                 .addIntegerOption(option =>
                     option
-                        .setName('四半期')
-                        .setDescription('何番目のテストか入力(1~4)')
+                        .setName('テスト回')
+                        .setDescription('何回後のテストか入力(1~4)')
                         .setRequired(true)
                 ),
 

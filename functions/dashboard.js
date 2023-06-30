@@ -74,43 +74,47 @@ exports.generation = async function func(guild) {
                 }
                 else{
                     test = `${data[1].year}年${data[1].month1}月${data[1].day1}日〜${data[1].month2}月${data[1].day2}日`
-                    let day = diffInMonthsAndDays(now, UNIXtest)
+                    UNIXtest = Date.UTC(data[1].year, data[1].month1 - 1, data[1].day1, 8, 50, 0);
+                    const day = diffInMonthsAndDays(now, UNIXtest)
                     test += `(${day[0]}ヶ月と${day[1]}日後)`
                 }
-                for (let i = 0; i < 3; i++) {
+
+                if(data[0].year !== "0"){
+                    for (let i = 0; i < 3; i++) {
+                        await db.update(
+                            "main", "nextTest", {label: String(i + 1)},
+                            {
+                                $set: {
+                                    year: String(data[i + 1].year),
+                                    month1: String(data[i + 1].month1),
+                                    day1: String(data[i + 1].day1),
+                                    month2: String(data[i + 1].month2),
+                                    day2: String(data[i + 1].day2)
+                                },
+                            }
+                        )
+                    }
                     await db.update(
-                        "main", "nextTest", {label: String(i + 1)},
+                        "main", "nextTest", {label: "4"},
                         {
                             $set: {
-                                year: String(data[i + 1].year),
-                                month1: String(data[i + 1].month1),
-                                day1: String(data[i + 1].day1),
-                                month2: String(data[i + 1].month2),
-                                day2: String(data[i + 1].day2)
+                                year: "0",
+                                month1: "0",
+                                day1: "0",
+                                month2: "0",
+                                day2: "0"
                             },
                         }
                     )
                 }
-                await db.update(
-                    "main", "nextTest", {label: "4"},
-                    {
-                        $set: {
-                            year: "0",
-                            month1: "0",
-                            day1: "0",
-                            month2: "0",
-                            day2: "0"
-                        },
-                    }
-                )
+
+            }
+            else if (now > testEnd - 86400000) { /*最終日なら*/
+                test = '本日はテスト期間最終日です'
             }
             else {
-                if (now > testEnd - 86400000) { /*最終日なら*/
-                    test = '本日はテスト期間最終日です'
-                } else {
-                    test = `現在テスト期間です(〜${data[0].month2}月${data[0].day2}日)`
+                test = `現在テスト期間です(〜${data[0].month2}月${data[0].day2}日)`
 
-                }
             }
         } else {
             test = `${data[0].year}年${data[0].month1}月${data[0].day1}日〜${data[0].month2}月${data[0].day2}日`
@@ -153,8 +157,8 @@ exports.generation = async function func(guild) {
         if (weatherData.forecasts[0].date === weatherCache[0].day) {
             todayMax = weatherCache[0].max;
             todayMin = weatherCache[0].min;
-        } else {
-
+        }
+        else {
             if (weatherData.forecasts[0].date === weatherCache[1].day) {
                 todayMax = weatherCache[1].max;
                 todayMin = weatherCache[1].min;
