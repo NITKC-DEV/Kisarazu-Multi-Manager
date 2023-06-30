@@ -1,7 +1,6 @@
-
 const fs = require("fs");
-const {configPath} = require("../environmentConfig");
-const system = require("./logsystem");
+const {configPath} = require("../environmentConfig.js");
+const system = require("./logsystem.js");
 const statusAndMode = require("./statusAndMode.js");
 
 const statusName = ['online','idle','dnd','invisible'];
