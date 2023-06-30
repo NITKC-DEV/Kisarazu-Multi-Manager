@@ -261,27 +261,22 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('birthday')
-                .setDescription('あなたの誕生日を登録/削除します。登録するとその日に祝ってくれます。')
-                .addBooleanOption(option =>
-                    option
-                        .setName('誕生日通知設定')
-                        .setDescription('データを追加/更新する場合はTrue、削除する場合はFalse')
-                        .setRequired(true)
-                ).addIntegerOption(option =>
+                .setDescription('あなたの誕生日を登録します。登録するとその日に祝ってくれます。')
+                .addIntegerOption(option =>
                     option
                         .setName('年')
                         .setDescription('生まれた年をいれます')
-                        .setRequired(false)
+                        .setRequired(true)
                 ).addIntegerOption(option =>
                     option
                         .setName('月')
                         .setDescription('生まれた月をいれます')
-                        .setRequired(false)
+                        .setRequired(true)
                 ).addIntegerOption(option =>
                     option
                         .setName('日')
                         .setDescription('生まれた日をいれます')
-                        .setRequired(false)
+                        .setRequired(true)
                 ),
 
             async execute (interaction) {
@@ -293,53 +288,66 @@ module.exports =
                     user: interaction.user.id,
                     guild: interaction.guildId
                 });
-                if(interaction.options.getBoolean('誕生日通知設定') === true){
-                    if(interaction.options.getInteger('月') > 0 && interaction.options.getInteger('月') < 13 && interaction.options.getInteger('日') > 0 && interaction.options.getInteger('日') < 32 && interaction.options.getInteger('年') ** 2 >= 0){
-                        if(data.length > 0){
-                            await db.update("main", "birthday", {
-                                user: interaction.user.id,
-                                guild: interaction.guildId
-                            },{$set:{
-                                    "user": String(interaction.user.id),
-                                    "guild": String(interaction.guildId),
-                                    "year": String(interaction.options.getInteger('年')),
-                                    "month": String(interaction.options.getInteger('月')),
-                                    "day": String(interaction.options.getInteger('日')),
-                                }});
-                        }
-                        else{
-                            await db.insert("main", "birthday", {
+                if(interaction.options.getInteger('月') > 0 && interaction.options.getInteger('月') < 13 && interaction.options.getInteger('日') > 0 && interaction.options.getInteger('日') < 32 && interaction.options.getInteger('年') ** 2 >= 0){
+                    if(data.length > 0){
+                        await db.update("main", "birthday", {
+                            user: interaction.user.id,
+                            guild: interaction.guildId
+                        },{$set:{
                                 "user": String(interaction.user.id),
                                 "guild": String(interaction.guildId),
                                 "year": String(interaction.options.getInteger('年')),
                                 "month": String(interaction.options.getInteger('月')),
                                 "day": String(interaction.options.getInteger('日')),
-                            });
-                        }
-                        await interaction.reply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`, ephemeral: true });
+                            }});
                     }
                     else{
-                        await interaction.reply({ content: "誕生日を正しい数字で設定してください。", ephemeral: true });
+                        await db.insert("main", "birthday", {
+                            "user": String(interaction.user.id),
+                            "guild": String(interaction.guildId),
+                            "year": String(interaction.options.getInteger('年')),
+                            "month": String(interaction.options.getInteger('月')),
+                            "day": String(interaction.options.getInteger('日')),
+                        });
                     }
+                    await interaction.reply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`, ephemeral: true });
                 }
                 else{
-                    if(data.length > 0){
-                        await db.delete("main", "birthday", {
-                            user: interaction.user.id,
-                            guild: interaction.guildId
-                        });
-                        await interaction.reply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。", ephemeral: true });
-                    }
-                    else{
-                        await interaction.reply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。", ephemeral: true });
-                    }
+                    await interaction.reply({ content: "誕生日を正しい数字で設定してください", ephemeral: true });
+                }
+            }
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('del-birthday')
+                .setDescription('あなたの誕生日を削除します'),
+
+            async execute (interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
+                const data = await db.find("main", "birthday", {
+                    user: interaction.user.id,
+                    guild: interaction.guildId
+                });
+
+                if(data.length > 0){
+                    await db.delete("main", "birthday", {
+                        user: interaction.user.id,
+                        guild: interaction.guildId
+                    });
+                    await interaction.reply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。", ephemeral: true });
+                }
+                else{
+                    await interaction.reply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。", ephemeral: true });
                 }
             }
         },
         {
             data: new SlashCommandBuilder()
                 .setName('weather')
-                .setDescription('その日の天気を取得します。')
+                .setDescription('その日の天気を取得します')
                 .addIntegerOption(option =>
                     option
                         .setName('日にち')
