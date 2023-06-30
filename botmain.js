@@ -36,8 +36,8 @@ const weather = require('./functions/weather.js');
 const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
-const mode = require("./functions/status&mode.js");
-const statusAndMode = require("./functions/status&mode.js");
+const mode = require("./functions/statusAndMode.js");
+const statusAndMode = require("./functions/statusAndMode.js");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');

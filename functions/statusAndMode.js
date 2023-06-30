@@ -2,7 +2,7 @@
 const fs = require("fs");
 const {configPath} = require("../environmentConfig");
 const system = require("./logsystem");
-const statusAndMode = require("./status&mode.js");
+const statusAndMode = require("./statusAndMode.js");
 
 const statusName = ['online','idle','dnd','invisible'];
 
