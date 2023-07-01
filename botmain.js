@@ -38,6 +38,7 @@ const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
 const mode = require("./functions/statusAndMode.js");
 const statusAndMode = require("./functions/statusAndMode.js");
+const help = require("./functions/help.js");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
@@ -130,6 +131,9 @@ client.on(Events.InteractionCreate, async interaction => {
         //timetable用 customIDに引数を埋め込むため、一致で検索
         else if((interaction.customId.match(/changeTimetableSelectMenu/) ?? {index:false}).index > 0){
             await timetable.setNewTimetableData(interaction);
+        }
+        else if (interaction.customId === "adminHelp"){
+            help.adminHelpDisplay(interaction);
         }
     }
 });
