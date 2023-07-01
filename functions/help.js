@@ -58,7 +58,7 @@ exports.adminHelpDisplay = async function func(interaction) {
     let page = parseFloat(interaction.values[0]);
     let newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
-        .setTitle('管理者向けヘルプ')
+        .setTitle(`管理者向けヘルプ - ${helpText.admin[page].value.title}`)
         .setAuthor({
             name: "木更津高専統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
@@ -104,7 +104,7 @@ exports.helpDisplay = async function func(interaction) {
     let page = parseFloat(interaction.values[0]);
     let newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
-        .setTitle('ヘルプ')
+        .setTitle(`ヘルプ - ${helpText.help[page].value.title}`)
         .setAuthor({
             name: "木更津高専統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
