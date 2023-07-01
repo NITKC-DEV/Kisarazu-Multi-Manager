@@ -133,7 +133,10 @@ client.on(Events.InteractionCreate, async interaction => {
             await timetable.setNewTimetableData(interaction);
         }
         else if (interaction.customId === "adminHelp"){
-            help.adminHelpDisplay(interaction);
+            await help.adminHelpDisplay(interaction);
+        }
+        else if (interaction.customId === "help"){
+            await help.helpDisplay(interaction);
         }
     }
 });
