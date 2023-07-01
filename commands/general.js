@@ -19,24 +19,7 @@ module.exports =
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
             async execute(interaction) {
-
-                const commands = require('../botmain')
-
-                const embed = new EmbedBuilder()
-                    .setColor(0x00A0EA)
-                    .setTitle('ヘルプ')
-                    .setAuthor({
-                        name: "木更津高専統合管理BOT",
-                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
-                    })
-                    .setDescription('現在実装されているコマンド一覧です')
-                    .addFields(
-                        commands.map(e => ({ name: '/' + e.data.name, value: e.data.description }))
-                    )
-                    .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC-DEV' });
-                await interaction.reply({ embeds: [embed] });
+                await help.helpSend(interaction);
             },
         },
         {
