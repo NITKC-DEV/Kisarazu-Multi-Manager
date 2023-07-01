@@ -9,6 +9,7 @@ const db = require('../functions/db.js');
 const fs = require("fs");
 const {configPath} = require("../environmentConfig.js");
 const mode = require("../functions/statusAndMode.js");
+const help = require("../functions/help.js");
 
 
 module.exports =
@@ -36,6 +37,16 @@ module.exports =
                     .setTimestamp()
                     .setFooter({ text: 'Developed by NITKC-DEV' });
                 await interaction.reply({ embeds: [embed] });
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('admin-help')
+                .setDescription('管理者向けメニューをDMで表示します。')
+                .setDefaultMemberPermissions(1<<3),
+            async execute(interaction) {
+                await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
+                await help.adminHelpSend(interaction.user);
             },
         },
         {
