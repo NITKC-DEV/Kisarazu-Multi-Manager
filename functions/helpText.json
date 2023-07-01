@@ -1,20 +1,23 @@
 {
     "help": [
         {
-            "shortDescription": "管理者向けコマンドの一覧です。",
+            "shortDescription": "時間割機能の説明です。",
             "value": {
-                "title": "管理者向けコマンド",
-                "description":"管理者向けコマンドの一覧です。管理者のみが実行可能となっていて、管理者権限を持っていないユーザーは一覧にも表示されません。\n",
+                "title": "時間割機能",
+                "description":"時間割機能のヘルプです。\n",
                 "field":[
                     {
-                        "name":"/adminhelp",
-                        "value":"管理者向けヘルプをDMで表示します。\n"
+                        "name":"/timetable",
+                        "value":"時間割を表示します。\nなお、授業変更を反映させたくない場合はそれ用のオプションがあるので指定してください。\n"
                     }, {
-                        "name":"/addchan",
-                        "value":"VCを自習室に登録します。これを実行したVCは自習室となり、参加時間が記録されるようになります。\n"
+                        "name":"/comment-timetable",
+                        "value":"時間割にコメントを追加できます。\n直近1週間に対応していて、各授業のほかその日全体にコメントを追加することもできます。\n"
                     }, {
-                        "name":"/delchan",
-                        "value":"VCを自習室から削除します。これを実行したVCでは、参加時間が記録されません。\n"
+                        "name":"授業変更・定期テスト機能",
+                        "value":"サーバーの管理者は、授業変更を登録することができます。また、定期テストの時間割を設定することもできます。\n登録は各サーバーの管理者に依頼してください。\n"
+                    }, {
+                        "name":"学科・学年自動識別機能",
+                        "value":"ロールに応じて/timetableコマンド実行時に学科と学年を自動で認識してくれる機能です。\n利用できない場合、各サーバーの管理者に問い合わせてください。\n"
                     }
                 ]
             }
@@ -31,11 +34,40 @@
                         "name":"/adminhelp",
                         "value":"管理者向けヘルプをDMで表示します。\n"
                     }, {
-                        "name":"/addchan",
-                        "value":"VCを自習室に登録します。これを実行したVCは自習室となり、参加時間が記録されるようになります。\n"
+                        "name":"/guilddata",
+                        "value":"guildDataSystemにサーバー情報を登録します。詳しくは[こちらのwiki](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/wiki/GuildDataSystem)をご覧ください。\n"
                     }, {
-                        "name":"/delchan",
-                        "value":"VCを自習室から削除します。これを実行したVCでは、参加時間が記録されません。\n"
+                        "name":"/config",
+                        "value":"現在のGuildDataSystemに登録されているデータをすべて見ることができます。\n"
+                    },{
+                        "name":"/config-reset",
+                        "value":"/guilddateコマンドで設定できるすべての項目を初期値の空データに戻します。\n"
+                    }, {
+                        "name":"/next-test",
+                        "value":"ダッシュボードに表示される、今後1年分の定期テストを登録するコマンドです(全サーバー共通)\n"
+                    }, {
+                        "name":"/weather-switcher",
+                        "value":"天気を毎日20時に送信する機能を停止するかどうか選択できます。\n"
+                    },
+                    {
+                        "name":"/weather-switcher",
+                        "value":"天気を毎日20時に送信する機能を停止するかどうか選択できます。\n"
+                    }, {
+                        "name":"/tt-switcher",
+                        "value":"各学科の時間割を対応する学科チャンネルに毎日20時に送信する機能を停止するかどうか選択できます。\n"
+                    }, {
+                        "name":"/add-category",
+                        "value":"チャンネル作成機能によってチャンネルの作成ができるカテゴリにこのカテゴリを追加します\n"
+                    }, {
+                        "name":"/remove-category",
+                        "value":"/add-categoryによって登録されたカテゴリの登録を解除します\n"
+                    },
+                    {
+                        "name":"/add-exception",
+                        "value":"授業変更、及び定期テスト等を時間割に登録します\n"
+                    }, {
+                        "name":"/delete-exception",
+                        "value":"授業変更やテストのデータを時間割から削除します\n"
                     }
                 ]
             }
@@ -48,13 +80,16 @@
                 "field":[
                     {
                         "name":"ソースコード",
-                        "value":"管理者向けヘルプをDMで表示します。\n"
+                        "value":"このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
+                    },{
+                        "name":"ホストサーバーについて",
+                        "value":"このBOTは、高専生向けコミュニティを運営する[Kloudさん](https://kloud.community/)から提供していただいたサーバーにて動いています。\n"
+                    },{
+                        "name":"サポート",
+                        "value":"不明点等ありましたら、DiscordでID:kokastarまでDMを送っていただければ、対応します。\n"
                     }, {
-                        "name":"あー",
-                        "value":"ほげあー\n"
-                    }, {
-                        "name":"いー",
-                        "value":"ほげいー\n"
+                        "name":"バグの報告先",
+                        "value":"[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に書いてもらうか、サポートへ連絡をお願いします。\n"
                     }
                 ]
             }
