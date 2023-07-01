@@ -17,8 +17,8 @@ exports.status = async function func(status,presence="") {
             name: presence
         }],
     });
-    if(status === 0){
-        let statusData = status;
+    let statusData = status;
+    if(statusData === 0){
         const date = new Date();
         if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)statusData=1;
     }
