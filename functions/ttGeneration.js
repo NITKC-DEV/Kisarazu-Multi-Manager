@@ -300,6 +300,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const input = new TextInputBuilder()
         .setCustomId(`${date}commentInputNewTimetable${grade}${department}5`)
         .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
+        .setRequired(false)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
@@ -346,7 +347,7 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .then((message) => {
                     message.delete();
                 })
-                .catch(error => {});
+                .catch(() => {});
         })
 }
 
