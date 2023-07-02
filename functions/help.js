@@ -1,28 +1,26 @@
-const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder,EmbedBuilder, ActionRowBuilder} = require("discord.js");
+const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} = require("discord.js");
 const system = require('./logsystem.js');
 
 
 //helpTextの生成
 const helpText = require("./helpText.json");
-let adminTable = [],i=0;
-for(let value in helpText.admin){
+const adminTable = [];
+for(let i=0;i < helpText.admin.length;i++){
     adminTable.push(
         new StringSelectMenuOptionBuilder()
         .setLabel(helpText.admin[i].value.title)
         .setDescription(helpText.admin[i].shortDescription)
         .setValue(String(i))
     )
-    i++;
 }
-let helpTable = [];i=0;
-for(let value in helpText.help){
+const helpTable = [];
+for(let i=0;i < helpText.help.length;i++){
     helpTable.push(
         new StringSelectMenuOptionBuilder()
             .setLabel(helpText.help[i].value.title)
             .setDescription(helpText.help[i].shortDescription)
             .setValue(String(i))
     )
-    i++;
 }
 
 
@@ -35,7 +33,7 @@ exports.adminHelpSend = async function func(user) {
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
             url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
         })
-        .setDescription("木更津高専統合管理BOTをご利用いただきありがとうございます。\n管理者向けのヘルプでは、主に以下に記載した管理者向けのBOTの情報や機能についての説明があります。\n\n下のセレクトメニューから内容を選ぶことで、ヘルプが読めます。\n")
+        .setDescription("木更津高専統合管理BOTをご利用いただきありがとうございます。\n管理者向けのヘルプでは、主に以下に記載した管理者向けのBOTの情報や機能についての説明があります。\n\n下のセレクトメニューから内容を選ぶことで、ヘルプを読めます。\n")
         .setTimestamp()
         .setFooter({ text: 'Developed by NITKC-DEV' });
 
@@ -55,8 +53,8 @@ exports.adminHelpSend = async function func(user) {
 }
 
 exports.adminHelpDisplay = async function func(interaction) {
-    let page = parseFloat(interaction.values[0]);
-    let newEmbed = new EmbedBuilder()
+    const page = parseFloat(interaction.values[0]);
+    const newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`管理者向けヘルプ - ${helpText.admin[page].value.title}`)
         .setAuthor({
@@ -74,7 +72,6 @@ exports.adminHelpDisplay = async function func(interaction) {
     catch (error){
         await system.error("DMを編集できませんでした。ブロックされている等ユーザー側が原因の場合もあります。",error,"DirectMessageエラー")
     }
-
 }
 
 exports.helpSend = async function func(interaction) {
@@ -86,7 +83,7 @@ exports.helpSend = async function func(interaction) {
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
             url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
         })
-        .setDescription("木更津高専統合管理BOTをご利用いただきありがとうございます。\nヘルプでは、このBOTの機能の使い方等を確認できます。\n\n下のセレクトメニューから内容を選ぶことで、ヘルプが読めます。\n")
+        .setDescription("木更津高専統合管理BOTをご利用いただきありがとうございます。\nヘルプでは、このBOTの機能の使い方等を確認できます。\n\n下のセレクトメニューから内容を選ぶことで、ヘルプを読めます。\n")
         .setTimestamp()
         .setFooter({ text: 'Developed by NITKC-DEV' });
 
@@ -101,8 +98,8 @@ exports.helpSend = async function func(interaction) {
 }
 
 exports.helpDisplay = async function func(interaction) {
-    let page = parseFloat(interaction.values[0]);
-    let newEmbed = new EmbedBuilder()
+    const page = parseFloat(interaction.values[0]);
+    const newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`ヘルプ - ${helpText.help[page].value.title}`)
         .setAuthor({
@@ -115,5 +112,4 @@ exports.helpDisplay = async function func(interaction) {
         .setTimestamp()
         .setFooter({ text: 'Developed by NITKC-DEV' });
     await interaction.update({embeds: [newEmbed]});
-
 }
