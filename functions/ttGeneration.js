@@ -225,7 +225,7 @@ exports.setNewTimetableData = async function func(interaction) {
     const period = interaction.customId.slice(-1);
     const date = interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index) + '00';
 
-    let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
+    let data = await db.find("main","timetableData",{grade,department,day: date});
     if(data.length === 0){
         data = await db.find("main","timetableData",{grade,department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
         if(data.length === 0){
@@ -268,7 +268,7 @@ exports.setNewTimetableData = async function func(interaction) {
         .catch(() => {
 
         });
-    await db.updateOrInsert("main","timetableData",{day:date},data[0]);
+    await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
 }
 
 /***
@@ -323,8 +323,8 @@ exports.showNewTimetableModal = async function func(interaction) {
             data[0].day = date;
             data[0].test = mode === '0';
             delete data[0]._id;
-            await db.updateOrInsert("main","timetableData",{day:date},data[0]);
-            await db.delete("main","timetableData",{day:date + '00'});
+            await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
+            await db.delete("main","timetableData",{grade,department,day:date + '00'});
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
                 .then((message) => {
