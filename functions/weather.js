@@ -52,19 +52,12 @@ exports.generationDay = async function func(day){
             value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
-    else if(day === 1){
-        annotation = "概況は今日から明日にかけての天気になります。";
-        filed ={
-            name: '概況',
-            value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
-        }
-    }
     else{
         filed ={
             name: '概況',
             value: `\`\`\`---\`\`\``,
         }
-        annotation = "概況は明後日の天気に言及されないため表示していません。"
+        annotation = "本日の天気ではないため、概況は表示していません。"
     }
     return new EmbedBuilder()
         .setColor(color)
