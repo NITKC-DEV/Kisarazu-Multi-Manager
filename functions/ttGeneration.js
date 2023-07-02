@@ -43,7 +43,7 @@ exports.generation = async function func(grade,department,day,change = true) {
         if(0 > nextDay){nextDay += 7}
 
         date.setDate(date.getDate() + nextDay);//対象の日を取得
-        data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(date.getMonth()+1)+ String(date.getDate())});
+        data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String((date.getMonth()+1)*100+date.getDate())});
         if(data.length === 0){
             data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
             dateText = `${dayName[parseFloat(day)-1]}曜日`
