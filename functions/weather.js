@@ -23,7 +23,7 @@ exports.generationDay = async function func(day){
     const data = await getWeather();
     const weather = data.forecasts[day];
     const weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}});
-    let fields,date = new Date(),color;
+    let date = new Date(),color;
     date.setDate(date.getDate() + day );
     const time = date.toFormat('MM月DD日');
 
