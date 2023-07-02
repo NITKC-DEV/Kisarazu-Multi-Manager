@@ -45,19 +45,27 @@ exports.generationDay = async function func(day){
     }
 
     let annotation = "",filed
-    if(day === 0){
+
+    if(day === 0 && date.getHours()*100+date.getMinutes() > 505){
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
         filed ={
             name: '概況',
             value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
-    else{
+    else if(day === 0){
+        annotation = "発表データの関係で、気温は前日発表のデータを使用しています。\n本日の天気ではないため、概況は表示していません。";
         filed ={
             name: '概況',
             value: `\`\`\`---\`\`\``,
         }
+    }
+    else{
         annotation = "本日の天気ではないため、概況は表示していません。"
+        filed ={
+            name: '概況',
+            value: `\`\`\`---\`\`\``,
+        }
     }
     return new EmbedBuilder()
         .setColor(color)
