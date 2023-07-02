@@ -162,6 +162,7 @@ module.exports =
                 ),
 
             async execute (interaction) {
+                await interaction.deferReply({ephemeral: true});
                 let receivedMsg = interaction.options.getString ('メッセージ');
                 const attachedFile1 = interaction.options.getAttachment ('添付ファイル1');
                 const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
@@ -224,16 +225,16 @@ module.exports =
                 sendingMsg = sendingMsg.trim();
                 if(sendingMsg.length >2000)
                 {
-                    await interaction.reply({content:"2000文字を超える内容は送信できません",ephemeral:true,});
+                    await interaction.editReply({content:"2000文字を超える内容は送信できません",ephemeral:true,});
                     return;
                 }
 
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
                 for(let attachment of attachFiles)
                 {
-                    if(attachment.size>8388608)
+                    if(attachment.size > 26214400)
                     {
-                        await interaction.reply({content:"サイズが8MBを超えるファイルは添付できません。通常のメッセージであれば25MBまでなら添付することができます。",ephemeral:true});
+                        await interaction.editReply({content:"サイズが25MBを超えるファイルは添付できません。",ephemeral:true});
                         return;
                     }
                 }
@@ -243,10 +244,10 @@ module.exports =
                  * @returns {{ephemeral: boolean, content: string}} メッセージと本人にしか表示させない構成でオブジェクトを返す
                  */
                 const replyOptions=time=>{return{content: channelName + 'にメッセージを代理で送信します\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
-                await interaction.reply (replyOptions(5));
-                if (sendingMsg) system.log (sendingMsg + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
-                if (attachFiles) for (const file of attachFiles) system.log (file.url + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
-                if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
+                await interaction.editReply (replyOptions(5));
+                if (sendingMsg) await system.log (sendingMsg + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
+                if (attachFiles) for (const file of attachFiles) await system.log (file.url + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
+                if (sendingMsg||attachFiles[0]) (await (await interaction.guild.channels.cache.get (interaction.channelId)).send ({content: sendingMsg,files: attachFiles}));
 
                 //5秒カウントダウンしたのちに返信を削除
                 for(let i=5;i>0;i--)
