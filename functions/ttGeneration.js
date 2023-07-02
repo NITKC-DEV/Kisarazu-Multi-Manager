@@ -218,8 +218,6 @@ exports.generation = async function func(grade,department,day,change = true) {
  */
 exports.setNewTimetableData = async function func(interaction) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
-    await interaction.deferReply();
-
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
@@ -265,15 +263,12 @@ exports.setNewTimetableData = async function func(interaction) {
     const channel = client.channels.cache.get(interaction.message.channelId);
     channel.messages.fetch(interaction.message.id)
         .then((message) => {
-            message.edit({embeds: [embed],comments: message.comments});
+            interaction.update({embeds: [embed],comments: message.comments});
         })
-        .catch(error => {
+        .catch(() => {
 
         });
     await db.updateOrInsert("main","timetableData",{day:date},data[0]);
-    await interaction.deleteReply();
-
-
 }
 
 /***
