@@ -10,6 +10,7 @@ const fs = require("fs");
 const {configPath} = require("../environmentConfig.js");
 const mode = require("../functions/statusAndMode.js");
 const CreateChannel = require("../functions/CCFunc.js");
+const help = require("../functions/help.js");
 
 
 module.exports =
@@ -19,24 +20,17 @@ module.exports =
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
             async execute(interaction) {
-
-                const commands = require('../botmain')
-
-                const embed = new EmbedBuilder()
-                    .setColor(0x00A0EA)
-                    .setTitle('ヘルプ')
-                    .setAuthor({
-                        name: "木更津高専統合管理BOT",
-                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
-                    })
-                    .setDescription('現在実装されているコマンド一覧です')
-                    .addFields(
-                        commands.map(e => ({ name: '/' + e.data.name, value: e.data.description }))
-                    )
-                    .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC-DEV' });
-                await interaction.reply({ embeds: [embed] });
+                await help.helpSend(interaction);
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('admin-help')
+                .setDescription('管理者向けメニューをDMで表示します。')
+                .setDefaultMemberPermissions(1<<3),
+            async execute(interaction) {
+                await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
+                await help.adminHelpSend(interaction.user);
             },
         },
         {
