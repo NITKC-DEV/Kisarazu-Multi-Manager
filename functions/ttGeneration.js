@@ -43,7 +43,7 @@ exports.generation = async function func(grade,department,day,change = true) {
         if(0 > nextDay){nextDay += 7}
 
         date.setDate(date.getDate() + nextDay);//対象の日を取得
-        data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(date.getMonth()+1)+ String(date.getDate())});
+        data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String((date.getMonth()+1)*100+date.getDate())});
         if(data.length === 0){
             data = await db.find("main","timetableData",{grade:String(grade),department:String(department),day:String(day)});
             dateText = `${dayName[parseFloat(day)-1]}曜日`
@@ -218,8 +218,6 @@ exports.generation = async function func(grade,department,day,change = true) {
  */
 exports.setNewTimetableData = async function func(interaction) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
-    await interaction.deferReply();
-
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
@@ -227,7 +225,7 @@ exports.setNewTimetableData = async function func(interaction) {
     const period = interaction.customId.slice(-1);
     const date = interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index) + '00';
 
-    let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
+    let data = await db.find("main","timetableData",{grade,department,day: date});
     if(data.length === 0){
         data = await db.find("main","timetableData",{grade,department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
         if(data.length === 0){
@@ -265,15 +263,9 @@ exports.setNewTimetableData = async function func(interaction) {
     const channel = client.channels.cache.get(interaction.message.channelId);
     channel.messages.fetch(interaction.message.id)
         .then((message) => {
-            message.edit({embeds: [embed],comments: message.comments});
+            interaction.update({embeds: [embed],comments: message.comments});
         })
-        .catch(error => {
-
-        });
-    await db.updateOrInsert("main","timetableData",{day:date},data[0]);
-    await interaction.deleteReply();
-
-
+    await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
 }
 
 /***
@@ -305,6 +297,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const input = new TextInputBuilder()
         .setCustomId(`${date}commentInputNewTimetable${grade}${department}5`)
         .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
+        .setRequired(false)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
@@ -327,8 +320,8 @@ exports.showNewTimetableModal = async function func(interaction) {
             data[0].day = date;
             data[0].test = mode === '0';
             delete data[0]._id;
-            await db.updateOrInsert("main","timetableData",{day:date},data[0]);
-            await db.delete("main","timetableData",{day:date + '00'});
+            await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
+            await db.delete("main","timetableData",{grade,department,day:date + '00'});
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
                 .then((message) => {
@@ -351,7 +344,7 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .then((message) => {
                     message.delete();
                 })
-                .catch(error => {});
+                .catch(() => {});
         })
 }
 
