@@ -65,6 +65,10 @@ module.exports =
 
 
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
                     await interaction.deferReply({ephemeral: true});
                     await db.update(

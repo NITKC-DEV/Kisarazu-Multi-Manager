@@ -29,6 +29,10 @@ module.exports =
                 .setDescription('管理者向けメニューをDMで表示します。')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
                 await help.adminHelpSend(interaction.user);
             },
@@ -97,6 +101,10 @@ module.exports =
                         .setRequired(true)
                 ),
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 await interaction.deferReply()
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
