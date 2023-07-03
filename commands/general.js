@@ -9,6 +9,7 @@ const db = require('../functions/db.js');
 const fs = require("fs");
 const {configPath} = require("../environmentConfig.js");
 const mode = require("../functions/statusAndMode.js");
+const CreateChannel = require("../functions/CCFunc.js");
 
 
 module.exports =
@@ -125,6 +126,7 @@ module.exports =
                     await reply.reactions.removeAll();
                     if(flag === 1){
                         await mode.maintenance(interaction.options.getBoolean('option'));
+                        await CreateChannel.dataCheck();
                         await interaction.editReply( `メンテナンスモードを${interaction.options.getBoolean('option')}にしました` );
                     }
                     else{
