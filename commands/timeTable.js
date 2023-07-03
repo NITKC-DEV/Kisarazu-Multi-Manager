@@ -150,6 +150,10 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            if(!interaction.guild){
+                await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                return;
+            }
             await interaction.deferReply({ephemeral: true});
             await guildData.updateOrInsert(interaction.guildId,{timetable:interaction.options.data[0].value})
             await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました"});
@@ -217,6 +221,10 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            if(!interaction.guild){
+                await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                return;
+            }
             await interaction.deferReply();
             const select = [];
             let day = "1";
@@ -365,6 +373,10 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            if(!interaction.guild){
+                await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                return;
+            }
             await interaction.deferReply();
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});
