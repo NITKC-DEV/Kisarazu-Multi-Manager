@@ -98,7 +98,8 @@ module.exports =
             async execute(interaction) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.channel.type === 0) {
-                    if((await db.find(dbMain, colCat, {ID: interaction.channel.parentId ? interaction.channel.parentId : "0"})).length === 0) {
+                    const dbData = await db.find(dbMain, colCat, {ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId});
+                    if(dbData.length === 0) {
                         await db.insert(dbMain, colCat, {
                             ID: interaction.channel.parentId !== null ? interaction.channel.parentId : interaction.guildId,
                             name: interaction.channel.parent !== null ? interaction.channel.parent.name : "カテゴリなし",
@@ -106,6 +107,10 @@ module.exports =
                             guildID: interaction.guildId
                         });
                         await interaction.editReply({content: "追加しました", ephemeral: true});
+                    }
+                    else if(dbData[0].allowRole !== Boolean(interaction.options.getNumber("ロールの追加を許可"))) {
+                        await db.update(dbMain, colCat, {ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId}, {$set: {allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可"))}});
+                        await interaction.editReply({content: "登録されているカテゴリのロール作成権限を上書きしました"});
                     }
                     else {
                         await interaction.editReply({content: "このカテゴリはすでに追加されています", ephemeral: true});
