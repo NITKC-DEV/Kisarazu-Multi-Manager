@@ -96,7 +96,7 @@ module.exports =
                         .setRequired(true)
                 ),
             async execute(interaction) {
-                await interaction.deferReply()
+                await interaction.deferReply();
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
                 for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
