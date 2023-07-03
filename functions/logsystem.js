@@ -7,7 +7,7 @@ const config = require("../environmentConfig");
  * @param title ログのタイトル。省略可
  */
 exports.log = async function func(message,title) {
-    console.log(`${title ?? "システムログ"} ----\n${message.trim()}\n--------\n`);
+    console.log(`${title ?? "システムログ"} ----\n${(message.trim().split("\`\`\`").join(''))}\n--------\n`);
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(title ?? "システムログ")
@@ -33,7 +33,7 @@ exports.error = async function func(message,error= {stack:""},title="エラー")
         .setTimestamp()
         .setFooter({ text: 'Discord Log System' });
 
-    console.error(`${title} ----\n${message.trim()}\n\n${error.stack}\n\n--------\n`);
+    console.error(`${title} ----\n${(message.trim().split("\`\`\`").join(''))}\n\n${error.stack}\n\n--------\n`);
 
     const errorChannel = await client.channels.fetch(config.errorSystem);
     await errorChannel.send({embeds: [embed]});
@@ -52,7 +52,7 @@ exports.error = async function func(message,error= {stack:""},title="エラー")
  * @param title ログのタイトル。省略可
  */
 exports.warn = async function func(message,title="警告") {
-    console.warn(`${title} ----\n${message.trim()}\n--------\n`);
+    console.warn(`${title} ----\n${(message.trim().split("\`\`\`").join(''))}\n--------\n`);
     const embed = new EmbedBuilder()
         .setColor(0xEC9F38)
         .setTitle(title)

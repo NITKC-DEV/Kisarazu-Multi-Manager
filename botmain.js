@@ -86,7 +86,7 @@ client.on("interactionCreate", async(interaction) => {
         if (!command) return;
         const guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
         const channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
-        await system.log(`コマンド名:${command.data.name}\`\`\`ギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
+        await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
             await command.execute(interaction);
         }
