@@ -108,14 +108,12 @@ module.exports =
                         });
                         await interaction.editReply({content: "追加しました", ephemeral: true});
                     }
+                    else if(dbData[0].allowRole !== Boolean(interaction.options.getNumber("ロールの追加を許可"))) {
+                        await db.update(dbMain, colCat, {ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId}, {$set: {allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可"))}});
+                        await interaction.editReply({content: "登録されているカテゴリのロール作成権限を上書きしました"});
+                    }
                     else {
-                        if(dbData[0].allowRole !== Boolean(interaction.options.getNumber("ロールの追加を許可"))) {
-                            await db.update(dbMain, colCat, {ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId}, {$set: {allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可"))}});
-                            await interaction.editReply({content: "登録されているカテゴリのロール作成権限を上書きしました"});
-                        }
-                        else {
-                            await interaction.editReply({content: "このカテゴリはすでに追加されています", ephemeral: true});
-                        }
+                        await interaction.editReply({content: "このカテゴリはすでに追加されています", ephemeral: true});
                     }
                 }
                 else {
