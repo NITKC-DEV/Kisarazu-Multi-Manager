@@ -265,9 +265,7 @@ exports.setNewTimetableData = async function func(interaction) {
         .then((message) => {
             interaction.update({embeds: [embed],comments: message.comments});
         })
-        .catch(() => {
-
-        });
+        .catch(() => {});
     await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
 }
 
