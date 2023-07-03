@@ -23,9 +23,9 @@ exports.generationDay = async function func(day){
     const data = await getWeather();
     const weather = data.forecasts[day];
     const weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}});
-    let date = new Date(),color;
+    const date = new Date();
+    let color;
     date.setDate(date.getDate() + day );
-    const time = date.toFormat('MM月DD日');
 
     const telop = data.forecasts[day].telop;
     if(telop.indexOf("雪")!== -1 || telop.indexOf("みぞれ")!== -1 || telop.indexOf("ひょう")!== -1 || telop.indexOf("あられ")!== -1){
