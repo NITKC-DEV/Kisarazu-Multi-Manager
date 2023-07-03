@@ -150,8 +150,9 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            await interaction.deferReply({ephemeral: true});
             await guildData.updateOrInsert(interaction.guildId,{timetable:interaction.options.data[0].value})
-            await interaction.reply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
+            await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました"});
         },
     },
     {
@@ -216,6 +217,7 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            await interaction.deferReply();
             const select = [];
             let day = "1";
             let defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getString('ベースの曜日')}); //指定したベースデータ
@@ -317,10 +319,10 @@ module.exports = [
                 label: '登録！'
             });
             if(interaction.options.getString('モード') === '1'){
-                await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
+                await interaction.editReply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[select[3]]},{type:1,components:[button]}]});
             }
             else{
-                await interaction.reply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[button]}]});
+                await interaction.editReply({ embeds:[embed],components: [{type:1,components:[select[0]]},{type:1,components:[select[1]]},{type:1,components:[select[2]]},{type:1,components:[button]}]});
             }
         }
     },
@@ -363,10 +365,11 @@ module.exports = [
             ),
 
         async execute(interaction) {
+            await interaction.deferReply();
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});
             const replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
-            await interaction.reply(replyOptions(5));
+            await interaction.editReply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await interaction.editReply(replyOptions(i));
                 await setTimeout(1000);
