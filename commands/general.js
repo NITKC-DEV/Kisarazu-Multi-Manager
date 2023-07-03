@@ -30,7 +30,7 @@ module.exports =
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
                 if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
                     return;
                 }
                 await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
@@ -105,7 +105,7 @@ module.exports =
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
-                await interaction.deferReply()
+                await interaction.deferReply();
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
                 for(let i = 0;i < config.sugoiTsuyoiHitotachi.length;i++){
@@ -319,7 +319,7 @@ module.exports =
                     await interaction.editReply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`});
                 }
                 else{
-                    await interaction.editReply({ content: "誕生日を正しい数字で設定してください"});
+                    await interaction.editReply({ content: "誕生日を正しい数字で設定してください。"});
                 }
             }
         },
@@ -330,7 +330,7 @@ module.exports =
 
             async execute (interaction) {
                 if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
                     return;
                 }
                 await interaction.deferReply({ephemeral: true});
@@ -397,7 +397,7 @@ module.exports =
                 }
                 await interaction.deferReply({ephemeral: true});
                 await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
-                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました"});
+                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
             },
         },
     ]

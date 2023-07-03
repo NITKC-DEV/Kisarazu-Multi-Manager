@@ -156,7 +156,7 @@ module.exports = [
             }
             await interaction.deferReply({ephemeral: true});
             await guildData.updateOrInsert(interaction.guildId,{timetable:interaction.options.data[0].value})
-            await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました"});
+            await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
         },
     },
     {
