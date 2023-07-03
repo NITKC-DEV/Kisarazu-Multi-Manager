@@ -10,7 +10,7 @@ const fs = require("fs");
 const {configPath} = require("../environmentConfig.js");
 const mode = require("../functions/statusAndMode.js");
 const help = require("../functions/help.js");
-const {autoDeleteEditReply} = require("../functions/functions.js");
+const {autoDeleteEditReply} = require("../functions/common.js");
 
 
 module.exports =
