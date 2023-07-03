@@ -165,7 +165,6 @@ module.exports =
                 const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
                 const attachedFile3 = interaction.options.getAttachment ('添付ファイル3');
                 const channelName = interaction.guild.channels.cache.get (interaction.channelId).name;
-                const date = new Date();
                 let sendingMsg='';
                 
                 //ロールメンション時パーミッション確認と除外処理
