@@ -23,9 +23,9 @@ exports.generationDay = async function func(day){
     const data = await getWeather();
     const weather = data.forecasts[day];
     const weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}});
-    let fields,date = new Date(),color;
+    const date = new Date();
+    let color;
     date.setDate(date.getDate() + day );
-    const time = date.toFormat('MM月DD日');
 
     const telop = data.forecasts[day].telop;
     if(telop.indexOf("雪")!== -1 || telop.indexOf("みぞれ")!== -1 || telop.indexOf("ひょう")!== -1 || telop.indexOf("あられ")!== -1){
@@ -45,26 +45,27 @@ exports.generationDay = async function func(day){
     }
 
     let annotation = "",filed
-    if(day === 0){
+
+    if(day === 0 && date.getHours()*100+date.getMinutes() > 505){
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
         filed ={
             name: '概況',
             value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
-    else if(day === 1){
-        annotation = "概況は今日から明日にかけての天気になります。";
-        filed ={
-            name: '概況',
-            value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
-        }
-    }
-    else{
+    else if(day === 0){
+        annotation = "発表データの関係で、気温は前日発表のデータを使用しています。\n本日の天気ではないため、概況は表示していません。";
         filed ={
             name: '概況',
             value: `\`\`\`---\`\`\``,
         }
-        annotation = "概況は明後日の天気に言及されないため表示していません。"
+    }
+    else{
+        annotation = "本日の天気ではないため、概況は表示していません。"
+        filed ={
+            name: '概況',
+            value: `\`\`\`---\`\`\``,
+        }
     }
     return new EmbedBuilder()
         .setColor(color)

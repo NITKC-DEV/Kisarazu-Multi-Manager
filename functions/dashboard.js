@@ -152,27 +152,52 @@ exports.generation = async function func(guild) {
     else{
         let todayMax;
         let todayMin;
-        const weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}}); /*天気のキャッシュを取得*/
+        let weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}}); /*天気のキャッシュを取得*/
+
+        if(weatherCache[1].day !== weatherData.forecasts[1].date){
+            await db.update(
+                "main", "weatherCache", {label: "1"},
+                {
+                    $set: {
+                        day: weatherData.forecasts[1].date,
+                        max: weatherData.forecasts[1].temperature.max.celsius,
+                        min: weatherData.forecasts[1].temperature.min.celsius
+                    },
+                }
+            );
+            weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}});
+        }
 
         if (weatherData.forecasts[0].date === weatherCache[0].day) {
             todayMax = weatherCache[0].max;
             todayMin = weatherCache[0].min;
         }
-        else {
-            if (weatherData.forecasts[0].date === weatherCache[1].day) {
-                todayMax = weatherCache[1].max;
-                todayMin = weatherCache[1].min;
-            } else {
-                todayMax = `---`;
-                todayMin = `---`;
-            }
-            await db.update(  /*日付を1日動かす*/
+        else if (weatherData.forecasts[0].date === weatherCache[1].day) {
+            todayMax = weatherCache[1].max;
+            todayMin = weatherCache[1].min;
+
+            await db.update(
                 "main", "weatherCache", {label: "0"},
                 {
                     $set: {
                         day: weatherCache[1].day,
                         max: weatherCache[1].max,
                         min: weatherCache[1].min
+                    },
+                }
+            );
+        }
+        else {
+            todayMax = `---`;
+            todayMin = `---`;
+
+            await db.update(
+                "main", "weatherCache", {label: "0"},
+                {
+                    $set: {
+                        day: weatherData.forecasts[0].date,
+                        max: `---`,
+                        min: `---`
                     },
                 }
             );
@@ -222,8 +247,5 @@ exports.generation = async function func(guild) {
         .setTimestamp()
         .setFooter({text: 'Developed by NITKC-DEV'});
 
-
     return embed;
-
-
 }
