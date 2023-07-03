@@ -230,11 +230,11 @@ module.exports =
                 }
 
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
-                for(let attachment of attachFiles)
+                for(const attachment of attachFiles)
                 {
                     if(attachment.size > 26214400)
                     {
-                        await interaction.editReply({content:"サイズが25MBを超えるファイルは添付できません。",ephemeral:true});
+                        await interaction.editReply({content:"サイズが25MBを超えるファイルは添付できません",ephemeral:true});
                         return;
                     }
                 }
