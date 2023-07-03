@@ -9,6 +9,7 @@ const db = require('../functions/db.js');
 const fs = require("fs");
 const {configPath} = require("../environmentConfig.js");
 const mode = require("../functions/statusAndMode.js");
+const CreateChannel = require("../functions/CCFunc.js");
 const help = require("../functions/help.js");
 const {autoDeleteEditReply} = require("../functions/common.js");
 
@@ -120,6 +121,7 @@ module.exports =
                     await reply.reactions.removeAll();
                     if(flag === 1){
                         await mode.maintenance(interaction.options.getBoolean('option'));
+                        await CreateChannel.dataCheck();
                         await interaction.editReply( `メンテナンスモードを${interaction.options.getBoolean('option')}にしました` );
                     }
                     else{
@@ -225,11 +227,11 @@ module.exports =
                 }
 
                 const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
-                for(let attachment of attachFiles)
+                for(const attachment of attachFiles)
                 {
-                    if(attachment.size>8388608)
+                    if(attachment.size > 26214400)
                     {
-                        await interaction.editReply({content:"サイズが8MBを超えるファイルは添付できません。通常のメッセージであれば25MBまでなら添付することができます。",ephemeral:true});
+                        await interaction.editReply({content:"サイズが25MBを超えるファイルは添付できません",ephemeral:true});
                         return;
                     }
                 }
