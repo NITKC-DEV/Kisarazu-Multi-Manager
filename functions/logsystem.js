@@ -7,7 +7,8 @@ const config = require("../environmentConfig");
  * @param title ログのタイトル。省略可
  */
 exports.log = async function func(message,title) {
-    console.log(`${title ?? "システムログ"} ----\n${(message.trim().split("\`\`\`").join(''))}\n--------\n`);
+    const date = new Date().toLocaleString() // YYYY/MM/DD hh:mm:ss形式に変換
+    console.log(`${title ?? "システムログ"} ----\n${(message.trim().split("\`\`\`").join(''))}\n--------${date}\n`);
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(title ?? "システムログ")
@@ -32,8 +33,8 @@ exports.error = async function func(message,error= {stack:""},title="エラー")
         .setDescription(message)
         .setTimestamp()
         .setFooter({ text: 'Discord Log System' });
-
-    console.error(`${title} ----\n${(message.trim().split("\`\`\`").join(''))}\n\n${error.stack}\n\n--------\n`);
+    const date = new Date().toLocaleString() // YYYY/MM/DD hh:mm:ss形式に変換
+    console.error(`${title} ----\n${(message.trim().split("\`\`\`").join(''))}\n\n${error.stack}\n\n--------${date}\n`);
 
     const errorChannel = await client.channels.fetch(config.errorSystem);
     await errorChannel.send({embeds: [embed]});
@@ -52,7 +53,8 @@ exports.error = async function func(message,error= {stack:""},title="エラー")
  * @param title ログのタイトル。省略可
  */
 exports.warn = async function func(message,title="警告") {
-    console.warn(`${title} ----\n${(message.trim().split("\`\`\`").join(''))}\n--------\n`);
+    console.warn(`${title} ----\n${(message.trim().split("\`\`\`").join(''))}\n--------${date}\n`);
+    const date = new Date().toLocaleString() // YYYY/MM/DD hh:mm:ss形式に変換
     const embed = new EmbedBuilder()
         .setColor(0xEC9F38)
         .setTitle(title)
