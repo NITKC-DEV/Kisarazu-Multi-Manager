@@ -4,9 +4,12 @@ const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 const system = require('../functions/logsystem.js');
 const weather = require('../functions/weather.js');
+const guildData = require('../functions/guildDataSet.js')
 const db = require('../functions/db.js');
 const fs = require("fs");
-const {configPath} = require("../environmentConfig");
+const {configPath} = require("../environmentConfig.js");
+const mode = require("../functions/statusAndMode.js");
+const help = require("../functions/help.js");
 
 
 module.exports =
@@ -16,24 +19,17 @@ module.exports =
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
             async execute(interaction) {
-
-                const commands = require('../botmain')
-
-                const embed = new EmbedBuilder()
-                    .setColor(0x00A0EA)
-                    .setTitle('ヘルプ')
-                    .setAuthor({
-                        name: "木更津高専統合管理BOT",
-                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
-                    })
-                    .setDescription('現在実装されているコマンド一覧です')
-                    .addFields(
-                        commands.map(e => ({ name: '/' + e.data.name, value: e.data.description }))
-                    )
-                    .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
-                await interaction.reply({ embeds: [embed] });
+                await help.helpSend(interaction);
+            },
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('admin-help')
+                .setDescription('管理者向けメニューをDMで表示します。')
+                .setDefaultMemberPermissions(1<<3),
+            async execute(interaction) {
+                await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
+                await help.adminHelpSend(interaction.user);
             },
         },
         {
@@ -47,7 +43,7 @@ module.exports =
                     .setAuthor({
                         name: "木更津高専統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
+                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                     })
                     .setDescription('このbotの概要を紹介します')
                     .addFields(
@@ -66,7 +62,7 @@ module.exports =
                             },
                             {
                                 name: 'ソースコード',
-                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC22s/bot-main)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
                             },
                             {
                                 name: '実行環境',
@@ -76,7 +72,7 @@ module.exports =
                         ]
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
                 await interaction.reply({ embeds: [embed] });
             },
         },
@@ -110,20 +106,20 @@ module.exports =
                     const reply = await interaction.editReply("あなたはシステム管理者から通常の講習を受けたはずです。\nこれは通常、以下の3点に要約されます:\n    #1) 他人のプライバシーを尊重すること。\n    #2) タイプする前に考えること。\n    #3) 大いなる力には大いなる責任が伴うこと。");
                     await reply.react('⭕');
                     await reply.react('❌');
+
                     flag = 0;
+                    await setTimeout(100);
 
                     await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                        .then(collected => {
+                        .then(() => {
                             if(reply.reactions.cache.at(0).count === 2){
                                 flag = 1;
                             }
                         })
                     await reply.reactions.removeAll();
                     if(flag === 1){
-                        config.maintenanceMode = interaction.options.getBoolean('option');
-                        fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
-                        await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
-                        await interaction.editReply( `メンテナンスモードを${config.maintenanceMode}にしました。` );
+                        await mode.maintenance(interaction.options.getBoolean('option'));
+                        await interaction.editReply( `メンテナンスモードを${interaction.options.getBoolean('option')}にしました` );
                     }
                     else{
                         await interaction.editReply( `変更を取りやめました` );
@@ -260,81 +256,93 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('birthday')
-                .setDescription('あなたの誕生日を登録/削除します。登録するとその日に祝ってくれます。')
-                .addBooleanOption(option =>
-                    option
-                        .setName('誕生日通知設定')
-                        .setDescription('データを追加/更新する場合はTrue、削除する場合はFalse')
-                        .setRequired(true)
-                ).addIntegerOption(option =>
+                .setDescription('あなたの誕生日を登録します。登録するとその日に祝ってくれます。')
+                .addIntegerOption(option =>
                     option
                         .setName('年')
                         .setDescription('生まれた年をいれます')
-                        .setRequired(false)
+                        .setRequired(true)
                 ).addIntegerOption(option =>
                     option
                         .setName('月')
                         .setDescription('生まれた月をいれます')
-                        .setRequired(false)
+                        .setRequired(true)
                 ).addIntegerOption(option =>
                     option
                         .setName('日')
                         .setDescription('生まれた日をいれます')
-                        .setRequired(false)
+                        .setRequired(true)
                 ),
 
             async execute (interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
                     guild: interaction.guildId
                 });
-                if(interaction.options.getBoolean('誕生日通知設定') === true){
-                    if(interaction.options.getInteger('月') > 0 && interaction.options.getInteger('月') < 13 && interaction.options.getInteger('日') > 0 && interaction.options.getInteger('日') < 32 && interaction.options.getInteger('年') ** 2 >= 0){
-                        if(data.length > 0){
-                            await db.update("main", "birthday", {
-                                user: interaction.user.id,
-                                guild: interaction.guildId
-                            },{$set:{
-                                    "user": String(interaction.user.id),
-                                    "guild": String(interaction.guildId),
-                                    "year": String(interaction.options.getInteger('年')),
-                                    "month": String(interaction.options.getInteger('月')),
-                                    "day": String(interaction.options.getInteger('日')),
-                                }});
-                        }
-                        else{
-                            await db.insert("main", "birthday", {
+                if(interaction.options.getInteger('月') > 0 && interaction.options.getInteger('月') < 13 && interaction.options.getInteger('日') > 0 && interaction.options.getInteger('日') < 32 && interaction.options.getInteger('年') ** 2 >= 0){
+                    if(data.length > 0){
+                        await db.update("main", "birthday", {
+                            user: interaction.user.id,
+                            guild: interaction.guildId
+                        },{$set:{
                                 "user": String(interaction.user.id),
                                 "guild": String(interaction.guildId),
                                 "year": String(interaction.options.getInteger('年')),
                                 "month": String(interaction.options.getInteger('月')),
                                 "day": String(interaction.options.getInteger('日')),
-                            });
-                        }
-                        await interaction.reply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`, ephemeral: true });
+                            }});
                     }
                     else{
-                        await interaction.reply({ content: "誕生日を正しい数字で設定してください。", ephemeral: true });
+                        await db.insert("main", "birthday", {
+                            "user": String(interaction.user.id),
+                            "guild": String(interaction.guildId),
+                            "year": String(interaction.options.getInteger('年')),
+                            "month": String(interaction.options.getInteger('月')),
+                            "day": String(interaction.options.getInteger('日')),
+                        });
                     }
+                    await interaction.reply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`, ephemeral: true });
                 }
                 else{
-                    if(data.length > 0){
-                        await db.delete("main", "birthday", {
-                            user: interaction.user.id,
-                            guild: interaction.guildId
-                        });
-                        await interaction.reply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。", ephemeral: true });
-                    }
-                    else{
-                        await interaction.reply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。", ephemeral: true });
-                    }
+                    await interaction.reply({ content: "誕生日を正しい数字で設定してください", ephemeral: true });
+                }
+            }
+        },
+        {
+            data: new SlashCommandBuilder()
+                .setName('del-birthday')
+                .setDescription('あなたの誕生日を削除します'),
+
+            async execute (interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
+                const data = await db.find("main", "birthday", {
+                    user: interaction.user.id,
+                    guild: interaction.guildId
+                });
+
+                if(data.length > 0){
+                    await db.delete("main", "birthday", {
+                        user: interaction.user.id,
+                        guild: interaction.guildId
+                    });
+                    await interaction.reply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。", ephemeral: true });
+                }
+                else{
+                    await interaction.reply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。", ephemeral: true });
                 }
             }
         },
         {
             data: new SlashCommandBuilder()
                 .setName('weather')
-                .setDescription('その日の天気を取得します。')
+                .setDescription('その日の天気を取得します')
                 .addIntegerOption(option =>
                     option
                         .setName('日にち')
@@ -371,7 +379,11 @@ module.exports =
                 ),
 
             async execute(interaction) {
-                await guildDate.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
+                    return;
+                }
+                await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
                 await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
             },
         },

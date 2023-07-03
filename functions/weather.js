@@ -9,13 +9,15 @@ async function getWeather() {
     return data[0].response;
 }
 
-function hankaku2Zenkaku(str) {
-    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．]/g, function(s) {
-        if(s === '．'){return `.`;}
+function zenkaku2Hankaku(str) {
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, function(s) {
+        if(s === '．')return `.`;
+        if(s === '　')return '';
+        if(s === '海')return " 海"
+        if(s === '後')return " 後"
         else{return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);}
     });
 }
-
 
 exports.generationDay = async function func(day){
     const data = await getWeather();
@@ -47,14 +49,14 @@ exports.generationDay = async function func(day){
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
         filed ={
             name: '概況',
-            value: `\`\`\`　${data.description.text.replace("　","​")}\`\`\``,
+            value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
     else if(day === 1){
         annotation = "概況は今日から明日にかけての天気になります。";
         filed ={
             name: '概況',
-            value: `\`\`\`　${data.description.text.replace("　","​")}\`\`\``,
+            value: `\`\`\`${zenkaku2Hankaku(data.description.text.replace(/[^\S\r\n]+/g, ""))}\`\`\``,
         }
     }
     else{
@@ -70,14 +72,14 @@ exports.generationDay = async function func(day){
         .setAuthor({
             name: "木更津22s統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC22s/bot-main'
+            url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
         })
         .setDescription(`${data.location.area}エリア ${data.location.prefecture}${data.location.district}-${data.location.city}の${weather.dateLabel}の天気の情報です。`)
         .addFields([
             filed,
             {
-                name: '気温・風・波',
-                value: `\`\`\`最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃\n\n${weather.detail.wind} 波${hankaku2Zenkaku(weather.detail.wave)}\`\`\``,
+                name: '気温・風',
+                value: `\`\`\`最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃\n\n${zenkaku2Hankaku(weather.detail.wind)}\`\`\``,
             },
             {
                 name: '降水確率',
@@ -90,7 +92,7 @@ exports.generationDay = async function func(day){
             }
         ])
         .setTimestamp()
-        .setFooter({text: '気象庁 Japan Meteorological Agency  |  Developed by NITKC22s server Admin'});
+        .setFooter({text: '気象庁 Japan Meteorological Agency  |  Developed by NITKC-DEV'});
 
 }
 
@@ -110,4 +112,19 @@ exports.update = async function func() {
             }
         });
     }
+}
+
+exports.catcheUpdate = async function func() {
+    const data = await db.find("main","weatherCache",{label:"最新の天気予報"});
+
+    await db.update(  /*明日の天気のキャッシュを更新*/
+        "main", "weatherCache", {label: "1"},
+        {
+            $set: {
+                day: data[0].response.forecasts[1].date,
+                max: data[0].response.forecasts[1].temperature.max.celsius ?? `---`,
+                min: data[0].response.forecasts[1].temperature.min.celsius ?? `---`
+            },
+        }
+    );
 }

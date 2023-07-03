@@ -1,9 +1,6 @@
 const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
-const system = require('../functions/logsystem.js');
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js');
-const packageVer = require("../package.json");
-const dashboard = require("../functions/dashboard");
 const {setTimeout} = require("node:timers/promises");
 
 module.exports =
@@ -11,7 +8,7 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('guilddata')
-                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelp 参照')
+                .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelpを参照してください')
                 .setDefaultMemberPermissions(1<<3)
                 .addIntegerOption(option =>
                     option
@@ -80,8 +77,12 @@ module.exports =
                         .setRequired(false)
                 ),
             async execute(interaction) {
-                const reply = await interaction.deferReply({ephemeral: true});
-                const olddata = await db.find("main","guildData",{guild: String(interaction.guildId)});
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
+                await interaction.deferReply({ephemeral: true});
+                await db.find("main","guildData",{guild: String(interaction.guildId)});
                 const object = {
                     guild: interaction.guildId,
                     grade: interaction.options.getInteger("学年"),
@@ -100,15 +101,20 @@ module.exports =
                 }
                 await guildData.updateOrInsert(interaction.guildId, object);
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
+
+                const date = new Date();
+                let description="";
+                if(date.getFullYear()-interaction.options.getInteger("学年") < 0 || date.getFullYear()-interaction.options.getInteger("学年") > 5)description=`\n\n学年の値が少しおかしいようです。\nこのサーバーは本当に今年${date.getFullYear()-interaction.options.getInteger("学年")}年生の集まりですか?\n学年オプションには入学した年を**「西暦で」**いれてください。`
+
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('GuildData')
                     .setAuthor({
                         name: "木更津22s統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
+                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                     })
-                    .setDescription('GuildDataを更新しました。')
+                    .setDescription(`GuildDataを更新しました。${description}`)
                     .addFields(
                         {
                             name: '全般',
@@ -143,18 +149,22 @@ module.exports =
                         },
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
                 await interaction.editReply({ embeds: [embed] ,ephemeral: true});
             }
         },
         {
             data: new SlashCommandBuilder()
                 .setName('config-reset')
-                .setDescription('サーバー情報をリセットします。詳細は/adminhelp 参照')
+                .setDescription('サーバー情報をリセットします。詳細は/adminhelpを参照してください')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 await interaction.deferReply()
-                const reply = await interaction.editReply("この操作を実行すると、時間割定期通知機能・時間割定期通知機能以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
+                const reply = await interaction.editReply("この操作を実行すると、時間割/天気定期通知機能のON/OFF以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
 
                 await reply.react('⭕');
                 await reply.react('❌');
@@ -193,10 +203,15 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config')
-                .setDescription('現在設定されている内容を表示します。詳細は/adminhelp 参照'),
+                .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelpを参照してください'),
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
+                await interaction.deferReply();
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
-                let dashboard,timetable;
+                let dashboard,timetable,weather;
                 if(newData[0].board !== undefined){
                     dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
                 }
@@ -209,6 +224,12 @@ module.exports =
                 else{
                     timetable = "時間割の定期通知は停止されています。";
                 }
+                if(newData[0].weather === true){
+                    weather = "千葉の天気予報を定期的に通知します。";
+                }
+                else{
+                    weather = "天気予報の定期通知は停止されています。";
+                }
 
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
@@ -216,7 +237,7 @@ module.exports =
                     .setAuthor({
                         name: "木更津22s統合管理BOT",
                         iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC22s/bot-main'
+                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                     })
                     .setDescription('GuildDataSystemに登録されている情報一覧です。')
                     .addFields(
@@ -259,10 +280,14 @@ module.exports =
                             name: '時間割定期通知',
                             value: timetable,
                         },
+                        {
+                            name: '天気定期通知',
+                            value: weather,
+                        }
                     )
                     .setTimestamp()
-                    .setFooter({ text: 'Developed by NITKC22s server Admin' });
-                await interaction.reply({ embeds: [embed] ,ephemeral: true});
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
+                await interaction.editReply({ embeds: [embed] ,ephemeral: true});
             }
         }
     ]

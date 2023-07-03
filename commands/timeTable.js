@@ -1,7 +1,5 @@
 const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder,} = require('discord.js');
-const  timetable= require('../functions/ttGeneration.js');
-const fs = require('fs');
-const {configPath} = require("../environmentConfig");
+const timetable= require('../functions/ttGeneration.js');
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js')
 const {setTimeout} = require("node:timers/promises");
@@ -34,7 +32,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('曜日')
-                    .setDescription('曜日を指定します。指定なければ次の学校の日になります。')
+                    .setDescription('曜日を指定します。指定がなければ次の学校の日になります')
                     .setRequired(false)
                     .addChoices(
                         { name: '月曜日', value: '1' },
@@ -66,7 +64,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(false)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -79,9 +77,9 @@ module.exports = [
 
         async execute(interaction) {
             await interaction.deferReply();
-            let dt = new Date();
+            const dt = new Date();
             let dayOfWeek = dt.getDay();
-            let hours = dt.getHours();
+            const hours = dt.getHours();
             if (interaction.options.getString('曜日') === '1') {
                 dayOfWeek = 1;
             } else if (interaction.options.getString('曜日') === '2') {
@@ -102,7 +100,7 @@ module.exports = [
             }
 
             let department = interaction.options.getString('学科');
-            if(department === undefined || department === null){
+            if(department === undefined || department === null && interaction.guild !== null){
                 const guildData = await db.find("main","guildData",{guild:interaction.guildId});
                 if(interaction.member._roles.includes(guildData[0].mRole))department = '1';
                 else if(interaction.member._roles.includes(guildData[0].eRole))department = '2';
@@ -112,7 +110,7 @@ module.exports = [
             }
 
             let grade = interaction.options.getString('学年');
-            if(grade === undefined || grade === null){
+            if(grade === undefined || grade === null && interaction.guild !== null){
                 const guildData = await db.find("main","guildData",{guild:interaction.guildId});
                 grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1
             }
@@ -121,7 +119,12 @@ module.exports = [
                 await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、/guilddataで入学した年を登録してもらってください。");
             }
             else if(department === null){
-                await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えて/guilddataで学科ロールを登録してもらってください。");
+                if(interaction.guild === null){
+                    await interaction.editReply("DMでは学科オプション・学年オプションの省略はできません。");
+                }
+                else{
+                    await interaction.editReply("あなたが学科ロールを付けていないか、このサーバーに学科ロールが登録されていないため、学科オプションを省略できません。\nサーバーでロールを付与してもらうか、管理者に伝えて/guilddataで学科ロールを登録してもらってください。");
+                }
             }
             else{
                 const embed = await timetable.generation(grade,department,String(dayOfWeek),interaction.options.getBoolean('授業変更') ?? true);
@@ -154,7 +157,7 @@ module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('add-exception')
-            .setDescription('授業変更、及び定期テスト等を登録します。')
+            .setDescription('授業変更、及び定期テスト等を登録します')
             .setDefaultMemberPermissions(1<<3)
             .addStringOption(option =>
                 option
@@ -182,7 +185,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(true)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -213,7 +216,7 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            let select = [];
+            const select = [];
             let day = "1";
             let defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getString('ベースの曜日')}); //指定したベースデータ
             if(defaultData[0] === undefined){
@@ -224,7 +227,7 @@ module.exports = [
 
                     if(defaultData[0] === undefined){
                         let date = new Date();
-                        let now = parseFloat(String(date.getMonth()) + String(date.getDate()));
+                        const now = parseFloat(String(date.getMonth()) + String(date.getDate()));
                         if(now > parseFloat(interaction.options.getInteger('変更日'))){
                             date.setDate(date.getFullYear()+1); //来年なので1足す
                         }
@@ -251,7 +254,7 @@ module.exports = [
 
             const subject = await db.find("main","syllabusData",{subject_id:`${interaction.options.getString('学年')}${interaction.options.getString('学科')}`})
 
-            let options=[];
+            const options=[];
             for(let i = 0;i<subject.length;i++){
                 options.push({label: subject[i].title, value: subject[i].title});
             }
@@ -282,12 +285,12 @@ module.exports = [
             let subjects="";
             if(interaction.options.getString('モード') === '0'){
                 for(let i=0;i<3;i++){
-                    subjects += `${i+1}コマ目：` + defaultData[0].timetable[i].name + '\n';
+                    subjects += `${i+1}コマ目：${defaultData[0].timetable[i].name}\n`;
                 }
             }
             else{
                 for(let i=0;i<defaultData[0].timetable.length;i++){
-                    subjects += `${2*i+1}-${2*i+2}限：` + defaultData[0].timetable[i].name + '\n';
+                    subjects += `${2*i+1}-${2*i+2}限：${defaultData[0].timetable[i].name}\n`;
                 }
             }
 
@@ -298,7 +301,7 @@ module.exports = [
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                 })
                 .setDescription(`教科を選択してください。\n入力が終わったら、登録ボタンを押してください。`)
                 .addFields({
@@ -306,7 +309,7 @@ module.exports = [
                     value:`\`\`\`${subjects}\`\`\``
                 })
                 .setTimestamp()
-                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                .setFooter({ text: 'Developed by NITKC-DEV' });
 
             const button = new ButtonBuilder({
                 custom_id: `${interaction.options.getString('学年')}${interaction.options.getString('学科')}${interaction.options.getInteger('変更日')}changeTimetableButton${interaction.options.getString('モード')}`,
@@ -324,7 +327,7 @@ module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('delete-exception')
-            .setDescription('授業変更やテストのデータを削除します。')
+            .setDescription('授業変更やテストのデータを削除します')
             .setDefaultMemberPermissions(1<<3)
             .addStringOption(option =>
                 option
@@ -342,7 +345,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(true)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -360,9 +363,9 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日')});
-            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:interaction.options.getInteger('削除日' + '00')});
-            let replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
+            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});
+            const replyOptions=time=>{return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await interaction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await interaction.editReply(replyOptions(i));
@@ -391,7 +394,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('学年')
-                    .setDescription('学年を指定します。')
+                    .setDescription('学年を指定します')
                     .setRequired(true)
                     .addChoices(
                         { name: '1年生', value: '1' },
@@ -404,7 +407,7 @@ module.exports = [
             .addStringOption(option =>
                 option
                     .setName('変更日')
-                    .setDescription('明日~来週の今日までを曜日で指定します(それ以上は管理者限定)')
+                    .setDescription('明日から来週の今日までの変更したい日を曜日で指定します(それ以上は管理者限定)')
                     .setRequired(true)
                     .addChoices(
                         { name: '月曜日', value: '1' },
@@ -416,19 +419,22 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            let nowDate = new Date();
-            let nowDay = nowDate.getDay(); //今日
+            const nowDate = new Date();
+            const nowDay = nowDate.getDay(); //今日
             let nextDay = parseFloat(interaction.options.getString('変更日')) - nowDay; //対象の曜日は何日後?
             if(0 >= nextDay){nextDay += 7}
 
             nowDate.setDate(nowDate.getDate() + nextDay);//対象の日を取得
-            let date = (nowDate.getMonth()+1)*100 + nowDate.getDate();
+            const date = (nowDate.getMonth()+1)*100 + nowDate.getDate();
 
             const grade = interaction.options.getString('学年');
             const department = interaction.options.getString('学科');
-            let data = await db.find("main","timetableData",{grade: grade,department: department,day: String(date)});
-            const defaultData = await db.find("main","timetableData",{grade: grade,department: department,day:interaction.options.getString('変更日')});
-            if(data.length === 0){
+            let data = await db.find("main","timetableData",{grade,department,day: String(date)});
+            let defaultData = await db.find("main","timetableData",{grade,department,day:interaction.options.getString('変更日')});
+            if(data.length !== 0){
+                defaultData = data;
+            }
+            else{
                 data = defaultData;
             }
 
@@ -440,14 +446,14 @@ module.exports = [
             for(let i = 0; i < data[0].timetable.length;i++){
                 const input = new TextInputBuilder()
                     .setCustomId(`${date}addCommentTimetable${grade}${department}${i}`)
-                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録(上書きされます)`)
+                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録(既存のコメントも含みます)`)
                     .setRequired(false)
                     .setStyle(1);
                 modal.addComponents(new ActionRowBuilder().addComponents(input));
             }
             const input = new TextInputBuilder()
                 .setCustomId(`${date}addCommentTimetable${grade}${department}5`)
-                .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを登録`)
+                .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録(既存のコメントも含みます)`)
                 .setRequired(false)
                 .setStyle(1);
             modal.addComponents(new ActionRowBuilder().addComponents(input));
@@ -456,7 +462,8 @@ module.exports = [
 
             interaction.awaitModalSubmit({ filter, time: 3600000 })
                 .then(async mInteraction => {
-                    let inputTxt = [],comment;
+                    const inputTxt = [];
+                    let comment;
                     for (let i = 0; i < data[0].timetable.length; i++) {
                         inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}addCommentTimetable${grade}${department}${i}`);
                     }
@@ -464,7 +471,7 @@ module.exports = [
 
 
                     for(let i = 0; i < data[0].timetable.length;i++){
-                        if(inputTxt[i]!=="" && inputTxt[i]!==undefined){
+                        if(inputTxt[i]!=="" && inputTxt[i]!==undefined && (defaultData[0].timetable[i].comment + `${inputTxt[i]}`).length <= 100){
                             if(defaultData[0].timetable[i].comment === ""){
                                 data[0].timetable[i].comment = defaultData[0].timetable[i].comment + `${inputTxt[i]}`;
                             }
@@ -473,13 +480,13 @@ module.exports = [
                             }
                         }
                     }
-                    if(comment!=="" && comment!==undefined)data[0].comment = defaultData[0].comment + comment;
+                    if(comment!=="" && comment!==undefined && (defaultData[0].comment + comment).length <= 100)data[0].comment = defaultData[0].comment + "\n" + comment;
                     data[0].day = String(date);
                     delete data[0]._id;
 
                     await db.updateOrInsert("main","timetableData",{day:String(date)},data[0]);
 
-                    let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                    const replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
                     await mInteraction.reply(replyOptions(5));
                     for(let i=5;i>0;i--){
                         await mInteraction.editReply(replyOptions(i));
@@ -490,6 +497,4 @@ module.exports = [
                 .catch(error => {})
         }
     }
-
-
 ]

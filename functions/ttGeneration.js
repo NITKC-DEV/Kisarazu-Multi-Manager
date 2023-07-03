@@ -37,8 +37,8 @@ const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
 exports.generation = async function func(grade,department,day,change = true) {
     let data,dateText;
     if(change){
-        let date = new Date();
-        let nowDay = date.getDay(); //今日
+        const date = new Date();
+        const nowDay = date.getDay(); //今日
         let nextDay = parseFloat(day) - nowDay; //対象の曜日は何日後?
         if(0 > nextDay){nextDay += 7}
 
@@ -73,7 +73,7 @@ exports.generation = async function func(grade,department,day,change = true) {
                 data[0].comment = "本日設定された試験はありません。" + data[0].comment
             }
 
-            let field = [];
+            const field = [];
             for(let i = 0; i < data[0].timetable.length; i++){
                 let comment = "";
                 if(data[0].timetable[i].comment !== ""){
@@ -118,12 +118,12 @@ exports.generation = async function func(grade,department,day,change = true) {
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                 })
                 .setDescription(`${data[0].day/100 | 0}月${data[0].day%100}日の定期テスト時間割です。\n※教室やテスト日程に変更がある場合があります。`)
                 .addFields(field)
                 .setTimestamp()
-                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                .setFooter({ text: 'Developed by NITKC-DEV' });
         }
         else{
             const siz = data[0].timetable.length;
@@ -140,7 +140,7 @@ exports.generation = async function func(grade,department,day,change = true) {
                 data[0].comment = "本日授業はありません。" + data[0].comment
             }
 
-            let field = [];
+            const field = [];
             let dailyComment="";
             for(let i = 0; i < data[0].timetable.length; i++){
                 const subject = await db.find("main","syllabusData",{title:data[0].timetable[i].name,subject_id:`${grade}${department}`});
@@ -195,12 +195,12 @@ exports.generation = async function func(grade,department,day,change = true) {
                 .setAuthor({
                     name: "木更津高専統合管理BOT",
                     iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC22s/bot-main'
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
                 })
                 .setDescription(`${dateText}の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
                 .addFields(field)
                 .setTimestamp()
-                .setFooter({ text: 'Developed by NITKC22s server Admin' });
+                .setFooter({ text: 'Developed by NITKC-DEV' });
         }
     }
     else{
@@ -229,21 +229,21 @@ exports.setNewTimetableData = async function func(interaction) {
 
     let data = await db.find("main","timetableData",{grade:grade,department:department,day: date});
     if(data.length === 0){
-        data = await db.find("main","timetableData",{grade:grade,department:department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
+        data = await db.find("main","timetableData",{grade,department,day: interaction.customId.substring(3,interaction.customId.match(/changeTimetableSelectMenu/).index)});
         if(data.length === 0){
-            data = await db.find("main","timetableData",{grade:grade,department:department,day: day});
+            data = await db.find("main","timetableData",{grade,department,day: day});
         }
     }
     delete data[0]._id;
     data[0].day = date;
-    data[0].timetable[parseInt(period)] = {name:interaction.values[0],comment:""};
+    data[0].timetable[parseInt(period,10)] = {name:interaction.values[0],comment:""};
 
     if(mode === "0" && data[0].timetable.length === 4){
         data[0].timetable.pop()
     }
     let subjects="";
     for(let i=0;i<data[0].timetable.length;i++){
-        subjects += `${2*i+1}-${2*i+2}限：` + data[0].timetable[i].name + '\n';
+        subjects += `${2*i+1}-${2*i+2}限：${data[0].timetable[i].name}\n`;
     }
 
     const embed = new EmbedBuilder()
@@ -252,7 +252,7 @@ exports.setNewTimetableData = async function func(interaction) {
         .setAuthor({
             name: "木更津高専統合管理BOT",
             iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC22s/bot-main'
+            url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
         })
         .setDescription(`教科を選択してください。\n\n入力が終わったら、登録ボタンを押してください`)
         .addFields({
@@ -260,7 +260,7 @@ exports.setNewTimetableData = async function func(interaction) {
             value:`\`\`\`${subjects}\`\`\``
         })
         .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC22s server Admin' });
+        .setFooter({ text: 'Developed by NITKC-DEV' });
 
     const channel = client.channels.cache.get(interaction.message.channelId);
     channel.messages.fetch(interaction.message.id)
@@ -288,7 +288,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2,interaction.customId.match(/changeTimetableButton/).index);
 
-    let data = await db.find("main","timetableData",{day:date + '00'});
+    const data = await db.find("main","timetableData",{day:date + '00'});
 
     const modal = new ModalBuilder()
         .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
@@ -297,14 +297,14 @@ exports.showNewTimetableModal = async function func(interaction) {
     for(let i = 0; i < data[0].timetable.length;i++){
         const input = new TextInputBuilder()
             .setCustomId(`${date}commentInputNewTimetable${grade}${department}${i}`)
-            .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを登録`)
+            .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録`)
             .setRequired(false)
             .setStyle(1);
         modal.addComponents(new ActionRowBuilder().addComponents(input));
     }
     const input = new TextInputBuilder()
         .setCustomId(`${date}commentInputNewTimetable${grade}${department}5`)
-        .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを登録`)
+        .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
@@ -312,7 +312,8 @@ exports.showNewTimetableModal = async function func(interaction) {
 
     interaction.awaitModalSubmit({ filter, time: 3600000 })
         .then(async mInteraction => {
-            let inputTxt = [],comment;
+            const inputTxt = []
+            let comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
                 inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}${i}`);
             }
@@ -320,16 +321,11 @@ exports.showNewTimetableModal = async function func(interaction) {
 
 
             for(let i = 0; i < data[0].timetable.length;i++){
-                if(inputTxt[i]!=="" && inputTxt[i]!==undefined)data[0].timetable[i].comment = inputTxt[i];
+                if(inputTxt[i]!=="" && inputTxt[i]!==undefined && inputTxt[i].length <= 100)data[0].timetable[i].comment = inputTxt[i];
             }
-            data[0].comment = comment;
+            if(comment.length <= 100)data[0].comment = comment;
             data[0].day = date;
-            if(mode === '0'){
-                data[0].test = true;
-            }
-            else{
-                data[0].test = false;
-            }
+            data[0].test = mode === '0';
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{day:date},data[0]);
             await db.delete("main","timetableData",{day:date + '00'});
@@ -338,10 +334,8 @@ exports.showNewTimetableModal = async function func(interaction) {
                 .then((message) => {
                     message.delete();
                 })
-                .catch(error => {
-
-                });
-            let replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                .catch(() => {});
+            const replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await mInteraction.editReply(replyOptions(i));
@@ -351,7 +345,7 @@ exports.showNewTimetableModal = async function func(interaction) {
 
 
         })
-        .catch(error => {
+        .catch(() => {
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
                 .then((message) => {
@@ -359,4 +353,12 @@ exports.showNewTimetableModal = async function func(interaction) {
                 })
                 .catch(error => {});
         })
+}
+
+exports.deleteData = async function func(){
+    const date = new Date;
+    date.setDate(date.getDate()-1);
+
+    await db.delete("main","timetableData",{day:String(date.getMonth()+1) + String(date.getDate())});
+    await db.delete("main","timetableData",{day:String(String(date.getMonth()+1) + String(date.getDate()) + '00')});
 }
