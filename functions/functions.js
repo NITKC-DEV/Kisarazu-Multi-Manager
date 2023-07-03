@@ -8,11 +8,12 @@ const {setTimeout} = require ("node:timers/promises");
  * @returns {Promise<void>} void(同期処理)
  */
 exports.autoDeleteEditReply = async function(interaction,options,time) {
-    for(time; time > 0; time--) {
+    
+    for(let i=time; i > 0;i--) {
         await setTimeout(1000);
         const defaultContent = JSON.parse(JSON.stringify(options)).content;
         const sendingOptions = JSON.parse(JSON.stringify(options));
-        sendingOptions.content = defaultContent.replace(/\$time\$/g, time);
+        sendingOptions.content = defaultContent.replace(/\$time\$/g, i);
         await interaction.editReply(sendingOptions);
     }
     await interaction.deleteReply();
