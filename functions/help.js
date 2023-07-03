@@ -1,7 +1,6 @@
 const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} = require("discord.js");
 const system = require('./logsystem.js');
 
-
 //helpTextの生成
 const helpText = require("./helpText.json");
 const adminTable = [];
@@ -22,7 +21,6 @@ for(let i=0;i < helpText.help.length;i++){
             .setValue(String(i))
     )
 }
-
 
 exports.adminHelpSend = async function func(user) {
     const embed = new EmbedBuilder()
