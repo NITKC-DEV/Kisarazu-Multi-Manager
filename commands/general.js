@@ -30,6 +30,10 @@ module.exports =
                 .setDescription('管理者向けメニューをDMで表示します。')
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
+                    return;
+                }
                 await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
                 await help.adminHelpSend(interaction.user);
             },
@@ -98,6 +102,10 @@ module.exports =
                         .setRequired(true)
                 ),
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 await interaction.deferReply();
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
@@ -268,6 +276,7 @@ module.exports =
                     await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
                     return;
                 }
+                await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
                     guild: interaction.guildId
@@ -294,10 +303,10 @@ module.exports =
                             "day": String(interaction.options.getInteger('日')),
                         });
                     }
-                    await interaction.reply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`, ephemeral: true });
+                    await interaction.editReply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`});
                 }
                 else{
-                    await interaction.reply({ content: "誕生日を正しい数字で設定してください", ephemeral: true });
+                    await interaction.editReply({ content: "誕生日を正しい数字で設定してください。"});
                 }
             }
         },
@@ -308,9 +317,10 @@ module.exports =
 
             async execute (interaction) {
                 if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
                     return;
                 }
+                await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
                     guild: interaction.guildId
@@ -321,10 +331,10 @@ module.exports =
                         user: interaction.user.id,
                         guild: interaction.guildId
                     });
-                    await interaction.reply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。", ephemeral: true });
+                    await interaction.editReply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。"});
                 }
                 else{
-                    await interaction.reply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。", ephemeral: true });
+                    await interaction.editReply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。"});
                 }
             }
         },
@@ -372,8 +382,9 @@ module.exports =
                     await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
                     return;
                 }
+                await interaction.deferReply({ephemeral: true});
                 await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
-                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました", ephemeral: true });
+                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
             },
         },
     ]
