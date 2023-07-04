@@ -60,7 +60,7 @@ module.exports =
                             },
                             {
                                 name: '開発者',
-                                value: '開発は、NITKC-DEVの8人で開発しています。\nメンバーは以下のとおりです。\n・[kokastar](https://github.com/starkoka)\n・[Naotiki](https://github.com/naotiki)\n・[KouRo](https://github.com/Kou-Ro)\n・[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)\n・[doit^6p](https://github.com/c-6p)\n・[トコトコ](https://github.com/tokotoko9981)\n・[maikuradentetu](https://github.com/maikuradentetu)\n・[nairoki23](https://github.com/nairoki23)',
+                                value: 'NITKC-DEVの8人で開発しています。\nメンバーは以下のとおりです。\n・[kokastar](https://github.com/starkoka)\n・[Naotiki](https://github.com/naotiki)\n・[KouRo](https://github.com/Kou-Ro)\n・[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)\n・[doit^6p](https://github.com/c-6p)\n・[トコトコ](https://github.com/tokotoko9981)\n・[maikuradentetu](https://github.com/maikuradentetu)\n・[nairoki23](https://github.com/nairoki23)',
                             },
                             {
                                 name:"ソースコード",
@@ -72,7 +72,7 @@ module.exports =
                             },
                             {
                                 name: '実行環境',
-                                value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker V24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
+                                value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
 
                             },
                         ]
