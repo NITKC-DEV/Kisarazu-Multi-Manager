@@ -33,5 +33,9 @@
   "homepage": "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager#readme",
   "devDependencies": {
     "cross-env": "^7.0.3"
+  },
+  "volta": {
+    "node": "18.16.0",
+    "npm": "9.7.2"
   }
 }
