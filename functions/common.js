@@ -5,7 +5,6 @@ const {setTimeout} = require ("node:timers/promises");
  * @param interaction 返信するinteraction
  * @param options メッセージのオブジェクト(contentの中の$time$を現在の残り時間に置き換える)
  * @param time 返信してから削除するまでの時間
- * @returns {void} void
 */
 exports.autoDeleteEditReply = function(interaction,options,time) {
     (async()=> {
