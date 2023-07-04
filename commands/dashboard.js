@@ -65,7 +65,12 @@ module.exports =
 
 
             async execute(interaction) {
+                if(!interaction.guild){
+                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
+                    return;
+                }
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
+                    await interaction.deferReply({ephemeral: true});
                     await db.update(
                         "main", "nextTest", {label: String(interaction.options.data[5].value)},
                         {
@@ -78,13 +83,11 @@ module.exports =
                             },
                         }
                     )
-
-                    await interaction.reply({ content: `今年度${interaction.options.data[5].value}回目のテストを${interaction.options.data[0].value}年${interaction.options.data[1].value}月${interaction.options.data[2].value}日〜${interaction.options.data[3].value}月${interaction.options.data[4].value}日に設定しました`, ephemeral: true });
+                    await interaction.editReply({ content: `今年度${interaction.options.data[5].value}回目のテストを${interaction.options.data[0].value}年${interaction.options.data[1].value}月${interaction.options.data[2].value}日〜${interaction.options.data[3].value}月${interaction.options.data[4].value}日に設定しました`});
                 }
                 else{
-                    await interaction.reply({content:"どっか〜ん　するから、1~4の中で指定してくれ", ephemeral: true })
+                    await interaction.reply({content:"どっか〜んするから、1~4の中で指定してくれ",ephemeral: true})
                 }
-
             },
         },
         {

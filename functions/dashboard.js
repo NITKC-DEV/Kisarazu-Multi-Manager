@@ -152,7 +152,10 @@ exports.generation = async function func(guild) {
     else{
         let todayMax;
         let todayMin;
-        let weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}}); /*天気のキャッシュを取得*/
+
+        const weatherCache = [{},{}]; /*天気のキャッシュを取得*/
+        weatherCache[0] = (await db.find("main","weatherCache",{label: {$in:["0"]}}))[0];
+        weatherCache[1] = (await db.find("main","weatherCache",{label: {$in:["1"]}}))[0];
 
         if(weatherCache[1].day !== weatherData.forecasts[1].date){
             await db.update(
