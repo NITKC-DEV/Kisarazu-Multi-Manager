@@ -1,0 +1,16 @@
+{
+  "token": "",
+  "logSystem": "",
+  "errorSystem": "",
+  "client": "",
+  "daily": "",
+  "maintenanceMode": false,
+  "sugoiTsuyoiHitotachi": [
+    "626680496834871308",
+    "684655306764058644",
+    "963412440706596925",
+    "932520495256076378"
+  ],
+  "devServer": "1004598980291866694",
+  "db": ""
+}
