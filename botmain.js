@@ -46,6 +46,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 client.commands = new Collection();
 module.exports = client.commands;
 client.once("ready", async() => {
+    await mode.maintenance(true);
     await mode.status(2,"BOT起動処理");
     for(const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -61,6 +62,7 @@ client.once("ready", async() => {
         await statusAndMode.status(2,"BOTメンテナンス");
     }
     else{
+        await mode.maintenance(false);
         await mode.status(0,"BOT起動完了");
     }
 });
@@ -84,18 +86,20 @@ client.on("interactionCreate", async(interaction) => {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) return;
-        await system.log(command.data.name, "SlashCommand");
+        const guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
+        const channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
             await command.execute(interaction);
         }
         catch(error) {
             await system.error("スラッシュコマンド実行時エラー : " + command.data.name, error);
             try {
-                await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true});
+                await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
             }
             catch {
                 await interaction.editReply({
-                    content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。',
+                    content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
                     ephemeral: true
                 });
                 //await reply.reactions.removeAll();

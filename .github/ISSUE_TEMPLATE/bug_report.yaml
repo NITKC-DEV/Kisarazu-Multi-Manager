@@ -1,0 +1,57 @@
+name: バグ報告
+description: 発見したバグを報告する
+title: "[bug]: <題名>"
+labels: ["bug"]
+body:
+  - type: checkboxes
+    attributes:
+      label: このバグに関する既存のIssueはありますか？
+      description: 同じバグを報告しているIssueが存在するか確認してください．
+      options:
+        - label: 確認しました
+          required: true
+  - type: textarea
+    attributes:
+      label: バグについての説明
+      description: バグの内容を明確かつ簡潔に説明してください．
+      placeholder: 内容を入力してください
+      value: "世界が滅亡した"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 期待された動作
+      description: 期待していた内容を明確かつ簡潔に説明してください．
+      placeholder: 内容を入力してください
+      value: "世界が存続する"
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: バグを再現するために
+      description: バグを再現するための手順を入力してください．
+      placeholder: |
+        1. 入力欄に複数の"CON"を入れる
+        2. 実行する
+        3. 世界が滅亡する
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 環境
+      description: 木更津高専統合管理botの実行環境を入力してください．
+      placeholder: 内容を入力してください
+      value: |
+        + **OS**: Windows 11 Pro 22H2
+        + **Discord**: Stable 199933 (db1e138)
+        + **木更津高専統合管理BOT**: v5.0.0
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: 補足情報
+      description: |
+        その他，問題に関する補足があれば，記載してください．
+        （スクリーンショット等も入力できます．）
+    validations:
+      required: false
