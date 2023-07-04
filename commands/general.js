@@ -244,10 +244,10 @@ module.exports =
                     }
                 }
                 
+                autoDeleteEditReply(interaction,{content:channelName + 'にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)',ephemeral:true},5);
                 if (sendingMsg) await system.log (sendingMsg + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
                 if (attachFiles) for (const file of attachFiles) await system.log (file.url + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
                 if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
-                await autoDeleteEditReply(interaction,{content:channelName + 'にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)',ephemeral:true},5);
             },
         },
         {
