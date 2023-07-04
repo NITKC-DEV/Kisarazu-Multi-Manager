@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="start" type="NodeJSConfigurationType" folderName="Run" singleton="false" path-to-js-file="botmain.js" working-dir="$PROJECT_DIR$">
+    <envs pass-parent-envs="false">
+      <env name="NODE_ENV" value="production" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
