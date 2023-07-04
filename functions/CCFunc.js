@@ -353,7 +353,7 @@ exports.updateRoleData = async function(role) {
     const channelData = await db.find(dbMain, colChan, {roleID: role.id});
     
     if(channelData.length > 0) {
-        const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch("0");
+        const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch(role.id);
         if(channelData[0].roleName !== newRole.name) {
             await db.update(dbMain, colChan, {roleID: newRole.id}, {$set: {roleName: newRole.name}});
         }
