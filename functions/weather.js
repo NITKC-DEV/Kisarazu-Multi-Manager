@@ -67,6 +67,12 @@ exports.generationDay = async function func(day){
             value: `\`\`\`---\`\`\``,
         }
     }
+
+    let temperature=`最高気温：${weather.temperature.max.celsius}℃ | 最低気温：${weather.temperature.min.celsius}℃`;
+    if(day === 0){
+        temperature = `最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃`;
+    }
+
     return new EmbedBuilder()
         .setColor(color)
         .setTitle(`${weather.dateLabel}(${weather.date})の天気予報：${telop}`)
@@ -80,7 +86,7 @@ exports.generationDay = async function func(day){
             filed,
             {
                 name: '気温・風',
-                value: `\`\`\`最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃\n\n${zenkaku2Hankaku(weather.detail.wind)}\`\`\``,
+                value: `\`\`\`${temperature}\n\n${zenkaku2Hankaku(weather.detail.wind)}\`\`\``,
             },
             {
                 name: '降水確率',
