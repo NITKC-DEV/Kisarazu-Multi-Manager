@@ -93,11 +93,11 @@ client.on("interactionCreate", async(interaction) => {
         catch(error) {
             await system.error("スラッシュコマンド実行時エラー : " + command.data.name, error);
             try {
-                await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true});
+                await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
             }
             catch {
                 await interaction.editReply({
-                    content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。',
+                    content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
                     ephemeral: true
                 });
                 //await reply.reactions.removeAll();
