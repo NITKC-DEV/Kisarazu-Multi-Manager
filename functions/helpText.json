@@ -1,10 +1,10 @@
 {
     "help": [
         {
-            "shortDescription": "時間割機能の説明です。",
+            "shortDescription": "時間割機能の説明です",
             "value": {
                 "title": "時間割機能",
-                "description":"時間割機能についての説明です。この機能は、様々な学年・学科・曜日の時間割を見れます。。\n",
+                "description":"時間割機能についての説明です。この機能は、様々な学年・学科・曜日の時間割を見れます。\n",
                 "field":[
                     {
                         "name":"/timetable",
@@ -29,7 +29,7 @@
             }
         },
         {
-            "shortDescription": "チャンネル作成機能の説明です。",
+            "shortDescription": "チャンネル作成機能の説明です",
             "value": {
                 "title": "チャンネル作成機能",
                 "description":"チャンネル作成機能の説明です。この機能では、許可されたカテゴリ内でチャンネルの作成が誰でもできるようになります。\n",
@@ -45,7 +45,7 @@
             }
         },
         {
-            "shortDescription": "シークレットメッセージ機能の説明です。",
+            "shortDescription": "シークレットメッセージ機能の説明です",
             "value": {
                 "title": "シークレットメッセージ機能",
                 "description":"シークレットメッセージ機能の説明です。この機能では、BOTに代理で発言させることが可能です。\n",
@@ -58,7 +58,7 @@
             }
         },
         {
-            "shortDescription": "ダッシュボード機能の説明です。",
+            "shortDescription": "ダッシュボード機能の説明です",
             "value": {
                 "title": "ダッシュボード機能",
                 "description":"ダッシュボード機能の説明です。この機能では、サーバーダッシュボードを見ることができます。\n",
@@ -71,7 +71,7 @@
             }
         },
         {
-            "shortDescription": "天気機能の説明です。",
+            "shortDescription": "天気機能の説明です",
             "value": {
                 "title": "天気機能",
                 "description":"天気機能の説明です。この機能では、天気を見ることができます。\n",
@@ -88,7 +88,7 @@
             }
         },
         {
-            "shortDescription": "誕生日機能の説明です。",
+            "shortDescription": "誕生日機能の説明です",
             "value": {
                 "title": "誕生日機能機能",
                 "description":"誕生日機能の説明です。この機能では、誕生日をお祝いしてもらえます。\n",
@@ -105,7 +105,7 @@
             }
         },
         {
-            "shortDescription": "その他の機能の説明です。",
+            "shortDescription": "その他の機能の説明です",
             "value": {
                 "title": "その他機能",
                 "description":"その他の機能の紹介です。\n",
