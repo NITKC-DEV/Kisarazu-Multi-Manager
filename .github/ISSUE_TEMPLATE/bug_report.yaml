@@ -39,7 +39,7 @@ body:
   - type: textarea
     attributes:
       label: 環境
-      description: food-terrorの実行環境を入力してください．
+      description: 木更津高専統合管理botの実行環境を入力してください．
       placeholder: 内容を入力してください
       value: |
         + **OS**: Windows 11 Pro 22H2
