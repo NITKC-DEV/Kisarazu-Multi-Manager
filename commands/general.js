@@ -60,19 +60,19 @@ module.exports =
                             },
                             {
                                 name: '開発者',
-                                value: '開発は、このサーバーの管理者4人([kokastar](https://github.com/starkoka)、[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)、[naotiki](https://github.com/naotiki)、[KouRo](https://github.com/Kou-Ro))で行っています',
+                                value: '開発は、NITKC-DEVの8人で開発しています。\nメンバーは以下のとおりです。\n・[kokastar](https://github.com/starkoka)\n・[Naotiki](https://github.com/naotiki)\n・[KouRo](https://github.com/Kou-Ro)\n・[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)\n・[doit^6p](https://github.com/c-6p)\n・[トコトコ](https://github.com/tokotoko9981)\n・[maikuradentetu](https://github.com/maikuradentetu)\n・[nairoki23](https://github.com/nairoki23)',
                             },
                             {
-                                name: '搭載機能',
-                                value: '[Genshin-timer Discord BOT v2.1.1](https://github.com/starkoka/Genshin-Timer)\n時間割通知/閲覧機能\nチャンネル作成機能\nシークレットメッセージ機能\nダッシュボード機能\npingコマンド機能\n誕生日お祝い機能',
+                                name:"ソースコード",
+                                value:"このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
                             },
                             {
-                                name: 'ソースコード',
-                                value: 'このBOTはオープンソースとなっています。以下のリンクより見ることが可能です。\n・[木更津高専統合管理BOT](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)\n・[Genshin-timer](https://github.com/starkoka/Genshin-Timer)',
+                                name:"バグの報告先",
+                                value:"[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)までお願いします。\nサポート等の詳細は/helpや/admin-helpを実行してください。\n"
                             },
                             {
                                 name: '実行環境',
-                                value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n MongoDB 6.0 Powered by Google Cloud`,
+                                value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker V24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
 
                             },
                         ]
