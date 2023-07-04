@@ -46,6 +46,7 @@ const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('
 client.commands = new Collection();
 module.exports = client.commands;
 client.once("ready", async() => {
+    await mode.maintenance(true);
     await mode.status(2,"BOT起動処理");
     for(const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
@@ -61,6 +62,7 @@ client.once("ready", async() => {
         await statusAndMode.status(2,"BOTメンテナンス");
     }
     else{
+        await mode.maintenance(false);
         await mode.status(0,"BOT起動完了");
     }
 });
