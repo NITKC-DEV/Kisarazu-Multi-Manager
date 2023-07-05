@@ -2,6 +2,7 @@ const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 const db = require('../functions/db.js');
 const guildData = require('../functions/guildDataSet.js');
 const {setTimeout} = require("node:timers/promises");
+const {ID_NODATA} = require("../functions/guildDataSet");
 
 module.exports =
     [
@@ -118,34 +119,27 @@ module.exports =
                     .addFields(
                         {
                             name: '全般',
-                            value: `学年：${newData[0].grade}年入学` +
-                                `\nアナウンスチャンネル：<#${newData[0].announce}>` +
-                                `\nメインチャンネル：<#${newData[0].main}>`,
+                            value: `学年：${(newData[0].grade===ID_NODATA ? "未設定" : newData[0].grade+"年入学")}\nアナウンスチャンネル：${(newData[0].announce === ID_NODATA ? "未設定" : `<#${newData[0].announce}>`)}\nメインチャンネル：${(newData[0].main === ID_NODATA ? "未設定" : `<#${newData[0].main}>`)}`
                         },
                         {
                             name: 'M科',
-                            value: `M科チャンネル：<#${newData[0].mChannel}>` +
-                                `\nM科ロール：<@&${newData[0].mRole}>`,
+                            value: `M科チャンネル：${(newData[0].mChannel === ID_NODATA ? "未設定" : `<#${newData[0].mChannel}>`)}\nM科ロール：${(newData[0].mRole === ID_NODATA ? "未設定" : `<@&${newData[0].mRole}>`)}`
                         },
                         {
                             name: 'E科',
-                            value: `E科チャンネル：<#${newData[0].eChannel}>` +
-                                `\nE科ロール：<@&${newData[0].eRole}>`,
+                            value: `E科チャンネル：${(newData[0].eChannel === ID_NODATA ? "未設定" : `<#${newData[0].eChannel}>`)}\nE科ロール：${(newData[0].eRole === ID_NODATA ? "未設定" : `<@&${newData[0].eRole}>`)}`
                         },
                         {
                             name: 'D科',
-                            value: `D科チャンネル：<#${newData[0].dChannel}>` +
-                                `\nD科ロール：<@&${newData[0].dRole}>`,
+                            value: `D科チャンネル：${(newData[0].dChannel === ID_NODATA ? "未設定" : `<#${newData[0].dChannel}>`)}\nD科ロール：${(newData[0].dRole === ID_NODATA ? "未設定" : `<@&${newData[0].dRole}>`)}`
                         },
                         {
                             name: 'J科',
-                            value: `J科チャンネル：<#${newData[0].jChannel}>` +
-                                `\nJ科ロール：<@&${newData[0].jRole}>`,
+                            value: `J科チャンネル：${(newData[0].jChannel === ID_NODATA ? "未設定" : `<#${newData[0].jChannel}>`)}\nJ科ロール：${(newData[0].jRole === ID_NODATA ? "未設定" : `<@&${newData[0].jRole}>`)}`
                         },
                         {
                             name: 'C科',
-                            value: `C科チャンネル：<#${newData[0].cChannel}>` +
-                                `\nC科ロール：<@&${newData[0].cRole}>`,
+                            value: `C科チャンネル：${(newData[0].cChannel === ID_NODATA ? "未設定" : `<#${newData[0].cChannel}>`)}\nC科ロール：${(newData[0].cRole === ID_NODATA ? "未設定" : `<@&${newData[0].cRole}>`)}`
                         },
                     )
                     .setTimestamp()
@@ -212,7 +206,7 @@ module.exports =
                 await interaction.deferReply();
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
                 let dashboard,timetable,weather;
-                if(newData[0].board !== undefined){
+                if(newData[0].board !== ID_NODATA){
                     dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
                 }
                 else{
@@ -243,34 +237,27 @@ module.exports =
                     .addFields(
                         {
                             name: '全般',
-                            value: `学年：${newData[0].grade}年入学` +
-                                `\nアナウンスチャンネル：<#${newData[0].announce}>` +
-                                `\nメインチャンネル：<#${newData[0].main}>`,
+                            value: `学年：${(newData[0].grade===ID_NODATA ? "未設定" : newData[0].grade+"年入学")}\nアナウンスチャンネル：${(newData[0].announce === ID_NODATA ? "未設定" : `<#${newData[0].announce}>`)}\nメインチャンネル：${(newData[0].main === ID_NODATA ? "未設定" : `<#${newData[0].main}>`)}`
                         },
                         {
                             name: 'M科',
-                            value: `M科チャンネル：<#${newData[0].mChannel}>` +
-                                `\nM科ロール：<@&${newData[0].mRole}>`,
+                            value: `M科チャンネル：${(newData[0].mChannel === ID_NODATA ? "未設定" : `<#${newData[0].mChannel}>`)}\nM科ロール：${(newData[0].mRole === ID_NODATA ? "未設定" : `<@&${newData[0].mRole}>`)}`
                         },
                         {
                             name: 'E科',
-                            value: `E科チャンネル：<#${newData[0].eChannel}>` +
-                                `\nE科ロール：<@&${newData[0].eRole}>`,
+                            value: `E科チャンネル：${(newData[0].eChannel === ID_NODATA ? "未設定" : `<#${newData[0].eChannel}>`)}\nE科ロール：${(newData[0].eRole === ID_NODATA ? "未設定" : `<@&${newData[0].eRole}>`)}`
                         },
                         {
                             name: 'D科',
-                            value: `D科チャンネル：<#${newData[0].dChannel}>` +
-                                `\nD科ロール：<@&${newData[0].dRole}>`,
+                            value: `D科チャンネル：${(newData[0].dChannel === ID_NODATA ? "未設定" : `<#${newData[0].dChannel}>`)}\nD科ロール：${(newData[0].dRole === ID_NODATA ? "未設定" : `<@&${newData[0].dRole}>`)}`
                         },
                         {
                             name: 'J科',
-                            value: `J科チャンネル：<#${newData[0].jChannel}>` +
-                                `\nJ科ロール：<@&${newData[0].jRole}>`,
+                            value: `J科チャンネル：${(newData[0].jChannel === ID_NODATA ? "未設定" : `<#${newData[0].jChannel}>`)}\nJ科ロール：${(newData[0].jRole === ID_NODATA ? "未設定" : `<@&${newData[0].jRole}>`)}`
                         },
                         {
                             name: 'C科',
-                            value: `C科チャンネル：<#${newData[0].cChannel}>` +
-                                `\nC科ロール：<@&${newData[0].cRole}>`,
+                            value: `C科チャンネル：${(newData[0].cChannel === ID_NODATA ? "未設定" : `<#${newData[0].cChannel}>`)}\nC科ロール：${(newData[0].cRole === ID_NODATA ? "未設定" : `<@&${newData[0].cRole}>`)}`
                         },
                         {
                             name: 'ダッシュボード',
