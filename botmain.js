@@ -185,6 +185,10 @@ client.on(Events.GuildRoleUpdate, async role => {
     await CreateChannel.updateRoleData(role);
 });
 
+client.on(Events.GuildCreate,async guild =>{
+    await guildData.updateOrInsert(guild.id);
+});
+
 //ギルド削除(退出)検知
 client.on(Events.GuildDelete,async guild =>{
     await CreateChannel.deleteGuildData(guild);
