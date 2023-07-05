@@ -162,17 +162,36 @@ module.exports =
 
                 await reply.react('⭕');
                 await reply.react('❌');
-                let flag = -1;
 
-                await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                    .then(collected => {
-                        if(reply.reactions.cache.at(0).count === 2){
-                            flag = 0;
-                        }
-                        else if(reply.reactions.cache.at(1).count === 2){
-                            flag = 1;
-                        }
-                    })
+                let flag = -1
+                const otherReact =[0,0];
+                await setTimeout(100);
+
+                while(flag === -1){
+                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 , time: 60_000})
+                        .then(() => {
+                            if(reply.reactions.cache.at(0).count === 2 + otherReact[0]){
+                                if(reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id){
+                                    flag = 0;
+                                }
+                                else {
+                                    otherReact[0] += 1;
+                                }
+                            }
+                            else if(reply.reactions.cache.at(1).count === 2 + otherReact[1]){
+                                if(reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id){
+                                    flag = 1;
+                                }
+                                else{
+                                    otherReact[1] += 1;
+                                }
+
+                            }
+                            else{
+                                flag = 1;
+                            }
+                        })
+                }
                 await reply.reactions.removeAll();
                 let replyOptions;
                 if(flag === 0){
