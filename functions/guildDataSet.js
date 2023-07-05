@@ -37,7 +37,7 @@ exports.ID_NODATA = ID_NODATA;
  * @param object 更新データ。guildDataSet.jsにテンプレあり
  * @returns {Promise<void>}
  */
-exports.updateOrInsert = async function func(guild,object) {
+exports.updateOrInsert = async function func(guild,object={}) {
     const data = await db.find("main","guildData",{guild: String(guild)});
     if(data.length > 0) {
         await db.update("main","guildData",{guild: String(guild)},{
