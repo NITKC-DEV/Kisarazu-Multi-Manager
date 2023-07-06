@@ -86,14 +86,21 @@ client.on("interactionCreate", async(interaction) => {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) return;
-        const guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
-        const channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        let guild,channel;
+        if(!interaction.guildId) {
+            guild = {name:"ダイレクトメッセージ",id:"---"};
+            channel = {name:"---",id:"---"};
+        }
+        else{
+            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
+            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        }
         await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
-            await command.execute(interaction);
+            throw new Error("");
         }
         catch(error) {
-            await system.error("スラッシュコマンド実行時エラー : " + command.data.name, error);
+            await system.error(`スラッシュコマンド実行時エラー : ${command.data.name}\n\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, error);
             try {
                 await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
             }
