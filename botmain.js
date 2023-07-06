@@ -331,9 +331,6 @@ cron.schedule('0 20 * * *', async() => {
 cron.schedule('*/1  * * * *', async () => {
 
     const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
-    if(data.length === 0){
-        await system.warn("ダッシュボードの自動更新対象がありません。");
-    }
     for(let i = 0; i < data.length; i++) {
         let flag = 0;
         if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -345,7 +342,7 @@ cron.schedule('*/1  * * * *', async () => {
             flag = 1;
         }
         
-        if(flag === 1) {
+        if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
             const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
             const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
             const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
@@ -354,13 +351,19 @@ cron.schedule('*/1  * * * *', async () => {
                     dashboard.edit({embeds: [newEmbed]});
                 })
                 .catch(async(error) => {
-                    await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`, error);
-                    await db.update("main", "guildData", {channel: data[i].channel}, {
-                        $set: {
-                            boardChannel: "0000000000000000000",
-                            board: "0000000000000000000"
-                        }
-                    });
+                    if(error.code === 10008){
+                        await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                        await db.update("main", "guildData", {guild: data[i].guild}, {
+                            $set: {
+                                boardChannel: "0000000000000000000",
+                                board: "0000000000000000000"
+                            }
+                        });
+                    }
+                    else{
+
+                    }
+
                 });
         }
     }
