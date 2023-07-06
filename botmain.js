@@ -352,7 +352,7 @@ cron.schedule('*/1  * * * *', async () => {
                 })
                 .catch(async(error) => {
                     if(error.code === 10008){
-                        await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                        await system.error(`元メッセージ削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                         await db.update("main", "guildData", {guild: data[i].guild}, {
                             $set: {
                                 boardChannel: "0000000000000000000",
@@ -361,7 +361,7 @@ cron.schedule('*/1  * * * *', async () => {
                         });
                     }
                     else{
-
+                        await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
                     }
 
                 });
