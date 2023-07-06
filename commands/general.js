@@ -170,7 +170,7 @@ module.exports =
 
             async execute (interaction) {
                 await interaction.deferReply({ephemeral: true});
-                if(!interaction.guild) {
+                if(interaction.guild) {
                     let receivedMsg = interaction.options.getString('メッセージ');
                     const attachedFile1 = interaction.options.getAttachment('添付ファイル1');
                     const attachedFile2 = interaction.options.getAttachment('添付ファイル2');
