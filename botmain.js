@@ -243,7 +243,7 @@ cron.schedule('* * * * *', async () => {
 /*誕生日通知とGuildDataチェック、時間割変更データチェック*/
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
-
+    await weather.update();
 });
 
 /*メンテナンスモード*/
