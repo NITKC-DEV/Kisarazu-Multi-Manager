@@ -170,85 +170,84 @@ module.exports =
 
             async execute (interaction) {
                 await interaction.deferReply({ephemeral: true});
-                let receivedMsg = interaction.options.getString ('メッセージ');
-                const attachedFile1 = interaction.options.getAttachment ('添付ファイル1');
-                const attachedFile2 = interaction.options.getAttachment ('添付ファイル2');
-                const attachedFile3 = interaction.options.getAttachment ('添付ファイル3');
-                const channelName = interaction.guild.channels.cache.get (interaction.channelId).name;
-                let sendingMsg='';
-                
-                //ロールメンション時パーミッション確認と除外処理
-                if(!interaction.memberPermissions.has(1n<<17n))
-                {
-                    const roleMentions= receivedMsg.match(/(?<!\\)<@&\d+>/g);
-                    if(roleMentions)
-                    {
-                        for(const roleMention of roleMentions)
-                        {
-                            const role = interaction.guild.roles.cache.find(readRole=>readRole.id===roleMention.match(/\d+/)[0]);
-                            if(role&&!role.mentionable)
-                            {
-                                receivedMsg=receivedMsg.replace(roleMention,"@"+role.name);
+                if(interaction.guild !== null) {
+                    let receivedMsg = interaction.options.getString('メッセージ');
+                    const attachedFile1 = interaction.options.getAttachment('添付ファイル1');
+                    const attachedFile2 = interaction.options.getAttachment('添付ファイル2');
+                    const attachedFile3 = interaction.options.getAttachment('添付ファイル3');
+                    const channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
+                    let sendingMsg = '';
+                    
+                    //ロールメンション時パーミッション確認と除外処理
+                    if(!interaction.memberPermissions.has(1n << 17n)) {
+                        const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
+                        if(roleMentions) {
+                            for(const roleMention of roleMentions) {
+                                const role = interaction.guild.roles.cache.find(readRole => readRole.id === roleMention.match(/\d+/)[0]);
+                                if(role && !role.mentionable) {
+                                    receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
+                                }
+                                
                             }
-
+                        }
+                        const everyoneMention = receivedMsg.search(/@everyone/);
+                        if(everyoneMention !== -1) {
+                            const rg = new RegExp("(?<!`)@everyone(?<!`)", "g");
+                            receivedMsg = receivedMsg.replace(rg, "\`@everyone\`\0");
+                        }
+                        const hereMention = receivedMsg.search(/@here/);
+                        if(hereMention !== -1) {
+                            const rg = new RegExp("(?<!`)@here(?<!`)", "g");
+                            receivedMsg = receivedMsg.replace(rg, "\`@here\`\0");
                         }
                     }
-                    const everyoneMention=receivedMsg.search(/@everyone/);
-                    if(everyoneMention!==-1)
-                    {
-                        const rg=new RegExp("(?<!`)@everyone(?<!`)","g");
-                        receivedMsg=receivedMsg.replace(rg,"\`@everyone\`\0");
-                    }
-                    const hereMention = receivedMsg.search(/@here/);
-                    if(hereMention!==-1)
-                    {
-                        const rg=new RegExp("(?<!`)@here(?<!`)","g");
-                        receivedMsg=receivedMsg.replace(rg,"\`@here\`\0");
-                    }
-                }
-                
-                //改行とバクスラのエスケープ処理
-                if(receivedMsg)for(let i=0;i<receivedMsg.length;i++)
-                {
-                    if (receivedMsg[i] === '\\')
-                    {
-                        switch (receivedMsg[i + 1])
-                        {
-                            case '\\':
-                                sendingMsg += '\\\\';
-                                i++;
-                                break;
-                            case 'n':
-                                sendingMsg += '\n';
-                                i++;
-                                break;
+                    
+                    //改行とバクスラのエスケープ処理
+                    if(receivedMsg) for(let i = 0; i < receivedMsg.length; i++) {
+                        if(receivedMsg[i] === '\\') {
+                            switch(receivedMsg[i + 1]) {
+                                case '\\':
+                                    sendingMsg += '\\\\';
+                                    i++;
+                                    break;
+                                case 'n':
+                                    sendingMsg += '\n';
+                                    i++;
+                                    break;
+                            }
                         }
+                        else sendingMsg += receivedMsg[i];
                     }
-                    else sendingMsg += receivedMsg[i];
-                }
-                
-                sendingMsg = sendingMsg.trim();
-                if(sendingMsg.length >2000)
-                {
-                    await interaction.editReply({content:"2000文字を超える内容は送信できません",ephemeral:true,});
-                    return;
-                }
-
-                const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file=>file);
-                for(const attachment of attachFiles)
-                {
-                    if(attachment.size > 26214400)
-                    {
-                        await interaction.editReply({content:"サイズが25MBを超えるファイルは添付できません",ephemeral:true});
+                    
+                    sendingMsg = sendingMsg.trim();
+                    if(sendingMsg.length > 2000) {
+                        await interaction.editReply({content: "2000文字を超える内容は送信できません", ephemeral: true,});
                         return;
                     }
+                    
+                    const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file => file);
+                    for(const attachment of attachFiles) {
+                        if(attachment.size > 26214400) {
+                            await interaction.editReply({content: "サイズが25MBを超えるファイルは添付できません", ephemeral: true});
+                            return;
+                        }
+                    }
+                    
+                    autoDeleteEditReply(interaction, {
+                        content: channelName + 'にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)',
+                        ephemeral: true
+                    }, 5);
+                    if(sendingMsg) await system.log(sendingMsg + "\nin <#" + interaction.channelId + ">\n", interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
+                    if(attachFiles) for(const file of attachFiles) await system.log(file.url + "\nin <#" + interaction.channelId + ">\n", interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
+                    if(sendingMsg || attachFiles[0]) interaction.guild.channels.cache.get(interaction.channelId).send({
+                        content: sendingMsg,
+                        files: attachFiles
+                    });
                 }
-                
-                autoDeleteEditReply(interaction,{content:channelName + 'にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)',ephemeral:true},5);
-                if (sendingMsg) await system.log (sendingMsg + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
-                if (attachFiles) for (const file of attachFiles) await system.log (file.url + "\nin <#" + interaction.channelId + ">\n",interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
-                if (sendingMsg||attachFiles[0])interaction.guild.channels.cache.get (interaction.channelId).send ({content: sendingMsg,files: attachFiles});
-            },
+                else{
+                    await interaction.editReply({content:"このコマンドはサーバーでのみ実行できます",ephemeral:true});
+                }
+            }
         },
         {
             data: new SlashCommandBuilder()
