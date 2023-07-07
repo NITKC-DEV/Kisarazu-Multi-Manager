@@ -138,7 +138,7 @@ exports.catcheUpdate = async function func() {
     }
     else{
         await db.update(
-            "main", "weatherCache", {label: "0"},
+            "main",     "weatherCache", {label: "0"},
             {
                 $set: {
                     day: today[0].day,
@@ -148,7 +148,6 @@ exports.catcheUpdate = async function func() {
             }
         );
     }
-
 
     await db.update(  /*明日の天気のキャッシュを更新*/
         "main", "weatherCache", {label: "1"},
