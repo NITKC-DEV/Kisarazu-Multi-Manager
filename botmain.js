@@ -255,6 +255,7 @@ cron.schedule('* * * * *', async () => {
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
     await weather.update();
+    await weather.catcheUpdate();
 });
 
 /*メンテナンスモード*/
@@ -272,15 +273,9 @@ cron.schedule('0 5 * * *', async () => {
 });
 
 /*天気キャッシュ取得*/
-cron.schedule('5 5,11 * * *', async () => {
+cron.schedule('5 5,11,17 * * *', async () => {
     await weather.update();
 });
-
-cron.schedule('5 17 * * *', async () => {
-    await weather.update();
-    await weather.catcheUpdate();
-});
-
 
 /*時間割*/
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
