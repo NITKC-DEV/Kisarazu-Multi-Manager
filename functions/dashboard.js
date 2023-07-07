@@ -147,69 +147,17 @@ exports.generation = async function func(guild) {
     const weatherData = await getWeather();
     let weather;
     if (!weatherData) {
-        weather = "天気を取得できませんでした"
+        weather = "天気を取得できませんでした";
     }
     else{
-        let todayMax;
-        let todayMin;
-
         const weatherCache = [{},{}]; /*天気のキャッシュを取得*/
         weatherCache[0] = (await db.find("main","weatherCache",{label: {$in:["0"]}}))[0];
         weatherCache[1] = (await db.find("main","weatherCache",{label: {$in:["1"]}}))[0];
 
-        if(weatherCache[1].day !== weatherData.forecasts[1].date){
-            await db.update(
-                "main", "weatherCache", {label: "1"},
-                {
-                    $set: {
-                        day: weatherData.forecasts[1].date,
-                        max: weatherData.forecasts[1].temperature.max.celsius,
-                        min: weatherData.forecasts[1].temperature.min.celsius
-                    },
-                }
-            );
-            weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}});
-        }
-
-        if (weatherData.forecasts[0].date === weatherCache[0].day) {
-            todayMax = weatherCache[0].max;
-            todayMin = weatherCache[0].min;
-        }
-        else if (weatherData.forecasts[0].date === weatherCache[1].day) {
-            todayMax = weatherCache[1].max;
-            todayMin = weatherCache[1].min;
-
-            await db.update(
-                "main", "weatherCache", {label: "0"},
-                {
-                    $set: {
-                        day: weatherCache[1].day,
-                        max: weatherCache[1].max,
-                        min: weatherCache[1].min
-                    },
-                }
-            );
-        }
-        else {
-            todayMax = `---`;
-            todayMin = `---`;
-
-            await db.update(
-                "main", "weatherCache", {label: "0"},
-                {
-                    $set: {
-                        day: weatherData.forecasts[0].date,
-                        max: `---`,
-                        min: `---`
-                    },
-                }
-            );
-        }
-        const min = [weatherData.forecasts[0].temperature.min.celsius ?? todayMin, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
-        const max = [weatherData.forecasts[0].temperature.max.celsius ?? todayMax, weatherData.forecasts[1].temperature.max.celsius ?? `---`];
+        const min = [weatherData.forecasts[0].temperature.min.celsius ?? weatherCache[0].min, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+        const max = [weatherData.forecasts[0].temperature.max.celsius ?? weatherCache[0].max, weatherData.forecasts[1].temperature.max.celsius ?? `---`];
 
         weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
-
     }
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
