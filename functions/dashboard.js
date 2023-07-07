@@ -158,7 +158,6 @@ exports.generation = async function func(guild) {
         const max = [weatherData.forecasts[0].temperature.max.celsius ?? weatherCache[0].max, weatherData.forecasts[1].temperature.max.celsius ?? `---`];
 
         weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;
-
     }
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
