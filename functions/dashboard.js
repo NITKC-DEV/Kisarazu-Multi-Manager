@@ -147,7 +147,7 @@ exports.generation = async function func(guild) {
     const weatherData = await getWeather();
     let weather;
     if (!weatherData) {
-        weather = "天気を取得できませんでした"
+        weather = "天気を取得できませんでした";
     }
     else{
         const weatherCache = [{},{}]; /*天気のキャッシュを取得*/
