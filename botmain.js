@@ -105,12 +105,13 @@ client.on("interactionCreate", async(interaction) => {
                 await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
             }
             catch {
-                await interaction.editReply({
-                    content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
-                    ephemeral: true
-                });
-                //await reply.reactions.removeAll();
-                //なんかエラー吐くのでとりあえずコメントアウト
+                try{
+                    await interaction.editReply({
+                        content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
+                        ephemeral: true
+                    });
+                }
+                catch{} //edit先が消えてる可能性を考えてtryに入れる
             }
         }
     }
