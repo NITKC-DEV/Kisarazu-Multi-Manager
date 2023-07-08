@@ -12,6 +12,7 @@ const mode = require("../functions/statusAndMode.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const help = require("../functions/help.js");
 const {autoDeleteEditReply} = require("../functions/common.js");
+const {ID_NODATA} = require("../functions/guildDataSet");
 
 
 module.exports =
@@ -360,15 +361,30 @@ module.exports =
                 .setDMPermission(false)
                 .addBooleanOption(option =>
                     option
-                        .setName('options')
-                        .setDescription('定期実行の可否を指定します')
+                        .setName('定期送信')
+                        .setDescription('定期実行のオンオフを指定します')
+                        .setRequired(true)
+                )
+                .addChannelOption(option =>
+                    option
+                        .setName('送信先')
+                        .setDescription('送信先を指定します。削除時は適当なチャンネルをいれてください。')
                         .setRequired(true)
                 ),
 
             async execute(interaction) {
                 await interaction.deferReply({ephemeral: true});
-                await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
-                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
+                if(!interaction.options.getBoolean('定期送信')){
+                    await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.getBoolean('定期送信')});
+                    await interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。"});
+                }
+                else if(interaction.options.getChannel('送信先').type === 0){
+                    await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.getBoolean('定期送信'),weatherChannel:interaction.options.getChannel('送信先').id});
+                    await interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。"});
+                }
+                else{
+                    await interaction.editReply({ content: "通常のチャンネルを指定してください"});
+                }
             },
         },
     ]
