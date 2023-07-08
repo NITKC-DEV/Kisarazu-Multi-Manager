@@ -28,12 +28,9 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('admin-help')
                 .setDescription('管理者向けメニューをDMで表示します。')
-                .setDefaultMemberPermissions(1<<3),
+                .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
-                    return;
-                }
                 await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
                 await help.adminHelpSend(interaction.user);
             },
@@ -95,6 +92,7 @@ module.exports =
                 .setName('sudo-maintenancemode')
                 .setDescription('sugoi user do')
                 .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false)
                 .addBooleanOption(option =>
                     option
                         .setName('option')
@@ -102,10 +100,6 @@ module.exports =
                         .setRequired(true)
                 ),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply();
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
@@ -253,6 +247,7 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('birthday')
                 .setDescription('あなたの誕生日を登録します。登録するとその日に祝ってくれます。')
+                .setDMPermission(false)
                 .addIntegerOption(option =>
                     option
                         .setName('年')
@@ -271,10 +266,6 @@ module.exports =
                 ),
 
             async execute (interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
@@ -312,13 +303,10 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('del-birthday')
+                .setDMPermission(false)
                 .setDescription('あなたの誕生日を削除します'),
 
             async execute (interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
@@ -369,6 +357,7 @@ module.exports =
                 .setName('weather-switcher')
                 .setDescription('天気定期送信のON/OFFを切り替えます')
                 .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false)
                 .addBooleanOption(option =>
                     option
                         .setName('options')
@@ -377,10 +366,6 @@ module.exports =
                 ),
 
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
                 await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
                 await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
