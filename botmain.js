@@ -339,34 +339,39 @@ cron.schedule('*/1  * * * *', async () => {
         }
         
         if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
-            let dashboardGuild
+            let dashboardGuild;
             try{
                 dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? await client.guilds.fetch(data[i].guild)); /*ギルド情報取得*/
                 const channel = (client.channels.cache.get(data[i].boardChannel) ?? await client.channels.fetch(data[i].boardChannel)); /*チャンネル情報取得*/
                 const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-                channel.messages.fetch(data[i].board)
-                    .then((dashboard) => {
-                        dashboard.edit({embeds: [newEmbed]});
-                    })
-                    .catch(async(error) => {
-                        if(error.code === 10008){
-                            await system.error(`元メッセージ削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
-                            await db.update("main", "guildData", {guild: data[i].guild}, {
-                                $set: {
-                                    boardChannel: "0000000000000000000",
-                                    board: "0000000000000000000"
-                                }
-                            });
-                        }
-                        else{
-                            await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
-                        }
+                if(newEmbed){
+                    channel.messages.fetch(data[i].board)
+                        .then(async (dashboard) => {
+                            await dashboard.edit({embeds: [newEmbed]});
+                        })
+                        .catch(async(error) => {
+                            if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
+                                await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                                await db.update("main", "guildData", {guild: data[i].guild}, {
+                                    $set: {
+                                        boardChannel: "0000000000000000000",
+                                        board: "0000000000000000000"
+                                    }
+                                });
+                            }
+                            else{
+                                await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
+                            }
 
-                    });
+                        });
+                }
+                else{
+                    await guildData.checkGuild();
+                }
             }
             catch(error){
-                if(error.code === 10003){
-                    await system.error(`元チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
+                    await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                     await db.update("main", "guildData", {guild: data[i].guild}, {
                         $set: {
                             boardChannel: "0000000000000000000",
