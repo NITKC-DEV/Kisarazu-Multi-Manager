@@ -10,6 +10,7 @@ module.exports =
                 .setName('guilddata')
                 .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelpを参照してください')
                 .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false)
                 .addIntegerOption(option =>
                     option
                         .setName('学年')
@@ -77,10 +78,6 @@ module.exports =
                         .setRequired(false)
                 ),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
                 await db.find("main","guildData",{guild: String(interaction.guildId)});
                 const object = {
@@ -150,12 +147,9 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('config-reset')
                 .setDescription('サーバー情報をリセットします。詳細は/adminhelpを参照してください')
+                .setDMPermission(false)
                 .setDefaultMemberPermissions(1<<3),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply()
                 const reply = await interaction.editReply("この操作を実行すると、時間割/天気定期通知機能のON/OFF以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。");
 
@@ -215,12 +209,9 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('config')
+                .setDMPermission(false)
                 .setDescription('現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelpを参照してください'),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply();
                 const newData = await db.find("main","guildData",{guild: String(interaction.guildId)})
                 let dashboard,timetable,weather;
