@@ -123,6 +123,31 @@ exports.update = async function func() {
 
 exports.catcheUpdate = async function func() {
     const data = await db.find("main","weatherCache",{label:"最新の天気予報"});
+    const today = await db.find("main","weatherCache",{label:"1"});
+    if(data[0].response.forecasts[0].date !== today[0].day){
+        await db.update(
+            "main", "weatherCache", {label: "0"},
+            {
+                $set: {
+                    day: data[0].response.forecasts[0].date,
+                    max: data[0].response.forecasts[0].temperature.max.celsius ?? `---`,
+                    min: data[0].response.forecasts[0].temperature.min.celsius ?? `---`
+                },
+            }
+        );
+    }
+    else{
+        await db.update(
+            "main",     "weatherCache", {label: "0"},
+            {
+                $set: {
+                    day: today[0].day,
+                    max: today[0].max ?? `---`,
+                    min: today[0].min ?? `---`
+                },
+            }
+        );
+    }
 
     await db.update(  /*明日の天気のキャッシュを更新*/
         "main", "weatherCache", {label: "1"},

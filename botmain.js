@@ -86,14 +86,21 @@ client.on("interactionCreate", async(interaction) => {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) return;
-        const guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
-        const channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        let guild,channel;
+        if(!interaction.guildId) {
+            guild = {name:"ダイレクトメッセージ",id:"---"};
+            channel = {name:"---",id:"---"};
+        }
+        else{
+            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
+            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        }
         await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
             await command.execute(interaction);
         }
         catch(error) {
-            await system.error("スラッシュコマンド実行時エラー : " + command.data.name, error);
+            await system.error(`スラッシュコマンド実行時エラー : ${command.data.name}\n\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, error);
             try {
                 await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
             }
@@ -185,6 +192,10 @@ client.on(Events.GuildRoleUpdate, async role => {
     await CreateChannel.updateRoleData(role);
 });
 
+client.on(Events.GuildCreate,async guild =>{
+    await guildData.updateOrInsert(guild.id);
+});
+
 //ギルド削除(退出)検知
 client.on(Events.GuildDelete,async guild =>{
     await CreateChannel.deleteGuildData(guild);
@@ -243,7 +254,8 @@ cron.schedule('* * * * *', async () => {
 /*誕生日通知とGuildDataチェック、時間割変更データチェック*/
 cron.schedule('0 0 * * *', async () => {
     await birthday.func();
-
+    await weather.update();
+    await weather.catcheUpdate();
 });
 
 /*メンテナンスモード*/
@@ -261,15 +273,9 @@ cron.schedule('0 5 * * *', async () => {
 });
 
 /*天気キャッシュ取得*/
-cron.schedule('5 5,11 * * *', async () => {
+cron.schedule('5 5,11,17 * * *', async () => {
     await weather.update();
 });
-
-cron.schedule('5 17 * * *', async () => {
-    await weather.update();
-    await weather.catcheUpdate();
-});
-
 
 /*時間割*/
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
@@ -320,9 +326,6 @@ cron.schedule('0 20 * * *', async() => {
 cron.schedule('*/1  * * * *', async () => {
 
     const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
-    if(data.length === 0){
-        await system.warn("ダッシュボードの自動更新対象がありません。");
-    }
     for(let i = 0; i < data.length; i++) {
         let flag = 0;
         if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -334,7 +337,7 @@ cron.schedule('*/1  * * * *', async () => {
             flag = 1;
         }
         
-        if(flag === 1) {
+        if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
             const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
             const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
             const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
@@ -343,13 +346,19 @@ cron.schedule('*/1  * * * *', async () => {
                     dashboard.edit({embeds: [newEmbed]});
                 })
                 .catch(async(error) => {
-                    await system.error(`メッセージID ${data[i].board} のダッシュボードを取得できませんでした`, error);
-                    await db.update("main", "guildData", {channel: data[i].channel}, {
-                        $set: {
-                            boardChannel: "0000000000000000000",
-                            board: "0000000000000000000"
-                        }
-                    });
+                    if(error.code === 10008){
+                        await system.error(`元メッセージ削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                        await db.update("main", "guildData", {guild: data[i].guild}, {
+                            $set: {
+                                boardChannel: "0000000000000000000",
+                                board: "0000000000000000000"
+                            }
+                        });
+                    }
+                    else{
+                        await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
+                    }
+
                 });
         }
     }
