@@ -28,7 +28,11 @@ exports.func = async function func() {
         }
         const guild = await db.find("main","guildData",{guild:String(data[i].guild)});
         if(guild.length > 0 && guild[0].main !== undefined){
-            client.channels.cache.get(guild[0].main).send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
+            try{
+                const channel = (client.channels.cache.get(guild[0].main) ?? await client.channels.fetch(guild[0].main));
+                await channel.send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
+            }
+            catch{}
         }
     }
     await system.log('誕生日お祝い！');

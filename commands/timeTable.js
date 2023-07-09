@@ -119,7 +119,7 @@ module.exports = [
                 await interaction.editReply("このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、/guilddataで入学した年を登録してもらってください。");
             }
             else if(department === null){
-                if(interaction.guild === null){
+                if(!interaction.guild){
                     await interaction.editReply("DMでは学科オプション・学年オプションの省略はできません。");
                 }
                 else{
@@ -142,6 +142,7 @@ module.exports = [
             .setName('tt-switcher')
             .setDescription('時間割定期送信のON/OFFを切り替えます')
             .setDefaultMemberPermissions(1<<3)
+            .setDMPermission(false)
             .addBooleanOption(option =>
                 option
                     .setName('options')
@@ -150,10 +151,6 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            if(!interaction.guild){
-                await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                return;
-            }
             await interaction.deferReply({ephemeral: true});
             await guildData.updateOrInsert(interaction.guildId,{timetable:interaction.options.data[0].value})
             await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
@@ -164,6 +161,7 @@ module.exports = [
             .setName('add-exception')
             .setDescription('授業変更、及び定期テスト等を登録します')
             .setDefaultMemberPermissions(1<<3)
+            .setDMPermission(false)
             .addStringOption(option =>
                 option
                     .setName('モード')
@@ -221,10 +219,6 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            if(!interaction.guild){
-                await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                return;
-            }
             await interaction.deferReply();
             const select = [];
             let day = "1";
@@ -339,6 +333,7 @@ module.exports = [
             .setName('delete-exception')
             .setDescription('授業変更やテストのデータを削除します')
             .setDefaultMemberPermissions(1<<3)
+            .setDMPermission(false)
             .addStringOption(option =>
                 option
                     .setName('学科')
@@ -373,10 +368,6 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            if(!interaction.guild){
-                await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                return;
-            }
             await interaction.deferReply();
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
             await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});

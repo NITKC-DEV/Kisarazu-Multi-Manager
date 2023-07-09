@@ -260,12 +260,15 @@ exports.setNewTimetableData = async function func(interaction) {
         .setTimestamp()
         .setFooter({ text: 'Developed by NITKC-DEV' });
 
-    const channel = client.channels.cache.get(interaction.message.channelId);
-    channel.messages.fetch(interaction.message.id)
-        .then((message) => {
-            interaction.update({embeds: [embed],comments: message.comments});
-        })
-    await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
+    try{
+        const channel = client.channels.cache.get(interaction.message.channelId);
+        channel.messages.fetch(interaction.message.id)
+            .then((message) => {
+                interaction.update({embeds: [embed],comments: message.comments});
+            })
+        await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
+    }
+    catch{} //元メッセージ削除対策
 }
 
 /***
@@ -339,12 +342,15 @@ exports.showNewTimetableModal = async function func(interaction) {
 
         })
         .catch(() => {
-            const channel = client.channels.cache.get(interaction.message.channelId);
-            channel.messages.fetch(interaction.message.id)
-                .then((message) => {
-                    message.delete();
-                })
-                .catch(() => {});
+            try{
+                const channel = client.channels.cache.get(interaction.message.channelId);
+                channel.messages.fetch(interaction.message.id)
+                    .then((message) => {
+                        message.delete();
+                    })
+                    .catch(() => {});
+            }
+            catch{} //元メッセージ削除対策
         })
 }
 

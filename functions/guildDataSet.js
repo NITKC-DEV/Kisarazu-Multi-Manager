@@ -22,7 +22,8 @@ exports.ID_NODATA = ID_NODATA;
             boardChannel: ,
             board: ,
             timetable: ,
-            weather:
+            weather: ,
+            weatherChannel:
  }
 
  更新したい内容のみで良いので、valueに更新後のデータを入れる。guildは不要
@@ -58,7 +59,8 @@ exports.updateOrInsert = async function func(guild,object={}) {
                 boardChannel: String(object.boardChannel ?? data[0].boardChannel),
                 board: String(object.board ?? data[0].board),
                 timetable: object.timetable ?? data[0].timetable,
-                weather: object.weather ?? data[0].weather
+                weather: object.weather ?? data[0].weather,
+                weatherChannel: String(object.weatherChannel ?? data[0].weatherChannel)
             }
         });
     }
@@ -80,8 +82,9 @@ exports.updateOrInsert = async function func(guild,object={}) {
             cRole: String(object.cRole ?? ID_NODATA),
             boardChannel: String(object.boardChannel ?? ID_NODATA),
             board: String(object.board ?? ID_NODATA),
-            timetable: object.board ?? true,
-            weather: object.board ?? true
+            timetable: object.timetable ?? true,
+            weather: object.weather ?? true,
+            weatherChannel: String(object.weatherChannel ?? ID_NODATA)
         });
     }
 }
