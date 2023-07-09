@@ -1,6 +1,7 @@
 const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
 const db = require('../functions/db.js');
-const {guildData,ID_NODATA} = require('../functions/guildDataSet.js');
+const guildData= require('../functions/guildDataSet.js');
+const ID_NODATA = require('../functions/guildDataSet.js');
 const {setTimeout} = require("node:timers/promises");
 
 module.exports =
