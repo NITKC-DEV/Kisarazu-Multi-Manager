@@ -1,18 +1,11 @@
-const { Client, GatewayIntentBits, Partials, Collection, EmbedBuilder,  Events,ActionRowBuilder,StringSelectMenuBuilder} = require('discord.js');
-const config = require('./environmentConfig')
-let ccconfig=require("./CCConfig.json");
-const timetableBuilder  = require('./timetable/timetableUtils');
-const Classes = require('./timetable/timetables.json');
-const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
-const dashboard = require('./functions/dashboard.js');
+const { Client, GatewayIntentBits, Partials, Collection, Events} = require('discord.js');
 const dotenv = require('dotenv');
 const path = require('path');
 const fs = require('fs');
 const cron = require('node-cron');
-require('date-utils');
-const {configPath} = require("./environmentConfig");
 dotenv.config();
-const client = new Client({
+require('date-utils');
+global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
         GatewayIntentBits.GuildVoiceStates,
@@ -20,517 +13,415 @@ const client = new Client({
         GatewayIntentBits.GuildMessages,
         GatewayIntentBits.GuildMessageReactions,
         GatewayIntentBits.MessageContent,
-        GatewayIntentBits.GuildPresences
+        GatewayIntentBits.GuildPresences,
+        GatewayIntentBits.DirectMessageReactions,
+        GatewayIntentBits.GuildMessageReactions
     ],
     partials: [Partials.Channel],
 });
-module.exports.client=client;
 
+//configファイル読み込み
+const config = require('./environmentConfig.js')
+const {configPath} = require("./environmentConfig.js");
+
+//関数読み込み
+const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+const birthday = require('./functions/birthday.js');
+const dashboard = require('./functions/dashboard.js');
+const timetable = require('./functions/ttGeneration.js');
+const system = require('./functions/logsystem.js');
+const genshin = require('./functions/genshin.js');
+const db = require('./functions/db.js');
+const weather = require('./functions/weather.js');
+const guildData = require("./functions/guildDataSet.js");
+const {ID_NODATA} = require("./functions/guildDataSet.js");
+const CreateChannel = require("./functions/CCFunc.js");
+const mode = require("./functions/statusAndMode.js");
+const statusAndMode = require("./functions/statusAndMode.js");
+const help = require("./functions/help.js");
+
+//スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
 client.commands = new Collection();
 module.exports = client.commands;
-
-
-/*スラッシュコマンド登録*/
-client.once("ready", async () => {
-    for (const file of commandFiles) {
+client.once("ready", async() => {
+    await mode.maintenance(true);
+    await mode.status(2,"BOT起動処理");
+    for(const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
-        for (let i = 0; i < command.length; i++) {
+        for(let i = 0; i < command.length; i++) {
             client.commands.set(command[i].data.name, command[i]);
         }
-
     }
-    console.log("Ready!");
+    await weather.update(); //天気更新
+    await CreateChannel.dataCheck();
+    await system.log("Ready!");
+    if(config.maintenanceMode === true){
+        await statusAndMode.status(2,"BOTメンテナンス");
+    }
+    else{
+        await mode.maintenance(false);
+        await mode.status(0,"BOT起動完了");
+    }
 });
 
-/*実際の動作*/
-client.on("interactionCreate", async (interaction) => {
-    if(interaction.guildId === config.server){
+/*command処理*/
+client.on("interactionCreate", async(interaction) => {
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+            if(config.sugoiTsuyoiHitotachi[i] === interaction.user.id) flag = 1;
+        }
+    }
+    else {
+        flag = 1;
+    }
+
+    if(flag === 1){
         if (!interaction.isCommand()) {
             return;
         }
-
         const command = interaction.client.commands.get(interaction.commandName);
-        if (!command) return;
 
-        console.log("SlashCommand : "+command.data.name);
+        if (!command) return;
+        let guild,channel;
+        if(!interaction.guildId) {
+            guild = {name:"ダイレクトメッセージ",id:"---"};
+            channel = {name:"---",id:"---"};
+        }
+        else{
+            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
+            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        }
+        await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
             await command.execute(interaction);
-        } catch (error) {
-            console.error(error);
-            await interaction.reply({ content: 'おっと、想定外の事態が起きちゃった。管理者に連絡してくれ。', ephemeral: true });
         }
-    }else{
-        await interaction.reply({ content: '現在スラッシュコマンドはNIT,Kisarazu College 22s Serverのみに限定されています。\n他サーバーでのサービス開始は7月上旬を予定しています。'});
+        catch(error) {
+            await system.error(`スラッシュコマンド実行時エラー : ${command.data.name}\n\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, error);
+            try {
+                await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
+            }
+            catch {
+                try{
+                    await interaction.editReply({
+                        content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
+                        ephemeral: true
+                    });
+                }
+                catch{} //edit先が消えてる可能性を考えてtryに入れる
+            }
+        }
+    }
+    else {
+        await interaction.reply({
+            content: '現在メンテナンスモード中につき、BOTは無効化されています。\nメンテナンスの詳細は各サーバーのアナウンスチャンネルをご覧ください。',
+            ephemeral: true
+        });
+        const interactionTypeName = ["Ping","ApplicationCommand","MessageComponent","ApplicationCommandAutocomplete","ModalSubmit"];
+        let guild,channel;
+        if(!interaction.guildId) {
+            guild = {name:"ダイレクトメッセージ",id:"---"};
+            channel = {name:"---",id:"---"};
+        }
+        else{
+            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
+            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        }
+        await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
-//SelectMenu受け取り
-client.on(Events.InteractionCreate, async interaction =>
-{
-    if (!interaction.isStringSelectMenu()) return;
-
-    // /createchanでのカテゴリ選択の受け取り
-    if (interaction.customId === "selectCat")
-    {
-        //キャンセル受付
-        if(interaction.values[0]==="0000000000000000000")
-        {
-            await interaction.update({content:"キャンセルされました", components: []});
+//StringSelectMenu受け取り
+client.on(Events.InteractionCreate, async interaction => {
+    if(interaction.isStringSelectMenu()) {
+        let flag = 0;
+        if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+            for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+                if(config.sugoiTsuyoiHitotachi[i] === interaction.user.id) flag = 1;
+            }
         }
-        //カテゴリ受付
-        else
-        {
-            //チャンネル作成
+        else {
+            flag = 1;
+        }
+        if(flag === 0) return;
 
-            let newChannel=await interaction.guild.channels.create({name:interaction.message.content.split(" ")[0],parent:interaction.values[0],reason:"木更津高専統合管理BOTの操作により作成"});
-
-            //作成チャンネル情報記録
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels[ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).channels.length]={ID:newChannel.id,name:newChannel.name,creatorID:interaction.user.id,createTime:Date.now()};
-
-            //json書き込み
-            const ccjson = JSON.stringify (ccconfig);
-            try
-            {
-                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-            } catch (e)
-            {
-                console.log (e);
-                await interaction.update({content:"データの保存に失敗しました\nやり直してください", components: []});
-                return;
-            }
-
-            //ロール作成許可時にロール作成をするかを問うSelectMenu作成
-            if(ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0]).allowRole)
-            {
-                const mkRole=new ActionRowBuilder()
-                    .addComponents(
-                        new StringSelectMenuBuilder()
-                            .setCustomId("mkRole")
-                            .addOptions
-                            (
-                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
-                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
-                            )
-                    )
-
-                await interaction.update({content:"このチャンネルに対応したロールを作成しますか？", components: [mkRole]});
-            }
-            else
-            {
-                interaction.update({content:"作成しました",components:[]});
-            }
+        if(interaction.customId === "createChannel") {
+            await CreateChannel.createChannel(interaction);
+        }
+        else if(interaction.customId === "createRole") {
+            await CreateChannel.createRole(interaction);
+        }
+        else if(interaction.customId === "removeCategory") {
+            await CreateChannel.removeCategory(interaction);
+        }
+        else if(interaction.customId === "selectDelete") {
+            await CreateChannel.selectDelete(interaction);
+        }
+        //timetable用 customIDに引数を埋め込むため、一致で検索
+        else if((interaction.customId.match(/changeTimetableSelectMenu/) ?? {index:false}).index > 0){
+            await timetable.setNewTimetableData(interaction);
+        }
+        else if (interaction.customId === "adminHelp"){
+            await help.adminHelpDisplay(interaction);
+        }
+        else if (interaction.customId === "help"){
+            await help.helpDisplay(interaction);
         }
     }
-    //ロール作成受け取り
-    if(interaction.customId==="mkRole")
-    {
-        //作成
-        if(interaction.values[0].split("/")[2]==="1")
-        {
-            //ロール作成
-            const newRole=await interaction.guild.roles.create({name:ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).name,permissions:BigInt(0),mentionable:true,reason:"木更津高専統合管理BOTの操作により作成"});
+});
 
-            //作成ロール情報記録
-            const newData={roleID:newRole.id,roleName:newRole.name};
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole=true;
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleID=newData.roleID;
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).roleName=newData.roleName;
-
-            //json記録
-            const ccjson = JSON.stringify (ccconfig);
-            try
-            {
-                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-            } catch (e)
-            {
-                console.log (e);
-                const mkRole=new ActionRowBuilder()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId("mkRole")
-                            .addOptions
-                            (
-                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
-                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
-                            )
-                    )
-                await interaction.update({ content:"データの保存に失敗しました\nやり直してください\nこのチャンネルに対応したロールを作成しますか？", components: [mkRole]});
-                return;
-            }
-
-            await interaction.update({ content:"ロールを作成して終了しました", components: []});
-        }
-        //作成しない
-        else
-        {
-            //作成しなかったことを記録
-            ccconfig.guilds.find(guild =>guild.ID===interaction.guild.id).categories.find(category => category.ID===interaction.values[0].split("/")[0]).channels.find(channel=>channel.ID===interaction.values[0].split("/")[1]).thereRole =false;
-
-            //json記録
-            const ccjson = JSON.stringify (ccconfig);
-            try
-            {
-                fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-            } catch (e)
-            {
-                console.log (e);
-                const mkRole=new ActionRowBuilder()
-                    .addComponents(
-                        new SelectMenuBuilder()
-                            .setCustomId("mkRole")
-                            .addOptions
-                            (
-                                {label:"作成する",value:interaction.values[0]+"/"+newChannel.id+"/1"},
-                                {label:"作成しない",value:interaction.values[0]+"/"+newChannel.id+"/0"}
-                            )
-                    )
-                await interaction.update({ content:"データの保存に失敗しました\nやり直してください\nこのチャンネルに対応したロールを作成しますか？", components: [mkRole]});
-                return;
-            }
-
-            await interaction.update({ content:"ロールを作成せずに終了しました", components: []});
+//Button入力受け取り
+client.on(Events.InteractionCreate, async interaction => {
+    if (!interaction.isButton()) return;
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+            if(config.sugoiTsuyoiHitotachi[i] === interaction.user.id) flag = 1;
         }
     }
-    //カテゴリ削除受け取り
-    if(interaction.customId==="remCat")
-    {
-        //ccconfig内のguildsの実行ギルドのインデックスを取得
-        const indGuild=ccconfig.guilds.findIndex(guild=>guild.ID===interaction.guildId);
-        //存在し得ないはず...念のため
-        if(!indGuild)
-        {
-            await interaction.update({ content:"このサーバーは登録されていません", components: []});
-            return;
-        }
-        //全削除
-        if(interaction.values[0].split("/")[0]==="ALL")
-        {
-            //チャンネルとロールの削除
-            if(interaction.values[0].split("/")[1]==="t")
-            {
-                for(let i=1;i<ccconfig.guilds[indGuild].categories.length;i++)
-                {
-                    for(let j=1;j<ccconfig.guilds[indGuild].categories[i].channels.length;j++)
-                    {
-                        //エラー起きやすそうだからtry文
-                        try
-                        {
-                            //チャンネル削除
-                            await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[i].channels[j].ID, "木更津高専統合管理BOTの操作により削除");
-                            //対応ロール存在時にロール削除
-                            if (ccconfig.guilds[indGuild].categories[i].channels[j].thereRole)
-                            {
-                                await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[i].channels[j].roleID, "木更津高専統合管理BOTの操作により削除");
-                            }
-                        }
-                        catch(e)
-                        {
-                            console.log(e);
-                        }
-
-                    }
-                }
-            }
-            //ccconfigからカテゴリの情報を削除
-            ccconfig.guilds[indGuild] =
-                            {
-                                ID: interaction.guild.id,
-                                categories: [{ID:"0000000000000000000",name:"キャンセル",allowRole:false,channels:[]}]
-                            };
-            //jsonに書き込み
-                const ccjson = JSON.stringify (ccconfig);
-                try
-                {
-                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-                } catch (e)
-                {
-                    console.log (e);
-                    await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
-                    return;
-                }
-
-                await interaction.update({content:"削除しました",components:[]});
-        }
-        //キャンセル選択時
-        else if(interaction.values[0].split("/")[0]==="0000000000000000000")
-        {
-            await interaction.update({content:"キャンセルされました",components:[]})
-        }
-        //個別削除時
-        else
-        {
-            //選択されたカテゴリのインデックスを取得
-            const indCategory=ccconfig.guilds[indGuild].categories.findIndex(cat=>cat.ID===interaction.values[0].split("/")[0]);
-            if(!indCategory)
-            {
-                await interaction.update ({content:"データエラーです\nやり直してください",components:[]});
-                return;
-            }
-
-            //チャンネルとロールの削除時
-            if(interaction.values[0].split("/")[1]==="t")
-            {
-                for(let i=1;i<ccconfig.guilds[indGuild].categories[indCategory].channels.length;i++)
-                {
-                    //エラー起きそうだから(以下略
-                    try
-                    {
-                        //カテゴリ内のチャンネル削除
-                        await interaction.guild.channels.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].ID, "木更津高専統合管理BOTの操作により削除");
-                        //対応するロールが存在するときにロールを削除
-                        if (ccconfig.guilds[indGuild].categories[indCategory].channels[i].thereRole)
-                        {
-                            await interaction.guild.roles.delete (ccconfig.guilds[indGuild].categories[indCategory].channels[i].roleID, "木更津高専統合管理BOTの操作により削除");
-                        }
-                    }
-                    catch(e)
-                    {
-                        console.log(e);
-                    }
-                }
-            }
-            //ccconfigから当該カテゴリの情報をまるまる削除
-            ccconfig.guilds[indGuild].categories.splice(indCategory,1);
-
-            //jsonに書き込み
-                const ccjson = JSON.stringify (ccconfig);
-                try
-                {
-                    fs.writeFileSync ("CCConfig.json", ccjson, "utf8");
-                } catch (e)
-                {
-                    console.log (e);
-                    await interaction.update({content:"データの保存に失敗しました\nやり直してください",components:[]});
-                    return;
-                }
-
-                await interaction.update({content:"削除しました",components:[]});
-        }
+    else {
+        flag = 1;
     }
+    if(flag === 0) return;
+
+    //timetable用 customIDに引数を埋め込むため、一致で検索
+    if((interaction.customId.match(/changeTimetableButton/) ?? {index:false}).index > 0){
+        await timetable.showNewTimetableModal(interaction);
+    }
+});
+
+//チャンネル(カテゴリ)削除検知
+client.on(Events.ChannelDelete,async channel=>{
+    if(channel.type===0){
+        await CreateChannel.removeDeletedChannelData(channel);
+    }
+    else if(channel.type===4){
+        await CreateChannel.removeDeletedCategoryData(channel);
+    }
+});
+
+//チャンネル(カテゴリ)情報変更検知
+client.on(Events.ChannelUpdate,async channel=>{
+    if(channel.type===0) {
+        await CreateChannel.updateChannelData(channel);
+    }
+    else if(channel.type===4){
+        await CreateChannel.updateCategoryData(channel);
+    }
+});
+
+//ロール削除検知
+client.on(Events.GuildRoleDelete,async role => {
+    await CreateChannel.removeDeletedRoleData(role);
+});
+
+//ロール情報変更検知
+client.on(Events.GuildRoleUpdate, async role => {
+    await CreateChannel.updateRoleData(role);
+});
+
+client.on(Events.GuildCreate,async guild =>{
+    await guildData.updateOrInsert(guild.id);
+});
+
+//ギルド削除(退出)検知
+client.on(Events.GuildDelete,async guild =>{
+    await CreateChannel.deleteGuildData(guild);
+    await guildData.checkGuild();
 });
 
 /*TxtEasterEgg*/
 client.on('messageCreate', message => {
-    TxtEasterEgg.func(message);
-})
-
-/*原神デイリー通知*/
-cron.schedule('0 5 * * *', () => {
-    const daily = {
-        color: 0x27668D,
-        title: 'デイリー更新',
-        author: {
-            name: 'Genshin-timer',
-            icon_url: 'https://pbs.twimg.com/media/FcdR7aIaIAE75Uu?format=png&name=large',
-            url: 'https://github.com/starkoka/Genshin-Timer',
-        },
-        description: 'デイリーが更新されました。忘れずに4つ+追加報酬を受け取りましょう\n\n',
-        timestamp: new Date().toISOString(),
-        footer: {
-            text: 'Developed by @kokastar_studio',
-            icon_url: 'https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg',
-        },
-    };
-    client.channels.cache.get(config.daily).send({ embeds: [daily] })
-    let dt = new Date();
-    let dayofweek = dt.getDay();
-    let date = dt.getDate();
-    const genshinColor = 0x27668D;
-    if (dayofweek === 1) { /*月曜日*/
-        const monday = {
-            color: genshinColor,
-            title: '新しい週が始まりました',
-            description: '新しい週が始まり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n週ボスリセット',
-                    value: '風魔龍・トワリン、アンドリアス、「公子」、若陀龍王、「淑女」、禍津御建鳴神命、七葉寂照秘密主、終末オアシスの守護者/起源オアシスの守護者の報酬が再度受け取れるようになりました。\nまた、樹脂半減回数がリセットされました。',
-                },
-                {
-                    name: '​\n評判任務更新',
-                    value: 'モンド、璃月、稲妻、スメール各国の評判任務が更新されました。\n',
-                },
-                {
-                    name: '​\n「緋紅の願い」リセット',
-                    value: 'ドラゴンスパインのクエスト「緋紅の願い」が再挑戦できるようになりました。\n',
-                },
-                {
-                    name: '​\nアイテム購入回数リセット',
-                    value: '加工済み食材・洞天百貨宝貨・四方八方の網の購入回数がリセットされました。\n',
-                },
-                {
-                    name: '​\n木材変転回数リセット',
-                    value: '木材変転の上限回数がリセットされました。\n',
-                },
-                {
-                    name: '​\n週間限定ギフトパック購入回数リセット',
-                    value: '週間限定ギフトパックの購入上限回数がリセットされました。\n',
-                },
-                {
-                    name: '​\n七聖召喚ウィークリーゲスト対戦リセット',
-                    value: '七聖召喚のウィークリーゲスト対戦がリセットされました\n',
-                }
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [monday] })
+    /*メンテナンスモード*/
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+            if(config.sugoiTsuyoiHitotachi[i] === message.author.id) flag = 1;
+        }
+        if(config.client === message.author.id) {
+            flag = 1;
+        }
     }
-
-    if (dayofweek === 4) { /*木曜日*/
-        const thursday = {
-            color: genshinColor,
-            title: '木曜日になりました',
-            description: '木曜日になり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n聖遺物購入回数リセット',
-                    value: '聖遺物の購入回数上限がリセットされました',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [thursday] })
+    else {
+        flag = 1;
     }
-
-    if (dayofweek === 5) { /*金曜日*/
-        const friday = {
-            color: genshinColor,
-            title: '金曜日になりました',
-            description: '金曜日になり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n「緋紅の願い」リセット',
-                    value: 'ドラゴンスパインのクエスト「緋紅の願い」が再挑戦できるようになりました。\n',
-                },
-                {
-                    name: '​\n周回する壺の精霊出現',
-                    value: '自分の塵歌壺内で商品を購入可能になりました(日曜日まで)',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [friday] })
+    
+    if(flag !== 0) {
+        TxtEasterEgg.func(message);
     }
-
-    if (dayofweek === 6) { /*土曜日*/
-        const saturday = {
-            color: genshinColor,
-            title: '土曜日になりました',
-            description: '土曜日になり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n他人の壺の精霊で購入可能に',
-                    value: '他人のの塵歌壺内で商品を購入可能になりました。(日曜日まで)',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [saturday] })
-    }
-    if (date % 3 === 0) { /*3の倍数の日*/
-        const multiple = {
-            color: genshinColor,
-            title: 'アイテム購入リセット',
-            description: '博来・長順以外の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n',
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [multiple] })
-    }
-    if (date % 3 === 1) { /*3の倍数+1の日*/
-        const multiple2 = {
-            color: genshinColor,
-            title: 'アイテム購入リセット',
-            description: '博来・長順の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n',
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [multiple2] })
-    }
-
-    if (date === 1) { /*毎月1日*/
-        const first = {
-            color: genshinColor,
-            title: '1日になりました',
-            description: '月が変わり、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n螺旋リセット',
-                    value: '螺旋9~12層がリセットされました。',
-                },
-                {
-                    name: '​\nスター交換ラインナップ更新・リセット',
-                    value: 'スターライト交換のラインナップが更新されました。\nまた、スターライト交換・スターダスト交換の購入回数上限がリセットされました。',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [first] })
-    }
-    if (date === 16) { /*毎月16日*/
-        const sixteenth = {
-            color: genshinColor,
-            title: '16日になりました',
-            description: '月の後半に入り、以下のものがリセットされました。\n\n',
-            fields: [
-                {
-                    name: '​\n螺旋リセット',
-                    value: '螺旋9~12層がリセットされました。',
-                },
-            ],
-            timestamp: new Date().toISOString(),
-        };
-        client.channels.cache.get(config.daily).send({ embeds: [sixteenth] })
-    }
-
-    console.log('デイリー通知送信完了')
 });
 
+/*ステータス更新*/
+cron.schedule('* * * * *', async () => {
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === false) {
+        const date = new Date();
+        const time = Math.floor(date.getTime() / 1000 / 60)%6
+        switch(time){
+            case 1:
+                await mode.status(0,`ヘルプ：/help`);
+                break;
+            case 2:
+                await mode.status(0,`時間割：/timetable`);
+                break;
+            case 3:
+                await mode.status(0,`天気：/weather`);
+                break;
+            case 4:
+                await mode.status(0,`匿名投稿：/secret-msg`);
+                break;
+            case 5:
+                await mode.status(0,`チャンネル作成：/create-channel`);
+                break;
+            default:
+                await mode.status(0,`導入数：${client.guilds.cache.size}サーバー`);
+        }
+    }
 
+});
+
+/*誕生日通知とGuildDataチェック、時間割変更データチェック*/
+cron.schedule('0 0 * * *', async () => {
+    await birthday.func();
+    await weather.update();
+    await weather.catcheUpdate();
+});
+
+/*メンテナンスモード*/
+cron.schedule('59 4 * * *', async () => {
+    await mode.maintenance(true);
+    await guildData.checkGuild();
+    await timetable.deleteData();
+    await mode.maintenance(false);
+});
+
+/*原神デイリー通知*/
+cron.schedule('0 5 * * *', async () => {
+    await genshin.daily();
+    await system.log('デイリー通知送信完了');
+});
+
+/*天気キャッシュ取得*/
+cron.schedule('5 5,11,17 * * *', async () => {
+    await weather.update();
+});
+
+/*時間割*/
 cron.schedule('0 20 * * 0,1,2,3,4', async () => {
-    let dayOfWeek = new Date().getDay()+1;
-    //timetable == trueのとき
-    let timetable = JSON.parse(await fs.promises.readFile(config.configPath, "utf-8")).timetable
-    if(timetable === true) {
-        (await (client.channels.cache.get(config.M) ?? await client.channels.fetch(config.M))
-            .send({ embeds: [timetableBuilder(Classes.M, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.E) ?? await client.channels.fetch(config.E))
-            .send({ embeds: [timetableBuilder(Classes.E, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.D) ?? await client.channels.fetch(config.D))
-            .send({ embeds: [timetableBuilder(Classes.D, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.J) ?? await client.channels.fetch(config.J))
-            .send({ embeds: [timetableBuilder(Classes.J, dayOfWeek)] }));
-        (await (client.channels.cache.get(config.C) ?? await client.channels.fetch(config.C))
-            .send({ embeds: [timetableBuilder(Classes.C, dayOfWeek)] }));
+    const guildData = await db.find("main","guildData",{});
+    const date = new Date();
+    const year = date.getFullYear();
+    const dayOfWeek = date.getDay();
+
+    for(let i = 0; i < guildData.length; i++){
+        if(guildData[i].timetable === true){
+            const grade = year - parseFloat(guildData[i].grade) + 1;
+            const embed = [];
+            if(0 < grade && grade < 6 ){
+                for(let j= 0;j < 5; j++){
+                    embed[j] = await timetable.generation(String(grade),String(j+1),String(dayOfWeek+1),true);
+                }
+                try{if(embed[0]!==0 && guildData[i].mChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].mChannel) ?? await client.channels.fetch(guildData[i].mChannel)).send({embeds:[embed[0]]})}catch{}
+                try{if(embed[1]!==0 && guildData[i].eChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].eChannel) ?? await client.channels.fetch(guildData[i].eChannel)).send({embeds:[embed[1]]})}catch{}
+                try{if(embed[2]!==0 && guildData[i].dChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].dChannel) ?? await client.channels.fetch(guildData[i].dChannel)).send({embeds:[embed[2]]})}catch{}
+                try{if(embed[3]!==0 && guildData[i].jChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].jChannel) ?? await client.channels.fetch(guildData[i].jChannel)).send({embeds:[embed[3]]})}catch{}
+                try{if(embed[4]!==0 && guildData[i].cChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].cChannel) ?? await client.channels.fetch(guildData[i].cChannel)).send({embeds:[embed[4]]})}catch{}
+            }
+            else{
+                try{
+                    await client.channels.cache.get(guildData[i].main).send("このサーバーの学年の設定をしていない、または正しくないため、時間割定期通知に失敗しました。" +
+                        "\n設定していない場合は、管理者が/guildDataコマンドを使用して設定してください。" +
+                        "\n設定している場合、学年ではなく「入学年」を西暦4ケタで入力しているかどうか確認してください。" +
+                        "\n(この通知をOFFにするには、/tt-switcherコマンドを実行してください。)")
+                }
+                catch{}
+            }
+        }
+    }
+});
+
+/*天気*/
+cron.schedule('29 20 * * *', async() => {
+    const embed = await weather.generationDay(1);
+    const data = await db.find("main", "guildData", {weather: true});
+    for(let i = 0; i < data.length; i++) {
+        try{
+            const channel = (client.channels.cache.get(data[i].weatherChannel) ?? await client.channels.fetch(data[i].weatherChannel));
+            await channel.send({embeds: [embed]});
+        }
+        catch{}
     }
 });
 
 cron.schedule('*/1  * * * *', async () => {
-    const data = JSON.parse(fs.readFileSync(configPath, 'utf8'))
-    const dashboardGuild = client.guilds.cache.get(data.dashboard[2]); /*ギルド情報取得*/
-    const channel = client.channels.cache.get(data.dashboard[1]); /*チャンネル情報取得*/
-    const field = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-    channel.messages.fetch(data.dashboard[0])
-        .then((dashboard) => {
-            const newEmbed = new EmbedBuilder()
-                .setColor(0x00A0EA)
-                .setTitle('NIT,Kisarazu College 22s ダッシュボード')
-                .setAuthor({
-                    name: "木更津高専統合管理BOT",
-                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
-                })
-                .addFields(field)
-                .setTimestamp()
-                .setFooter({text: 'Developed by NITKC-DEV'});
 
-            dashboard.edit({embeds: [newEmbed]});
-        })
-        .catch((error) => {
-            console.error(`メッセージID ${messageId} のダッシュボードを取得できませんでした: ${error}`);
-        });
+    const data = await db.find("main","guildData",{board: {$nin:["0000000000000000000"]}});
+    for(let i = 0; i < data.length; i++) {
+        let flag = 0;
+        if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+            if(config.devServer === data[i].guild) {
+                flag = 1;
+            }
+        }
+        else {
+            flag = 1;
+        }
+        
+        if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
+            let dashboardGuild;
+            try{
+                dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? await client.guilds.fetch(data[i].guild)); /*ギルド情報取得*/
+                const channel = (client.channels.cache.get(data[i].boardChannel) ?? await client.channels.fetch(data[i].boardChannel)); /*チャンネル情報取得*/
+                const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+                if(newEmbed){
+                    channel.messages.fetch(data[i].board)
+                        .then(async (dashboard) => {
+                            await dashboard.edit({embeds: [newEmbed]});
+                        })
+                        .catch(async(error) => {
+                            if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
+                                await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                                await db.update("main", "guildData", {guild: data[i].guild}, {
+                                    $set: {
+                                        boardChannel: "0000000000000000000",
+                                        board: "0000000000000000000"
+                                    }
+                                });
+                            }
+                            else{
+                                await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
+                            }
+
+                        });
+                }
+                else{
+                    await guildData.checkGuild();
+                }
+            }
+            catch(error){
+                if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
+                    await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                    await db.update("main", "guildData", {guild: data[i].guild}, {
+                        $set: {
+                            boardChannel: "0000000000000000000",
+                            board: "0000000000000000000"
+                        }
+                    });
+                }
+                else if(error.code === 10004){
+                    await system.error(`ギルド削除 または退出により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                    await guildData.checkGuild();
+                }
+                else{
+                    await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードがあるチャンネルを何らかの理由で取得できませんでした`, error);
+                }
+            }
+        }
+    }
 });
 
-
-client.login(config.token);
+if(require.main === module) {
+    client.login(config.token);
+}

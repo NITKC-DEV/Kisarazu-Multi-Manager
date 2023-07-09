@@ -1,0 +1,8 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="cmd-prod" type="NodeJSConfigurationType" folderName="AddCommand" singleton="false" path-to-js-file="deploy-commands.js" working-dir="$PROJECT_DIR$">
+    <envs pass-parent-envs="false">
+      <env name="NODE_ENV" value="production" />
+    </envs>
+    <method v="2" />
+  </configuration>
+</component>
