@@ -12,6 +12,7 @@ const mode = require("../functions/statusAndMode.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const help = require("../functions/help.js");
 const {autoDeleteEditReply} = require("../functions/common.js");
+const {ID_NODATA} = require("../functions/guildDataSet");
 
 
 module.exports =
@@ -28,12 +29,9 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('admin-help')
                 .setDescription('管理者向けメニューをDMで表示します。')
-                .setDefaultMemberPermissions(1<<3),
+                .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
-                    return;
-                }
                 await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
                 await help.adminHelpSend(interaction.user);
             },
@@ -95,6 +93,7 @@ module.exports =
                 .setName('sudo-maintenancemode')
                 .setDescription('sugoi user do')
                 .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false)
                 .addBooleanOption(option =>
                     option
                         .setName('option')
@@ -102,10 +101,6 @@ module.exports =
                         .setRequired(true)
                 ),
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply();
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
@@ -253,6 +248,7 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('birthday')
                 .setDescription('あなたの誕生日を登録します。登録するとその日に祝ってくれます。')
+                .setDMPermission(false)
                 .addIntegerOption(option =>
                     option
                         .setName('年')
@@ -271,10 +267,6 @@ module.exports =
                 ),
 
             async execute (interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
@@ -312,13 +304,10 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('del-birthday')
+                .setDMPermission(false)
                 .setDescription('あなたの誕生日を削除します'),
 
             async execute (interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます。', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
@@ -369,21 +358,33 @@ module.exports =
                 .setName('weather-switcher')
                 .setDescription('天気定期送信のON/OFFを切り替えます')
                 .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false)
                 .addBooleanOption(option =>
                     option
-                        .setName('options')
-                        .setDescription('定期実行の可否を指定します')
+                        .setName('定期送信')
+                        .setDescription('定期実行のオンオフを指定します')
+                        .setRequired(true)
+                )
+                .addChannelOption(option =>
+                    option
+                        .setName('送信先')
+                        .setDescription('送信先を指定します。削除時は適当なチャンネルをいれてください。')
                         .setRequired(true)
                 ),
 
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
-                    return;
-                }
                 await interaction.deferReply({ephemeral: true});
-                await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.data[0].value});
-                await interaction.reply({ content: "天気定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
+                if(!interaction.options.getBoolean('定期送信')){
+                    await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.getBoolean('定期送信')});
+                    await interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。"});
+                }
+                else if(interaction.options.getChannel('送信先').type === 0){
+                    await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.getBoolean('定期送信'),weatherChannel:interaction.options.getChannel('送信先').id});
+                    await interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。"});
+                }
+                else{
+                    await interaction.editReply({ content: "通常のチャンネルを指定してください"});
+                }
             },
         },
     ]
