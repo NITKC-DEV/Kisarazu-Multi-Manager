@@ -105,12 +105,13 @@ client.on("interactionCreate", async(interaction) => {
                 await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
             }
             catch {
-                await interaction.editReply({
-                    content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
-                    ephemeral: true
-                });
-                //await reply.reactions.removeAll();
-                //なんかエラー吐くのでとりあえずコメントアウト
+                try{
+                    await interaction.editReply({
+                        content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。',
+                        ephemeral: true
+                    });
+                }
+                catch{} //edit先が消えてる可能性を考えてtryに入れる
             }
         }
     }
@@ -120,13 +121,33 @@ client.on("interactionCreate", async(interaction) => {
             ephemeral: true
         });
         const interactionTypeName = ["Ping","ApplicationCommand","MessageComponent","ApplicationCommandAutocomplete","ModalSubmit"];
-        await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。`, `${interactionTypeName[interaction.type-1]}をブロック`);
+        let guild,channel;
+        if(!interaction.guildId) {
+            guild = {name:"ダイレクトメッセージ",id:"---"};
+            channel = {name:"---",id:"---"};
+        }
+        else{
+            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
+            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+        }
+        await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
 //StringSelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction => {
     if(interaction.isStringSelectMenu()) {
+        let flag = 0;
+        if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+            for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+                if(config.sugoiTsuyoiHitotachi[i] === interaction.user.id) flag = 1;
+            }
+        }
+        else {
+            flag = 1;
+        }
+        if(flag === 0) return;
+
         if(interaction.customId === "createChannel") {
             await CreateChannel.createChannel(interaction);
         }
@@ -155,6 +176,16 @@ client.on(Events.InteractionCreate, async interaction => {
 //Button入力受け取り
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
+    let flag = 0;
+    if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
+        for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+            if(config.sugoiTsuyoiHitotachi[i] === interaction.user.id) flag = 1;
+        }
+    }
+    else {
+        flag = 1;
+    }
+    if(flag === 0) return;
 
     //timetable用 customIDに引数を埋め込むため、一致で検索
     if((interaction.customId.match(/changeTimetableButton/) ?? {index:false}).index > 0){
@@ -312,14 +343,15 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 /*天気*/
-cron.schedule('0 20 * * *', async() => {
+cron.schedule('29 20 * * *', async() => {
     const embed = await weather.generationDay(1);
-    const data = await db.find("main", "guildData", {main: {$nin: [ID_NODATA]}});
+    const data = await db.find("main", "guildData", {weather: true});
     for(let i = 0; i < data.length; i++) {
-        if(data[i].weather) {
-            const channel = await client.channels.fetch(data[i].main);
+        try{
+            const channel = (client.channels.cache.get(data[i].weatherChannel) ?? await client.channels.fetch(data[i].weatherChannel));
             await channel.send({embeds: [embed]});
         }
+        catch{}
     }
 });
 
@@ -338,28 +370,54 @@ cron.schedule('*/1  * * * *', async () => {
         }
         
         if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
-            const dashboardGuild = client.guilds.cache.get(data[i].guild); /*ギルド情報取得*/
-            const channel = client.channels.cache.get(data[i].boardChannel); /*チャンネル情報取得*/
-            const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
-            channel.messages.fetch(data[i].board)
-                .then((dashboard) => {
-                    dashboard.edit({embeds: [newEmbed]});
-                })
-                .catch(async(error) => {
-                    if(error.code === 10008){
-                        await system.error(`元メッセージ削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
-                        await db.update("main", "guildData", {guild: data[i].guild}, {
-                            $set: {
-                                boardChannel: "0000000000000000000",
-                                board: "0000000000000000000"
+            let dashboardGuild;
+            try{
+                dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? await client.guilds.fetch(data[i].guild)); /*ギルド情報取得*/
+                const channel = (client.channels.cache.get(data[i].boardChannel) ?? await client.channels.fetch(data[i].boardChannel)); /*チャンネル情報取得*/
+                const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+                if(newEmbed){
+                    channel.messages.fetch(data[i].board)
+                        .then(async (dashboard) => {
+                            await dashboard.edit({embeds: [newEmbed]});
+                        })
+                        .catch(async(error) => {
+                            if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
+                                await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                                await db.update("main", "guildData", {guild: data[i].guild}, {
+                                    $set: {
+                                        boardChannel: "0000000000000000000",
+                                        board: "0000000000000000000"
+                                    }
+                                });
                             }
-                        });
-                    }
-                    else{
-                        await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
-                    }
+                            else{
+                                await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを何らかの理由で取得できませんでした`, error);
+                            }
 
-                });
+                        });
+                }
+                else{
+                    await guildData.checkGuild();
+                }
+            }
+            catch(error){
+                if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
+                    await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                    await db.update("main", "guildData", {guild: data[i].guild}, {
+                        $set: {
+                            boardChannel: "0000000000000000000",
+                            board: "0000000000000000000"
+                        }
+                    });
+                }
+                else if(error.code === 10004){
+                    await system.error(`ギルド削除 または退出により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
+                    await guildData.checkGuild();
+                }
+                else{
+                    await system.error(`${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードがあるチャンネルを何らかの理由で取得できませんでした`, error);
+                }
+            }
         }
     }
 });

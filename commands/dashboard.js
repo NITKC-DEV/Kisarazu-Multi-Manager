@@ -8,17 +8,13 @@ module.exports =
         {
             data: new SlashCommandBuilder()
                 .setName('dashboard')
+                .setDMPermission(false)
                 .setDescription('ダッシュボードを表示します'),
 
             async execute(interaction) {
-                await interaction.deferReply()
-                if(!interaction.guild){
-                    await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
-                }
-                else{
-                    const embed = await dashboard.generation(interaction.guild)
-                    await interaction.editReply({ embeds: [embed] });
-                }
+                await interaction.deferReply();
+                const embed = await dashboard.generation(interaction.guild)
+                await interaction.editReply({ embeds: [embed] });
             },
         },
         {
@@ -26,6 +22,7 @@ module.exports =
                 .setName('next-test')
                 .setDescription('次のテストを設定します。')
                 .setDefaultMemberPermissions(1<<3)
+                .setDMPermission(false)
                 .addIntegerOption(option =>
                     option
                         .setName('年')
@@ -65,10 +62,6 @@ module.exports =
 
 
             async execute(interaction) {
-                if(!interaction.guild){
-                    await interaction.reply({ content: 'このコマンドはサーバーでのみ実行できます', ephemeral: true });
-                    return;
-                }
                 if(interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5){
                     await interaction.deferReply({ephemeral: true});
                     await db.update(
@@ -94,16 +87,12 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('auto-dashboard')
                 .setDescription('自動更新されるダッシュボードを生成')
+                .setDMPermission(false)
                 .setDefaultMemberPermissions(1<<3),
 
             async execute(interaction) {
                 await interaction.deferReply()
                 let replyOptions;
-                if(!interaction.guild){
-                    await interaction.editReply({ content: 'サーバー情報が取得できませんでした。DMで実行している などの原因が考えられます。', ephemeral: true });
-                    await system.warn("ダッシュボードギルド情報取得エラー発生(DMの可能性あり)");
-                    return;
-                }
                 let data = await db.find("main","guildData",{guild:interaction.guildId,board:{$nin:["0000000000000000000"]}}); /*自動更新対象のボードがあるかどうか確認*/
                 if(data.length > 0){
                     const reply = await interaction.editReply("このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。");
