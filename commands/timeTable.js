@@ -239,7 +239,7 @@ module.exports = [
 
                         defaultData = await db.find("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(date.getDay())}); //指定したベースデータ
                         if(defaultData[0] === undefined) {
-                            interaction.reply({content: "その学科・曜日のデータは登録されていません。", ephemeral: true});
+                            interaction.editReply({content: "その学科・曜日のデータは登録されていません。", ephemeral: true});
                             return;
                         }
                         else{
@@ -440,8 +440,18 @@ module.exports = [
             if(data.length !== 0){
                 defaultData = data;
             }
-            else{
+            else if(defaultData.length !== 0){
                 data = defaultData;
+            }
+            else{
+                const replyOptions=time=>{return{content: '指定した学科・学年の時間割データが見つかりませんでした。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+                await interaction.reply(replyOptions(5));
+                for(let i=5;i>0;i--){
+                    await interaction.editReply(replyOptions(i));
+                    await setTimeout(1000);
+                }
+                await interaction.deleteReply();
+                return ;
             }
 
 
