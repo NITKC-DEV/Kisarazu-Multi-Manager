@@ -462,14 +462,14 @@ module.exports = [
             for(let i = 0; i < data[0].timetable.length;i++){
                 const input = new TextInputBuilder()
                     .setCustomId(`${date}addCommentTimetable${grade}${department}${i}`)
-                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録(既存のコメントも含みます)`)
+                    .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録`)
                     .setRequired(false)
                     .setStyle(1);
                 modal.addComponents(new ActionRowBuilder().addComponents(input));
             }
             const input = new TextInputBuilder()
                 .setCustomId(`${date}addCommentTimetable${grade}${department}5`)
-                .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録(既存のコメントも含みます)`)
+                .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
                 .setRequired(false)
                 .setStyle(1);
             modal.addComponents(new ActionRowBuilder().addComponents(input));
