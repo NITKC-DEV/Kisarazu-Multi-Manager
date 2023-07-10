@@ -343,7 +343,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
 });
 
 /*天気*/
-cron.schedule('29 20 * * *', async() => {
+cron.schedule('00 20 * * *', async() => {
     const embed = await weather.generationDay(1);
     const data = await db.find("main", "guildData", {weather: true});
     for(let i = 0; i < data.length; i++) {
