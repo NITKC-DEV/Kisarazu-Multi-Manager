@@ -57,6 +57,7 @@ client.once("ready", async() => {
     }
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
+    await guildData.checkGuild();
     await system.log("Ready!");
     if(config.maintenanceMode === true){
         await statusAndMode.status(2,"BOTメンテナンス");
