@@ -1,5 +1,5 @@
 const axios = require('axios');
-const db = require("../functions/db.js");
+const db = require("./db.js");
 const {EmbedBuilder} = require("discord.js");
 const system = require("./logsystem.js");
 

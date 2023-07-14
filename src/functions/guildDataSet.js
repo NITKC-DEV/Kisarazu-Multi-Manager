@@ -1,4 +1,4 @@
-const db = require('../functions/db.js');
+const db = require('./db.js');
 
 const ID_NODATA= "0000000000000000000";
 exports.ID_NODATA = ID_NODATA;

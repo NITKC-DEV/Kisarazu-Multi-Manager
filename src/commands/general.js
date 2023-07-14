@@ -1,5 +1,5 @@
 const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
-const packageVer = require('../package.json');
+const packageVer = require('../../package.json');
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 const system = require('../functions/logsystem.js');

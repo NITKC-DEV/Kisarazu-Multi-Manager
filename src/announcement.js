@@ -3,7 +3,7 @@ const dotenv = require('dotenv');
 const cron = require('node-cron');
 require('date-utils');
 const {MongoClient, ServerApiVersion} = require("mongodb");
-const config = require("./config.json");
+const config = require("../env/config.json");
 const devConfig = require("./config.dev.json");
 
 const readline = require('readline');

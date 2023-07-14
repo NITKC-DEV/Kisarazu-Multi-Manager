@@ -313,8 +313,6 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,git,node,intellij
 
 
-config.json
-/config.dev.json
-/CCConfig.json
+env/*
+!env/templates/
 /.fleet/settings.json
-*/announcement.js
