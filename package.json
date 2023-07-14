@@ -25,7 +25,7 @@
     "pm2-restart": "pm2 restart Kisarazu-Multi-Manager",
     "cmd-dev": "cross-env NODE_ENV=development node src/deploy-commands.js",
     "cmd-prod": "cross-env NODE_ENV=production node src/deploy-commands.js",
-    "build":  "tsc -p ."
+    "build": "rimraf build/ && tsc -p . && copyfiles -u 1 src/**/*.json build/"
   },
   "repository": {
     "type": "git",
@@ -38,7 +38,9 @@
   },
   "homepage": "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager#readme",
   "devDependencies": {
-    "cross-env": "^7.0.3"
+    "copyfiles": "^2.4.1",
+    "cross-env": "^7.0.3",
+    "rimraf": "^5.0.1"
   },
   "volta": {
     "node": "18.16.0",

@@ -1,0 +1,12 @@
+export function createChannel(interaction: any): Promise<void>;
+export function createRole(interaction: any): Promise<void>;
+export function removeCategory(interaction: any): Promise<void>;
+export function selectDelete(interaction: any): Promise<void>;
+export function removeDeletedChannelData(channel: any): Promise<void>;
+export function removeDeletedCategoryData(category: any): Promise<void>;
+export function updateChannelData(channel: any): Promise<void>;
+export function updateCategoryData(category: any): Promise<void>;
+export function removeDeletedRoleData(role: any): Promise<void>;
+export function updateRoleData(role: any): Promise<void>;
+export function deleteGuildData(guild: any): Promise<void>;
+export function dataCheck(): Promise<void>;
