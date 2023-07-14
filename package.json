@@ -20,6 +20,9 @@
   "scripts": {
     "start-dev": "cross-env NODE_ENV=development node .",
     "start-prod": "cross-env NODE_ENV=production node .",
+    "pm2-start-dev": "pm2 start ./ecosystem.config.cjs --env dev",
+    "pm2-start-prod": "pm2 start ./ecosystem.config.cjs --env prod",
+    "pm2-restart": "pm2 restart Kisarazu-Multi-Manager",
     "cmd-dev": "cross-env NODE_ENV=development node deploy-commands.js",
     "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
     "build":  "tsc -p ."
