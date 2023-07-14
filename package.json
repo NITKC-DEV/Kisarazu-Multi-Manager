@@ -16,7 +16,7 @@
   "name": "nitkc-main",
   "description": "",
   "version": "5.0.1",
-  "main": "botmain.js",
+  "main": "./build/botmain.js",
   "scripts": {
     "start-dev": "cross-env NODE_ENV=development node .",
     "start-prod": "cross-env NODE_ENV=production node .",
