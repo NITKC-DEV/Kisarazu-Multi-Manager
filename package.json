@@ -18,10 +18,11 @@
   "version": "5.0.1",
   "main": "botmain.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node .",
-    "start": "cross-env NODE_ENV=production node .",
-    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js"
+    "start-dev": "cross-env NODE_ENV=development node .",
+    "start-prod": "cross-env NODE_ENV=production node .",
+    "cmd-dev": "cross-env NODE_ENV=development node deploy-commands.js",
+    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
+    "build":  "tsc -p ."
   },
   "repository": {
     "type": "git",
