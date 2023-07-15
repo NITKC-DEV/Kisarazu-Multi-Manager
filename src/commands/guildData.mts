@@ -1,15 +1,10 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
-const {SlashCommandBuilder, EmbedBuilder} = require('discord.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require('../functions/db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
-const guildData= require('../functions/guildDataSet.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
-const {ID_NODATA} = require('../functions/guildDataSet.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
-const {setTimeout} = require("node:timers/promises");
+import {SlashCommandBuilder, EmbedBuilder} from "@discordjs/builders";
+import * as db from "../functions/db.js";
+import * as guildData from "../functions/guildDataSet.js";
+import {ID_NODATA} from "../functions/guildDataSet.js";
+import {setTimeout} from "timers/promises";
 
-module.exports =
+export default
     [
         {
             data: new SlashCommandBuilder()
