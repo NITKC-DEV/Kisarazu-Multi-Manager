@@ -1,5 +1,5 @@
 /*メッセージに反応する系のイースターエッグ*/
-exports.func = function func(message: any) {
+export const func = function func(message: any) {
     let dt = new Date();
     let month = dt.getMonth();
     let date = dt.getDate();
