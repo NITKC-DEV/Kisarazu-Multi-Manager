@@ -1,10 +1,8 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'StringSele... Remove this comment to see the full error message
-const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} = require("discord.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
-const system = require('./logsystem.js');
+import {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} from "@discordjs/builders";
+import * as system from "./logsystem.js";
 
 //helpTextの生成
-const helpText = require("./helpText.json");
+import * as helpText from "./helpText.json"
 const adminTable: any = [];
 for(let i=0;i < helpText.admin.length;i++){
     adminTable.push(
@@ -24,7 +22,7 @@ for(let i=0;i < helpText.help.length;i++){
     )
 }
 
-exports.adminHelpSend = async function func(user: any) {
+export const adminHelpSend = async function func(user: any) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`管理者向けヘルプ`)
@@ -47,12 +45,12 @@ exports.adminHelpSend = async function func(user: any) {
     try{
         await user.send({embeds: [embed],components: [row]});
     }
-    catch (error){
+    catch (error: any){
         await system.error("DMを送れませんでした。ブロックされている等ユーザー側が原因の場合もあります。",error,"DirectMessageエラー")
     }
 }
 
-exports.adminHelpDisplay = async function func(interaction: any) {
+export const adminHelpDisplay = async function func(interaction: any) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
@@ -69,12 +67,12 @@ exports.adminHelpDisplay = async function func(interaction: any) {
     try{
         await interaction.update({embeds: [newEmbed]});
     }
-    catch (error){
+    catch (error: any){
         await system.error("DMを編集できませんでした。ブロックされている等ユーザー側が原因の場合もあります。",error,"DirectMessageエラー")
     }
 }
 
-exports.helpSend = async function func(interaction: any) {
+export const helpSend = async function func(interaction: any) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`ヘルプ`)
@@ -97,7 +95,7 @@ exports.helpSend = async function func(interaction: any) {
     await interaction.reply({embeds: [embed],components: [row]});
 }
 
-exports.helpDisplay = async function func(interaction: any) {
+export const helpDisplay = async function func(interaction: any) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
