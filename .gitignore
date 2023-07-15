@@ -313,8 +313,8 @@ $RECYCLE.BIN/
 # End of https://www.toptal.com/developers/gitignore/api/linux,windows,git,node,intellij
 
 
+build/
 src/env/*
-build/env/*
 !src/env/templates/
 CCConfig.json
 config.json
