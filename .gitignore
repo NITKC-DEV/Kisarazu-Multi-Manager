@@ -314,8 +314,8 @@ $RECYCLE.BIN/
 
 
 build/
-src/env/*
-!src/env/templates/
+env/*
+!env/templates/
 CCConfig.json
 config.json
 config.dev.json

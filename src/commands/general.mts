@@ -1,21 +1,19 @@
-const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
-const packageVer = require('../../package.json');
-const {setTimeout} = require ("node:timers/promises");
-require('date-utils');
-const system = require('../functions/logsystem.js');
-const weather = require('../functions/weather.js');
-const guildData = require('../functions/guildDataSet.js')
-const db = require('../functions/db.js');
-const fs = require("fs");
+import {SlashCommandBuilder, EmbedBuilder, version} from "@discordjs/builders";
+import packageVer from "../../package.json";
+import {setTimeout} from "timers/promises";
+import "date-utils";
+import * as system from "../functions/logsystem.js";
+import * as weather from "../functions/weather.js";
+import * as guildData from "../functions/guildDataSet.js";
+import * as db from "../functions/db.js";
+import fs from "fs";
 import {configPath} from "../environmentConfig.mjs";
-const mode = require("../functions/statusAndMode.js");
-const CreateChannel = require("../functions/CCFunc.js");
-const help = require("../functions/help.js");
-const {autoDeleteEditReply} = require("../functions/common.js");
-const {ID_NODATA} = require("../functions/guildDataSet");
+import * as mode from "../functions/statusAndMode.js";
+import * as CreateChannel from "../functions/CCFunc.js";
+import * as help from "../functions/help.js";
+import {autoDeleteEditReply} from "../functions/common.js";
 
-
-module.exports =
+export default
     [
         {
             data: new SlashCommandBuilder()
@@ -307,7 +305,7 @@ module.exports =
                 });
 
                 if(data.length > 0){
-                    await db.delete("main", "birthday", {
+                    await db.del("main", "birthday", {
                         user: interaction.user.id,
                         guild: interaction.guildId
                     });
