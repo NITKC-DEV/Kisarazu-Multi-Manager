@@ -1,5 +1,4 @@
 /*メッセージに反応する系のイースターエッグ*/
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.func = function func(message: any) {
     let dt = new Date();
     let month = dt.getMonth();

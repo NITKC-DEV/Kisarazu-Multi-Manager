@@ -7,7 +7,6 @@ const dbMain = "main";          //データベースmainとコレクションCC-
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'colCat'.
 const colCat = "CC-categories";
 
-// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {

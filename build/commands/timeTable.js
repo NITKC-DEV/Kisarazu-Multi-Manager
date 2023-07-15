@@ -28,7 +28,6 @@ const departmentData = [
         color: "1E9B50"
     }
 ];
-// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports = [
     {
         data: new SlashCommandBuilder()

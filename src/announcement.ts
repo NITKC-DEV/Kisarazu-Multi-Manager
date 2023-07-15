@@ -4,16 +4,13 @@ const { Client, GatewayIntentBits, Partials, EmbedBuilder} = require('discord.js
 const dotenv = require('dotenv');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cron'.
 const cron = require('node-cron');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 require('date-utils');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'MongoClien... Remove this comment to see the full error message
 const {MongoClient, ServerApiVersion} = require("mongodb");
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
 const config = require("../env/config.json");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const devConfig = require("./config.dev.json");
 
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const readline = require('readline');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Select'.
 const {Select} = require("enquirer");
@@ -32,7 +29,6 @@ const client = new Client({
 });
 
 /*埋め込みメッセージ受け取り*/
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const embed = require("./announceText.js");
 
 async function find(dbName: any, collectionName: any, filter: any) {
@@ -52,11 +48,8 @@ let sendTime = {
 }
 
 function readUserInput(question: any) {
-    // @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
     const readline = require('readline').createInterface({
-        // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
         input: process.stdin,
-        // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
         output: process.stdout
     });
 
@@ -68,6 +61,7 @@ function readUserInput(question: any) {
     });
 }
 
+// @ts-ignore
 async function run() {
 
     const mode = await new Select({
@@ -126,7 +120,6 @@ async function run() {
             return;
         }
         default:{
-            // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
             process.exit(1);
         }
 

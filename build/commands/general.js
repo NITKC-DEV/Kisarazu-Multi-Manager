@@ -1,35 +1,21 @@
 "use strict";
 // @ts-expect-error TS(6200): Definitions of the following identifiers conflict ... Remove this comment to see the full error message
 const { SlashCommandBuilder, EmbedBuilder, version } = require('discord.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const packageVer = require('../../package.json');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const { setTimeout } = require("node:timers/promises");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 require('date-utils');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const system = require('../functions/logsystem.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const weather = require('../functions/weather.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const guildData = require('../functions/guildDataSet.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const db = require('../functions/db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const { configPath } = require("../environmentConfig");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const mode = require("../functions/statusAndMode.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const CreateChannel = require("../functions/CCFunc.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const help = require("../functions/help.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const { autoDeleteEditReply } = require("../functions/common.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const { ID_NODATA } = require("../functions/guildDataSet");
-// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports =
     [
         {
@@ -84,7 +70,6 @@ module.exports =
                     },
                     {
                         name: '実行環境',
-                        // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
                         value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
                     },
                 ])
@@ -174,7 +159,6 @@ module.exports =
                     const channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
                     let sendingMsg = '';
                     //ロールメンション時パーミッション確認と除外処理
-                    // @ts-expect-error TS(2737): BigInt literals are not available when targeting l... Remove this comment to see the full error message
                     if (!interaction.memberPermissions.has(1n << 17n)) {
                         const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
                         if (roleMentions) {

@@ -16,7 +16,6 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @param filter フィルターを指定
  * @returns {Promise<WithId<Document>[]>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.find = async function (dbName: any, collectionName: any, filter: any) {
     const collection = await dbClient.db(dbName).collection(collectionName);
 
@@ -30,7 +29,6 @@ exports.find = async function (dbName: any, collectionName: any, filter: any) {
  * @param filter フィルターを指定
  * @returns {Promise<boolean>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.includes = async function (dbName: any, collectionName: any, filter: any) {
     const collection = await dbClient.db(dbName).collection(collectionName);
     const data = await collection.find(filter).toArray();
@@ -45,7 +43,6 @@ exports.includes = async function (dbName: any, collectionName: any, filter: any
  * @param update update operatorを用いた更新内容の記述
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.update = async function run(dbName: any, collectionName: any, filter: any, update: any) {
     try {
         const database = await dbClient.db(dbName);
@@ -66,7 +63,6 @@ exports.update = async function run(dbName: any, collectionName: any, filter: an
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.insert = async function run(dbName: any, collectionName: any, object: any) {
     try {
         const database = await dbClient.db(dbName);
@@ -87,7 +83,6 @@ exports.insert = async function run(dbName: any, collectionName: any, object: an
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.updateOrInsert = async function run(dbName: any, collectionName: any,filter: any, object: any) {
     try {
         const data = await db.find(dbName,collectionName,filter);
@@ -109,7 +104,6 @@ exports.updateOrInsert = async function run(dbName: any, collectionName: any,fil
  * @param filter 削除対象のフィルターを指定
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.delete = async function run(dbName: any,collectionName: any,filter: any) {
     try {
         const database = await dbClient.db(dbName);
@@ -126,7 +120,6 @@ exports.delete = async function run(dbName: any,collectionName: any,filter: any)
  *
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.open = async function close(){
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     await system.log("DB - open");
@@ -136,7 +129,6 @@ exports.open = async function close(){
  *
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.close = async function close(){
     await dbClient.close();
     await system.log("DB - close");

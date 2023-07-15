@@ -8,6 +8,7 @@ const axios = require("axios");
 const system = require("./logsystem");
 
 /*天気取得*/
+// @ts-ignore
 async function getWeather() {
     const data = await db.find("main","weatherCache",{label: "最新の天気予報"});
     return data[0].response;
@@ -23,7 +24,6 @@ function zenkaku2Hankaku(str: any) {
     });
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.generationDay = async function func(day: any){
     const data = await getWeather();
     const weather = data.forecasts[day];
@@ -108,7 +108,6 @@ exports.generationDay = async function func(day: any){
 
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.update = async function func() {
     let response;
     try {
@@ -127,7 +126,6 @@ exports.update = async function func() {
     }
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.catcheUpdate = async function func() {
     const data = await db.find("main","weatherCache",{label:"最新の天気予報"});
     const today = await db.find("main","weatherCache",{label:"1"});

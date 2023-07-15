@@ -7,7 +7,6 @@ const db = require("../functions/db.js");
 const dbMain = "main"; //データベースmainとコレクションCC-categoryを定数化
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'colCat'.
 const colCat = "CC-categories";
-// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {

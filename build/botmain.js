@@ -10,7 +10,6 @@ const fs = require('fs');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cron'.
 const cron = require('node-cron');
 dotenv.config();
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 require('date-utils');
 // @ts-expect-error TS(2304): Cannot find name 'global'.
 global.client = new Client({
@@ -33,9 +32,7 @@ const config = require('./environmentConfig');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'configPath... Remove this comment to see the full error message
 const { configPath } = require("./environmentConfig");
 //関数読み込み
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const birthday = require('./functions/birthday.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dashboard'... Remove this comment to see the full error message
 const dashboard = require('./functions/dashboard.js');
@@ -43,23 +40,18 @@ const dashboard = require('./functions/dashboard.js');
 const timetable = require('./functions/ttGeneration.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require('./functions/logsystem.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const genshin = require('./functions/genshin.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./functions/db.js');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const weather = require('./functions/weather.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
 const guildData = require("./functions/guildDataSet.js");
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
 const { ID_NODATA } = require("./functions/guildDataSet.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const CreateChannel = require("./functions/CCFunc.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const mode = require("./functions/statusAndMode.js");
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'statusAndM... Remove this comment to see the full error message
 const statusAndMode = require("./functions/statusAndMode.js");
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const help = require("./functions/help.js");
 //スラッシュコマンド登録
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandsPa... Remove this comment to see the full error message
@@ -67,14 +59,12 @@ const commandsPath = path.join(__dirname, 'commands');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandFil... Remove this comment to see the full error message
 const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
 client.commands = new Collection();
-// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports = client.commands;
 client.once("ready", async () => {
     await mode.maintenance(true);
     await mode.status(2, "BOT起動処理");
     for (const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
-        // @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
         const command = require(filePath);
         for (let i = 0; i < command.length; i++) {
             client.commands.set(command[i].data.name, command[i]);
@@ -448,7 +438,6 @@ cron.schedule('*/1  * * * *', async () => {
         }
     }
 });
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 if (require.main === module) {
     client.login(config.token);
 }

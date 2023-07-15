@@ -4,7 +4,6 @@ const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, Act
 const system = require('./logsystem.js');
 
 //helpTextの生成
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const helpText = require("./helpText.json");
 const adminTable: any = [];
 for(let i=0;i < helpText.admin.length;i++){
@@ -25,7 +24,6 @@ for(let i=0;i < helpText.help.length;i++){
     )
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.adminHelpSend = async function func(user: any) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
@@ -54,7 +52,6 @@ exports.adminHelpSend = async function func(user: any) {
     }
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.adminHelpDisplay = async function func(interaction: any) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()
@@ -77,7 +74,6 @@ exports.adminHelpDisplay = async function func(interaction: any) {
     }
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.helpSend = async function func(interaction: any) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
@@ -101,7 +97,6 @@ exports.helpSend = async function func(interaction: any) {
     await interaction.reply({embeds: [embed],components: [row]});
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.helpDisplay = async function func(interaction: any) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()

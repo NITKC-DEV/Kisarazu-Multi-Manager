@@ -17,7 +17,6 @@ const system = require("./logsystem.js");
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.createChannel = async function(interaction: any) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     //ゴリ押しJson文字列をオブジェクト型に変換する
@@ -102,7 +101,6 @@ exports.createChannel = async function(interaction: any) {
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.createRole = async function(interaction: any) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     const receivedValue = JSON.parse(interaction.values[0]);
@@ -112,7 +110,6 @@ exports.createRole = async function(interaction: any) {
         try {
             createdRole = await interaction.guild.roles.create({
                 name: receivedValue.channelName,
-                // @ts-expect-error TS(2583): Cannot find name 'BigInt'. Do you need to change y... Remove this comment to see the full error message
                 permissions: BigInt(0),
                 mentionable: true,
                 reason: "木更津高専統合管理BOTの/create-channelにより作成"
@@ -146,7 +143,6 @@ exports.createRole = async function(interaction: any) {
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.removeCategory = async function(interaction: any) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     switch(interaction.values[0]) {
@@ -179,7 +175,6 @@ exports.removeCategory = async function(interaction: any) {
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.selectDelete = async function(interaction: any) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     if(interaction.values[0] === "Cancel") {
@@ -297,7 +292,6 @@ async function roleDelete(interaction: any, ID: any) {
  * @param channel チャンネルオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.removeDeletedChannelData = async function(channel: any) {
     await db.delete(dbMain, colChan, {ID: channel.id})
 };
@@ -307,7 +301,6 @@ exports.removeDeletedChannelData = async function(channel: any) {
  * @param category カテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.removeDeletedCategoryData = async function(category: any) {
     await db.delete(dbMain, colCat, {ID: category.id});
     await db.delete(dbMain, colChan, {categoryID: category.id});
@@ -318,7 +311,6 @@ exports.removeDeletedCategoryData = async function(category: any) {
  * @param channel 変更を検知したときのchannelオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.updateChannelData = async function(channel: any) {
     const channelData = await db.find(dbMain, colChan, {ID: channel.id});
     const newChannel = await client.channels.cache.get(channel.id);
@@ -338,7 +330,6 @@ exports.updateChannelData = async function(channel: any) {
  * @param category 変更を検知したときのカテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.updateCategoryData = async function(category: any) {
     const categoryData = await db.find(dbMain, colCat, {ID: category.id});
     const newCategory = await client.channels.cache.get(category.id);
@@ -354,7 +345,6 @@ exports.updateCategoryData = async function(category: any) {
  * @param role roleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.removeDeletedRoleData = async function(role: any) {
     await db.update(dbMain, colChan, {roleID: role.id}, {$set: {thereRole: false, roleID: "", roleName: ""}});
 };
@@ -364,7 +354,6 @@ exports.removeDeletedRoleData = async function(role: any) {
  * @param role 変更を検知したときのroleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.updateRoleData = async function(role: any) {
     const channelData = await db.find(dbMain, colChan, {roleID: role.id});
     
@@ -381,7 +370,6 @@ exports.updateRoleData = async function(role: any) {
  * @param guild 抜けたときのguildオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.deleteGuildData = async function(guild: any) {
     const categoryData = await db.find(dbMain, colCat, {guildID: guild.id});
     for(const category of categoryData) {
@@ -394,7 +382,6 @@ exports.deleteGuildData = async function(guild: any) {
  * ギルド、カテゴリ、チャンネル、ロールの情報を参照し、整合性を確認する
  * @returns {Promise<void>} void(同期処理)
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.dataCheck = async function() {
     
     await system.log("開始", "createChannelデータベース整合性検証");

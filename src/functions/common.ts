@@ -7,7 +7,6 @@ const {setTimeout} = require ("node:timers/promises");
  * @param options メッセージのオブジェクト(contentの中の$time$を現在の残り時間に置き換える)
  * @param time 返信してから削除するまでの時間
 */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.autoDeleteEditReply = function(interaction: any,options: any,time: any) {
     (async()=> {
         for(let i = time; i > 0; i--) {

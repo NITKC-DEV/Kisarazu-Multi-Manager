@@ -47,7 +47,6 @@ function diffInMonthsAndDays(from: any, to: any) {
     return [ months, days ];
 }
 
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.generation = async function func(guild: any) {
     try{
         /*現在時刻を取得*/

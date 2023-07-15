@@ -2,9 +2,7 @@
 const fs = require('node:fs');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('node:path');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const { REST } = require('@discordjs/rest');
-// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const { Routes } = require('discord.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
 const config =require('./environmentConfig')
@@ -18,7 +16,6 @@ const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.js'));
 for (const file of commandFiles) {//ファイルの数だけ
     const filePath = path.join(commandsPath, file);
-    // @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
     const command = require(filePath);
     for (let i = 0; i < command.length; i++) {
         //各コマンドを配列にぶちこむ
@@ -31,7 +28,7 @@ const rest = new REST({ version: '10' }).setToken(config.token);
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Select'.
 const { Select ,MultiSelect,Toggle } = require('enquirer');
 
-// @ts-expect-error TS(2393): Duplicate function implementation.
+// @ts-ignore
 async function run() {
     //GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client, config.server))
@@ -85,7 +82,6 @@ async function run() {
                     value:e.id
                 })),
                 result(commands: any) {
-                    // @ts-expect-error TS(2550): Property 'entries' does not exist on type 'ObjectC... Remove this comment to see the full error message
                     return  Object.entries(this.map(commands));
                 }
             }).run();

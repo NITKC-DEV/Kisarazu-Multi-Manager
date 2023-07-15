@@ -9,7 +9,6 @@ const {ID_NODATA} = require('../functions/guildDataSet.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const {setTimeout} = require("node:timers/promises");
 
-// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {

@@ -15,7 +15,6 @@ const statusName = ['online','idle','dnd','invisible'];
  * @param presence ○○をプレイ中 のメッセージ
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.status = async function func(status: any,presence="") {
     client.user.setPresence({
         activities: [{
@@ -35,7 +34,6 @@ exports.status = async function func(status: any,presence="") {
  * @param mode Trueでメンテナンスモード
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.maintenance = async function (mode: any){
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     config.maintenanceMode = mode;

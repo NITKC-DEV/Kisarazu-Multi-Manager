@@ -2,7 +2,6 @@
 const config = require("../environmentConfig");
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const {EmbedBuilder} = require("discord.js");
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.daily = async function func(message: any,title: any) {
     const daily = {
         color: 0x27668D,

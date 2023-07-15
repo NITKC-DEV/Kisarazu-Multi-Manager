@@ -35,7 +35,6 @@ const examTime = ["08:50 - 09:50\n", "10:05 - 11:05\n", "11:20 - 12:20\n"];
  * @param change 授業変更を加味する場合はTrue(来週限定)
  * @returns {Promise<number|EmbedBuilder>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.generation = async function func(grade, department, day, change = true) {
     let data, dateText;
     if (change) {
@@ -204,7 +203,6 @@ exports.generation = async function func(grade, department, day, change = true) 
  * @param interaction セレクトメニューのinteraction
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.setNewTimetableData = async function func(interaction) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
     const grade = interaction.customId[0];
@@ -261,7 +259,6 @@ exports.setNewTimetableData = async function func(interaction) {
  * @param interaction ボタンのinteraction
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.showNewTimetableModal = async function func(interaction) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
     const grade = interaction.customId[0];
@@ -334,7 +331,6 @@ exports.showNewTimetableModal = async function func(interaction) {
         catch { } //元メッセージ削除対策
     });
 };
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.deleteData = async function func() {
     const date = new Date;
     date.setDate(date.getDate() - 1);

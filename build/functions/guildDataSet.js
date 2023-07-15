@@ -3,7 +3,6 @@
 const db = require('./db.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
 const ID_NODATA = "0000000000000000000";
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.ID_NODATA = ID_NODATA;
 /***
  * Objectテンプレ
@@ -38,7 +37,6 @@ exports.ID_NODATA = ID_NODATA;
  * @param object 更新データ。guildDataSet.jsにテンプレあり
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.updateOrInsert = async function func(guild, object = {}) {
     const data = await db.find("main", "guildData", { guild: String(guild) });
     if (data.length > 0) {
@@ -130,7 +128,6 @@ exports.updateOrInsert = async function func(guild, object = {}) {
  * @param guild guildID
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.reset = async function func(guild) {
     const data = await db.find("main", "guildData", { guild: String(guild) });
     if (data.length > 0) {
@@ -158,7 +155,6 @@ exports.reset = async function func(guild) {
  * BOTが参加してないGuildのデータを削除
  * @returns {Promise<void>}
  */
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.checkGuild = async function func() {
     const data = await db.find("main", "guildData", {});
     for (let i = 0; i < data.length; i++) {

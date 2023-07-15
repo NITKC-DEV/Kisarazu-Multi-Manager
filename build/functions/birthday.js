@@ -3,7 +3,6 @@
 const db = require('./db.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require("./logsystem.js");
-// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.func = async function func() {
     const date = new Date();
     const data = await db.find("main", "birthday", {
