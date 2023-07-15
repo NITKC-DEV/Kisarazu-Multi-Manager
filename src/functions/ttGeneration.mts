@@ -1,11 +1,7 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
-const {EmbedBuilder, ActionRowBuilder, TextInputBuilder,ModalBuilder} = require("discord.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require("./db.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
-const {setTimeout} = require("node:timers/promises");
+import {EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder} from "@discordjs/builders";
+import * as db from "./db.mjs";
+import {setTimeout} from "timers/promises";
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'department... Remove this comment to see the full error message
 const departmentData = [
     {
         name:"機械工学科",
@@ -38,7 +34,7 @@ const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
  * @param change 授業変更を加味する場合はTrue(来週限定)
  * @returns {Promise<number|EmbedBuilder>}
  */
-exports.generation = async function func(grade: any,department: any,day: any,change = true) {
+export const generation = async function func(grade: any,department: any,day: any,change = true) {
     let data,dateText;
     if(change){
         const date = new Date();
@@ -117,6 +113,7 @@ exports.generation = async function func(grade: any,department: any,day: any,cha
 
 
             return new EmbedBuilder()
+                // @ts-ignore 引数の型が一致していない
                 .setColor(departmentData[parseFloat(department)-1].color)
                 .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${data[0].day/100 | 0}月${data[0].day%100}日定期テスト時間割`)
                 .setAuthor({
@@ -194,6 +191,7 @@ exports.generation = async function func(grade: any,department: any,day: any,cha
             })
 
             return new EmbedBuilder()
+                // @ts-ignore 引数の型が一致していない
                 .setColor(departmentData[parseFloat(department)-1].color)
                 .setTitle(`${departmentData[parseFloat(department)-1].name}${grade}年 ${dateText}の時間割`)
                 .setAuthor({
@@ -220,7 +218,7 @@ exports.generation = async function func(grade: any,department: any,day: any,cha
  * @param interaction セレクトメニューのinteraction
  * @returns {Promise<void>}
  */
-exports.setNewTimetableData = async function func(interaction: any) {
+export const setNewTimetableData = async function func(interaction: any) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
@@ -236,6 +234,7 @@ exports.setNewTimetableData = async function func(interaction: any) {
             data = await db.find("main","timetableData",{grade,department,day: day});
         }
     }
+    // @ts-ignore deleteされるプロパティはoptionalでなければならない
     delete data[0]._id;
     data[0].day = date;
     data[0].timetable[parseInt(period,10)] = {name:interaction.values[0],comment:""};
@@ -282,7 +281,7 @@ exports.setNewTimetableData = async function func(interaction: any) {
  * @param interaction ボタンのinteraction
  * @returns {Promise<void>}
  */
-exports.showNewTimetableModal = async function func(interaction: any) {
+export const showNewTimetableModal = async function func(interaction: any) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
@@ -301,6 +300,7 @@ exports.showNewTimetableModal = async function func(interaction: any) {
             .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録`)
             .setRequired(false)
             .setStyle(1);
+        // @ts-ignore 引数の型が違うらしい．今までどうして動いてたんですか...
         modal.addComponents(new ActionRowBuilder().addComponents(input));
     }
     const input = new TextInputBuilder()
@@ -308,6 +308,7 @@ exports.showNewTimetableModal = async function func(interaction: any) {
         .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
         .setRequired(false)
         .setStyle(1);
+    // @ts-ignore 引数の型が違うらしい．今までどうして動いてたんですか...
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
     const filter = (mInteraction: any) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
@@ -328,9 +329,10 @@ exports.showNewTimetableModal = async function func(interaction: any) {
             if(comment.length <= 100)data[0].comment = comment;
             data[0].day = date;
             data[0].test = mode === '0';
+            // @ts-ignore deleteされるプロパティはoptionalでなければならない
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
-            await db.delete("main","timetableData",{grade,department,day:date + '00'});
+            await db.del("main","timetableData",{grade,department,day:date + '00'});
             // @ts-ignore
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
@@ -363,10 +365,10 @@ exports.showNewTimetableModal = async function func(interaction: any) {
         })
 }
 
-exports.deleteData = async function func(){
+export const deleteData = async function func(){
     const date = new Date;
     date.setDate(date.getDate()-1);
 
-    await db.delete("main","timetableData",{day:String(date.getMonth()+1) + String(date.getDate())});
-    await db.delete("main","timetableData",{day:String(String(date.getMonth()+1) + String(date.getDate()) + '00')});
+    await db.del("main","timetableData",{day:String(date.getMonth()+1) + String(date.getDate())});
+    await db.del("main","timetableData",{day:String(String(date.getMonth()+1) + String(date.getDate()) + '00')});
 }
