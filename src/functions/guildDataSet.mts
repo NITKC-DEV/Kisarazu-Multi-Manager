@@ -1,9 +1,6 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require('./db.js');
+import * as db from "./db.mjs";
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
-const ID_NODATA= "0000000000000000000";
-exports.ID_NODATA = ID_NODATA;
+export const ID_NODATA= "0000000000000000000";
 
 /***
  * Objectテンプレ
@@ -40,7 +37,7 @@ exports.ID_NODATA = ID_NODATA;
  * @param object 更新データ。guildDataSet.jsにテンプレあり
  * @returns {Promise<void>}
  */
-exports.updateOrInsert = async function func(guild: any,object={}) {
+export const updateOrInsert = async function func(guild: any,object={}) {
     const data = await db.find("main","guildData",{guild: String(guild)});
     if(data.length > 0) {
         await db.update("main","guildData",{guild: String(guild)},{
@@ -133,7 +130,7 @@ exports.updateOrInsert = async function func(guild: any,object={}) {
  * @param guild guildID
  * @returns {Promise<void>}
  */
-exports.reset = async function func(guild: any) {
+export const reset = async function func(guild: any) {
     const data = await db.find("main","guildData",{guild: String(guild)});
     if(data.length > 0) {
         await db.update("main", "guildData", {guild: String(guild)}, {
@@ -161,7 +158,7 @@ exports.reset = async function func(guild: any) {
  * BOTが参加してないGuildのデータを削除
  * @returns {Promise<void>}
  */
-exports.checkGuild = async function func() {
+export const checkGuild = async function func() {
     const data = await db.find("main","guildData", {});
     for(let i=0;i<data.length;i++) {
         try{
@@ -171,7 +168,7 @@ exports.checkGuild = async function func() {
         catch(err){
             // @ts-expect-error TS(2571): Object is of type 'unknown'.
             if(err.code === 10004){ //guildがないよエラーならギルド削除
-                await db.delete("main","guildData",{guild:data[i].guild});
+                await db.del("main","guildData",{guild:data[i].guild});
             }
         }
     }
