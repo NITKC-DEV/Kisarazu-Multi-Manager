@@ -41,7 +41,8 @@
     "@types/node": "^20.4.2",
     "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
-    "rimraf": "^5.0.1"
+    "rimraf": "^5.0.1",
+    "ts-migrate": "^0.1.35"
   },
   "volta": {
     "node": "18.16.0",
