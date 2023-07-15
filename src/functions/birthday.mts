@@ -1,9 +1,7 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require('./db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
-const system = require("./logsystem.js");
+import * as db from "./db.js";
+import * as system from "./logsystem.js";
 
-exports.func = async function func() {
+export const func = async function func() {
     const date = new Date();
     const data = await db.find("main", "birthday", {
         month: String(date.getMonth()+1),
@@ -38,5 +36,6 @@ exports.func = async function func() {
             catch{}
         }
     }
+    // @ts-ignore 引数が足りない
     await system.log('誕生日お祝い！');
 }
