@@ -342,6 +342,7 @@ exports.showNewTimetableModal = async function func(interaction: any) {
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await mInteraction.editReply(replyOptions(i));
+                // @ts-ignore
                 await setTimeout(1000);
             }
             await mInteraction.deleteReply();

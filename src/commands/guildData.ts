@@ -151,6 +151,7 @@ module.exports =
 
                 let flag = -1
                 const otherReact =[0,0];
+                // @ts-ignore
                 await setTimeout(100);
 
                 while(flag === -1){
@@ -195,6 +196,7 @@ module.exports =
                 for(let i=5;i>0;i--){
                     // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                     await interaction.editReply(replyOptions(i));
+                    // @ts-ignore
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();

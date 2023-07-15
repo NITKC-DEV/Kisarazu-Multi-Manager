@@ -13,6 +13,7 @@ exports.autoDeleteEditReply = function(interaction: any,options: any,time: any) 
             const defaultContent = JSON.parse(JSON.stringify(options)).content;
             const sendingOptions = JSON.parse(JSON.stringify(options));
             sendingOptions.content = defaultContent.replace(/\$time\$/g, i);
+            // @ts-ignore
             await setTimeout(1000);
             await interaction.editReply(sendingOptions);
         }

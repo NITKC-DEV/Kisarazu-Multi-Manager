@@ -1,17 +1,20 @@
-const fs = require('node:fs');
-const path = require('node:path');
-const { REST } = require('@discordjs/rest');
-const { Routes } = require('discord.js');
+import fs from "node:fs";
+import path from "node:path";
+import {REST} from "@discordjs/rest";
+import {Routes} from "discord.js";
 import {config} from "./environmentConfig.mjs";
-console.log(config)
+import {fileURLToPath} from "url";
+console.log(config);
+
 // ./commands/ ディレクトリ内を探索
 const commands: any = [];
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const commandsPath = path.join(__dirname, 'commands');
 //.jsを検索
-const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.js'));
+const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.mjs'));
 for (const file of commandFiles) {//ファイルの数だけ
     const filePath = path.join(commandsPath, file);
-    const command = require(filePath);
+    const command = await import(filePath);
     for (let i = 0; i < command.length; i++) {
         //各コマンドを配列にぶちこむ
         commands.push(command[i].data.toJSON());
@@ -20,13 +23,15 @@ for (const file of commandFiles) {//ファイルの数だけ
 
 // Discord API通信準備 トークン設定
 const rest = new REST({ version: '10' }).setToken(config.token);
-const { Select ,MultiSelect,Toggle } = require('enquirer');
+// @ts-ignore  cf. https://github.com/enquirer/enquirer/issues/135
+import { Select, MultiSelect, Toggle } from "enquirer";
 
 // @ts-ignore
 async function run() {
     //GETで現在登録されているのを取得
-    const data = await rest.get(Routes.applicationCommands(config.client))
+    const data = await rest.get(Routes.applicationCommands(config.client));
     console.log("---コマンド一覧---")
+    // @ts-ignore dataが返すundefined型に敗北した．誰かたすけて
     for (const command of data) {
         console.log(`/${command.name}`)
         console.log(`  ID:${command.id}`)
@@ -71,6 +76,7 @@ async function run() {
             const selected = await new MultiSelect({
                 name: 'value',
                 message: '対象のコマンドを<space>で選択、<a>で全選択、<i>で反転',
+                // @ts-ignore dataが返すundefined型に敗北した．誰かたすけて
                 choices: data.map((e: any) => ({
                     name:"/"+e.name,
                     value:e.id
