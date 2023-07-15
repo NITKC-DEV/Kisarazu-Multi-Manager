@@ -1,7 +1,8 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+import { MongoClient, ServerApiVersion } from "mongodb";
 import {config} from "../environmentConfig.mjs";
-const system = require('./logsystem.js');
-const db = require('./db.js');
+import * as system from "./logsystem.js";
+import * as db from "./db.mjs";
+
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 
 /***
@@ -11,7 +12,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @param filter フィルターを指定
  * @returns {Promise<WithId<Document>[]>}
  */
-exports.find = async function (dbName: any, collectionName: any, filter: any) {
+export const find = async function (dbName: any, collectionName: any, filter: any) {
     const collection = await dbClient.db(dbName).collection(collectionName);
 
     return await collection.find(filter).toArray();
@@ -24,7 +25,7 @@ exports.find = async function (dbName: any, collectionName: any, filter: any) {
  * @param filter フィルターを指定
  * @returns {Promise<boolean>}
  */
-exports.includes = async function (dbName: any, collectionName: any, filter: any) {
+export const includes = async function (dbName: any, collectionName: any, filter: any) {
     const collection = await dbClient.db(dbName).collection(collectionName);
     const data = await collection.find(filter).toArray();
     return data.length > 0;
@@ -38,14 +39,14 @@ exports.includes = async function (dbName: any, collectionName: any, filter: any
  * @param update update operatorを用いた更新内容の記述
  * @returns {Promise<void>}
  */
-exports.update = async function run(dbName: any, collectionName: any, filter: any, update: any) {
+export const update = async function run(dbName: any, collectionName: any, filter: any, update: any) {
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
         const result = await collection.updateOne(filter,update);
         await system.log(`${dbName}.${collectionName}を更新`,`DB更新実行`);
-    } catch(err) {
+    } catch(err: any) {
         await system.error(`${dbName}.${collectionName}を更新できませんでした`,err,`DB更新失敗`);
     }
 }
@@ -58,14 +59,14 @@ exports.update = async function run(dbName: any, collectionName: any, filter: an
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
-exports.insert = async function run(dbName: any, collectionName: any, object: any) {
+export const insert = async function run(dbName: any, collectionName: any, object: any) {
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
         const result = await collection.insertOne(object);
         await system.log(`${dbName}.${collectionName}にレコード追加`,`DB追加実行`);
-    } catch(err) {
+    } catch(err: any) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`,err,`DB追加失敗`);
     }
 }
@@ -78,7 +79,7 @@ exports.insert = async function run(dbName: any, collectionName: any, object: an
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
-exports.updateOrInsert = async function run(dbName: any, collectionName: any,filter: any, object: any) {
+export const updateOrInsert = async function run(dbName: any, collectionName: any,filter: any, object: any) {
     try {
         const data = await db.find(dbName,collectionName,filter);
         if(data.length > 0){
@@ -87,7 +88,7 @@ exports.updateOrInsert = async function run(dbName: any, collectionName: any,fil
         else{
             await db.insert(dbName, collectionName, object);
         }
-    } catch(err) {
+    } catch(err: any) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`,err,`DB追加失敗`);
     }
 }
@@ -99,14 +100,14 @@ exports.updateOrInsert = async function run(dbName: any, collectionName: any,fil
  * @param filter 削除対象のフィルターを指定
  * @returns {Promise<void>}
  */
-exports.delete = async function run(dbName: any,collectionName: any,filter: any) {
+export const del = async function run(dbName: any, collectionName: any, filter: any) {
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
         const result = await collection.deleteMany(filter);
         await system.log(`${dbName}.${collectionName}からレコード削除(削除されたとは言っていない)`,`DBレコード削除操作実行`);
-    } catch(err) {
+    } catch(err: any) {
         await system.error(`${dbName}.${collectionName}からレコードを削除できませんでした`,err,`DB削除失敗`);
     }
 }
@@ -115,8 +116,9 @@ exports.delete = async function run(dbName: any,collectionName: any,filter: any)
  *
  * @returns {Promise<void>}
  */
-exports.open = async function close(){
+export const open = async function close(){
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+    // @ts-ignore 引数が足りない
     await system.log("DB - open");
 }
 
@@ -124,8 +126,9 @@ exports.open = async function close(){
  *
  * @returns {Promise<void>}
  */
-exports.close = async function close(){
+export const close = async function close(){
     await dbClient.close();
+    // @ts-ignore 引数が足りない
     await system.log("DB - close");
 }
 
