@@ -1,13 +1,9 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
-const {SlashCommandBuilder} = require('discord.js');
-const dashboard = require('../functions/dashboard.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require('../functions/db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
-const system = require("../functions/logsystem");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
-const {setTimeout} = require("node:timers/promises");
-module.exports =
+import {SlashCommandBuilder} from "@discordjs/builders";
+import * as dashboard from "../functions/dashboard.js";
+import * as db from "../functions/db.js";
+import {setTimeout} from "timers/promises";
+
+export default
     [
         {
             data: new SlashCommandBuilder()
