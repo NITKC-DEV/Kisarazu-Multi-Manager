@@ -1,4 +1,4 @@
-const {EmbedBuilder} = require("discord.js");
+import {EmbedBuilder} from "@discordjs/builders";
 import {config} from "../environmentConfig.mjs";
 
 /***
@@ -6,7 +6,7 @@ import {config} from "../environmentConfig.mjs";
  * @param message ログの本文
  * @param title ログのタイトル。省略可
  */
-exports.log = async function func(message: any,title: any) {
+export const log = async function func(message: any,title: any) {
     const date = new Date().toLocaleString(); // YYYY/MM/DD hh:mm:ss形式に変換
     console.log(`${title ?? "システムログ"} ----\n${(message.trim().split("```").join(''))}\n--------${date}\n`);
     const embed = new EmbedBuilder()
@@ -27,7 +27,7 @@ exports.log = async function func(message: any,title: any) {
  * @param error エラーオブジェクト。error.stackが存在する場合にそれが送られる。省略可
  * @param title エラーメッセージのタイトル。省略可
  */
-exports.error = async function func(message: any,error= {stack:""},title="エラー") {
+export const error = async function func(message: any,error= {stack:""},title="エラー") {
     const embed = new EmbedBuilder()
         .setColor(0xFF0000)
         .setTitle(title)
@@ -55,7 +55,7 @@ exports.error = async function func(message: any,error= {stack:""},title="エラ
  * @param message ログの本文
  * @param title ログのタイトル。省略可
  */
-exports.warn = async function func(message: any,title="警告") {
+export const warn = async function func(message: any,title="警告") {
     const date = new Date().toLocaleString(); // YYYY/MM/DD hh:mm:ss形式に変換
     console.warn(`${title} ----\n${(message.trim().split("```").join(''))}\n--------${date}\n`);
     const embed = new EmbedBuilder()
