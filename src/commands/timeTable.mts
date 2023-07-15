@@ -1,14 +1,9 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
-const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder,} = require('discord.js');
-const timetable= require('../functions/ttGeneration.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require('../functions/db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
-const guildData = require('../functions/guildDataSet.js')
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
-const {setTimeout} = require("node:timers/promises");
+import {SlashCommandBuilder, StringSelectMenuBuilder, EmbedBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder} from "@discordjs/builders";
+import * as timetable from "../functions/ttGeneration.js";
+import * as db from "../functions/db.js";
+import * as guildData from "../functions/guildDataSet.js";
+import {setTimeout} from "timers/promises";
 
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'department... Remove this comment to see the full error message
 const departmentData = [
     {
         name:"機械工学科",
@@ -29,7 +24,7 @@ const departmentData = [
 ];
 
 
-module.exports = [
+export default [
     {
         data: new SlashCommandBuilder()
             .setName('timetable')
@@ -361,8 +356,8 @@ module.exports = [
 
         async execute(interaction: any) {
             await interaction.deferReply();
-            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
-            await db.delete("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});
+            await db.del("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日'))});
+            await db.del("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('削除日') + '00')});
             const replyOptions=(time: any) => {return{content: '削除しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await interaction.editReply(replyOptions(5));
             for(let i=5;i>0;i--){
@@ -456,6 +451,7 @@ module.exports = [
                     .setLabel(`${2*i+1}-${2*i+2}限目(${data[0].timetable[i].name})のコメントを100字以内で登録`)
                     .setRequired(false)
                     .setStyle(1);
+                // @ts-ignore (動作はしない)を信じてignore
                 modal.addComponents(new ActionRowBuilder().addComponents(input));
             }
             const input = new TextInputBuilder()
@@ -463,6 +459,7 @@ module.exports = [
                 .setLabel(`${Math.floor(date/100)}月${Math.floor(date%100)}日の時間割にコメントを100字以内で登録`)
                 .setRequired(false)
                 .setStyle(1);
+            // @ts-ignore (動作はしない)を信じてignore
             modal.addComponents(new ActionRowBuilder().addComponents(input));
             await interaction.showModal(modal);
             const filter = (mInteraction: any) => mInteraction.customId === `${date}addCommentTimetableModal${grade}${department}`;
