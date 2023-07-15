@@ -6,7 +6,7 @@ declare const config: any;
 declare const devConfig: any;
 declare const readline: any;
 declare const Select: any;
-declare const client: any;
+declare let client: any;
 declare const embed: any;
 declare function find(dbName: any, collectionName: any, filter: any): Promise<any>;
 declare let dbClient: any;
