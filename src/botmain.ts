@@ -28,9 +28,9 @@ global.client = new Client({
 
 //configファイル読み込み
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const config = require('./environmentConfig')
+const {config} = require('./environmentConfig.mjs')
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'configPath... Remove this comment to see the full error message
-const {configPath} = require("./environmentConfig");
+const {configPath} = require("./environmentConfig.mjs");
 
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');

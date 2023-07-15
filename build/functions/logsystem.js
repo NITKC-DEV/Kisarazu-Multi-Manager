@@ -2,7 +2,7 @@
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const { EmbedBuilder } = require("discord.js");
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const config = require("../environmentConfig");
+const { config } = require("../environmentConfig.mjs");
 /***
  * ログをコンソールとdiscordに送信する
  * @param message ログの本文

@@ -5,7 +5,7 @@ const path = require('node:path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const config =require('./environmentConfig')
+const {config} =require('./environmentConfig.mjs')
 console.log(config)
 // ./commands/ ディレクトリ内を探索
 const commands: any = [];
