@@ -1,6 +1,6 @@
 import {config} from "../environmentConfig.mjs";
-const {EmbedBuilder} = require("discord.js");
-exports.daily = async function func(message: any,title: any) {
+
+export const daily = async function func(message: any,title: any) {
     const daily = {
         color: 0x27668D,
         title: 'デイリー更新',
