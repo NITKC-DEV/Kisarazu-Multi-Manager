@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
 const db = require("../functions/db.js");
 const dbMain = "main"; //データベースmainとコレクションCC-categoryを定数化
@@ -29,50 +20,48 @@ module.exports =
              * @param interaction
              * @returns {Promise<void>}
              */
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    if (interaction.guild !== null) {
-                        const guildCats = yield db.find(dbMain, colCat, { "guildID": interaction.guildId });
-                        if (guildCats.length > 0) {
-                            const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
-                            if (channelName.length <= 30) {
-                                //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
-                                const selectCategory = new ActionRowBuilder()
-                                    .addComponents(new StringSelectMenuBuilder()
-                                    .setPlaceholder("カテゴリを選択してください")
-                                    .setCustomId("createChannel")
-                                    .addOptions(...guildCats.map(data => ({
-                                    label: data.name,
-                                    value: JSON.stringify({ categoryID: data.ID, channelName: channelName })
-                                })), {
-                                    label: "キャンセル",
-                                    value: JSON.stringify({ categoryID: "cancel", channelName: channelName })
-                                }));
-                                yield interaction.editReply({
-                                    content: `${channelName}を作成するカテゴリを指定してください`,
-                                    components: [selectCategory],
-                                    ephemeral: true
-                                });
-                            }
-                            else {
-                                yield interaction.editReply({
-                                    content: "チャンネル名として指定できる文字数は最大30文字です",
-                                    ephemeral: true
-                                });
-                            }
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                if (interaction.guild !== null) {
+                    const guildCats = await db.find(dbMain, colCat, { "guildID": interaction.guildId });
+                    if (guildCats.length > 0) {
+                        const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
+                        if (channelName.length <= 30) {
+                            //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
+                            const selectCategory = new ActionRowBuilder()
+                                .addComponents(new StringSelectMenuBuilder()
+                                .setPlaceholder("カテゴリを選択してください")
+                                .setCustomId("createChannel")
+                                .addOptions(...guildCats.map(data => ({
+                                label: data.name,
+                                value: JSON.stringify({ categoryID: data.ID, channelName: channelName })
+                            })), {
+                                label: "キャンセル",
+                                value: JSON.stringify({ categoryID: "cancel", channelName: channelName })
+                            }));
+                            await interaction.editReply({
+                                content: `${channelName}を作成するカテゴリを指定してください`,
+                                components: [selectCategory],
+                                ephemeral: true
+                            });
                         }
                         else {
-                            yield interaction.editReply({
-                                content: "このサーバーでは/create-chanが許可されているカテゴリがありません。\n管理者権限を持つ人が/add-categoryを実行することで/create-chanが有効になります。",
+                            await interaction.editReply({
+                                content: "チャンネル名として指定できる文字数は最大30文字です",
                                 ephemeral: true
                             });
                         }
                     }
                     else {
-                        yield interaction.editReply("このコマンドはサーバーでのみ実行できます");
+                        await interaction.editReply({
+                            content: "このサーバーでは/create-chanが許可されているカテゴリがありません。\n管理者権限を持つ人が/add-categoryを実行することで/create-chanが有効になります。",
+                            ephemeral: true
+                        });
                     }
-                });
+                }
+                else {
+                    await interaction.editReply("このコマンドはサーバーでのみ実行できます");
+                }
             }
         },
         {
@@ -91,32 +80,30 @@ module.exports =
              * @param interaction
              * @returns {Promise<void>}
              */
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    if (interaction.channel.type === 0) {
-                        const dbData = yield db.find(dbMain, colCat, { ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId });
-                        if (dbData.length === 0) {
-                            yield db.insert(dbMain, colCat, {
-                                ID: interaction.channel.parentId !== null ? interaction.channel.parentId : interaction.guildId,
-                                name: interaction.channel.parent !== null ? interaction.channel.parent.name : "カテゴリなし",
-                                allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")),
-                                guildID: interaction.guildId
-                            });
-                            yield interaction.editReply({ content: "追加しました", ephemeral: true });
-                        }
-                        else if (dbData[0].allowRole !== Boolean(interaction.options.getNumber("ロールの追加を許可"))) {
-                            yield db.update(dbMain, colCat, { ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId }, { $set: { allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")) } });
-                            yield interaction.editReply({ content: "登録されているカテゴリのロール作成権限を上書きしました" });
-                        }
-                        else {
-                            yield interaction.editReply({ content: "このカテゴリはすでに追加されています", ephemeral: true });
-                        }
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                if (interaction.channel.type === 0) {
+                    const dbData = await db.find(dbMain, colCat, { ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId });
+                    if (dbData.length === 0) {
+                        await db.insert(dbMain, colCat, {
+                            ID: interaction.channel.parentId !== null ? interaction.channel.parentId : interaction.guildId,
+                            name: interaction.channel.parent !== null ? interaction.channel.parent.name : "カテゴリなし",
+                            allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")),
+                            guildID: interaction.guildId
+                        });
+                        await interaction.editReply({ content: "追加しました", ephemeral: true });
+                    }
+                    else if (dbData[0].allowRole !== Boolean(interaction.options.getNumber("ロールの追加を許可"))) {
+                        await db.update(dbMain, colCat, { ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId }, { $set: { allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")) } });
+                        await interaction.editReply({ content: "登録されているカテゴリのロール作成権限を上書きしました" });
                     }
                     else {
-                        yield interaction.editReply("このコマンドはサーバー内のテキストチャンネルでのみ実行できます");
+                        await interaction.editReply({ content: "このカテゴリはすでに追加されています", ephemeral: true });
                     }
-                });
+                }
+                else {
+                    await interaction.editReply("このコマンドはサーバー内のテキストチャンネルでのみ実行できます");
+                }
             }
         },
         {
@@ -129,34 +116,32 @@ module.exports =
              * @param interaction
              * @returns {Promise<void>}
              */
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    if (interaction.guild !== null) {
-                        const guildCats = yield db.find(dbMain, colCat, { "guildID": interaction.guildId });
-                        if (guildCats.length > 0) {
-                            const selectCategory = new ActionRowBuilder()
-                                .addComponents(new StringSelectMenuBuilder()
-                                .setPlaceholder("カテゴリを選択")
-                                .setCustomId("removeCategory")
-                                .addOptions({ label: "全カテゴリを登録解除する", value: "All" }, ...guildCats.map(cat => ({ label: cat.name, value: cat.ID })), { label: "キャンセル", value: "Cancel" }));
-                            yield interaction.editReply({
-                                content: "削除するカテゴリを指定してください。",
-                                components: [selectCategory],
-                                ephemeral: true
-                            });
-                        }
-                        else {
-                            yield interaction.editReply({
-                                content: "このサーバーには登録されているカテゴリがありません。",
-                                ephemeral: true
-                            });
-                        }
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                if (interaction.guild !== null) {
+                    const guildCats = await db.find(dbMain, colCat, { "guildID": interaction.guildId });
+                    if (guildCats.length > 0) {
+                        const selectCategory = new ActionRowBuilder()
+                            .addComponents(new StringSelectMenuBuilder()
+                            .setPlaceholder("カテゴリを選択")
+                            .setCustomId("removeCategory")
+                            .addOptions({ label: "全カテゴリを登録解除する", value: "All" }, ...guildCats.map(cat => ({ label: cat.name, value: cat.ID })), { label: "キャンセル", value: "Cancel" }));
+                        await interaction.editReply({
+                            content: "削除するカテゴリを指定してください。",
+                            components: [selectCategory],
+                            ephemeral: true
+                        });
                     }
                     else {
-                        yield interaction.editReply("このコマンドはサーバーでのみ実行できます");
+                        await interaction.editReply({
+                            content: "このサーバーには登録されているカテゴリがありません。",
+                            ephemeral: true
+                        });
                     }
-                });
+                }
+                else {
+                    await interaction.editReply("このコマンドはサーバーでのみ実行できます");
+                }
             }
         }
     ];

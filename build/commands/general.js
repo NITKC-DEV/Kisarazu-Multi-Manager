@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 const { SlashCommandBuilder, EmbedBuilder, version } = require('discord.js');
 const packageVer = require('../../package.json');
 const { setTimeout } = require("node:timers/promises");
@@ -17,7 +8,7 @@ const weather = require('../functions/weather.js');
 const guildData = require('../functions/guildDataSet.js');
 const db = require('../functions/db.js');
 const fs = require("fs");
-const { configPath } = require("../environmentConfig.js");
+const { configPath } = require("../environmentConfig");
 const mode = require("../functions/statusAndMode.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const help = require("../functions/help.js");
@@ -29,10 +20,8 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield help.helpSend(interaction);
-                });
+            async execute(interaction) {
+                await help.helpSend(interaction);
             },
         },
         {
@@ -41,64 +30,58 @@ module.exports =
                 .setDescription('管理者向けメニューをDMで表示します。')
                 .setDefaultMemberPermissions(1 << 3)
                 .setDMPermission(false),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
-                    yield help.adminHelpSend(interaction.user);
-                });
+            async execute(interaction) {
+                await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
+                await help.adminHelpSend(interaction.user);
             },
         },
         {
             data: new SlashCommandBuilder()
                 .setName('about')
                 .setDescription('このBOTの概要を表示します'),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    const embed = new EmbedBuilder()
-                        .setColor(0x00A0EA)
-                        .setTitle('NITKC統合管理BOT概要')
-                        .setAuthor({
-                        name: "木更津高専統合管理BOT",
-                        iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                        url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
-                    })
-                        .setDescription('このbotの概要を紹介します')
-                        .addFields([
-                        {
-                            name: 'バージョン情報',
-                            value: 'v' + packageVer.version,
-                        },
-                        {
-                            name: '開発者',
-                            value: 'NITKC-DEVの8人で開発しています。\nメンバーは以下のとおりです。\n・[kokastar](https://github.com/starkoka)\n・[Naotiki](https://github.com/naotiki)\n・[KouRo](https://github.com/Kou-Ro)\n・[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)\n・[doit^6p](https://github.com/c-6p)\n・[トコトコ](https://github.com/tokotoko9981)\n・[maikuradentetu](https://github.com/maikuradentetu)\n・[nairoki23](https://github.com/nairoki23)',
-                        },
-                        {
-                            name: "ソースコード",
-                            value: "このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
-                        },
-                        {
-                            name: "バグの報告先",
-                            value: "[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)までお願いします。\nサポート等の詳細は/helpや/admin-helpを実行してください。\n"
-                        },
-                        {
-                            name: '実行環境',
-                            value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
-                        },
-                    ])
-                        .setTimestamp()
-                        .setFooter({ text: 'Developed by NITKC-DEV' });
-                    yield interaction.reply({ embeds: [embed] });
-                });
+            async execute(interaction) {
+                const embed = new EmbedBuilder()
+                    .setColor(0x00A0EA)
+                    .setTitle('NITKC統合管理BOT概要')
+                    .setAuthor({
+                    name: "木更津高専統合管理BOT",
+                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
+                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
+                })
+                    .setDescription('このbotの概要を紹介します')
+                    .addFields([
+                    {
+                        name: 'バージョン情報',
+                        value: 'v' + packageVer.version,
+                    },
+                    {
+                        name: '開発者',
+                        value: 'NITKC-DEVの8人で開発しています。\nメンバーは以下のとおりです。\n・[kokastar](https://github.com/starkoka)\n・[Naotiki](https://github.com/naotiki)\n・[KouRo](https://github.com/Kou-Ro)\n・[NXVZBGBFBEN](https://github.com/NXVZBGBFBEN)\n・[doit^6p](https://github.com/c-6p)\n・[トコトコ](https://github.com/tokotoko9981)\n・[maikuradentetu](https://github.com/maikuradentetu)\n・[nairoki23](https://github.com/nairoki23)',
+                    },
+                    {
+                        name: "ソースコード",
+                        value: "このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
+                    },
+                    {
+                        name: "バグの報告先",
+                        value: "[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)までお願いします。\nサポート等の詳細は/helpや/admin-helpを実行してください。\n"
+                    },
+                    {
+                        name: '実行環境',
+                        value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
+                    },
+                ])
+                    .setTimestamp()
+                    .setFooter({ text: 'Developed by NITKC-DEV' });
+                await interaction.reply({ embeds: [embed] });
             },
         },
         {
             data: new SlashCommandBuilder()
                 .setName('ping')
                 .setDescription('このBOTのpingを測定します'),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.reply(`Ping : ${interaction.client.ws.ping}ms`);
-                });
+            async execute(interaction) {
+                await interaction.reply(`Ping : ${interaction.client.ws.ping}ms`);
             },
         },
         {
@@ -111,41 +94,39 @@ module.exports =
                 .setName('option')
                 .setDescription('True or False')
                 .setRequired(true)),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply();
-                    const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-                    let flag = 0;
-                    for (let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
-                        if (config.sugoiTsuyoiHitotachi[i] === interaction.user.id)
+            async execute(interaction) {
+                await interaction.deferReply();
+                const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+                let flag = 0;
+                for (let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
+                    if (config.sugoiTsuyoiHitotachi[i] === interaction.user.id)
+                        flag = 1;
+                }
+                if (flag === 1) {
+                    const reply = await interaction.editReply("あなたはシステム管理者から通常の講習を受けたはずです。\nこれは通常、以下の3点に要約されます:\n    #1) 他人のプライバシーを尊重すること。\n    #2) タイプする前に考えること。\n    #3) 大いなる力には大いなる責任が伴うこと。");
+                    await reply.react('⭕');
+                    await reply.react('❌');
+                    flag = 0;
+                    await setTimeout(100);
+                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
+                        .then(() => {
+                        if (reply.reactions.cache.at(0).count === 2) {
                             flag = 1;
-                    }
+                        }
+                    });
+                    await reply.reactions.removeAll();
                     if (flag === 1) {
-                        const reply = yield interaction.editReply("あなたはシステム管理者から通常の講習を受けたはずです。\nこれは通常、以下の3点に要約されます:\n    #1) 他人のプライバシーを尊重すること。\n    #2) タイプする前に考えること。\n    #3) 大いなる力には大いなる責任が伴うこと。");
-                        yield reply.react('⭕');
-                        yield reply.react('❌');
-                        flag = 0;
-                        yield setTimeout(100);
-                        yield reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
-                            .then(() => {
-                            if (reply.reactions.cache.at(0).count === 2) {
-                                flag = 1;
-                            }
-                        });
-                        yield reply.reactions.removeAll();
-                        if (flag === 1) {
-                            yield mode.maintenance(interaction.options.getBoolean('option'));
-                            yield CreateChannel.dataCheck();
-                            yield interaction.editReply(`メンテナンスモードを${interaction.options.getBoolean('option')}にしました`);
-                        }
-                        else {
-                            yield interaction.editReply(`変更を取りやめました`);
-                        }
+                        await mode.maintenance(interaction.options.getBoolean('option'));
+                        await CreateChannel.dataCheck();
+                        await interaction.editReply(`メンテナンスモードを${interaction.options.getBoolean('option')}にしました`);
                     }
                     else {
-                        yield interaction.editReply(`Permission denied : BOT開発者専用コマンドです`);
+                        await interaction.editReply(`変更を取りやめました`);
                     }
-                });
+                }
+                else {
+                    await interaction.editReply(`Permission denied : BOT開発者専用コマンドです`);
+                }
             },
         },
         {
@@ -165,87 +146,85 @@ module.exports =
                 .setName('添付ファイル3')
                 .setDescription('添付するファイルをアップロードします')
                 .setRequired(false)),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    if (interaction.guild) {
-                        let receivedMsg = interaction.options.getString('メッセージ');
-                        const attachedFile1 = interaction.options.getAttachment('添付ファイル1');
-                        const attachedFile2 = interaction.options.getAttachment('添付ファイル2');
-                        const attachedFile3 = interaction.options.getAttachment('添付ファイル3');
-                        const channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
-                        let sendingMsg = '';
-                        //ロールメンション時パーミッション確認と除外処理
-                        if (!interaction.memberPermissions.has(1n << 17n)) {
-                            const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
-                            if (roleMentions) {
-                                for (const roleMention of roleMentions) {
-                                    const role = interaction.guild.roles.cache.find(readRole => readRole.id === roleMention.match(/\d+/)[0]);
-                                    if (role && !role.mentionable) {
-                                        receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
-                                    }
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                if (interaction.guild) {
+                    let receivedMsg = interaction.options.getString('メッセージ');
+                    const attachedFile1 = interaction.options.getAttachment('添付ファイル1');
+                    const attachedFile2 = interaction.options.getAttachment('添付ファイル2');
+                    const attachedFile3 = interaction.options.getAttachment('添付ファイル3');
+                    const channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
+                    let sendingMsg = '';
+                    //ロールメンション時パーミッション確認と除外処理
+                    if (!interaction.memberPermissions.has(1n << 17n)) {
+                        const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
+                        if (roleMentions) {
+                            for (const roleMention of roleMentions) {
+                                const role = interaction.guild.roles.cache.find(readRole => readRole.id === roleMention.match(/\d+/)[0]);
+                                if (role && !role.mentionable) {
+                                    receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
                                 }
-                            }
-                            const everyoneMention = receivedMsg.search(/@everyone/);
-                            if (everyoneMention !== -1) {
-                                const rg = new RegExp("(?<!`)@everyone(?<!`)", "g");
-                                receivedMsg = receivedMsg.replace(rg, "\`@everyone\`\0");
-                            }
-                            const hereMention = receivedMsg.search(/@here/);
-                            if (hereMention !== -1) {
-                                const rg = new RegExp("(?<!`)@here(?<!`)", "g");
-                                receivedMsg = receivedMsg.replace(rg, "\`@here\`\0");
                             }
                         }
-                        //改行とバクスラのエスケープ処理
-                        if (receivedMsg)
-                            for (let i = 0; i < receivedMsg.length; i++) {
-                                if (receivedMsg[i] === '\\') {
-                                    switch (receivedMsg[i + 1]) {
-                                        case '\\':
-                                            sendingMsg += '\\\\';
-                                            i++;
-                                            break;
-                                        case 'n':
-                                            sendingMsg += '\n';
-                                            i++;
-                                            break;
-                                    }
+                        const everyoneMention = receivedMsg.search(/@everyone/);
+                        if (everyoneMention !== -1) {
+                            const rg = new RegExp("(?<!`)@everyone(?<!`)", "g");
+                            receivedMsg = receivedMsg.replace(rg, "\`@everyone\`\0");
+                        }
+                        const hereMention = receivedMsg.search(/@here/);
+                        if (hereMention !== -1) {
+                            const rg = new RegExp("(?<!`)@here(?<!`)", "g");
+                            receivedMsg = receivedMsg.replace(rg, "\`@here\`\0");
+                        }
+                    }
+                    //改行とバクスラのエスケープ処理
+                    if (receivedMsg)
+                        for (let i = 0; i < receivedMsg.length; i++) {
+                            if (receivedMsg[i] === '\\') {
+                                switch (receivedMsg[i + 1]) {
+                                    case '\\':
+                                        sendingMsg += '\\\\';
+                                        i++;
+                                        break;
+                                    case 'n':
+                                        sendingMsg += '\n';
+                                        i++;
+                                        break;
                                 }
-                                else
-                                    sendingMsg += receivedMsg[i];
                             }
-                        sendingMsg = sendingMsg.trim();
-                        if (sendingMsg.length > 2000) {
-                            yield interaction.editReply({ content: "2000文字を超える内容は送信できません", ephemeral: true, });
+                            else
+                                sendingMsg += receivedMsg[i];
+                        }
+                    sendingMsg = sendingMsg.trim();
+                    if (sendingMsg.length > 2000) {
+                        await interaction.editReply({ content: "2000文字を超える内容は送信できません", ephemeral: true, });
+                        return;
+                    }
+                    const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file => file);
+                    for (const attachment of attachFiles) {
+                        if (attachment.size > 26214400) {
+                            await interaction.editReply({ content: "サイズが25MBを超えるファイルは添付できません", ephemeral: true });
                             return;
                         }
-                        const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file => file);
-                        for (const attachment of attachFiles) {
-                            if (attachment.size > 26214400) {
-                                yield interaction.editReply({ content: "サイズが25MBを超えるファイルは添付できません", ephemeral: true });
-                                return;
-                            }
-                        }
-                        autoDeleteEditReply(interaction, {
-                            content: channelName + 'にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)',
-                            ephemeral: true
-                        }, 5);
-                        if (sendingMsg)
-                            yield system.log(sendingMsg + "\nin <#" + interaction.channelId + ">\n", interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
-                        if (attachFiles)
-                            for (const file of attachFiles)
-                                yield system.log(file.url + "\nin <#" + interaction.channelId + ">\n", interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
-                        if (sendingMsg || attachFiles[0])
-                            interaction.guild.channels.cache.get(interaction.channelId).send({
-                                content: sendingMsg,
-                                files: attachFiles
-                            });
                     }
-                    else {
-                        yield interaction.editReply({ content: "このコマンドはサーバーでのみ実行できます", ephemeral: true });
-                    }
-                });
+                    autoDeleteEditReply(interaction, {
+                        content: channelName + 'にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)',
+                        ephemeral: true
+                    }, 5);
+                    if (sendingMsg)
+                        await system.log(sendingMsg + "\nin <#" + interaction.channelId + ">\n", interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ");
+                    if (attachFiles)
+                        for (const file of attachFiles)
+                            await system.log(file.url + "\nin <#" + interaction.channelId + ">\n", interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル");
+                    if (sendingMsg || attachFiles[0])
+                        interaction.guild.channels.cache.get(interaction.channelId).send({
+                            content: sendingMsg,
+                            files: attachFiles
+                        });
+                }
+                else {
+                    await interaction.editReply({ content: "このコマンドはサーバーでのみ実行できます", ephemeral: true });
+                }
             }
         },
         {
@@ -263,41 +242,39 @@ module.exports =
                 .setName('日')
                 .setDescription('生まれた日をいれます')
                 .setRequired(true)),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    const data = yield db.find("main", "birthday", {
-                        user: interaction.user.id,
-                        guild: interaction.guildId
-                    });
-                    if (interaction.options.getInteger('月') > 0 && interaction.options.getInteger('月') < 13 && interaction.options.getInteger('日') > 0 && interaction.options.getInteger('日') < 32 && interaction.options.getInteger('年') ** 2 >= 0) {
-                        if (data.length > 0) {
-                            yield db.update("main", "birthday", {
-                                user: interaction.user.id,
-                                guild: interaction.guildId
-                            }, { $set: {
-                                    "user": String(interaction.user.id),
-                                    "guild": String(interaction.guildId),
-                                    "year": String(interaction.options.getInteger('年')),
-                                    "month": String(interaction.options.getInteger('月')),
-                                    "day": String(interaction.options.getInteger('日')),
-                                } });
-                        }
-                        else {
-                            yield db.insert("main", "birthday", {
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                const data = await db.find("main", "birthday", {
+                    user: interaction.user.id,
+                    guild: interaction.guildId
+                });
+                if (interaction.options.getInteger('月') > 0 && interaction.options.getInteger('月') < 13 && interaction.options.getInteger('日') > 0 && interaction.options.getInteger('日') < 32 && interaction.options.getInteger('年') ** 2 >= 0) {
+                    if (data.length > 0) {
+                        await db.update("main", "birthday", {
+                            user: interaction.user.id,
+                            guild: interaction.guildId
+                        }, { $set: {
                                 "user": String(interaction.user.id),
                                 "guild": String(interaction.guildId),
                                 "year": String(interaction.options.getInteger('年')),
                                 "month": String(interaction.options.getInteger('月')),
                                 "day": String(interaction.options.getInteger('日')),
-                            });
-                        }
-                        yield interaction.editReply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。` });
+                            } });
                     }
                     else {
-                        yield interaction.editReply({ content: "誕生日を正しい数字で設定してください。" });
+                        await db.insert("main", "birthday", {
+                            "user": String(interaction.user.id),
+                            "guild": String(interaction.guildId),
+                            "year": String(interaction.options.getInteger('年')),
+                            "month": String(interaction.options.getInteger('月')),
+                            "day": String(interaction.options.getInteger('日')),
+                        });
                     }
-                });
+                    await interaction.editReply({ content: `このサーバーで誕生日を${interaction.options.getInteger('月')}月${interaction.options.getInteger('日')}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。` });
+                }
+                else {
+                    await interaction.editReply({ content: "誕生日を正しい数字で設定してください。" });
+                }
             }
         },
         {
@@ -305,24 +282,22 @@ module.exports =
                 .setName('del-birthday')
                 .setDMPermission(false)
                 .setDescription('あなたの誕生日を削除します'),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    const data = yield db.find("main", "birthday", {
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                const data = await db.find("main", "birthday", {
+                    user: interaction.user.id,
+                    guild: interaction.guildId
+                });
+                if (data.length > 0) {
+                    await db.delete("main", "birthday", {
                         user: interaction.user.id,
                         guild: interaction.guildId
                     });
-                    if (data.length > 0) {
-                        yield db.delete("main", "birthday", {
-                            user: interaction.user.id,
-                            guild: interaction.guildId
-                        });
-                        yield interaction.editReply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。" });
-                    }
-                    else {
-                        yield interaction.editReply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。" });
-                    }
-                });
+                    await interaction.editReply({ content: "このサーバーでの通知を解除しました。\n他のサーバーでも通知を止めたい場合、そのサーバーで実行してください。" });
+                }
+                else {
+                    await interaction.editReply({ content: "このサーバーではあなたの誕生日が設定されていません。\n通知を止めたいサーバーで実行してください。" });
+                }
             }
         },
         {
@@ -334,18 +309,16 @@ module.exports =
                 .setDescription('日にちを指定します。指定なければ今日の天気になります。')
                 .setRequired(false)
                 .addChoices({ name: '今日', value: 0 }, { name: '明日', value: 1 }, { name: '明後日', value: 2 })),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    const reply = yield interaction.deferReply();
-                    let embed;
-                    if (interaction.options.getInteger('日にち') === undefined || interaction.options.getInteger('日にち') === null) {
-                        embed = yield weather.generationDay(0);
-                    }
-                    else {
-                        embed = yield weather.generationDay(interaction.options.getInteger('日にち'));
-                    }
-                    yield interaction.editReply({ embeds: [embed] });
-                });
+            async execute(interaction) {
+                const reply = await interaction.deferReply();
+                let embed;
+                if (interaction.options.getInteger('日にち') === undefined || interaction.options.getInteger('日にち') === null) {
+                    embed = await weather.generationDay(0);
+                }
+                else {
+                    embed = await weather.generationDay(interaction.options.getInteger('日にち'));
+                }
+                await interaction.editReply({ embeds: [embed] });
             }
         },
         {
@@ -362,21 +335,19 @@ module.exports =
                 .setName('送信先')
                 .setDescription('送信先を指定します。削除時は適当なチャンネルをいれてください。')
                 .setRequired(true)),
-            execute(interaction) {
-                return __awaiter(this, void 0, void 0, function* () {
-                    yield interaction.deferReply({ ephemeral: true });
-                    if (!interaction.options.getBoolean('定期送信')) {
-                        yield guildData.updateOrInsert(interaction.guildId, { weather: interaction.options.getBoolean('定期送信') });
-                        yield interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。" });
-                    }
-                    else if (interaction.options.getChannel('送信先').type === 0) {
-                        yield guildData.updateOrInsert(interaction.guildId, { weather: interaction.options.getBoolean('定期送信'), weatherChannel: interaction.options.getChannel('送信先').id });
-                        yield interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。" });
-                    }
-                    else {
-                        yield interaction.editReply({ content: "通常のチャンネルを指定してください" });
-                    }
-                });
+            async execute(interaction) {
+                await interaction.deferReply({ ephemeral: true });
+                if (!interaction.options.getBoolean('定期送信')) {
+                    await guildData.updateOrInsert(interaction.guildId, { weather: interaction.options.getBoolean('定期送信') });
+                    await interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。" });
+                }
+                else if (interaction.options.getChannel('送信先').type === 0) {
+                    await guildData.updateOrInsert(interaction.guildId, { weather: interaction.options.getBoolean('定期送信'), weatherChannel: interaction.options.getChannel('送信先').id });
+                    await interaction.editReply({ content: "天気定期通知機能を" + interaction.options.getBoolean('定期送信') + "に設定しました。" });
+                }
+                else {
+                    await interaction.editReply({ content: "通常のチャンネルを指定してください" });
+                }
             },
         },
     ];

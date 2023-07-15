@@ -21,8 +21,8 @@ global.client = new Client({
 });
 
 //configファイル読み込み
-const config = require('./environmentConfig.js')
-const {configPath} = require("./environmentConfig.js");
+const config = require('./environmentConfig')
+const {configPath} = require("./environmentConfig");
 
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');

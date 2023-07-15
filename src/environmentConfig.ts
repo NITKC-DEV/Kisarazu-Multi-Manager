@@ -1,7 +1,8 @@
-const Path = require("path");
+import * as Path from "path";
+
 const configPath = Path.resolve(
   __dirname,
-  process.env.NODE_ENV == "production" ? "../env/config.json" : "../env/config.dev.json"
+  process.env.NODE_ENV === "production" ? "../env/config.json" : "../env/config.dev.json"
 );
 const config = require(configPath);
 module.exports = config;
