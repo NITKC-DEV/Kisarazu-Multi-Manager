@@ -1,13 +1,9 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
-const {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require("../functions/db.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbMain'.
+import {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} from "@discordjs/builders";
+import * as db from "../functions/db.js"
 const dbMain = "main";          //データベースmainとコレクションCC-categoryを定数化
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'colCat'.
 const colCat = "CC-categories";
 
-module.exports =
+export default
     [
         {
             //スラッシュコマンドの定義
