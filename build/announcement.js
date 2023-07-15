@@ -1,18 +1,11 @@
-"use strict";
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Client'.
 const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require('discord.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dotenv'.
 const dotenv = require('dotenv');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cron'.
 const cron = require('node-cron');
 require('date-utils');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'MongoClien... Remove this comment to see the full error message
 const { MongoClient, ServerApiVersion } = require("mongodb");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const config = require("../env/config.json");
-const devConfig = require("./config.dev.json");
+import * as config from "./env/config.json";
+import * as devConfig from "./env/config.dev.json";
 const readline = require('readline');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Select'.
 const { Select } = require("enquirer");
 dotenv.config();
 const client = new Client({
@@ -33,7 +26,6 @@ async function find(dbName, collectionName, filter) {
     const collection = dbClient.db(dbName).collection(collectionName);
     return await collection.find(filter).toArray();
 }
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbClient'.
 let dbClient;
 let sendTime = {
     noticeH: -1,

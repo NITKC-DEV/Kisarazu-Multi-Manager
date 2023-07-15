@@ -1,10 +1,1 @@
-declare const fs: any;
-declare const path: any;
-declare const REST: any;
-declare const Routes: any;
-declare const config: any;
-declare const commands: any;
-declare const commandsPath: any;
-declare const commandFiles: any;
-declare const rest: any;
-declare const Select: any, MultiSelect: any, Toggle: any;
+export {};

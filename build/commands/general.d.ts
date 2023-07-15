@@ -1,14 +1,1 @@
-declare const SlashCommandBuilder: any, EmbedBuilder: any, version: any;
-declare const packageVer: any;
-declare const setTimeout: any;
-declare const system: any;
-declare const weather: any;
-declare const guildData: any;
-declare const db: any;
-declare const fs: any;
-declare const configPath: any;
-declare const mode: any;
-declare const CreateChannel: any;
-declare const help: any;
-declare const autoDeleteEditReply: any;
-declare const ID_NODATA: any;
+export {};

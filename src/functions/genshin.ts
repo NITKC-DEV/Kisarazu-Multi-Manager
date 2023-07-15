@@ -1,6 +1,4 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const {config} = require("../environmentConfig.mjs");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
+import {config} from "../environmentConfig.mjs";
 const {EmbedBuilder} = require("discord.js");
 exports.daily = async function func(message: any,title: any) {
     const daily = {
@@ -18,6 +16,7 @@ exports.daily = async function func(message: any,title: any) {
             icon_url: 'https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg',
         },
     };
+    // @ts-ignore
     client.channels.cache.get(config.daily).send({ embeds: [daily] })
     let dt = new Date();
     let dayofweek = dt.getDay();
@@ -60,6 +59,7 @@ exports.daily = async function func(message: any,title: any) {
             ],
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [monday] })
     }
 
@@ -76,6 +76,7 @@ exports.daily = async function func(message: any,title: any) {
             ],
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [thursday] })
     }
 
@@ -96,6 +97,7 @@ exports.daily = async function func(message: any,title: any) {
             ],
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [friday] })
     }
 
@@ -112,6 +114,7 @@ exports.daily = async function func(message: any,title: any) {
             ],
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [saturday] })
     }
     if (date % 3 === 0) { /*3の倍数の日*/
@@ -121,6 +124,7 @@ exports.daily = async function func(message: any,title: any) {
             description: '博来・長順以外の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n',
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [multiple] })
     }
     if (date % 3 === 1) { /*3の倍数+1の日*/
@@ -130,6 +134,7 @@ exports.daily = async function func(message: any,title: any) {
             description: '博来・長順の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n',
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [multiple2] })
     }
 
@@ -150,6 +155,7 @@ exports.daily = async function func(message: any,title: any) {
             ],
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [first] })
     }
     if (date === 16) { /*毎月16日*/
@@ -165,6 +171,7 @@ exports.daily = async function func(message: any,title: any) {
             ],
             timestamp: new Date().toISOString(),
         };
+        // @ts-ignore
         client.channels.cache.get(config.daily).send({ embeds: [sixteenth] })
     }
 

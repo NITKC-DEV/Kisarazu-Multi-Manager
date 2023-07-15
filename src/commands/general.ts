@@ -1,7 +1,5 @@
-// @ts-expect-error TS(6200): Definitions of the following identifiers conflict ... Remove this comment to see the full error message
 const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
 const packageVer = require('../../package.json');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const {setTimeout} = require ("node:timers/promises");
 require('date-utils');
 const system = require('../functions/logsystem.js');
@@ -9,7 +7,7 @@ const weather = require('../functions/weather.js');
 const guildData = require('../functions/guildDataSet.js')
 const db = require('../functions/db.js');
 const fs = require("fs");
-const {configPath} = require("../environmentConfig.mjs");
+import {configPath} from "../environmentConfig.mjs";
 const mode = require("../functions/statusAndMode.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const help = require("../functions/help.js");

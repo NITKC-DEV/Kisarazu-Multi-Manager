@@ -1,13 +1,7 @@
-"use strict";
-// @ts-expect-error TS(6200): Definitions of the following identifiers conflict ... Remove this comment to see the full error message
 const { Client, GatewayIntentBits, Partials, Collection, Events } = require('discord.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dotenv'.
 const dotenv = require('dotenv');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cron'.
 const cron = require('node-cron');
 dotenv.config();
 require('date-utils');
@@ -27,39 +21,31 @@ global.client = new Client({
     partials: [Partials.Channel],
 });
 //configファイル読み込み
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const { config } = require('./environmentConfig.mjs');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'configPath... Remove this comment to see the full error message
-const { configPath } = require("./environmentConfig.mjs");
+import { config } from "./environmentConfig.mjs";
+import { configPath } from "./environmentConfig.mjs";
 //関数読み込み
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
 const birthday = require('./functions/birthday.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dashboard'... Remove this comment to see the full error message
 const dashboard = require('./functions/dashboard.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'timetable'... Remove this comment to see the full error message
 const timetable = require('./functions/ttGeneration.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require('./functions/logsystem.js');
 const genshin = require('./functions/genshin.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./functions/db.js');
 const weather = require('./functions/weather.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
 const guildData = require("./functions/guildDataSet.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
 const { ID_NODATA } = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
 const mode = require("./functions/statusAndMode.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'statusAndM... Remove this comment to see the full error message
 const statusAndMode = require("./functions/statusAndMode.js");
 const help = require("./functions/help.js");
 //スラッシュコマンド登録
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandsPa... Remove this comment to see the full error message
 const commandsPath = path.join(__dirname, 'commands');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandFil... Remove this comment to see the full error message
 const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith('.js'));
+// @ts-ignore
 client.commands = new Collection();
+// @ts-ignore
 module.exports = client.commands;
+// @ts-ignore
 client.once("ready", async () => {
     await mode.maintenance(true);
     await mode.status(2, "BOT起動処理");
@@ -67,13 +53,14 @@ client.once("ready", async () => {
         const filePath = path.join(commandsPath, file);
         const command = require(filePath);
         for (let i = 0; i < command.length; i++) {
+            // @ts-ignore
             client.commands.set(command[i].data.name, command[i]);
         }
     }
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
     await system.log("Ready!");
-    if (config.maintenanceMode === true) {
+    if (config.maintenanceMode) {
         await statusAndMode.status(2, "BOTメンテナンス");
     }
     else {
@@ -82,6 +69,7 @@ client.once("ready", async () => {
     }
 });
 /*command処理*/
+// @ts-ignore
 client.on("interactionCreate", async (interaction) => {
     let flag = 0;
     if (JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -106,7 +94,9 @@ client.on("interactionCreate", async (interaction) => {
             channel = { name: "---", id: "---" };
         }
         else {
+            // @ts-ignore
             guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
+            // @ts-ignore
             channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
         }
         await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
@@ -141,13 +131,16 @@ client.on("interactionCreate", async (interaction) => {
             channel = { name: "---", id: "---" };
         }
         else {
+            // @ts-ignore
             guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
+            // @ts-ignore
             channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
         }
         await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type - 1]}をブロックしました。\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, `${interactionTypeName[interaction.type - 1]}をブロック`);
     }
 });
 //StringSelectMenu受け取り
+// @ts-ignore
 client.on(Events.InteractionCreate, async (interaction) => {
     if (interaction.isStringSelectMenu()) {
         let flag = 0;
@@ -187,6 +180,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 //Button入力受け取り
+// @ts-ignore
 client.on(Events.InteractionCreate, async (interaction) => {
     if (!interaction.isButton())
         return;
@@ -208,6 +202,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
     }
 });
 //チャンネル(カテゴリ)削除検知
+// @ts-ignore
 client.on(Events.ChannelDelete, async (channel) => {
     if (channel.type === 0) {
         await CreateChannel.removeDeletedChannelData(channel);
@@ -217,6 +212,7 @@ client.on(Events.ChannelDelete, async (channel) => {
     }
 });
 //チャンネル(カテゴリ)情報変更検知
+// @ts-ignore
 client.on(Events.ChannelUpdate, async (channel) => {
     if (channel.type === 0) {
         await CreateChannel.updateChannelData(channel);
@@ -226,22 +222,27 @@ client.on(Events.ChannelUpdate, async (channel) => {
     }
 });
 //ロール削除検知
+// @ts-ignore
 client.on(Events.GuildRoleDelete, async (role) => {
     await CreateChannel.removeDeletedRoleData(role);
 });
 //ロール情報変更検知
+// @ts-ignore
 client.on(Events.GuildRoleUpdate, async (role) => {
     await CreateChannel.updateRoleData(role);
 });
+// @ts-ignore
 client.on(Events.GuildCreate, async (guild) => {
     await guildData.updateOrInsert(guild.id);
 });
 //ギルド削除(退出)検知
+// @ts-ignore
 client.on(Events.GuildDelete, async (guild) => {
     await CreateChannel.deleteGuildData(guild);
     await guildData.checkGuild();
 });
 /*TxtEasterEgg*/
+// @ts-ignore
 client.on('messageCreate', (message) => {
     /*メンテナンスモード*/
     let flag = 0;
@@ -283,6 +284,7 @@ cron.schedule('* * * * *', async () => {
                 await mode.status(0, `チャンネル作成：/create-channel`);
                 break;
             default:
+                // @ts-ignore
                 await mode.status(0, `導入数：${client.guilds.cache.size}サーバー`);
         }
     }
@@ -323,26 +325,31 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
                 for (let j = 0; j < 5; j++) {
                     embed[j] = await timetable.generation(String(grade), String(j + 1), String(dayOfWeek + 1), true);
                 }
+                // @ts-ignore
                 try {
                     if (embed[0] !== 0 && guildData[i].mChannel !== ID_NODATA)
                         await (client.channels.cache.get(guildData[i].mChannel) ?? (await client.channels.fetch(guildData[i].mChannel))).send({ embeds: [embed[0]] });
                 }
                 catch { }
+                // @ts-ignore
                 try {
                     if (embed[1] !== 0 && guildData[i].eChannel !== ID_NODATA)
                         await (client.channels.cache.get(guildData[i].eChannel) ?? (await client.channels.fetch(guildData[i].eChannel))).send({ embeds: [embed[1]] });
                 }
                 catch { }
+                // @ts-ignore
                 try {
                     if (embed[2] !== 0 && guildData[i].dChannel !== ID_NODATA)
                         await (client.channels.cache.get(guildData[i].dChannel) ?? (await client.channels.fetch(guildData[i].dChannel))).send({ embeds: [embed[2]] });
                 }
                 catch { }
+                // @ts-ignore
                 try {
                     if (embed[3] !== 0 && guildData[i].jChannel !== ID_NODATA)
                         await (client.channels.cache.get(guildData[i].jChannel) ?? (await client.channels.fetch(guildData[i].jChannel))).send({ embeds: [embed[3]] });
                 }
                 catch { }
+                // @ts-ignore
                 try {
                     if (embed[4] !== 0 && guildData[i].cChannel !== ID_NODATA)
                         await (client.channels.cache.get(guildData[i].cChannel) ?? (await client.channels.fetch(guildData[i].cChannel))).send({ embeds: [embed[4]] });
@@ -351,6 +358,7 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
             }
             else {
                 try {
+                    // @ts-ignore
                     await client.channels.cache.get(guildData[i].main).send("このサーバーの学年の設定をしていない、または正しくないため、時間割定期通知に失敗しました。" +
                         "\n設定していない場合は、管理者が/guildDataコマンドを使用して設定してください。" +
                         "\n設定している場合、学年ではなく「入学年」を西暦4ケタで入力しているかどうか確認してください。" +
@@ -367,6 +375,7 @@ cron.schedule('00 20 * * *', async () => {
     const data = await db.find("main", "guildData", { weather: true });
     for (let i = 0; i < data.length; i++) {
         try {
+            // @ts-ignore
             const channel = (client.channels.cache.get(data[i].weatherChannel) ?? (await client.channels.fetch(data[i].weatherChannel)));
             await channel.send({ embeds: [embed] });
         }
@@ -388,7 +397,9 @@ cron.schedule('*/1  * * * *', async () => {
         if (flag === 1 && data[i].boardChannel !== ID_NODATA) {
             let dashboardGuild;
             try {
+                // @ts-ignore
                 dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? (await client.guilds.fetch(data[i].guild))); /*ギルド情報取得*/
+                // @ts-ignore
                 const channel = (client.channels.cache.get(data[i].boardChannel) ?? (await client.channels.fetch(data[i].boardChannel))); /*チャンネル情報取得*/
                 const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
                 if (newEmbed) {
@@ -439,5 +450,6 @@ cron.schedule('*/1  * * * *', async () => {
     }
 });
 if (require.main === module) {
+    // @ts-ignore
     client.login(config.token);
 }

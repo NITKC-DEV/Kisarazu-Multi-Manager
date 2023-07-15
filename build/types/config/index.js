@@ -1,1 +1,1 @@
-export * as EnvironmentConfig from "./environment";
+export * as EnvironmentConfig from "./environment.js";

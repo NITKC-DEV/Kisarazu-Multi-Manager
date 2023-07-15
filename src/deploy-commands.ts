@@ -1,18 +1,13 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require('node:fs');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('node:path');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const {config} =require('./environmentConfig.mjs')
+import {config} from "./environmentConfig.mjs";
 console.log(config)
 // ./commands/ ディレクトリ内を探索
 const commands: any = [];
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandsPa... Remove this comment to see the full error message
 const commandsPath = path.join(__dirname, 'commands');
 //.jsを検索
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandFil... Remove this comment to see the full error message
 const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.js'));
 for (const file of commandFiles) {//ファイルの数だけ
     const filePath = path.join(commandsPath, file);
@@ -25,13 +20,12 @@ for (const file of commandFiles) {//ファイルの数だけ
 
 // Discord API通信準備 トークン設定
 const rest = new REST({ version: '10' }).setToken(config.token);
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Select'.
 const { Select ,MultiSelect,Toggle } = require('enquirer');
 
 // @ts-ignore
 async function run() {
     //GETで現在登録されているのを取得
-    const data = await rest.get(Routes.applicationCommands(config.client, config.server))
+    const data = await rest.get(Routes.applicationCommands(config.client))
     console.log("---コマンド一覧---")
     for (const command of data) {
         console.log(`/${command.name}`)
@@ -45,7 +39,7 @@ async function run() {
         message: 'モードを選んでください',
         choices: ['登録(更新)', '削除', 'キャンセル',]
     }).run();
-    if (mode=='キャンセル'){
+    if (mode==='キャンセル'){
         return
     }
 

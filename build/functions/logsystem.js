@@ -1,8 +1,5 @@
-"use strict";
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const { EmbedBuilder } = require("discord.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const { config } = require("../environmentConfig.mjs");
+import { config } from "../environmentConfig.mjs";
 /***
  * ログをコンソールとdiscordに送信する
  * @param message ログの本文
@@ -17,6 +14,7 @@ exports.log = async function func(message, title) {
         .setDescription(message)
         .setTimestamp()
         .setFooter({ text: 'Discord Log System' });
+    // @ts-ignore
     const channel = await client.channels.fetch(config.logSystem);
     await channel.send({ embeds: [embed] });
 };
@@ -35,9 +33,11 @@ exports.error = async function func(message, error = { stack: "" }, title = "エ
         .setFooter({ text: 'Discord Log System' });
     const date = new Date().toLocaleString(); // YYYY/MM/DD hh:mm:ss形式に変換
     console.error(`${title} ----\n${(message.trim().split("```").join(''))}\n\n${error.stack}\n\n--------${date}\n`);
+    // @ts-ignore
     const errorChannel = await client.channels.fetch(config.errorSystem);
     await errorChannel.send({ embeds: [embed] });
     await errorChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
+    // @ts-ignore
     const logChannel = await client.channels.fetch(config.logSystem);
     await logChannel.send({ embeds: [embed] });
     await logChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
@@ -56,7 +56,9 @@ exports.warn = async function func(message, title = "警告") {
         .setDescription(message)
         .setTimestamp()
         .setFooter({ text: 'Discord Log System' });
+    // @ts-ignore
     const logChannel = await client.channels.fetch(config.logSystem);
+    // @ts-ignore
     const errorChannel = await client.channels.fetch(config.errorSystem);
     await logChannel.send({ embeds: [embed] });
     await errorChannel.send({ embeds: [embed] });

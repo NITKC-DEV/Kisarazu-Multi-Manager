@@ -313,6 +313,7 @@ exports.removeDeletedCategoryData = async function(category: any) {
  */
 exports.updateChannelData = async function(channel: any) {
     const channelData = await db.find(dbMain, colChan, {ID: channel.id});
+    // @ts-ignore
     const newChannel = await client.channels.cache.get(channel.id);
     if(channelData.length > 0) {
         if(channelData[0].categoryID !== (newChannel.parentId !== null ? newChannel.parentId : newChannel.guildId)) {
@@ -332,6 +333,7 @@ exports.updateChannelData = async function(channel: any) {
  */
 exports.updateCategoryData = async function(category: any) {
     const categoryData = await db.find(dbMain, colCat, {ID: category.id});
+    //@ts-ignore
     const newCategory = await client.channels.cache.get(category.id);
     if(categoryData.length > 0) {
         if(categoryData[0].name !== newCategory.name) {
@@ -358,6 +360,7 @@ exports.updateRoleData = async function(role: any) {
     const channelData = await db.find(dbMain, colChan, {roleID: role.id});
     
     if(channelData.length > 0) {
+        // @ts-ignore
         const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch(role.id);
         if(channelData[0].roleName !== newRole.name) {
             await db.update(dbMain, colChan, {roleID: newRole.id}, {$set: {roleName: newRole.name}});
@@ -389,6 +392,7 @@ exports.dataCheck = async function() {
         for(const category of await db.find(dbMain, colCat, {})) {
             let guildData;
             try {
+                // @ts-ignore
                 guildData = await client.guilds.fetch(category.guildID);
             }
             catch(e) {
@@ -421,7 +425,7 @@ exports.dataCheck = async function() {
                 await db.delete(dbMain, colChan, {ID: channel.ID});
                 continue;
             }
-            
+            // @ts-ignore
             const channelData = await client.channels.cache.get(channel.ID);
             
             if(channelData === undefined) {
@@ -433,6 +437,7 @@ exports.dataCheck = async function() {
             }
             
             if(channel.thereRole) {
+                // @ts-ignore
                 const roleData = await (await client.guilds.fetch((await db.find(dbMain, colCat, {ID: channel.categoryID}))[0].guildID)).roles.fetch(channel.roleID);
                 if(roleData === null) {
                     await db.update(dbMain, colChan, {ID: channel.ID}, {

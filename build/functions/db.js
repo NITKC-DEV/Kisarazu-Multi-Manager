@@ -1,13 +1,7 @@
-"use strict";
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'MongoClien... Remove this comment to see the full error message
 const { MongoClient, ServerApiVersion } = require("mongodb");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
-const { config } = require('../environmentConfig.mjs');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
+import { config } from "../environmentConfig.mjs";
 const system = require('./logsystem.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbClient'.
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 /***
  * データベースからデータを取得する

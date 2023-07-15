@@ -1,10 +1,6 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'configPath... Remove this comment to see the full error message
-const {configPath} = require("../environmentConfig.mjs");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
+import {configPath} from "../environmentConfig.mjs";
 const system = require("./logsystem.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'statusAndM... Remove this comment to see the full error message
 const statusAndMode = require("./statusAndMode.js");
 
 const statusName = ['online','idle','dnd','invisible'];
@@ -16,6 +12,7 @@ const statusName = ['online','idle','dnd','invisible'];
  * @returns {Promise<void>}
  */
 exports.status = async function func(status: any,presence="") {
+    // @ts-ignore
     client.user.setPresence({
         activities: [{
             name: presence
@@ -26,6 +23,7 @@ exports.status = async function func(status: any,presence="") {
         const date = new Date();
         if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)statusData=1;
     }
+     //@ts-ignore
     client.user.setStatus(statusName[statusData]);
 }
 

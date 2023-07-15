@@ -165,6 +165,7 @@ exports.checkGuild = async function func() {
     const data = await db.find("main","guildData", {});
     for(let i=0;i<data.length;i++) {
         try{
+            // @ts-ignore
             await client.guilds.fetch(data[i].guild);
         }
         catch(err){

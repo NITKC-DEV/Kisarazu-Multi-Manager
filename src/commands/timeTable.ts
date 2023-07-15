@@ -1,6 +1,5 @@
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
 const {SlashCommandBuilder, StringSelectMenuBuilder,EmbedBuilder,ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder,} = require('discord.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'timetable'... Remove this comment to see the full error message
 const timetable= require('../functions/ttGeneration.js');
 // @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('../functions/db.js');
