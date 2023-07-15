@@ -1,6 +1,9 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require("./logsystem.js");
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.func = async function func() {
     const date = new Date();
     const data = await db.find("main", "birthday", {
@@ -28,7 +31,7 @@ exports.func = async function func() {
         const guild = await db.find("main", "guildData", { guild: String(data[i].guild) });
         if (guild.length > 0 && guild[0].main !== undefined) {
             try {
-                const channel = (client.channels.cache.get(guild[0].main) ?? await client.channels.fetch(guild[0].main));
+                const channel = (client.channels.cache.get(guild[0].main) ?? (await client.channels.fetch(guild[0].main)));
                 await channel.send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
             }
             catch { }

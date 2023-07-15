@@ -1,4 +1,23 @@
-export = client.commands;
-declare var commands: Collection<any, any>;
-declare namespace client { }
-import { Collection } from "discord.js";
+declare const Client: any, GatewayIntentBits: any, Partials: any, Collection: any, Events: any;
+declare const dotenv: any;
+declare const path: any;
+declare const fs: any;
+declare const cron: any;
+declare const config: any;
+declare const configPath: any;
+declare const TxtEasterEgg: any;
+declare const birthday: any;
+declare const dashboard: any;
+declare const timetable: any;
+declare const system: any;
+declare const genshin: any;
+declare const db: any;
+declare const weather: any;
+declare const guildData: any;
+declare const ID_NODATA: any;
+declare const CreateChannel: any;
+declare const mode: any;
+declare const statusAndMode: any;
+declare const help: any;
+declare const commandsPath: any;
+declare const commandFiles: any;

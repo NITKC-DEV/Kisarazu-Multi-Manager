@@ -1,8 +1,13 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'MongoClien... Remove this comment to see the full error message
 const { MongoClient, ServerApiVersion } = require("mongodb");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
 const config = require('../environmentConfig');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require('./logsystem.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbClient'.
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 /***
  * データベースからデータを取得する
@@ -11,6 +16,7 @@ const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
  * @param filter フィルターを指定
  * @returns {Promise<WithId<Document>[]>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.find = async function (dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
     return await collection.find(filter).toArray();
@@ -22,6 +28,7 @@ exports.find = async function (dbName, collectionName, filter) {
  * @param filter フィルターを指定
  * @returns {Promise<boolean>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.includes = async function (dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
     const data = await collection.find(filter).toArray();
@@ -35,6 +42,7 @@ exports.includes = async function (dbName, collectionName, filter) {
  * @param update update operatorを用いた更新内容の記述
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.update = async function run(dbName, collectionName, filter, update) {
     try {
         const database = await dbClient.db(dbName);
@@ -53,6 +61,7 @@ exports.update = async function run(dbName, collectionName, filter, update) {
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.insert = async function run(dbName, collectionName, object) {
     try {
         const database = await dbClient.db(dbName);
@@ -72,6 +81,7 @@ exports.insert = async function run(dbName, collectionName, object) {
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.updateOrInsert = async function run(dbName, collectionName, filter, object) {
     try {
         const data = await db.find(dbName, collectionName, filter);
@@ -93,6 +103,7 @@ exports.updateOrInsert = async function run(dbName, collectionName, filter, obje
  * @param filter 削除対象のフィルターを指定
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.delete = async function run(dbName, collectionName, filter) {
     try {
         const database = await dbClient.db(dbName);
@@ -108,6 +119,7 @@ exports.delete = async function run(dbName, collectionName, filter) {
  *
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.open = async function close() {
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     await system.log("DB - open");
@@ -116,6 +128,7 @@ exports.open = async function close() {
  *
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.close = async function close() {
     await dbClient.close();
     await system.log("DB - close");

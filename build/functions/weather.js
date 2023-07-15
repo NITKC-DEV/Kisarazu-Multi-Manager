@@ -1,7 +1,11 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const { EmbedBuilder } = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'axios'.
 const axios = require("axios");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require("./logsystem");
 /*天気取得*/
 async function getWeather() {
@@ -23,6 +27,7 @@ function zenkaku2Hankaku(str) {
         }
     });
 }
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.generationDay = async function func(day) {
     const data = await getWeather();
     const weather = data.forecasts[day];
@@ -99,6 +104,7 @@ exports.generationDay = async function func(day) {
         .setTimestamp()
         .setFooter({ text: '気象庁 Japan Meteorological Agency  |  Developed by NITKC-DEV' });
 };
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.update = async function func() {
     let response;
     try {
@@ -116,6 +122,7 @@ exports.update = async function func() {
         });
     }
 };
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.catcheUpdate = async function func() {
     const data = await db.find("main", "weatherCache", { label: "最新の天気予報" });
     const today = await db.find("main", "weatherCache", { label: "1" });

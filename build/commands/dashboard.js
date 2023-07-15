@@ -1,9 +1,15 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
 const { SlashCommandBuilder } = require('discord.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dashboard'... Remove this comment to see the full error message
 const dashboard = require('../functions/dashboard.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('../functions/db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require("../functions/logsystem");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const { setTimeout } = require("node:timers/promises");
+// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {
@@ -23,27 +29,27 @@ module.exports =
                 .setDescription('次のテストを設定します。')
                 .setDefaultMemberPermissions(1 << 3)
                 .setDMPermission(false)
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('年')
                 .setDescription('テストが実施される年を入力')
                 .setRequired(true))
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('開始月')
                 .setDescription('テストが開始される月を入力')
                 .setRequired(true))
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('開始日')
                 .setDescription('テストが開始される日を入力')
                 .setRequired(true))
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('終了月')
                 .setDescription('テストが終了する月を入力')
                 .setRequired(true))
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('終了日')
                 .setDescription('テストが終了する日を入力')
                 .setRequired(true))
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('テスト回')
                 .setDescription('何回後のテストか入力(1~4)')
                 .setRequired(true)),
@@ -82,9 +88,10 @@ module.exports =
                     await reply.react('❌');
                     let flag = -1;
                     const otherReact = [0, 0];
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(100);
                     while (flag === -1) {
-                        await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1, time: 60000 })
+                        await reply.awaitReactions({ filter: (reaction) => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1, time: 60000 })
                             .then(() => {
                             if (reply.reactions.cache.at(0).count === 2 + otherReact[0]) {
                                 if (reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id) {
@@ -119,11 +126,11 @@ module.exports =
                                 board: String(board.id)
                             }
                         });
-                        replyOptions = time => { return { content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは' + time + '秒後に自動で削除されます。)', ephemeral: true }; };
+                        replyOptions = (time) => { return { content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは' + time + '秒後に自動で削除されます。)', ephemeral: true }; };
                     }
                     else if (flag === 1) {
                         await reply.reactions.removeAll();
-                        replyOptions = time => { return { content: '生成をキャンセルしました。\n(このメッセージは' + time + '秒後に自動で削除されます。)', ephemeral: true }; };
+                        replyOptions = (time) => { return { content: '生成をキャンセルしました。\n(このメッセージは' + time + '秒後に自動で削除されます。)', ephemeral: true }; };
                     }
                 }
                 else {
@@ -138,7 +145,7 @@ module.exports =
                                 board: String(board.id)
                             }
                         });
-                        replyOptions = time => { return { content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは' + time + '秒後に自動で削除されます。)', ephemeral: true }; };
+                        replyOptions = (time) => { return { content: 'ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは' + time + '秒後に自動で削除されます。)', ephemeral: true }; };
                     }
                     else {
                         await db.insert("main", "guildData", {
@@ -146,13 +153,16 @@ module.exports =
                             boardChannel: interaction.channelId,
                             board: String(board.id)
                         });
-                        replyOptions = time => { return { content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは' + time + '秒後に自動で削除されます)。', ephemeral: true }; };
+                        replyOptions = (time) => { return { content: 'ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは' + time + '秒後に自動で削除されます)。', ephemeral: true }; };
                     }
                 }
+                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                 await interaction.editReply(replyOptions(5));
                 //5秒カウントダウンしたのちに返信を削除
                 for (let i = 5; i > 0; i--) {
+                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                     await interaction.editReply(replyOptions(i));
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();

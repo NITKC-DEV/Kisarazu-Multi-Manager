@@ -1,12 +1,20 @@
-export function createChannel(interaction: any): Promise<void>;
-export function createRole(interaction: any): Promise<void>;
-export function removeCategory(interaction: any): Promise<void>;
-export function selectDelete(interaction: any): Promise<void>;
-export function removeDeletedChannelData(channel: any): Promise<void>;
-export function removeDeletedCategoryData(category: any): Promise<void>;
-export function updateChannelData(channel: any): Promise<void>;
-export function updateCategoryData(category: any): Promise<void>;
-export function removeDeletedRoleData(role: any): Promise<void>;
-export function updateRoleData(role: any): Promise<void>;
-export function deleteGuildData(guild: any): Promise<void>;
-export function dataCheck(): Promise<void>;
+declare const ActionRowBuilder: any, StringSelectMenuBuilder: any;
+declare const db: any;
+declare const dbMain = "main";
+declare const colCat = "CC-categories";
+declare const colChan = "CC-channels";
+declare const system: any;
+/***
+ * 与えられた引数からチャンネルを削除する
+ * @param interaction 何かしらのinteraction(使わない実装にもできるけどだるかった)
+ * @param ID チャンネルID
+ * @returns {Promise<void>} void(同期処理)
+ */
+declare function channelDelete(interaction: any, ID: any): Promise<void>;
+/***
+ * 与えられた引数からロールを削除する
+ * @param interaction 何かしらのinteraction
+ * @param ID ロールID
+ * @returns {Promise<void>} void(同期処理)
+ */
+declare function roleDelete(interaction: any, ID: any): Promise<void>;

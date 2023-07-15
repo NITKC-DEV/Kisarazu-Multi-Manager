@@ -1,9 +1,15 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('../functions/db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
 const guildData = require('../functions/guildDataSet.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
 const { ID_NODATA } = require('../functions/guildDataSet.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const { setTimeout } = require("node:timers/promises");
+// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {
@@ -12,43 +18,43 @@ module.exports =
                 .setDescription('サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelpを参照してください')
                 .setDefaultMemberPermissions(1 << 3)
                 .setDMPermission(false)
-                .addIntegerOption(option => option
+                .addIntegerOption((option) => option
                 .setName('学年')
                 .setDescription('入学した年を西暦4桁で入力してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('アナウンスチャンネル')
                 .setDescription('BOTのアナウンスをするときに使うチャンネルを指定してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('メインチャンネル')
                 .setDescription('雑談等メインで使うチャンネルを指定してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('m科チャンネル')
                 .setDescription('m科用チャンネルを指定してください。')
-                .setRequired(false)).addRoleOption(option => option
+                .setRequired(false)).addRoleOption((option) => option
                 .setName('m科ロール')
                 .setDescription('m科用ロールを指定してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('e科チャンネル')
                 .setDescription('e科用チャンネルを指定してください。')
-                .setRequired(false)).addRoleOption(option => option
+                .setRequired(false)).addRoleOption((option) => option
                 .setName('e科ロール')
                 .setDescription('e科用ロールを指定してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('d科チャンネル')
                 .setDescription('d科用チャンネルを指定してください。')
-                .setRequired(false)).addRoleOption(option => option
+                .setRequired(false)).addRoleOption((option) => option
                 .setName('d科ロール')
                 .setDescription('d科用ロールを指定してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('j科チャンネル')
                 .setDescription('j科用チャンネルを指定してください。')
-                .setRequired(false)).addRoleOption(option => option
+                .setRequired(false)).addRoleOption((option) => option
                 .setName('j科ロール')
                 .setDescription('j科用ロールを指定してください。')
-                .setRequired(false)).addChannelOption(option => option
+                .setRequired(false)).addChannelOption((option) => option
                 .setName('c科チャンネル')
                 .setDescription('c科用チャンネルを指定してください。')
-                .setRequired(false)).addRoleOption(option => option
+                .setRequired(false)).addRoleOption((option) => option
                 .setName('c科ロール')
                 .setDescription('c科用ロールを指定してください。')
                 .setRequired(false)),
@@ -123,9 +129,10 @@ module.exports =
                 await reply.react('❌');
                 let flag = -1;
                 const otherReact = [0, 0];
+                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                 await setTimeout(100);
                 while (flag === -1) {
-                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1, time: 60000 })
+                    await reply.awaitReactions({ filter: (reaction) => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1, time: 60000 })
                         .then(() => {
                         if (reply.reactions.cache.at(0).count === 2 + otherReact[0]) {
                             if (reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id) {
@@ -153,16 +160,19 @@ module.exports =
                 if (flag === 0) {
                     await interaction.editReply("削除中...");
                     await guildData.reset(interaction.guildId);
-                    replyOptions = time => { return { content: '削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
+                    replyOptions = (time) => { return { content: '削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
                 }
                 else if (flag === 1) {
                     await reply.reactions.removeAll();
-                    replyOptions = time => { return { content: '操作をキャンセルしました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
+                    replyOptions = (time) => { return { content: '操作をキャンセルしました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
                 }
+                // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                 await interaction.editReply(replyOptions(5));
                 //5秒カウントダウンしたのちに返信を削除
                 for (let i = 5; i > 0; i--) {
+                    // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                     await interaction.editReply(replyOptions(i));
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();

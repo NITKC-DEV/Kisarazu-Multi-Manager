@@ -1,9 +1,15 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
 const { SlashCommandBuilder, StringSelectMenuBuilder, EmbedBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder, } = require('discord.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'timetable'... Remove this comment to see the full error message
 const timetable = require('../functions/ttGeneration.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('../functions/db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
 const guildData = require('../functions/guildDataSet.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const { setTimeout } = require("node:timers/promises");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'department... Remove this comment to see the full error message
 const departmentData = [
     {
         name: "機械工学科",
@@ -22,26 +28,27 @@ const departmentData = [
         color: "1E9B50"
     }
 ];
+// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports = [
     {
         data: new SlashCommandBuilder()
             .setName('timetable')
             .setDescription('指定した学科・曜日の時間割を送信します')
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('曜日')
             .setDescription('曜日を指定します。指定がなければ次の学校の日になります')
             .setRequired(false)
             .addChoices({ name: '月曜日', value: '1' }, { name: '火曜日', value: '2' }, { name: '水曜日', value: '3' }, { name: '木曜日', value: '4' }, { name: '金曜日', value: '5' }))
-            .addBooleanOption(option => option
+            .addBooleanOption((option) => option
             .setName('授業変更')
             .setDescription('授業変更を反映させるかどうか指定します(デフォルト=true)')
             .setRequired(false))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学科')
             .setDescription('学科を指定します')
             .setRequired(false)
             .addChoices({ name: 'M-機械工学科', value: '1' }, { name: 'E-電気電子工学科', value: '2' }, { name: 'D-電子制御工学科', value: '3' }, { name: 'J-情報工学科', value: '4' }, { name: 'C-環境都市工学科', value: '5' }))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学年')
             .setDescription('学年を指定します')
             .setRequired(false)
@@ -121,7 +128,7 @@ module.exports = [
             .setDescription('時間割定期送信のON/OFFを切り替えます')
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addBooleanOption(option => option
+            .addBooleanOption((option) => option
             .setName('options')
             .setDescription('定期実行の可否を指定します')
             .setRequired(true)),
@@ -137,26 +144,26 @@ module.exports = [
             .setDescription('授業変更、及び定期テスト等を登録します')
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('モード')
             .setDescription('モード選択')
             .setRequired(true)
             .addChoices({ name: '定期テスト', value: '0' }, { name: '授業変更', value: '1' }))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学科')
             .setDescription('学科を指定します')
             .setRequired(true)
             .addChoices({ name: 'M-機械工学科', value: '1' }, { name: 'E-電気電子工学科', value: '2' }, { name: 'D-電子制御工学科', value: '3' }, { name: 'J-情報工学科', value: '4' }, { name: 'C-環境都市工学科', value: '5' }))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学年')
             .setDescription('学年を指定します')
             .setRequired(true)
             .addChoices({ name: '1年生', value: '1' }, { name: '2年生', value: '2' }, { name: '3年生', value: '3' }, { name: '4年生', value: '4' }, { name: '5年生', value: '5' }))
-            .addIntegerOption(option => option
+            .addIntegerOption((option) => option
             .setName('変更日')
             .setDescription('授業変更する日を、月×100+日でいれてください。例)12月14日→1214')
             .setRequired(true))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('ベースの曜日')
             .setDescription('ベースとする曜日を選択')
             .setRequired(false)
@@ -260,17 +267,17 @@ module.exports = [
             .setDescription('授業変更やテストのデータを削除します')
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学科')
             .setDescription('学科を指定します')
             .setRequired(true)
             .addChoices({ name: 'M-機械工学科', value: '1' }, { name: 'E-電気電子工学科', value: '2' }, { name: 'D-電子制御工学科', value: '3' }, { name: 'J-情報工学科', value: '4' }, { name: 'C-環境都市工学科', value: '5' }))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学年')
             .setDescription('学年を指定します')
             .setRequired(true)
             .addChoices({ name: '1年生', value: '1' }, { name: '2年生', value: '2' }, { name: '3年生', value: '3' }, { name: '4年生', value: '4' }, { name: '5年生', value: '5' }))
-            .addIntegerOption(option => option
+            .addIntegerOption((option) => option
             .setName('削除日')
             .setDescription('削除する日を、月×100+日でいれてください。例)12月14日→1214')
             .setRequired(true)),
@@ -278,10 +285,11 @@ module.exports = [
             await interaction.deferReply();
             await db.delete("main", "timetableData", { grade: interaction.options.getString('学年'), department: interaction.options.getString('学科'), day: String(interaction.options.getInteger('削除日')) });
             await db.delete("main", "timetableData", { grade: interaction.options.getString('学年'), department: interaction.options.getString('学科'), day: String(interaction.options.getInteger('削除日') + '00') });
-            const replyOptions = time => { return { content: '削除しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
+            const replyOptions = (time) => { return { content: '削除しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
             await interaction.editReply(replyOptions(5));
             for (let i = 5; i > 0; i--) {
                 await interaction.editReply(replyOptions(i));
+                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                 await setTimeout(1000);
             }
             await interaction.deleteReply();
@@ -291,17 +299,17 @@ module.exports = [
         data: new SlashCommandBuilder()
             .setName('comment-timetable')
             .setDescription('特定の日にコメントを追加します。(明日からの1週間は曜日で指定可)')
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学科')
             .setDescription('学科を指定します')
             .setRequired(true)
             .addChoices({ name: 'M-機械工学科', value: '1' }, { name: 'E-電気電子工学科', value: '2' }, { name: 'D-電子制御工学科', value: '3' }, { name: 'J-情報工学科', value: '4' }, { name: 'C-環境都市工学科', value: '5' }))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('学年')
             .setDescription('学年を指定します')
             .setRequired(true)
             .addChoices({ name: '1年生', value: '1' }, { name: '2年生', value: '2' }, { name: '3年生', value: '3' }, { name: '4年生', value: '4' }, { name: '5年生', value: '5' }))
-            .addStringOption(option => option
+            .addStringOption((option) => option
             .setName('変更日')
             .setDescription('明日から来週の今日までの変更したい日を曜日で指定します(それ以上は管理者限定)')
             .setRequired(true)
@@ -326,10 +334,11 @@ module.exports = [
                 data = defaultData;
             }
             else {
-                const replyOptions = time => { return { content: '指定した学科・学年の時間割データが見つかりませんでした。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
+                const replyOptions = (time) => { return { content: '指定した学科・学年の時間割データが見つかりませんでした。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
                 await interaction.reply(replyOptions(5));
                 for (let i = 5; i > 0; i--) {
                     await interaction.editReply(replyOptions(i));
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();
@@ -377,15 +386,16 @@ module.exports = [
                 data[0].day = String(date);
                 delete data[0]._id;
                 await db.updateOrInsert("main", "timetableData", { day: String(date) }, data[0]);
-                const replyOptions = time => { return { content: '登録しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
+                const replyOptions = (time) => { return { content: '登録しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
                 await mInteraction.reply(replyOptions(5));
                 for (let i = 5; i > 0; i--) {
                     await mInteraction.editReply(replyOptions(i));
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await mInteraction.deleteReply();
             })
-                .catch(error => { });
+                .catch((error) => { });
         }
     }
 ];

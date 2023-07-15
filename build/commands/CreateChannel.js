@@ -1,8 +1,13 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
 const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require("../functions/db.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbMain'.
 const dbMain = "main"; //データベースmainとコレクションCC-categoryを定数化
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'colCat'.
 const colCat = "CC-categories";
+// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {
@@ -11,7 +16,7 @@ module.exports =
                 .setName("create-channel")
                 .setDescription("チャンネルの作成")
                 //チャンネル名を入力 -> string
-                .addStringOption(option => option
+                .addStringOption((option) => option
                 .setName("チャンネル名")
                 .setDescription("作成するチャンネル名を指定します")
                 .setRequired(true)),
@@ -32,7 +37,7 @@ module.exports =
                                 .addComponents(new StringSelectMenuBuilder()
                                 .setPlaceholder("カテゴリを選択してください")
                                 .setCustomId("createChannel")
-                                .addOptions(...guildCats.map(data => ({
+                                .addOptions(...guildCats.map((data) => ({
                                 label: data.name,
                                 value: JSON.stringify({ categoryID: data.ID, channelName: channelName })
                             })), {
@@ -69,7 +74,7 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName("add-category")
                 .setDescription("/CreateChanによってチャンネルの作成ができるカテゴリにこのカテゴリを追加します")
-                .addNumberOption(option => option
+                .addNumberOption((option) => option
                 .setName("ロールの追加を許可")
                 .setDescription("/CreateChanによって作成されたチャンネルに対応するメンション用のロールの作成を許可するかどうかを指定します")
                 .setRequired(true)
@@ -125,7 +130,10 @@ module.exports =
                             .addComponents(new StringSelectMenuBuilder()
                             .setPlaceholder("カテゴリを選択")
                             .setCustomId("removeCategory")
-                            .addOptions({ label: "全カテゴリを登録解除する", value: "All" }, ...guildCats.map(cat => ({ label: cat.name, value: cat.ID })), { label: "キャンセル", value: "Cancel" }));
+                            .addOptions({ label: "全カテゴリを登録解除する", value: "All" }, ...guildCats.map((cat) => ({
+                            label: cat.name,
+                            value: cat.ID
+                        })), { label: "キャンセル", value: "Cancel" }));
                         await interaction.editReply({
                             content: "削除するカテゴリを指定してください。",
                             components: [selectCategory],

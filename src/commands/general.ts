@@ -1,27 +1,43 @@
+// @ts-expect-error TS(6200): Definitions of the following identifiers conflict ... Remove this comment to see the full error message
 const { SlashCommandBuilder, EmbedBuilder , version} = require('discord.js');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const packageVer = require('../../package.json');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const {setTimeout} = require ("node:timers/promises");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 require('date-utils');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const system = require('../functions/logsystem.js');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const weather = require('../functions/weather.js');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const guildData = require('../functions/guildDataSet.js')
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const db = require('../functions/db.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const {configPath} = require("../environmentConfig");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const mode = require("../functions/statusAndMode.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const CreateChannel = require("../functions/CCFunc.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const help = require("../functions/help.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const {autoDeleteEditReply} = require("../functions/common.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const {ID_NODATA} = require("../functions/guildDataSet");
 
 
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports =
     [
         {
             data: new SlashCommandBuilder()
                 .setName('help')
                 .setDescription('このBOTのヘルプを表示します'),
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await help.helpSend(interaction);
             },
         },
@@ -31,7 +47,7 @@ module.exports =
                 .setDescription('管理者向けメニューをDMで表示します。')
                 .setDefaultMemberPermissions(1<<3)
                 .setDMPermission(false),
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.reply({ content: "DMに管理者向けメニューを送信しました。受信できていない場合、以下に該当していないかどうかご確認ください。\n・このサーバー上の他のメンバーからのDMをOFFにしている\n・フレンドからのDMのみを許可している\n・このBOTをブロックしている", ephemeral: true });
                 await help.adminHelpSend(interaction.user);
             },
@@ -40,7 +56,7 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('about')
                 .setDescription('このBOTの概要を表示します'),
-            async execute(interaction) {
+            async execute(interaction: any) {
                 const embed = new EmbedBuilder()
                     .setColor(0x00A0EA)
                     .setTitle('NITKC統合管理BOT概要')
@@ -70,6 +86,7 @@ module.exports =
                             },
                             {
                                 name: '実行環境',
+                                // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
                                 value: 'node.js v' + process.versions.node + `\n discord.js v` + version + `\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
 
                             },
@@ -84,7 +101,7 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('ping')
                 .setDescription('このBOTのpingを測定します'),
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.reply( `Ping : ${interaction.client.ws.ping}ms` );
             },
         },
@@ -94,13 +111,12 @@ module.exports =
                 .setDescription('sugoi user do')
                 .setDefaultMemberPermissions(1<<3)
                 .setDMPermission(false)
-                .addBooleanOption(option =>
-                    option
-                        .setName('option')
-                        .setDescription('True or False')
-                        .setRequired(true)
+                .addBooleanOption((option: any) => option
+                .setName('option')
+                .setDescription('True or False')
+                .setRequired(true)
                 ),
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.deferReply();
                 const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
                 let flag = 0;
@@ -113,9 +129,10 @@ module.exports =
                     await reply.react('❌');
 
                     flag = 0;
+                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(100);
 
-                    await reply.awaitReactions({ filter: reaction => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
+                    await reply.awaitReactions({ filter: (reaction: any) => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
                         .then(() => {
                             if(reply.reactions.cache.at(0).count === 2){
                                 flag = 1;
@@ -141,29 +158,25 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('secret-msg')
                 .setDescription('実行したチャンネルにbotが代理で送信します')
-                .addStringOption(option =>
-                    option
-                        .setName('メッセージ')
-                        .setDescription('送りたいメッセージを入れます')
-                        .setRequired(false)
-                ).addAttachmentOption(option =>
-                    option
-                        .setName('添付ファイル1')
-                        .setDescription('添付するファイルをアップロードします')
-                        .setRequired(false)
-                ).addAttachmentOption(option =>
-                    option
-                        .setName('添付ファイル2')
-                        .setDescription('添付するファイルをアップロードします')
-                        .setRequired(false)
-                ).addAttachmentOption(option =>
-                    option
-                        .setName('添付ファイル3')
-                        .setDescription('添付するファイルをアップロードします')
-                        .setRequired(false)
+                .addStringOption((option: any) => option
+                .setName('メッセージ')
+                .setDescription('送りたいメッセージを入れます')
+                .setRequired(false)
+                ).addAttachmentOption((option: any) => option
+                .setName('添付ファイル1')
+                .setDescription('添付するファイルをアップロードします')
+                .setRequired(false)
+                ).addAttachmentOption((option: any) => option
+                .setName('添付ファイル2')
+                .setDescription('添付するファイルをアップロードします')
+                .setRequired(false)
+                ).addAttachmentOption((option: any) => option
+                .setName('添付ファイル3')
+                .setDescription('添付するファイルをアップロードします')
+                .setRequired(false)
                 ),
 
-            async execute (interaction) {
+            async execute (interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.guild) {
                     let receivedMsg = interaction.options.getString('メッセージ');
@@ -174,11 +187,12 @@ module.exports =
                     let sendingMsg = '';
                     
                     //ロールメンション時パーミッション確認と除外処理
+                    // @ts-expect-error TS(2737): BigInt literals are not available when targeting l... Remove this comment to see the full error message
                     if(!interaction.memberPermissions.has(1n << 17n)) {
                         const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
                         if(roleMentions) {
                             for(const roleMention of roleMentions) {
-                                const role = interaction.guild.roles.cache.find(readRole => readRole.id === roleMention.match(/\d+/)[0]);
+                                const role = interaction.guild.roles.cache.find((readRole: any) => readRole.id === roleMention.match(/\d+/)[0]);
                                 if(role && !role.mentionable) {
                                     receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
                                 }
@@ -249,24 +263,21 @@ module.exports =
                 .setName('birthday')
                 .setDescription('あなたの誕生日を登録します。登録するとその日に祝ってくれます。')
                 .setDMPermission(false)
-                .addIntegerOption(option =>
-                    option
-                        .setName('年')
-                        .setDescription('生まれた年をいれます')
-                        .setRequired(true)
-                ).addIntegerOption(option =>
-                    option
-                        .setName('月')
-                        .setDescription('生まれた月をいれます')
-                        .setRequired(true)
-                ).addIntegerOption(option =>
-                    option
-                        .setName('日')
-                        .setDescription('生まれた日をいれます')
-                        .setRequired(true)
+                .addIntegerOption((option: any) => option
+                .setName('年')
+                .setDescription('生まれた年をいれます')
+                .setRequired(true)
+                ).addIntegerOption((option: any) => option
+                .setName('月')
+                .setDescription('生まれた月をいれます')
+                .setRequired(true)
+                ).addIntegerOption((option: any) => option
+                .setName('日')
+                .setDescription('生まれた日をいれます')
+                .setRequired(true)
                 ),
 
-            async execute (interaction) {
+            async execute (interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
@@ -307,7 +318,7 @@ module.exports =
                 .setDMPermission(false)
                 .setDescription('あなたの誕生日を削除します'),
 
-            async execute (interaction) {
+            async execute (interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 const data = await db.find("main", "birthday", {
                     user: interaction.user.id,
@@ -330,18 +341,17 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName('weather')
                 .setDescription('その日の天気を取得します')
-                .addIntegerOption(option =>
-                    option
-                        .setName('日にち')
-                        .setDescription('日にちを指定します。指定なければ今日の天気になります。')
-                        .setRequired(false)
-                        .addChoices(
-                            { name: '今日', value: 0 },
-                            { name: '明日', value: 1 },
-                            { name: '明後日', value: 2 }
-                        )
+                .addIntegerOption((option: any) => option
+                .setName('日にち')
+                .setDescription('日にちを指定します。指定なければ今日の天気になります。')
+                .setRequired(false)
+                .addChoices(
+                    { name: '今日', value: 0 },
+                    { name: '明日', value: 1 },
+                    { name: '明後日', value: 2 }
+                )
                 ),
-            async execute (interaction) {
+            async execute (interaction: any) {
                 const reply = await interaction.deferReply()
                 let embed;
                 if(interaction.options.getInteger('日にち') === undefined || interaction.options.getInteger('日にち') === null){
@@ -359,20 +369,18 @@ module.exports =
                 .setDescription('天気定期送信のON/OFFを切り替えます')
                 .setDefaultMemberPermissions(1<<3)
                 .setDMPermission(false)
-                .addBooleanOption(option =>
-                    option
-                        .setName('定期送信')
-                        .setDescription('定期実行のオンオフを指定します')
-                        .setRequired(true)
+                .addBooleanOption((option: any) => option
+                .setName('定期送信')
+                .setDescription('定期実行のオンオフを指定します')
+                .setRequired(true)
                 )
-                .addChannelOption(option =>
-                    option
-                        .setName('送信先')
-                        .setDescription('送信先を指定します。削除時は適当なチャンネルをいれてください。')
-                        .setRequired(true)
+                .addChannelOption((option: any) => option
+                .setName('送信先')
+                .setDescription('送信先を指定します。削除時は適当なチャンネルをいれてください。')
+                .setRequired(true)
                 ),
 
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 if(!interaction.options.getBoolean('定期送信')){
                     await guildData.updateOrInsert(interaction.guildId, {weather:interaction.options.getBoolean('定期送信')});

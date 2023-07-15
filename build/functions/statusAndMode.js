@@ -1,7 +1,11 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require("fs");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'configPath... Remove this comment to see the full error message
 const { configPath } = require("../environmentConfig");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require("./logsystem.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'statusAndM... Remove this comment to see the full error message
 const statusAndMode = require("./statusAndMode.js");
 const statusName = ['online', 'idle', 'dnd', 'invisible'];
 /***
@@ -10,6 +14,7 @@ const statusName = ['online', 'idle', 'dnd', 'invisible'];
  * @param presence ○○をプレイ中 のメッセージ
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.status = async function func(status, presence = "") {
     client.user.setPresence({
         activities: [{
@@ -29,6 +34,7 @@ exports.status = async function func(status, presence = "") {
  * @param mode Trueでメンテナンスモード
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.maintenance = async function (mode) {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     config.maintenanceMode = mode;

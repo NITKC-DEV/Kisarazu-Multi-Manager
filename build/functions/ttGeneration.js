@@ -1,7 +1,11 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const { EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder } = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require("./db.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const { setTimeout } = require("node:timers/promises");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'department... Remove this comment to see the full error message
 const departmentData = [
     {
         name: "機械工学科",
@@ -31,6 +35,7 @@ const examTime = ["08:50 - 09:50\n", "10:05 - 11:05\n", "11:20 - 12:20\n"];
  * @param change 授業変更を加味する場合はTrue(来週限定)
  * @returns {Promise<number|EmbedBuilder>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.generation = async function func(grade, department, day, change = true) {
     let data, dateText;
     if (change) {
@@ -199,6 +204,7 @@ exports.generation = async function func(grade, department, day, change = true) 
  * @param interaction セレクトメニューのinteraction
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.setNewTimetableData = async function func(interaction) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
     const grade = interaction.customId[0];
@@ -226,6 +232,7 @@ exports.setNewTimetableData = async function func(interaction) {
     }
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
+        // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
         .setTitle(`授業変更・定期テスト登録 - ${departmentData[parseFloat(department) - 1].name}${grade}年 ${Math.floor(date / 10000)}月${Math.floor(date % 10000 / 100)}日`)
         .setAuthor({
         name: "木更津高専統合管理BOT",
@@ -254,6 +261,7 @@ exports.setNewTimetableData = async function func(interaction) {
  * @param interaction ボタンのinteraction
  * @returns {Promise<void>}
  */
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.showNewTimetableModal = async function func(interaction) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
     const grade = interaction.customId[0];
@@ -305,10 +313,11 @@ exports.showNewTimetableModal = async function func(interaction) {
             message.delete();
         })
             .catch(() => { });
-        const replyOptions = time => { return { content: '登録しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
+        const replyOptions = (time) => { return { content: '登録しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true }; };
         await mInteraction.reply(replyOptions(5));
         for (let i = 5; i > 0; i--) {
             await mInteraction.editReply(replyOptions(i));
+            // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
             await setTimeout(1000);
         }
         await mInteraction.deleteReply();
@@ -325,6 +334,7 @@ exports.showNewTimetableModal = async function func(interaction) {
         catch { } //元メッセージ削除対策
     });
 };
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.deleteData = async function func() {
     const date = new Date;
     date.setDate(date.getDate() - 1);

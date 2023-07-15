@@ -1,7 +1,11 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const {EmbedBuilder, ActionRowBuilder, TextInputBuilder,ModalBuilder} = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require("./db.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'setTimeout... Remove this comment to see the full error message
 const {setTimeout} = require("node:timers/promises");
 
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'department... Remove this comment to see the full error message
 const departmentData = [
     {
         name:"機械工学科",
@@ -34,7 +38,8 @@ const examTime = ["08:50 - 09:50\n","10:05 - 11:05\n","11:20 - 12:20\n"];
  * @param change 授業変更を加味する場合はTrue(来週限定)
  * @returns {Promise<number|EmbedBuilder>}
  */
-exports.generation = async function func(grade,department,day,change = true) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.generation = async function func(grade: any,department: any,day: any,change = true) {
     let data,dateText;
     if(change){
         const date = new Date();
@@ -216,7 +221,8 @@ exports.generation = async function func(grade,department,day,change = true) {
  * @param interaction セレクトメニューのinteraction
  * @returns {Promise<void>}
  */
-exports.setNewTimetableData = async function func(interaction) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.setNewTimetableData = async function func(interaction: any) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
@@ -246,6 +252,7 @@ exports.setNewTimetableData = async function func(interaction) {
 
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
+        // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
         .setTitle(`授業変更・定期テスト登録 - ${departmentData[parseFloat(department)-1].name}${grade}年 ${Math.floor(date/10000)}月${Math.floor(date%10000/100)}日`)
         .setAuthor({
             name: "木更津高専統合管理BOT",
@@ -263,7 +270,7 @@ exports.setNewTimetableData = async function func(interaction) {
     try{
         const channel = client.channels.cache.get(interaction.message.channelId);
         channel.messages.fetch(interaction.message.id)
-            .then((message) => {
+            .then((message: any) => {
                 interaction.update({embeds: [embed],comments: message.comments});
             })
         await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
@@ -276,7 +283,8 @@ exports.setNewTimetableData = async function func(interaction) {
  * @param interaction ボタンのinteraction
  * @returns {Promise<void>}
  */
-exports.showNewTimetableModal = async function func(interaction) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.showNewTimetableModal = async function func(interaction: any) {
     //カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
@@ -304,10 +312,10 @@ exports.showNewTimetableModal = async function func(interaction) {
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
-    const filter = (mInteraction) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
+    const filter = (mInteraction: any) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
 
     interaction.awaitModalSubmit({ filter, time: 3600000 })
-        .then(async mInteraction => {
+        .then(async (mInteraction: any) => {
             const inputTxt = []
             let comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
@@ -327,14 +335,15 @@ exports.showNewTimetableModal = async function func(interaction) {
             await db.delete("main","timetableData",{grade,department,day:date + '00'});
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages.fetch(interaction.message.id)
-                .then((message) => {
+                .then((message: any) => {
                     message.delete();
                 })
                 .catch(() => {});
-            const replyOptions=time=>{return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
+            const replyOptions=(time: any) => {return{content: '登録しました。\n(このメッセージは'+time+'秒後に自動で削除されます)', ephemeral:true};};
             await mInteraction.reply(replyOptions(5));
             for(let i=5;i>0;i--){
                 await mInteraction.editReply(replyOptions(i));
+                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                 await setTimeout(1000);
             }
             await mInteraction.deleteReply();
@@ -345,7 +354,7 @@ exports.showNewTimetableModal = async function func(interaction) {
             try{
                 const channel = client.channels.cache.get(interaction.message.channelId);
                 channel.messages.fetch(interaction.message.id)
-                    .then((message) => {
+                    .then((message: any) => {
                         message.delete();
                     })
                     .catch(() => {});
@@ -354,6 +363,7 @@ exports.showNewTimetableModal = async function func(interaction) {
         })
 }
 
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.deleteData = async function func(){
     const date = new Date;
     date.setDate(date.getDate()-1);

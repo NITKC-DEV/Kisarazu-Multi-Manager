@@ -1,10 +1,17 @@
+// @ts-expect-error TS(6200): Definitions of the following identifiers conflict ... Remove this comment to see the full error message
 const { Client, GatewayIntentBits, Partials, Collection, Events} = require('discord.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dotenv'.
 const dotenv = require('dotenv');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'path'.
 const path = require('path');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'fs'.
 const fs = require('fs');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cron'.
 const cron = require('node-cron');
 dotenv.config();
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 require('date-utils');
+// @ts-expect-error TS(2304): Cannot find name 'global'.
 global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -21,35 +28,55 @@ global.client = new Client({
 });
 
 //configファイル読み込み
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
 const config = require('./environmentConfig')
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'configPath... Remove this comment to see the full error message
 const {configPath} = require("./environmentConfig");
 
 //関数読み込み
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const birthday = require('./functions/birthday.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dashboard'... Remove this comment to see the full error message
 const dashboard = require('./functions/dashboard.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'timetable'... Remove this comment to see the full error message
 const timetable = require('./functions/ttGeneration.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require('./functions/logsystem.js');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const genshin = require('./functions/genshin.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require('./functions/db.js');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const weather = require('./functions/weather.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'guildData'... Remove this comment to see the full error message
 const guildData = require("./functions/guildDataSet.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'ID_NODATA'... Remove this comment to see the full error message
 const {ID_NODATA} = require("./functions/guildDataSet.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const CreateChannel = require("./functions/CCFunc.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const mode = require("./functions/statusAndMode.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'statusAndM... Remove this comment to see the full error message
 const statusAndMode = require("./functions/statusAndMode.js");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const help = require("./functions/help.js");
 
 //スラッシュコマンド登録
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandsPa... Remove this comment to see the full error message
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'commandFil... Remove this comment to see the full error message
+const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.js'));
 client.commands = new Collection();
+// @ts-expect-error TS(2580): Cannot find name 'module'. Do you need to install ... Remove this comment to see the full error message
 module.exports = client.commands;
 client.once("ready", async() => {
     await mode.maintenance(true);
     await mode.status(2,"BOT起動処理");
     for(const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
+        // @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
         const command = require(filePath);
         for(let i = 0; i < command.length; i++) {
             client.commands.set(command[i].data.name, command[i]);
@@ -68,7 +95,7 @@ client.once("ready", async() => {
 });
 
 /*command処理*/
-client.on("interactionCreate", async(interaction) => {
+client.on("interactionCreate", async (interaction: any) => {
     let flag = 0;
     if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
         for(let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
@@ -92,8 +119,8 @@ client.on("interactionCreate", async(interaction) => {
             channel = {name:"---",id:"---"};
         }
         else{
-            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
-            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+            guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
+            channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
         }
         await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
@@ -127,15 +154,15 @@ client.on("interactionCreate", async(interaction) => {
             channel = {name:"---",id:"---"};
         }
         else{
-            guild = client.guilds.cache.get(interaction.guildId) ?? await client.guilds.fetch(interaction.guildId);
-            channel = client.channels.cache.get(interaction.channelId) ?? await client.channels.fetch(interaction.channelId);
+            guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
+            channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
         }
         await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
 //StringSelectMenu受け取り
-client.on(Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async (interaction: any) => {
     if(interaction.isStringSelectMenu()) {
         let flag = 0;
         if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -174,7 +201,7 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 //Button入力受け取り
-client.on(Events.InteractionCreate, async interaction => {
+client.on(Events.InteractionCreate, async (interaction: any) => {
     if (!interaction.isButton()) return;
     let flag = 0;
     if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -194,7 +221,7 @@ client.on(Events.InteractionCreate, async interaction => {
 });
 
 //チャンネル(カテゴリ)削除検知
-client.on(Events.ChannelDelete,async channel=>{
+client.on(Events.ChannelDelete,async (channel: any) => {
     if(channel.type===0){
         await CreateChannel.removeDeletedChannelData(channel);
     }
@@ -204,7 +231,7 @@ client.on(Events.ChannelDelete,async channel=>{
 });
 
 //チャンネル(カテゴリ)情報変更検知
-client.on(Events.ChannelUpdate,async channel=>{
+client.on(Events.ChannelUpdate,async (channel: any) => {
     if(channel.type===0) {
         await CreateChannel.updateChannelData(channel);
     }
@@ -214,27 +241,27 @@ client.on(Events.ChannelUpdate,async channel=>{
 });
 
 //ロール削除検知
-client.on(Events.GuildRoleDelete,async role => {
+client.on(Events.GuildRoleDelete,async (role: any) => {
     await CreateChannel.removeDeletedRoleData(role);
 });
 
 //ロール情報変更検知
-client.on(Events.GuildRoleUpdate, async role => {
+client.on(Events.GuildRoleUpdate, async (role: any) => {
     await CreateChannel.updateRoleData(role);
 });
 
-client.on(Events.GuildCreate,async guild =>{
+client.on(Events.GuildCreate,async (guild: any) => {
     await guildData.updateOrInsert(guild.id);
 });
 
 //ギルド削除(退出)検知
-client.on(Events.GuildDelete,async guild =>{
+client.on(Events.GuildDelete,async (guild: any) => {
     await CreateChannel.deleteGuildData(guild);
     await guildData.checkGuild();
 });
 
 /*TxtEasterEgg*/
-client.on('messageCreate', message => {
+client.on('messageCreate', (message: any) => {
     /*メンテナンスモード*/
     let flag = 0;
     if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -323,11 +350,11 @@ cron.schedule('0 20 * * 0,1,2,3,4', async () => {
                 for(let j= 0;j < 5; j++){
                     embed[j] = await timetable.generation(String(grade),String(j+1),String(dayOfWeek+1),true);
                 }
-                try{if(embed[0]!==0 && guildData[i].mChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].mChannel) ?? await client.channels.fetch(guildData[i].mChannel)).send({embeds:[embed[0]]})}catch{}
-                try{if(embed[1]!==0 && guildData[i].eChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].eChannel) ?? await client.channels.fetch(guildData[i].eChannel)).send({embeds:[embed[1]]})}catch{}
-                try{if(embed[2]!==0 && guildData[i].dChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].dChannel) ?? await client.channels.fetch(guildData[i].dChannel)).send({embeds:[embed[2]]})}catch{}
-                try{if(embed[3]!==0 && guildData[i].jChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].jChannel) ?? await client.channels.fetch(guildData[i].jChannel)).send({embeds:[embed[3]]})}catch{}
-                try{if(embed[4]!==0 && guildData[i].cChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].cChannel) ?? await client.channels.fetch(guildData[i].cChannel)).send({embeds:[embed[4]]})}catch{}
+                try{if(embed[0]!==0 && guildData[i].mChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].mChannel) ?? (await client.channels.fetch(guildData[i].mChannel))).send({embeds:[embed[0]]})}catch{}
+                try{if(embed[1]!==0 && guildData[i].eChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].eChannel) ?? (await client.channels.fetch(guildData[i].eChannel))).send({embeds:[embed[1]]})}catch{}
+                try{if(embed[2]!==0 && guildData[i].dChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].dChannel) ?? (await client.channels.fetch(guildData[i].dChannel))).send({embeds:[embed[2]]})}catch{}
+                try{if(embed[3]!==0 && guildData[i].jChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].jChannel) ?? (await client.channels.fetch(guildData[i].jChannel))).send({embeds:[embed[3]]})}catch{}
+                try{if(embed[4]!==0 && guildData[i].cChannel!==ID_NODATA)await (client.channels.cache.get(guildData[i].cChannel) ?? (await client.channels.fetch(guildData[i].cChannel))).send({embeds:[embed[4]]})}catch{}
             }
             else{
                 try{
@@ -348,7 +375,7 @@ cron.schedule('00 20 * * *', async() => {
     const data = await db.find("main", "guildData", {weather: true});
     for(let i = 0; i < data.length; i++) {
         try{
-            const channel = (client.channels.cache.get(data[i].weatherChannel) ?? await client.channels.fetch(data[i].weatherChannel));
+            const channel = (client.channels.cache.get(data[i].weatherChannel) ?? (await client.channels.fetch(data[i].weatherChannel)));
             await channel.send({embeds: [embed]});
         }
         catch{}
@@ -370,17 +397,17 @@ cron.schedule('*/1  * * * *', async () => {
         }
         
         if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
-            let dashboardGuild;
+            let dashboardGuild: any;
             try{
-                dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? await client.guilds.fetch(data[i].guild)); /*ギルド情報取得*/
-                const channel = (client.channels.cache.get(data[i].boardChannel) ?? await client.channels.fetch(data[i].boardChannel)); /*チャンネル情報取得*/
+                dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? (await client.guilds.fetch(data[i].guild))); /*ギルド情報取得*/
+                const channel = (client.channels.cache.get(data[i].boardChannel) ?? (await client.channels.fetch(data[i].boardChannel))); /*チャンネル情報取得*/
                 const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
                 if(newEmbed){
                     channel.messages.fetch(data[i].board)
-                        .then(async (dashboard) => {
+                        .then(async (dashboard: any) => {
                             await dashboard.edit({embeds: [newEmbed]});
                         })
-                        .catch(async(error) => {
+                        .catch(async (error: any) => {
                             if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
                                 await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                                 await db.update("main", "guildData", {guild: data[i].guild}, {
@@ -401,6 +428,7 @@ cron.schedule('*/1  * * * *', async () => {
                 }
             }
             catch(error){
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
                     await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                     await db.update("main", "guildData", {guild: data[i].guild}, {
@@ -410,6 +438,7 @@ cron.schedule('*/1  * * * *', async () => {
                         }
                     });
                 }
+                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 else if(error.code === 10004){
                     await system.error(`ギルド削除 または退出により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                     await guildData.checkGuild();
@@ -422,6 +451,7 @@ cron.schedule('*/1  * * * *', async () => {
     }
 });
 
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 if(require.main === module) {
     client.login(config.token);
 }

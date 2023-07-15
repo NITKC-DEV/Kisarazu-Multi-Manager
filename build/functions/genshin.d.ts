@@ -1,1 +1,2 @@
-export function daily(message: any, title: any): Promise<void>;
+declare const config: any;
+declare const EmbedBuilder: any;

@@ -1,9 +1,12 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'StringSele... Remove this comment to see the full error message
 const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require('./logsystem.js');
 
 //helpTextの生成
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const helpText = require("./helpText.json");
-const adminTable = [];
+const adminTable: any = [];
 for(let i=0;i < helpText.admin.length;i++){
     adminTable.push(
         new StringSelectMenuOptionBuilder()
@@ -12,7 +15,7 @@ for(let i=0;i < helpText.admin.length;i++){
         .setValue(String(i))
     )
 }
-const helpTable = [];
+const helpTable: any = [];
 for(let i=0;i < helpText.help.length;i++){
     helpTable.push(
         new StringSelectMenuOptionBuilder()
@@ -22,7 +25,8 @@ for(let i=0;i < helpText.help.length;i++){
     )
 }
 
-exports.adminHelpSend = async function func(user) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.adminHelpSend = async function func(user: any) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`管理者向けヘルプ`)
@@ -50,7 +54,8 @@ exports.adminHelpSend = async function func(user) {
     }
 }
 
-exports.adminHelpDisplay = async function func(interaction) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.adminHelpDisplay = async function func(interaction: any) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)
@@ -72,7 +77,8 @@ exports.adminHelpDisplay = async function func(interaction) {
     }
 }
 
-exports.helpSend = async function func(interaction) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.helpSend = async function func(interaction: any) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
         .setTitle(`ヘルプ`)
@@ -95,7 +101,8 @@ exports.helpSend = async function func(interaction) {
     await interaction.reply({embeds: [embed],components: [row]});
 }
 
-exports.helpDisplay = async function func(interaction) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.helpDisplay = async function func(interaction: any) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()
         .setColor(0x00A0EA)

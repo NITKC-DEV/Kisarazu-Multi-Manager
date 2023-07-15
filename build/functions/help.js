@@ -1,7 +1,10 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'StringSele... Remove this comment to see the full error message
 const { StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder } = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require('./logsystem.js');
 //helpTextの生成
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const helpText = require("./helpText.json");
 const adminTable = [];
 for (let i = 0; i < helpText.admin.length; i++) {
@@ -17,6 +20,7 @@ for (let i = 0; i < helpText.help.length; i++) {
         .setDescription(helpText.help[i].shortDescription)
         .setValue(String(i)));
 }
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.adminHelpSend = async function func(user) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
@@ -42,6 +46,7 @@ exports.adminHelpSend = async function func(user) {
         await system.error("DMを送れませんでした。ブロックされている等ユーザー側が原因の場合もあります。", error, "DirectMessageエラー");
     }
 };
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.adminHelpDisplay = async function func(interaction) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()
@@ -63,6 +68,7 @@ exports.adminHelpDisplay = async function func(interaction) {
         await system.error("DMを編集できませんでした。ブロックされている等ユーザー側が原因の場合もあります。", error, "DirectMessageエラー");
     }
 };
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.helpSend = async function func(interaction) {
     const embed = new EmbedBuilder()
         .setColor(0x00A0EA)
@@ -83,6 +89,7 @@ exports.helpSend = async function func(interaction) {
         .addComponents(select);
     await interaction.reply({ embeds: [embed], components: [row] });
 };
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
 exports.helpDisplay = async function func(interaction) {
     const page = parseFloat(interaction.values[0]);
     const newEmbed = new EmbedBuilder()

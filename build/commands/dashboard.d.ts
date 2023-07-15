@@ -1,6 +1,5 @@
-declare const _exports: {
-    data: Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">;
-    execute(interaction: any): Promise<void>;
-}[];
-export = _exports;
-import { SlashCommandBuilder } from "@discordjs/builders";
+declare const SlashCommandBuilder: any;
+declare const dashboard: any;
+declare const db: any;
+declare const system: any;
+declare const setTimeout: any;

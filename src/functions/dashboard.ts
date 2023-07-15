@@ -1,16 +1,21 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'axios'.
 const axios = require('axios');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require("./db.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const {EmbedBuilder} = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
 const system = require("./logsystem.js");
 
 /*天気取得*/
+// @ts-expect-error TS(2393): Duplicate function implementation.
 async function getWeather() {
     const data = await db.find("main","weatherCache",{label: "最新の天気予報"});
     return data[0].response;
 }
 
 /*日数カウント*/
-function diffInMonthsAndDays(from, to) {
+function diffInMonthsAndDays(from: any, to: any) {
     if(from > to) {
         [from, to] = [to, from];
     }
@@ -42,17 +47,19 @@ function diffInMonthsAndDays(from, to) {
     return [ months, days ];
 }
 
-exports.generation = async function func(guild) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.generation = async function func(guild: any) {
     try{
         /*現在時刻を取得*/
         const date = new Date();
+        // @ts-expect-error TS(2339): Property 'toFormat' does not exist on type 'Date'.
         const time = date.toFormat('YYYY年 MM月DD日 HH24:MI:SS')
 
         /*bot及びユーザーの人数を取得*/
         const members = await guild.members.fetch({withPresences: true});
-        const user = members.filter(member => member.user.bot === false).size;
-        const online = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
-        const botOnline = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
+        const user = members.filter((member: any) => member.user.bot === false).size;
+        const online = members.filter((member: any) => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
+        const botOnline = members.filter((member: any) => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
 
         /*定期テスト*/
         const data = await db.find("main","nextTest",{label: {$in:["1","2","3","4"]}});
@@ -156,7 +163,9 @@ exports.generation = async function func(guild) {
             weatherCache[0] = (await db.find("main","weatherCache",{label: {$in:["0"]}}))[0];
             weatherCache[1] = (await db.find("main","weatherCache",{label: {$in:["1"]}}))[0];
 
+            // @ts-expect-error TS(2339): Property 'min' does not exist on type '{}'.
             const min = [weatherData.forecasts[0].temperature.min.celsius ?? weatherCache[0].min, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
+            // @ts-expect-error TS(2339): Property 'max' does not exist on type '{}'.
             const max = [weatherData.forecasts[0].temperature.max.celsius ?? weatherCache[0].max, weatherData.forecasts[1].temperature.max.celsius ?? `---`];
 
             weather = `${weatherData.forecasts[0].dateLabel}：${weatherData.forecasts[0].telop} 最高気温：${max[0]}°C 最低気温：${min[0]}°C\n${weatherData.forecasts[1].dateLabel}：${weatherData.forecasts[1].telop} 最高気温：${max[1]}°C 最低気温：${min[1]}°C\n\n発表時刻：${weatherData.publicTimeFormatted} `;

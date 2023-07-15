@@ -1,4 +1,6 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
 const {EmbedBuilder} = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
 const config = require("../environmentConfig");
 
 /***
@@ -6,7 +8,8 @@ const config = require("../environmentConfig");
  * @param message ログの本文
  * @param title ログのタイトル。省略可
  */
-exports.log = async function func(message,title) {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.log = async function func(message: any,title: any) {
     const date = new Date().toLocaleString(); // YYYY/MM/DD hh:mm:ss形式に変換
     console.log(`${title ?? "システムログ"} ----\n${(message.trim().split("```").join(''))}\n--------${date}\n`);
     const embed = new EmbedBuilder()
@@ -26,7 +29,8 @@ exports.log = async function func(message,title) {
  * @param error エラーオブジェクト。error.stackが存在する場合にそれが送られる。省略可
  * @param title エラーメッセージのタイトル。省略可
  */
-exports.error = async function func(message,error= {stack:""},title="エラー") {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.error = async function func(message: any,error= {stack:""},title="エラー") {
     const embed = new EmbedBuilder()
         .setColor(0xFF0000)
         .setTitle(title)
@@ -52,7 +56,8 @@ exports.error = async function func(message,error= {stack:""},title="エラー")
  * @param message ログの本文
  * @param title ログのタイトル。省略可
  */
-exports.warn = async function func(message,title="警告") {
+// @ts-expect-error TS(2304): Cannot find name 'exports'.
+exports.warn = async function func(message: any,title="警告") {
     const date = new Date().toLocaleString(); // YYYY/MM/DD hh:mm:ss形式に変換
     console.warn(`${title} ----\n${(message.trim().split("```").join(''))}\n--------${date}\n`);
     const embed = new EmbedBuilder()

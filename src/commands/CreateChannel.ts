@@ -1,8 +1,13 @@
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'SlashComma... Remove this comment to see the full error message
 const {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
 const db = require("../functions/db.js");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbMain'.
 const dbMain = "main";          //データベースmainとコレクションCC-categoryを定数化
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'colCat'.
 const colCat = "CC-categories";
 
+// @ts-expect-error TS(2552): Cannot find name 'module'. Did you mean 'mode'?
 module.exports =
     [
         {
@@ -11,18 +16,17 @@ module.exports =
                 .setName("create-channel")
                 .setDescription("チャンネルの作成")
                 //チャンネル名を入力 -> string
-                .addStringOption(option =>
-                    option
-                        .setName("チャンネル名")
-                        .setDescription("作成するチャンネル名を指定します")
-                        .setRequired(true)
+                .addStringOption((option: any) => option
+                .setName("チャンネル名")
+                .setDescription("作成するチャンネル名を指定します")
+                .setRequired(true)
                 ),
             /***
              * /add-category で登録されたカテゴリにチャンネルを作成する
              * @param interaction
              * @returns {Promise<void>}
              */
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.guild !== null) {
                     const guildCats = await db.find(dbMain, colCat, {"guildID": interaction.guildId});
@@ -36,7 +40,7 @@ module.exports =
                                         .setPlaceholder("カテゴリを選択してください")
                                         .setCustomId("createChannel")
                                         .addOptions(
-                                            ...guildCats.map(data => ({
+                                            ...guildCats.map((data: any) => ({
                                                 label: data.name,
                                                 value: JSON.stringify({categoryID: data.ID, channelName: channelName})
                                             })),
@@ -78,16 +82,15 @@ module.exports =
             data: new SlashCommandBuilder()
                 .setName("add-category")
                 .setDescription("/CreateChanによってチャンネルの作成ができるカテゴリにこのカテゴリを追加します")
-                .addNumberOption(option =>
-                    option
-                        .setName("ロールの追加を許可")
-                        .setDescription("/CreateChanによって作成されたチャンネルに対応するメンション用のロールの作成を許可するかどうかを指定します")
-                        .setRequired(true)
-                        .addChoices
-                        (
-                            {name: "許可する", value: 1},
-                            {name: "許可しない", value: 0}
-                        )
+                .addNumberOption((option: any) => option
+                .setName("ロールの追加を許可")
+                .setDescription("/CreateChanによって作成されたチャンネルに対応するメンション用のロールの作成を許可するかどうかを指定します")
+                .setRequired(true)
+                .addChoices
+                (
+                    {name: "許可する", value: 1},
+                    {name: "許可しない", value: 0}
+                )
                 )
                 .setDefaultMemberPermissions(1 << 3),
             /***
@@ -95,7 +98,7 @@ module.exports =
              * @param interaction
              * @returns {Promise<void>}
              */
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.channel.type === 0) {
                     const dbData = await db.find(dbMain, colCat, {ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId});
@@ -131,7 +134,7 @@ module.exports =
              * @param interaction
              * @returns {Promise<void>}
              */
-            async execute(interaction) {
+            async execute(interaction: any) {
                 await interaction.deferReply({ephemeral: true});
                 if(interaction.guild !== null) {
                     const guildCats = await db.find(dbMain, colCat, {"guildID": interaction.guildId});
@@ -143,7 +146,10 @@ module.exports =
                                     .setCustomId("removeCategory")
                                     .addOptions(
                                         {label: "全カテゴリを登録解除する", value: "All"},
-                                        ...guildCats.map(cat => ({label: cat.name, value: cat.ID})),
+                                        ...guildCats.map((cat: any) => ({
+                                            label: cat.name,
+                                            value: cat.ID
+                                        })),
                                         {label: "キャンセル", value: "Cancel"}
                                     )
                             );

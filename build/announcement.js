@@ -1,12 +1,21 @@
 "use strict";
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Client'.
 const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require('discord.js');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dotenv'.
 const dotenv = require('dotenv');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'cron'.
 const cron = require('node-cron');
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 require('date-utils');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'MongoClien... Remove this comment to see the full error message
 const { MongoClient, ServerApiVersion } = require("mongodb");
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'config'.
 const config = require("../env/config.json");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const devConfig = require("./config.dev.json");
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const readline = require('readline');
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'Select'.
 const { Select } = require("enquirer");
 dotenv.config();
 const client = new Client({
@@ -22,11 +31,13 @@ const client = new Client({
     partials: [Partials.Channel],
 });
 /*埋め込みメッセージ受け取り*/
+// @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
 const embed = require("./announceText.js");
 async function find(dbName, collectionName, filter) {
     const collection = dbClient.db(dbName).collection(collectionName);
     return await collection.find(filter).toArray();
 }
+// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'dbClient'.
 let dbClient;
 let sendTime = {
     noticeH: -1,
@@ -37,8 +48,11 @@ let sendTime = {
     endM: -1,
 };
 function readUserInput(question) {
+    // @ts-expect-error TS(2580): Cannot find name 'require'. Do you need to install... Remove this comment to see the full error message
     const readline = require('readline').createInterface({
+        // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
         input: process.stdin,
+        // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
         output: process.stdout
     });
     return new Promise((resolve, reject) => {
@@ -74,11 +88,16 @@ async function run() {
         case 'メンテ告知&開始通知セット': {
             dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
             client.login(config.token);
+            // @ts-expect-error TS(2322): Type '{ noticeH: number; noticeM: number; startH: ... Remove this comment to see the full error message
             sendTime.startH =
                 sendTime = {
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                     noticeH: parseFloat(await readUserInput('メンテ告知時間(HH)を入力')),
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                     noticeM: parseFloat(await readUserInput('メンテ告知時間(MM)を入力')),
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                     startH: parseFloat(await readUserInput('メンテ開始時間(HH)を入力')),
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
                     startM: parseFloat(await readUserInput('メンテ開始時間(MM)を入力')),
                     endH: -1,
                     endM: -1,
@@ -97,6 +116,7 @@ async function run() {
             return;
         }
         default: {
+            // @ts-expect-error TS(2580): Cannot find name 'process'. Do you need to install... Remove this comment to see the full error message
             process.exit(1);
         }
     }

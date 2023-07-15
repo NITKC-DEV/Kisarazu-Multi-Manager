@@ -1,4 +1,5 @@
-export function generationDay(day: any): Promise<EmbedBuilder>;
-export function update(): Promise<void>;
-export function catcheUpdate(): Promise<void>;
-import { EmbedBuilder } from "discord.js";
+declare const EmbedBuilder: any;
+declare const db: any;
+declare const axios: any;
+declare const system: any;
+declare function zenkaku2Hankaku(str: any): any;
