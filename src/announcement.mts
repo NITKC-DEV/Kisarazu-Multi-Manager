@@ -1,13 +1,13 @@
-const { Client, GatewayIntentBits, Partials, EmbedBuilder} = require('discord.js');
-const dotenv = require('dotenv');
-const cron = require('node-cron');
-require('date-utils');
-const {MongoClient, ServerApiVersion} = require("mongodb");
+import {Client, GatewayIntentBits, Partials, TextChannel} from "discord.js";
+import dotenv from "dotenv";
+import cron from "node-cron"
+import "date-utils";
+import {MongoClient, ServerApiVersion} from "mongodb";
 import * as config from "./env/config.json";
 import * as devConfig from "./env/config.dev.json";
+// @ts-ignore  cf. https://github.com/enquirer/enquirer/issues/135
+import {Select} from "enquirer";
 
-const readline = require('readline');
-const {Select} = require("enquirer");
 dotenv.config();
 const client = new Client({
     intents: [
@@ -23,7 +23,8 @@ const client = new Client({
 });
 
 /*埋め込みメッセージ受け取り*/
-const embed = require("./announceText.js");
+// @ts-ignore ファイル無いんだが()
+import embed from "./announceText.js";
 
 async function find(dbName: any, collectionName: any, filter: any) {
     const collection = dbClient.db(dbName).collection(collectionName);
@@ -40,13 +41,13 @@ let sendTime = {
     endM: -1,
 }
 
-function readUserInput(question: any) {
-    const readline = require('readline').createInterface({
+async function readUserInput(question: any) {
+    const readline = await import("readline").then(readline => readline.createInterface({
         input: process.stdin,
         output: process.stdout
-    });
+    }));
 
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
         readline.question(question, (answer: any) => {
             resolve(answer);
             readline.close();
@@ -127,22 +128,22 @@ cron.schedule('*/1  * * * *', async () => {
     if(date.getHours() === sendTime.noticeH && date.getMinutes() === sendTime.noticeM){
         const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
         for(let i = 0; i < data.length; i++) {
-            client.channels.cache.get(data[i].announce).send("@everyone");
-            client.channels.cache.get(data[i].announce).send({ embeds: [embed.notice] });
+            (client.channels.cache.get(data[i].announce) as TextChannel).send("@everyone");
+            (client.channels.cache.get(data[i].announce) as TextChannel).send({embeds: [embed.notice]});
         }
     }
     if(date.getHours() === sendTime.startH && date.getMinutes() === sendTime.startM){
         const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
         for(let i = 0; i < data.length; i++) {
-            client.channels.cache.get(data[i].announce).send("@everyone");
-            client.channels.cache.get(data[i].announce).send({ embeds: [embed.start] });
+            (client.channels.cache.get(data[i].announce) as TextChannel).send("@everyone");
+            (client.channels.cache.get(data[i].announce) as TextChannel).send({ embeds: [embed.start] });
         }
     }
     if(date.getHours() === sendTime.endH && date.getMinutes() === sendTime.endM){
         const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
         for(let i = 0; i < data.length; i++) {
-            client.channels.cache.get(data[i].announce).send("@everyone");
-            client.channels.cache.get(data[i].announce).send({embeds: [embed.end] });
+            (client.channels.cache.get(data[i].announce) as TextChannel).send("@everyone");
+            (client.channels.cache.get(data[i].announce) as TextChannel).send({embeds: [embed.end] });
         }
     }
 
