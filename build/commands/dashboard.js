@@ -87,7 +87,6 @@ module.exports =
                     await reply.react('❌');
                     let flag = -1;
                     const otherReact = [0, 0];
-                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(100);
                     while (flag === -1) {
                         await reply.awaitReactions({ filter: (reaction) => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1, time: 60000 })
@@ -161,7 +160,6 @@ module.exports =
                 for (let i = 5; i > 0; i--) {
                     // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                     await interaction.editReply(replyOptions(i));
-                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();

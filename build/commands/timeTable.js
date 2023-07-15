@@ -288,7 +288,6 @@ module.exports = [
             await interaction.editReply(replyOptions(5));
             for (let i = 5; i > 0; i--) {
                 await interaction.editReply(replyOptions(i));
-                // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                 await setTimeout(1000);
             }
             await interaction.deleteReply();
@@ -337,7 +336,6 @@ module.exports = [
                 await interaction.reply(replyOptions(5));
                 for (let i = 5; i > 0; i--) {
                     await interaction.editReply(replyOptions(i));
-                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();
@@ -389,7 +387,6 @@ module.exports = [
                 await mInteraction.reply(replyOptions(5));
                 for (let i = 5; i > 0; i--) {
                     await mInteraction.editReply(replyOptions(i));
-                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(1000);
                 }
                 await mInteraction.deleteReply();

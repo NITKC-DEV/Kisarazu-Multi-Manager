@@ -114,7 +114,6 @@ module.exports =
                     await reply.react('❌');
 
                     flag = 0;
-                    // @ts-expect-error TS(2345): Argument of type 'number' is not assignable to par... Remove this comment to see the full error message
                     await setTimeout(100);
 
                     await reply.awaitReactions({ filter: (reaction: any) => reaction.emoji.name === '⭕' || reaction.emoji.name === '❌', max: 1 })
