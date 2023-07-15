@@ -1,7 +1,7 @@
-const fs = require("fs");
+import fs from "fs";
 import {configPath} from "../environmentConfig.mjs";
-const system = require("./logsystem.js");
-const statusAndMode = require("./statusAndMode.js");
+import * as system from "./logsystem.mjs";
+import * as statusAndMode from "./statusAndMode.mjs";
 
 const statusName = ['online','idle','dnd','invisible'];
 
@@ -11,7 +11,7 @@ const statusName = ['online','idle','dnd','invisible'];
  * @param presence ○○をプレイ中 のメッセージ
  * @returns {Promise<void>}
  */
-exports.status = async function func(status: any,presence="") {
+export const status = async function func(status: any,presence="") {
     // @ts-ignore
     client.user.setPresence({
         activities: [{
@@ -32,7 +32,7 @@ exports.status = async function func(status: any,presence="") {
  * @param mode Trueでメンテナンスモード
  * @returns {Promise<void>}
  */
-exports.maintenance = async function (mode: any){
+export const maintenance = async function (mode: any){
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     config.maintenanceMode = mode;
     fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
