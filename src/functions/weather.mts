@@ -1,11 +1,7 @@
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'EmbedBuild... Remove this comment to see the full error message
-const {EmbedBuilder} = require("discord.js");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'db'.
-const db = require('./db.js');
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'axios'.
-const axios = require("axios");
-// @ts-expect-error TS(2451): Cannot redeclare block-scoped variable 'system'.
-const system = require("./logsystem");
+import {EmbedBuilder} from "@discordjs/builders";
+import * as db from "./db.mjs";
+import axios from "axios";
+import * as system from "./logsystem.mjs";
 
 /*天気取得*/
 // @ts-ignore
@@ -24,7 +20,7 @@ function zenkaku2Hankaku(str: any) {
     });
 }
 
-exports.generationDay = async function func(day: any){
+export const generationDay = async function func(day: any){
     const data = await getWeather();
     const weather = data.forecasts[day];
     const weatherCache = await db.find("main","weatherCache",{label: {$in:["0","1"]}});
@@ -79,6 +75,7 @@ exports.generationDay = async function func(day: any){
     }
 
     return new EmbedBuilder()
+        // @ts-ignore 引数の型が一致していない
         .setColor(color)
         .setTitle(`${weather.dateLabel}(${weather.date})の天気予報：${telop}`)
         .setAuthor({
@@ -108,7 +105,7 @@ exports.generationDay = async function func(day: any){
 
 }
 
-exports.update = async function func() {
+export const update = async function func() {
     let response;
     try {
         response = await axios.get('https://weather.tsukumijima.net/api/forecast/city/120010');
@@ -126,7 +123,7 @@ exports.update = async function func() {
     }
 }
 
-exports.catcheUpdate = async function func() {
+export const catcheUpdate = async function func() {
     const data = await db.find("main","weatherCache",{label:"最新の天気予報"});
     const today = await db.find("main","weatherCache",{label:"1"});
     if(data[0].response.forecasts[0].date !== today[0].day){
