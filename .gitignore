@@ -315,4 +315,6 @@ $RECYCLE.BIN/
 
 env/*
 !env/templates/
+config.json
+config.dev.json
 /.fleet/settings.json
