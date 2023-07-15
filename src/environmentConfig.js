@@ -1,4 +1,4 @@
-import * as Path from "path";
+const Path = require("path")
 
 const configPath = Path.resolve(
   __dirname,
