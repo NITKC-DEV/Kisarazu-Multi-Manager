@@ -1,0 +1,1 @@
+export * as EnvironmentConfig from "./config";
