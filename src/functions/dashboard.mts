@@ -1,6 +1,6 @@
-import * as db from "./db.js";
+import * as db from "./db.mjs";
 import {EmbedBuilder} from "@discordjs/builders";
-import * as system from "./logsystem.js";
+import * as system from "./logsystem.mjs";
 
 /*天気取得*/
 async function getWeather() {

@@ -1,6 +1,6 @@
 import {SlashCommandBuilder} from "@discordjs/builders";
-import * as dashboard from "../functions/dashboard.js";
-import * as db from "../functions/db.js";
+import * as dashboard from "../functions/dashboard.mjs";
+import * as db from "../functions/db.mjs";
 import {setTimeout} from "timers/promises";
 
 export default

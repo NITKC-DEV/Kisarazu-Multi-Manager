@@ -1,7 +1,7 @@
 import {SlashCommandBuilder, StringSelectMenuBuilder, EmbedBuilder, ButtonBuilder, ModalBuilder, TextInputBuilder, ActionRowBuilder} from "@discordjs/builders";
-import * as timetable from "../functions/ttGeneration.js";
-import * as db from "../functions/db.js";
-import * as guildData from "../functions/guildDataSet.js";
+import * as timetable from "../functions/ttGeneration.mjs";
+import * as db from "../functions/db.mjs";
+import * as guildData from "../functions/guildDataSet.mjs";
 import {setTimeout} from "timers/promises";
 
 const departmentData = [
@@ -127,6 +127,7 @@ export default [
                 if(embed === 0){
                     await interaction.editReply("指定したデータは未登録です。");
                 }
+                // @ts-ignore 条件式が常に偽となるらしい．異なる型同士を比較してる......?
                 else if(embed !== -1){
                     await interaction.editReply({ embeds: [embed] });
                 }
@@ -242,6 +243,7 @@ export default [
                 day = interaction.options.getString('ベースの曜日');
             }
 
+            // @ts-ignore delete演算子のオペランドはoptionalじゃないとダメらしい
             delete defaultData[0]._id;
             defaultData[0].day = String(interaction.options.getInteger('変更日')) + '00';
             await db.updateOrInsert("main","timetableData",{grade:interaction.options.getString('学年'),department:interaction.options.getString('学科'),day:String(interaction.options.getInteger('変更日') + '00')},defaultData[0]);
@@ -486,6 +488,7 @@ export default [
                     }
                     if(comment!=="" && comment!==undefined && (defaultData[0].comment + comment).length <= 100)data[0].comment = defaultData[0].comment + "\n" + comment;
                     data[0].day = String(date);
+                    // @ts-ignore delete演算子のオペランドはoptionalじゃないとダメらしい
                     delete data[0]._id;
 
                     await db.updateOrInsert("main","timetableData",{day:String(date)},data[0]);

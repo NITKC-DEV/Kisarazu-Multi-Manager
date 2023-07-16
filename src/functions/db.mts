@@ -1,6 +1,6 @@
 import { MongoClient, ServerApiVersion } from "mongodb";
 import {config} from "../environmentConfig.mjs";
-import * as system from "./logsystem.js";
+import * as system from "./logsystem.mjs";
 import * as db from "./db.mjs";
 
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });

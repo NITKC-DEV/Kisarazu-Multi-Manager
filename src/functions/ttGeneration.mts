@@ -265,8 +265,8 @@ export const setNewTimetableData = async function func(interaction: any) {
         .setFooter({ text: 'Developed by NITKC-DEV' });
 
     try{
-        // @ts-ignore
         const channel = client.channels.cache.get(interaction.message.channelId);
+        // @ts-ignore channelがundefinedになる場合がある
         channel.messages.fetch(interaction.message.id)
             .then((message: any) => {
                 interaction.update({embeds: [embed],comments: message.comments});
@@ -333,8 +333,8 @@ export const showNewTimetableModal = async function func(interaction: any) {
             delete data[0]._id;
             await db.updateOrInsert("main","timetableData",{grade,department,day:date},data[0]);
             await db.del("main","timetableData",{grade,department,day:date + '00'});
-            // @ts-ignore
             const channel = client.channels.cache.get(interaction.message.channelId);
+            // @ts-ignore channelがundefinedになる場合がある
             channel.messages.fetch(interaction.message.id)
                 .then((message: any) => {
                     message.delete();
@@ -353,8 +353,8 @@ export const showNewTimetableModal = async function func(interaction: any) {
         })
         .catch(() => {
             try{
-                // @ts-ignore
                 const channel = client.channels.cache.get(interaction.message.channelId);
+                // @ts-ignore channelがundefinedになる場合がある
                 channel.messages.fetch(interaction.message.id)
                     .then((message: any) => {
                         message.delete();

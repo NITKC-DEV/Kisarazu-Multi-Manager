@@ -3,8 +3,8 @@ import dotenv from "dotenv";
 import cron from "node-cron"
 import "date-utils";
 import {MongoClient, ServerApiVersion} from "mongodb";
-import * as config from "./env/config.json";
-import * as devConfig from "./env/config.dev.json";
+import * as config from "../env/config.json";
+import * as devConfig from "../env/config.dev.json";
 // @ts-ignore  cf. https://github.com/enquirer/enquirer/issues/135
 import {Select} from "enquirer";
 

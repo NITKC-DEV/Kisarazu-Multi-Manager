@@ -1,5 +1,5 @@
 import {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} from "@discordjs/builders";
-import * as system from "./logsystem.js";
+import * as system from "./logsystem.mjs";
 
 //helpTextの生成
 import * as helpText from "./helpText.json"

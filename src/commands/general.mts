@@ -2,16 +2,16 @@ import {SlashCommandBuilder, EmbedBuilder, version} from "@discordjs/builders";
 import packageVer from "../../package.json";
 import {setTimeout} from "timers/promises";
 import "date-utils";
-import * as system from "../functions/logsystem.js";
-import * as weather from "../functions/weather.js";
-import * as guildData from "../functions/guildDataSet.js";
-import * as db from "../functions/db.js";
+import * as system from "../functions/logsystem.mjs";
+import * as weather from "../functions/weather.mjs";
+import * as guildData from "../functions/guildDataSet.mjs";
+import * as db from "../functions/db.mjs";
 import fs from "fs";
 import {configPath} from "../environmentConfig.mjs";
-import * as mode from "../functions/statusAndMode.js";
-import * as CreateChannel from "../functions/CCFunc.js";
-import * as help from "../functions/help.js";
-import {autoDeleteEditReply} from "../functions/common.js";
+import * as mode from "../functions/statusAndMode.mjs";
+import * as CreateChannel from "../functions/CCFunc.mjs";
+import * as help from "../functions/help.mjs";
+import {autoDeleteEditReply} from "../functions/common.mjs";
 
 export default
     [

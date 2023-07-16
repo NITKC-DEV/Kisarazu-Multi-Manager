@@ -1,11 +1,11 @@
 import {ActionRowBuilder, StringSelectMenuBuilder} from "@discordjs/builders";
-import * as db from "./db.js";
+import * as db from "./db.mjs";
 
 const dbMain = "main";
 const colCat = "CC-categories";
 const colChan = "CC-channels";
 
-import * as system from "./logsystem.js";
+import * as system from "./logsystem.mjs";
 
 /***
  * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
@@ -313,11 +313,15 @@ export const updateChannelData = async function(channel: any) {
     // @ts-ignore
     const newChannel = await client.channels.cache.get(channel.id);
     if(channelData.length > 0) {
+        // @ts-ignore newChannelがundefinedになる可能性がある
         if(channelData[0].categoryID !== (newChannel.parentId !== null ? newChannel.parentId : newChannel.guildId)) {
+            // @ts-ignore newChannelがundefinedになる可能性がある
             await db.del(dbMain, colChan, {ID: newChannel.id});
         }
-        
+
+        // @ts-ignore newChannelがundefinedになる可能性がある
         if(channelData[0].name !== newChannel.name) {
+            // @ts-ignore newChannelがundefinedになる可能性がある
             await db.update(dbMain, colChan, {ID: newChannel.id}, {$set: {name: newChannel.name}});
         }
     }
@@ -333,7 +337,9 @@ export const updateCategoryData = async function(category: any) {
     //@ts-ignore
     const newCategory = await client.channels.cache.get(category.id);
     if(categoryData.length > 0) {
+        // @ts-ignore newCategoryがundefinedになる可能性がある
         if(categoryData[0].name !== newCategory.name) {
+            // @ts-ignore newCategoryがundefinedになる可能性がある
             await db.update(dbMain, colCat, {ID: newCategory.id}, {$set: {name: newCategory.name}});
         }
     }
@@ -359,7 +365,9 @@ export const updateRoleData = async function(role: any) {
     if(channelData.length > 0) {
         // @ts-ignore
         const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch(role.id);
+        // @ts-ignore newRoleがundefinedになる可能性がある
         if(channelData[0].roleName !== newRole.name) {
+            // @ts-ignore newRoleがundefinedになる可能性がある
             await db.update(dbMain, colChan, {roleID: newRole.id}, {$set: {roleName: newRole.name}});
         }
     }
@@ -429,7 +437,9 @@ export const dataCheck = async function() {
                 await db.del(dbMain, colChan, {ID: channel.ID});
                 continue;
             }
+            // @ts-ignore プロパティ`name`は型`Channel`に定義されていない
             else if(channelData.name !== channel.name) {
+                // @ts-ignore プロパティ`name`は型`Channel`に定義されていない
                 await db.update(dbMain, colChan, {ID: channel.ID}, {$set: {name: channelData.name}});
             }
             

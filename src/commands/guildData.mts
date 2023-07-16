@@ -1,7 +1,7 @@
 import {SlashCommandBuilder, EmbedBuilder} from "@discordjs/builders";
-import * as db from "../functions/db.js";
-import * as guildData from "../functions/guildDataSet.js";
-import {ID_NODATA} from "../functions/guildDataSet.js";
+import * as db from "../functions/db.mjs";
+import * as guildData from "../functions/guildDataSet.mjs";
+import {ID_NODATA} from "../functions/guildDataSet.mjs";
 import {setTimeout} from "timers/promises";
 
 export default

@@ -1,5 +1,5 @@
 import {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} from "@discordjs/builders";
-import * as db from "../functions/db.js"
+import * as db from "../functions/db.mjs"
 const dbMain = "main";          //データベースmainとコレクションCC-categoryを定数化
 const colCat = "CC-categories";
 
