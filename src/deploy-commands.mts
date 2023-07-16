@@ -25,11 +25,8 @@ for (const file of commandFiles) {//ファイルの数だけ
 
 // Discord API通信準備 トークン設定
 const rest = new REST({ version: '10' }).setToken(config.token);
-// @ts-ignore  cf. https://github.com/enquirer/enquirer/issues/135
-// import { Select, MultiSelect, Toggle } from "enquirer";
 const { Select, MultiSelect, Toggle } = require("enquirer");
 
-// @ts-ignore
 async function run() {
     //GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client));
