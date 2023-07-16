@@ -1,11 +1,12 @@
-const { Client, GatewayIntentBits, Partials, Collection, Events} = require('discord.js');
-const dotenv = require('dotenv');
-const path = require('path');
-const fs = require('fs');
-const cron = require('node-cron');
+import {Client, GatewayIntentBits, Partials, Collection, Events} from "discord.js";
+import dotenv from "dotenv";
+import path from "path";
+import fs from "fs";
+import cron from "node-cron";
+
 dotenv.config();
-require('date-utils');
-// @ts-expect-error TS(2304): Cannot find name 'global'.
+import "date-utils";
+
 global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -26,42 +27,43 @@ import {config} from "./environmentConfig.mjs";
 import {configPath} from "./environmentConfig.mjs";
 
 //関数読み込み
-const TxtEasterEgg = require('./functions/TxtEasterEgg.js');
-const birthday = require('./functions/birthday.js');
-const dashboard = require('./functions/dashboard.js');
-const timetable = require('./functions/ttGeneration.js');
-const system = require('./functions/logsystem.js');
-const genshin = require('./functions/genshin.js');
-const db = require('./functions/db.js');
-const weather = require('./functions/weather.js');
-const guildData = require("./functions/guildDataSet.js");
-const {ID_NODATA} = require("./functions/guildDataSet.js");
-const CreateChannel = require("./functions/CCFunc.js");
-const mode = require("./functions/statusAndMode.js");
-const statusAndMode = require("./functions/statusAndMode.js");
-const help = require("./functions/help.js");
+import * as TxtEasterEgg from "./functions/TxtEasterEgg.mjs";
+import * as birthday from "./functions/birthday.mjs";
+import * as dashboard from "./functions/dashboard.mjs";
+import * as timetable from "./functions/ttGeneration.mjs";
+import * as system from "./functions/logsystem.mjs";
+import * as genshin from "./functions/genshin.mjs";
+import * as db from "./functions/db.mjs";
+import * as weather from "./functions/weather.mjs";
+import * as guildData from "./functions/guildDataSet.mjs";
+import {ID_NODATA} from "./functions/guildDataSet.mjs";
+import * as CreateChannel from "./functions/CCFunc.mjs";
+import * as mode from "./functions/statusAndMode.mjs";
+import * as statusAndMode from "./functions/statusAndMode.mjs";
+import * as help from "./functions/help.mjs";
+import {fileURLToPath} from "url";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, 'commands');
-const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.js'));
-// @ts-ignore
+const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.mjs'));
+
 client.commands = new Collection();
-// @ts-ignore
-module.exports = client.commands;
-// @ts-ignore
+
+export default client.commands;
 client.once("ready", async() => {
     await mode.maintenance(true);
     await mode.status(2,"BOT起動処理");
     for(const file of commandFiles) {
         const filePath = path.join(commandsPath, file);
-        const command = require(filePath);
+        const command = await import(filePath);
         for(let i = 0; i < command.length; i++) {
-// @ts-ignore
             client.commands.set(command[i].data.name, command[i]);
         }
     }
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
+    // @ts-ignore 引数足りない
     await system.log("Ready!");
     if(config.maintenanceMode){
         await statusAndMode.status(2,"BOTメンテナンス");
@@ -73,7 +75,6 @@ client.once("ready", async() => {
 });
 
 /*command処理*/
-// @ts-ignore
 client.on("interactionCreate", async (interaction: any) => {
     let flag = 0;
     if(JSON.parse(fs.readFileSync(configPath, 'utf8')).maintenanceMode === true) {
@@ -98,16 +99,16 @@ client.on("interactionCreate", async (interaction: any) => {
             channel = {name:"---",id:"---"};
         }
         else{
-// @ts-ignore
             guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
-// @ts-ignore
             channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
         }
+        // @ts-ignore channelがnullになる場合がある
         await system.log(`コマンド名:${command.data.name}\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, "SlashCommand");
         try {
             await command.execute(interaction);
         }
         catch(error) {
+            // @ts-ignore channelがnullになる場合がある
             await system.error(`スラッシュコマンド実行時エラー : ${command.data.name}\n\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, error);
             try {
                 await interaction.reply({content: 'おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。', ephemeral: true});
@@ -135,17 +136,15 @@ client.on("interactionCreate", async (interaction: any) => {
             channel = {name:"---",id:"---"};
         }
         else{
-// @ts-ignore
             guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
-// @ts-ignore
             channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
         }
+        // @ts-ignore channelがnullになる場合がある
         await system.log(`メンテナンスモードにつき${interactionTypeName[interaction.type-1]}をブロックしました。\`\`\`\nギルド　　：${guild.name}\n(ID:${guild.id})\n\nチャンネル：${channel.name}\n(ID:${channel.id})\n\nユーザ　　：${interaction.user.username}#${interaction.user.discriminator}\n(ID:${interaction.user.id})\`\`\``, `${interactionTypeName[interaction.type-1]}をブロック`);
     }
 });
 
 //StringSelectMenu受け取り
-// @ts-ignore
 client.on(Events.InteractionCreate, async (interaction: any) => {
     if(interaction.isStringSelectMenu()) {
         let flag = 0;
@@ -185,7 +184,6 @@ client.on(Events.InteractionCreate, async (interaction: any) => {
 });
 
 //Button入力受け取り
-// @ts-ignore
 client.on(Events.InteractionCreate, async (interaction: any) => {
     if (!interaction.isButton()) return;
     let flag = 0;
@@ -206,7 +204,6 @@ client.on(Events.InteractionCreate, async (interaction: any) => {
 });
 
 //チャンネル(カテゴリ)削除検知
-// @ts-ignore
 client.on(Events.ChannelDelete,async (channel: any) => {
     if(channel.type===0){
         await CreateChannel.removeDeletedChannelData(channel);
@@ -217,7 +214,6 @@ client.on(Events.ChannelDelete,async (channel: any) => {
 });
 
 //チャンネル(カテゴリ)情報変更検知
-// @ts-ignore
 client.on(Events.ChannelUpdate,async (channel: any) => {
     if(channel.type===0) {
         await CreateChannel.updateChannelData(channel);
@@ -228,31 +224,26 @@ client.on(Events.ChannelUpdate,async (channel: any) => {
 });
 
 //ロール削除検知
-// @ts-ignore
 client.on(Events.GuildRoleDelete,async (role: any) => {
     await CreateChannel.removeDeletedRoleData(role);
 });
 
 //ロール情報変更検知
-// @ts-ignore
 client.on(Events.GuildRoleUpdate, async (role: any) => {
     await CreateChannel.updateRoleData(role);
 });
 
-// @ts-ignore
 client.on(Events.GuildCreate,async (guild: any) => {
     await guildData.updateOrInsert(guild.id);
 });
 
 //ギルド削除(退出)検知
-// @ts-ignore
 client.on(Events.GuildDelete,async (guild: any) => {
     await CreateChannel.deleteGuildData(guild);
     await guildData.checkGuild();
 });
 
 /*TxtEasterEgg*/
-// @ts-ignore
 client.on('messageCreate', (message: any) => {
     /*メンテナンスモード*/
     let flag = 0;
@@ -295,7 +286,6 @@ cron.schedule('* * * * *', async () => {
                 await mode.status(0,`チャンネル作成：/create-channel`);
                 break;
             default:
-// @ts-ignore
                 await mode.status(0,`導入数：${client.guilds.cache.size}サーバー`);
         }
     }
@@ -319,7 +309,9 @@ cron.schedule('59 4 * * *', async () => {
 
 /*原神デイリー通知*/
 cron.schedule('0 5 * * *', async () => {
+    // @ts-ignore 引数が足りない
     await genshin.daily();
+    // @ts-ignore 引数が足りない
     await system.log('デイリー通知送信完了');
 });
 
@@ -376,6 +368,7 @@ cron.schedule('00 20 * * *', async() => {
         try{
 // @ts-ignore
             const channel = (client.channels.cache.get(data[i].weatherChannel) ?? (await client.channels.fetch(data[i].weatherChannel)));
+// @ts-ignore
             await channel.send({embeds: [embed]});
         }
         catch{}
@@ -399,12 +392,11 @@ cron.schedule('*/1  * * * *', async () => {
         if(flag === 1 && data[i].boardChannel !== ID_NODATA) {
             let dashboardGuild: any;
             try{
-// @ts-ignore
                 dashboardGuild = (client.guilds.cache.get(data[i].guild) ?? (await client.guilds.fetch(data[i].guild))); /*ギルド情報取得*/
-// @ts-ignore
                 const channel = (client.channels.cache.get(data[i].boardChannel) ?? (await client.channels.fetch(data[i].boardChannel))); /*チャンネル情報取得*/
                 const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
                 if(newEmbed){
+                    // @ts-ignore channelがnullになる場合がある
                     channel.messages.fetch(data[i].board)
                         .then(async (dashboard: any) => {
                             await dashboard.edit({embeds: [newEmbed]});
@@ -429,8 +421,7 @@ cron.schedule('*/1  * * * *', async () => {
                     await guildData.checkGuild();
                 }
             }
-            catch(error){
-                // @ts-expect-error TS(2571): Object is of type 'unknown'.
+            catch(error: any){
                 if(error.code === 10008 || error.code === 10003){ //メッセージかチャンネルが不明
                     await system.error(`元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                     await db.update("main", "guildData", {guild: data[i].guild}, {
@@ -440,7 +431,6 @@ cron.schedule('*/1  * * * *', async () => {
                         }
                     });
                 }
-                // @ts-expect-error TS(2571): Object is of type 'unknown'.
                 else if(error.code === 10004){
                     await system.error(`ギルド削除 または退出により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`, error);
                     await guildData.checkGuild();
@@ -453,7 +443,9 @@ cron.schedule('*/1  * * * *', async () => {
     }
 });
 
-if(require.main === module) {
-// @ts-ignore
-    client.login(config.token);
+if (import.meta.url.startsWith("file:")) {
+    const modulePath = fileURLToPath(import.meta.url);
+    if (process.argv[1] === modulePath) {
+        client.login(config.token);
+    }
 }
