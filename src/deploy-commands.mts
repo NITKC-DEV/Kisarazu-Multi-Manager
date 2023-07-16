@@ -5,33 +5,41 @@ import {Routes} from "discord.js";
 import {config} from "./environmentConfig.mjs";
 import {fileURLToPath} from "url";
 import {createRequire} from "module";
+
 const require = createRequire(import.meta.url);
+const { Select, MultiSelect, Toggle } = require("enquirer");
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 console.log(config);
 
-// ./commands/ ディレクトリ内を探索
 const commands: any = [];
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const commandsPath = path.join(__dirname, 'commands');
-//.jsを検索
-const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.mjs'));
-for (const file of commandFiles) {//ファイルの数だけ
-    const filePath = path.join(commandsPath, file);
-    const command = await import(`file://${filePath}`);
-    for (let i = 0; i < command.length; i++) {
-        //各コマンドを配列にぶちこむ
-        commands.push(command[i].data.toJSON());
+
+async function load() {
+    // ./commands/ ディレクトリ内を探索
+    const commandsPath = path.join(__dirname, 'commands');
+    // .mjsを検索
+    const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.mjs'));
+    for (const file of commandFiles) {//ファイルの数だけ
+        const filePath = `file://${path.join(commandsPath, file)}`;
+        await import(filePath).then((command) => {
+            const defaults = command.default;
+            for (const commandData of defaults) {
+                //各コマンドを配列にぶちこむ
+                commands.push(commandData.data.toJSON());
+            }
+        });
     }
 }
 
-// Discord API通信準備 トークン設定
-const rest = new REST({ version: '10' }).setToken(config.token);
-const { Select, MultiSelect, Toggle } = require("enquirer");
-
 async function run() {
+    await load();
+    // Discord API通信準備 トークン設定
+    const rest = new REST({ version: '10' }).setToken(config.token);
     //GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client));
     console.log("---コマンド一覧---")
-    // @ts-ignore dataが返すundefined型に敗北した．誰かたすけて
+    // @ts-ignore dataが返すunknown型に敗北した．誰かたすけて
     for (const command of data) {
         console.log(`/${command.name}`)
         console.log(`  ID:${command.id}`)
@@ -76,7 +84,7 @@ async function run() {
             const selected = await new MultiSelect({
                 name: 'value',
                 message: '対象のコマンドを<space>で選択、<a>で全選択、<i>で反転',
-                // @ts-ignore dataが返すundefined型に敗北した．誰かたすけて
+                // @ts-ignore dataが返すunknown型に敗北した．誰かたすけて
                 choices: data.map((e: any) => ({
                     name:"/"+e.name,
                     value:e.id
@@ -87,8 +95,8 @@ async function run() {
             }).run();
             for (const selectedElement of selected) {
                 console.log(selectedElement)
-               await rest.delete(Routes.applicationCommand(config.client, selectedElement[1]))
-                    .then(() => console.log(`アプリケーション コマンド"${selectedElement.name}"が正常に削除されました`))
+                await rest.delete(Routes.applicationCommand(config.client, selectedElement[1]))
+                    .then(() => console.log(`アプリケーション コマンド"${selectedElement[0]}"が正常に削除されました`))
                     .catch(console.error);
             }
             break
