@@ -1,8 +1,10 @@
 import {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} from "@discordjs/builders";
 import * as system from "./logsystem.mjs";
+import {createRequire} from "module";
+const require = createRequire(import.meta.url);
 
 //helpTextの生成
-import * as helpText from "./helpText.json"
+const helpText = require("./helpText.json");
 const adminTable: any = [];
 for(let i=0;i < helpText.admin.length;i++){
     adminTable.push(

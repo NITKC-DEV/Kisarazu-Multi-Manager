@@ -1,5 +1,7 @@
 import {SlashCommandBuilder, EmbedBuilder, version} from "@discordjs/builders";
-import packageVer from "../../package.json";
+import {createRequire} from "module";
+const require = createRequire(import.meta.url);
+const packageVer = require("../../package.json");
 import {setTimeout} from "timers/promises";
 import "date-utils";
 import * as system from "../functions/logsystem.mjs";

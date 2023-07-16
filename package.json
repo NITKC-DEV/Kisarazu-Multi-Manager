@@ -7,6 +7,7 @@
     "discord.js": "^14.11.0",
     "dotenv": "^16.3.1",
     "enquirer": "^2.3.6",
+    "es-main": "^1.2.0",
     "moment": "^2.29.4",
     "mongodb": "^5.6.0",
     "node-cron": "^3.0.2",
@@ -24,9 +25,9 @@
     "pm2-start-dev": "pm2 start ./ecosystem.config.cjs --env dev",
     "pm2-start-prod": "pm2 start ./ecosystem.config.cjs --env prod",
     "pm2-restart": "pm2 restart Kisarazu-Multi-Manager",
-    "cmd-dev": "cross-env NODE_ENV=development node src/deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node src/deploy-commands.js",
-    "build": "rimraf build/ && tsc -p . && copyfiles -u 1 src/**/*.json build/"
+    "cmd-dev": "cross-env NODE_ENV=development node build/src/deploy-commands.mjs",
+    "cmd-prod": "cross-env NODE_ENV=production node build/src/deploy-commands.mjs",
+    "build": "rimraf build/ && tsc -p . && copyfiles package.json src/**/*.json build/"
   },
   "repository": {
     "type": "git",

@@ -1,9 +1,11 @@
 import fs from "node:fs";
-import path from "node:path";
+import path from "path";
 import {REST} from "@discordjs/rest";
 import {Routes} from "discord.js";
 import {config} from "./environmentConfig.mjs";
 import {fileURLToPath} from "url";
+import {createRequire} from "module";
+const require = createRequire(import.meta.url);
 console.log(config);
 
 // ./commands/ ディレクトリ内を探索
@@ -14,7 +16,7 @@ const commandsPath = path.join(__dirname, 'commands');
 const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith('.mjs'));
 for (const file of commandFiles) {//ファイルの数だけ
     const filePath = path.join(commandsPath, file);
-    const command = await import(filePath);
+    const command = await import(`file://${filePath}`);
     for (let i = 0; i < command.length; i++) {
         //各コマンドを配列にぶちこむ
         commands.push(command[i].data.toJSON());
@@ -24,7 +26,8 @@ for (const file of commandFiles) {//ファイルの数だけ
 // Discord API通信準備 トークン設定
 const rest = new REST({ version: '10' }).setToken(config.token);
 // @ts-ignore  cf. https://github.com/enquirer/enquirer/issues/135
-import { Select, MultiSelect, Toggle } from "enquirer";
+// import { Select, MultiSelect, Toggle } from "enquirer";
+const { Select, MultiSelect, Toggle } = require("enquirer");
 
 // @ts-ignore
 async function run() {

@@ -42,6 +42,7 @@ import * as mode from "./functions/statusAndMode.mjs";
 import * as statusAndMode from "./functions/statusAndMode.mjs";
 import * as help from "./functions/help.mjs";
 import {fileURLToPath} from "url";
+import esMain from "es-main";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 //スラッシュコマンド登録
@@ -443,9 +444,8 @@ cron.schedule('*/1  * * * *', async () => {
     }
 });
 
-if (import.meta.url.startsWith("file:")) {
-    const modulePath = fileURLToPath(import.meta.url);
-    if (process.argv[1] === modulePath) {
-        client.login(config.token);
-    }
+if (esMain(import.meta)) {
+    client.login(config.token);
+} else {
+    console.log("err")
 }
