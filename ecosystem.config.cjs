@@ -4,7 +4,7 @@ module.exports = {
     apps: [
         {
             name: "Kisarazu-Multi-Manager",
-            script: "./build/botmain.mjs",
+            script: "./build/src/botmain.mjs",
             instance_var: "INSTANCE_ID",
             env_dev: {
                 NODE_ENV: "development"
