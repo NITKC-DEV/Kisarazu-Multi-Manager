@@ -5,7 +5,7 @@
     <scripts>
       <script value="pm2-start-dev" />
     </scripts>
-    <node-interpreter value="project" />
+    <node-interpreter value="$VOLTA_HOME$/bin/node" />
     <envs />
     <method v="2" />
   </configuration>
