@@ -7,13 +7,13 @@ module.exports = {
             script: "./build/src/botmain.mjs",
             instance_var: "INSTANCE_ID",
             env_dev: {
-                NODE_ENV: "development"
+                NODE_ENV: "development",
             },
             env_stg: {
-                NODE_ENV: "staging"
+                NODE_ENV: "staging",
             },
             env_prod: {
-                NODE_ENV: "production"
+                NODE_ENV: "production",
             },
             time: true,
         },

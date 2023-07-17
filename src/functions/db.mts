@@ -1,11 +1,11 @@
 /** @format */
 
-import {MongoClient, ServerApiVersion} from "mongodb";
-import {config} from "../environmentConfig.mjs";
+import { MongoClient, ServerApiVersion } from "mongodb";
+import { config } from "../environmentConfig.mjs";
 import * as system from "./logsystem.mjs";
 import * as db from "./db.mjs";
 
-const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
+const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 
 /***
  * データベースからデータを取得する
@@ -18,7 +18,7 @@ export const find = async function (dbName: any, collectionName: any, filter: an
     const collection = await dbClient.db(dbName).collection(collectionName);
 
     return await collection.find(filter).toArray();
-}
+};
 
 /***
  * filterに該当する要素があるかどうか確認する
@@ -31,7 +31,7 @@ export const includes = async function (dbName: any, collectionName: any, filter
     const collection = await dbClient.db(dbName).collection(collectionName);
     const data = await collection.find(filter).toArray();
     return data.length > 0;
-}
+};
 
 /***
  * データベースを更新する
@@ -51,8 +51,7 @@ export const update = async function run(dbName: any, collectionName: any, filte
     } catch (err: any) {
         await system.error(`${dbName}.${collectionName}を更新できませんでした`, err, `DB更新失敗`);
     }
-}
-
+};
 
 /***
  * データベースにレコードを追加する
@@ -71,7 +70,7 @@ export const insert = async function run(dbName: any, collectionName: any, objec
     } catch (err: any) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`, err, `DB追加失敗`);
     }
-}
+};
 
 /***
  * filterにレコードが見つかればそれをsetで更新し、見つからなけれレコードを追加する
@@ -85,14 +84,14 @@ export const updateOrInsert = async function run(dbName: any, collectionName: an
     try {
         const data = await db.find(dbName, collectionName, filter);
         if (data.length > 0) {
-            await db.update(dbName, collectionName, filter, {$set: object});
+            await db.update(dbName, collectionName, filter, { $set: object });
         } else {
             await db.insert(dbName, collectionName, object);
         }
     } catch (err: any) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`, err, `DB追加失敗`);
     }
-}
+};
 
 /***
  * データベースからレコードを削除する
@@ -111,17 +110,17 @@ export const del = async function run(dbName: any, collectionName: any, filter: 
     } catch (err: any) {
         await system.error(`${dbName}.${collectionName}からレコードを削除できませんでした`, err, `DB削除失敗`);
     }
-}
+};
 
 /***
  *
  * @returns {Promise<void>}
  */
 export const open = async function close() {
-    const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
+    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     // @ts-ignore 引数が足りない
     await system.log("DB - open");
-}
+};
 
 /***
  *
@@ -131,6 +130,6 @@ export const close = async function close() {
     await dbClient.close();
     // @ts-ignore 引数が足りない
     await system.log("DB - close");
-}
+};
 
 //引数の詳細については、mongodbの公式ドキュメントを参照すること
