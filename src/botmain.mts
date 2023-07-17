@@ -56,11 +56,13 @@ client.once("ready", async() => {
     await mode.maintenance(true);
     await mode.status(2,"BOT起動処理");
     for(const file of commandFiles) {
-        const filePath = path.join(commandsPath, file);
-        const command = await import(filePath);
-        for(let i = 0; i < command.length; i++) {
-            client.commands.set(command[i].data.name, command[i]);
-        }
+        const filePath = `file://${path.join(commandsPath, file)}`;
+        await import(filePath).then((command) => {
+            const defaults = command.default;
+            for (const commandData of defaults) {
+                client.commands.set(commandData.data.name, commandData);
+            }
+        })
     }
     await weather.update(); //天気更新
     await CreateChannel.dataCheck();
