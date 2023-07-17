@@ -1,9 +1,11 @@
+/** @format */
+
 import fs from "fs";
 import {configPath} from "../environmentConfig.mjs";
 import * as system from "./logsystem.mjs";
 import * as statusAndMode from "./statusAndMode.mjs";
 
-const statusName = ['online','idle','dnd','invisible'];
+const statusName = ['online', 'idle', 'dnd', 'invisible'];
 
 /***
  * botのステータスを設定
@@ -11,7 +13,7 @@ const statusName = ['online','idle','dnd','invisible'];
  * @param presence ○○をプレイ中 のメッセージ
  * @returns {Promise<void>}
  */
-export const status = async function func(status: any,presence="") {
+export const status = async function func(status: any, presence = "") {
     // @ts-ignore
     client.user.setPresence({
         activities: [{
@@ -19,11 +21,11 @@ export const status = async function func(status: any,presence="") {
         }],
     });
     let statusData = status;
-    if(statusData === 0){
+    if (statusData === 0) {
         const date = new Date();
-        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)statusData=1;
+        if (date.getHours() * 100 + date.getMinutes() >= 204 && date.getHours() * 100 + date.getMinutes() <= 509) statusData = 1;
     }
-     //@ts-ignore
+    //@ts-ignore
     client.user.setStatus(statusName[statusData]);
 }
 
@@ -32,19 +34,18 @@ export const status = async function func(status: any,presence="") {
  * @param mode Trueでメンテナンスモード
  * @returns {Promise<void>}
  */
-export const maintenance = async function (mode: any){
+export const maintenance = async function (mode: any) {
     const config = JSON.parse(fs.readFileSync(configPath, 'utf8'));
     config.maintenanceMode = mode;
-    fs.writeFileSync(configPath, JSON.stringify(config,null ,"\t"));
-    await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`,"メンテナンスモード変更");
+    fs.writeFileSync(configPath, JSON.stringify(config, null, "\t"));
+    await system.warn(`メンテナンスモードを${config.maintenanceMode}にしました。`, "メンテナンスモード変更");
 
-    if(mode){
-        await statusAndMode.status(2,"BOTメンテナンス");
-    }
-    else{
+    if (mode) {
+        await statusAndMode.status(2, "BOTメンテナンス");
+    } else {
         const date = new Date();
-        let status=0;
-        if(date.getHours()*100+date.getMinutes()>=204 && date.getHours()*100+date.getMinutes()<=509)status=1;
-        await statusAndMode.status(status,"メンテナンス完了");
+        let status = 0;
+        if (date.getHours() * 100 + date.getMinutes() >= 204 && date.getHours() * 100 + date.getMinutes() <= 509) status = 1;
+        await statusAndMode.status(status, "メンテナンス完了");
     }
 }

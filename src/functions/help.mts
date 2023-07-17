@@ -1,22 +1,25 @@
+/** @format */
+
 import {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} from "@discordjs/builders";
 import * as system from "./logsystem.mjs";
 import {createRequire} from "module";
 import {HelpText} from "../types/Kisarazu-Multi-Manager/jsonStructure";
+
 const require = createRequire(import.meta.url);
 
 //helpTextの生成
 const helpText = require("./helpText.json") as HelpText;
 const adminTable: any = [];
-for(let i=0;i < helpText.admin.length;i++){
+for (let i = 0; i < helpText.admin.length; i++) {
     adminTable.push(
         new StringSelectMenuOptionBuilder()
-        .setLabel(helpText.admin[i].value.title)
-        .setDescription(helpText.admin[i].shortDescription)
-        .setValue(String(i))
+            .setLabel(helpText.admin[i].value.title)
+            .setDescription(helpText.admin[i].shortDescription)
+            .setValue(String(i))
     )
 }
 const helpTable: any = [];
-for(let i=0;i < helpText.help.length;i++){
+for (let i = 0; i < helpText.help.length; i++) {
     helpTable.push(
         new StringSelectMenuOptionBuilder()
             .setLabel(helpText.help[i].value.title)
@@ -36,7 +39,7 @@ export const adminHelpSend = async function func(user: any) {
         })
         .setDescription("木更津高専統合管理BOTをご利用いただきありがとうございます。\n管理者向けのヘルプでは、主に以下に記載した管理者向けのBOTの情報や機能についての説明があります。\n\n下のセレクトメニューから内容を選ぶことで、ヘルプを読めます。\n")
         .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC-DEV' });
+        .setFooter({text: 'Developed by NITKC-DEV'});
 
     const select = new StringSelectMenuBuilder()
         .setCustomId('adminHelp')
@@ -45,11 +48,10 @@ export const adminHelpSend = async function func(user: any) {
     const row = new ActionRowBuilder()
         .addComponents(select);
 
-    try{
-        await user.send({embeds: [embed],components: [row]});
-    }
-    catch (error: any){
-        await system.error("DMを送れませんでした。ブロックされている等ユーザー側が原因の場合もあります。",error,"DirectMessageエラー")
+    try {
+        await user.send({embeds: [embed], components: [row]});
+    } catch (error: any) {
+        await system.error("DMを送れませんでした。ブロックされている等ユーザー側が原因の場合もあります。", error, "DirectMessageエラー")
     }
 }
 
@@ -66,12 +68,11 @@ export const adminHelpDisplay = async function func(interaction: any) {
         .setDescription(helpText.admin[page].value.description)
         .addFields(helpText.admin[page].value.field)
         .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC-DEV' });
-    try{
+        .setFooter({text: 'Developed by NITKC-DEV'});
+    try {
         await interaction.update({embeds: [newEmbed]});
-    }
-    catch (error: any){
-        await system.error("DMを編集できませんでした。ブロックされている等ユーザー側が原因の場合もあります。",error,"DirectMessageエラー")
+    } catch (error: any) {
+        await system.error("DMを編集できませんでした。ブロックされている等ユーザー側が原因の場合もあります。", error, "DirectMessageエラー")
     }
 }
 
@@ -86,7 +87,7 @@ export const helpSend = async function func(interaction: any) {
         })
         .setDescription("木更津高専統合管理BOTをご利用いただきありがとうございます。\nヘルプでは、このBOTの機能の使い方等を確認できます。\n\n下のセレクトメニューから内容を選ぶことで、ヘルプを読めます。\n")
         .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC-DEV' });
+        .setFooter({text: 'Developed by NITKC-DEV'});
 
     const select = new StringSelectMenuBuilder()
         .setCustomId('help')
@@ -95,7 +96,7 @@ export const helpSend = async function func(interaction: any) {
     const row = new ActionRowBuilder()
         .addComponents(select);
 
-    await interaction.reply({embeds: [embed],components: [row]});
+    await interaction.reply({embeds: [embed], components: [row]});
 }
 
 export const helpDisplay = async function func(interaction: any) {
@@ -111,6 +112,6 @@ export const helpDisplay = async function func(interaction: any) {
         .setDescription(helpText.help[page].value.description)
         .addFields(helpText.help[page].value.field)
         .setTimestamp()
-        .setFooter({ text: 'Developed by NITKC-DEV' });
+        .setFooter({text: 'Developed by NITKC-DEV'});
     await interaction.update({embeds: [newEmbed]});
 }

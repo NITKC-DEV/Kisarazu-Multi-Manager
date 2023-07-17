@@ -1,6 +1,8 @@
+/** @format */
+
 import * as db from "./db.mjs";
 
-export const ID_NODATA= "0000000000000000000";
+export const ID_NODATA = "0000000000000000000";
 
 /***
  * Objectテンプレ
@@ -37,11 +39,11 @@ export const ID_NODATA= "0000000000000000000";
  * @param object 更新データ。guildDataSet.jsにテンプレあり
  * @returns {Promise<void>}
  */
-export const updateOrInsert = async function func(guild: any,object={}) {
-    const data = await db.find("main","guildData",{guild: String(guild)});
-    if(data.length > 0) {
-        await db.update("main","guildData",{guild: String(guild)},{
-            $set:{
+export const updateOrInsert = async function func(guild: any, object = {}) {
+    const data = await db.find("main", "guildData", {guild: String(guild)});
+    if (data.length > 0) {
+        await db.update("main", "guildData", {guild: String(guild)}, {
+            $set: {
                 // @ts-expect-error TS(2339): Property 'grade' does not exist on type '{}'.
                 grade: String(object.grade ?? data[0].grade),
                 // @ts-expect-error TS(2339): Property 'announce' does not exist on type '{}'.
@@ -80,9 +82,8 @@ export const updateOrInsert = async function func(guild: any,object={}) {
                 weatherChannel: String(object.weatherChannel ?? data[0].weatherChannel)
             }
         });
-    }
-    else{
-        await db.insert("main","guildData",{
+    } else {
+        await db.insert("main", "guildData", {
             guild: String(guild),
             // @ts-expect-error TS(2339): Property 'grade' does not exist on type '{}'.
             grade: String(object.grade ?? ID_NODATA),
@@ -131,8 +132,8 @@ export const updateOrInsert = async function func(guild: any,object={}) {
  * @returns {Promise<void>}
  */
 export const reset = async function func(guild: any) {
-    const data = await db.find("main","guildData",{guild: String(guild)});
-    if(data.length > 0) {
+    const data = await db.find("main", "guildData", {guild: String(guild)});
+    if (data.length > 0) {
         await db.update("main", "guildData", {guild: String(guild)}, {
             $set: {
                 guild: String(guild),
@@ -159,16 +160,15 @@ export const reset = async function func(guild: any) {
  * @returns {Promise<void>}
  */
 export const checkGuild = async function func() {
-    const data = await db.find("main","guildData", {});
-    for(let i=0;i<data.length;i++) {
-        try{
+    const data = await db.find("main", "guildData", {});
+    for (let i = 0; i < data.length; i++) {
+        try {
             // @ts-ignore
             await client.guilds.fetch(data[i].guild);
-        }
-        catch(err){
+        } catch (err) {
             // @ts-expect-error TS(2571): Object is of type 'unknown'.
-            if(err.code === 10004){ //guildがないよエラーならギルド削除
-                await db.del("main","guildData",{guild:data[i].guild});
+            if (err.code === 10004) { //guildがないよエラーならギルド削除
+                await db.del("main", "guildData", {guild: data[i].guild});
             }
         }
     }

@@ -1,3 +1,5 @@
+/** @format */
+
 import fs from "node:fs";
 import path from "path";
 import {REST} from "@discordjs/rest";
@@ -7,7 +9,7 @@ import {fileURLToPath} from "url";
 import {createRequire} from "module";
 
 const require = createRequire(import.meta.url);
-const { Select, MultiSelect, Toggle } = require("enquirer");
+const {Select, MultiSelect, Toggle} = require("enquirer");
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -35,7 +37,7 @@ async function load() {
 async function run() {
     await load();
     // Discord API通信準備 トークン設定
-    const rest = new REST({ version: '10' }).setToken(config.token);
+    const rest = new REST({version: '10'}).setToken(config.token);
     //GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client));
     console.log("---コマンド一覧---")
@@ -52,7 +54,7 @@ async function run() {
         message: 'モードを選んでください',
         choices: ['登録(更新)', '削除', 'キャンセル',]
     }).run();
-    if (mode==='キャンセル'){
+    if (mode === 'キャンセル') {
         return
     }
 
@@ -67,13 +69,13 @@ async function run() {
             }
             const prompt = await new Toggle({
                 message: '続行しますか？',
-                initial:true,
+                initial: true,
                 enabled: 'はい',
                 disabled: 'いいえ'
             }).run();
-            if (prompt){
+            if (prompt) {
                 // PUTで上書き すべてcommandsの内容に
-                await rest.put(Routes.applicationCommands(config.client), { body: commands })
+                await rest.put(Routes.applicationCommands(config.client), {body: commands})
                     .then((data: any) => console.log(`${data.length} 個のアプリケーション コマンドが正常に登録されました。`))
                     .catch(console.error);
             }
@@ -86,11 +88,11 @@ async function run() {
                 message: '対象のコマンドを<space>で選択、<a>で全選択、<i>で反転',
                 // @ts-ignore dataが返すunknown型に敗北した．誰かたすけて
                 choices: data.map((e: any) => ({
-                    name:"/"+e.name,
-                    value:e.id
+                    name: "/" + e.name,
+                    value: e.id
                 })),
                 result(commands: any) {
-                    return  Object.entries(this.map(commands));
+                    return Object.entries(this.map(commands));
                 }
             }).run();
             for (const selectedElement of selected) {

@@ -1,3 +1,5 @@
+/** @format */
+
 import {setTimeout} from "timers/promises";
 
 /***
@@ -5,10 +7,10 @@ import {setTimeout} from "timers/promises";
  * @param interaction 返信するinteraction
  * @param options メッセージのオブジェクト(contentの中の$time$を現在の残り時間に置き換える)
  * @param time 返信してから削除するまでの時間
-*/
-export const autoDeleteEditReply = function(interaction: any,options: any,time: any) {
-    (async()=> {
-        for(let i = time; i > 0; i--) {
+ */
+export const autoDeleteEditReply = function (interaction: any, options: any, time: any) {
+    (async () => {
+        for (let i = time; i > 0; i--) {
             const defaultContent = JSON.parse(JSON.stringify(options)).content;
             const sendingOptions = JSON.parse(JSON.stringify(options));
             sendingOptions.content = defaultContent.replace(/\$time\$/g, i);

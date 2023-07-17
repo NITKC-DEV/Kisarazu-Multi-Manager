@@ -1,3 +1,5 @@
+/** @format */
+
 export type EnvironmentConfig = {
     token: string;
     logSystem: string;
@@ -8,7 +10,7 @@ export type EnvironmentConfig = {
     devServer: string;
     db: string;
     maintenanceMode: boolean;
-}
+};
 
 export type HelpText = {
     help: {
@@ -33,4 +35,4 @@ export type HelpText = {
             }[];
         };
     }[];
-}
+};

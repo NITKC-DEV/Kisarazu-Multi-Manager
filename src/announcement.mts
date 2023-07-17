@@ -1,3 +1,5 @@
+/** @format */
+
 import {Client, GatewayIntentBits, Partials, TextChannel} from "discord.js";
 import dotenv from "dotenv";
 import cron from "node-cron"
@@ -71,7 +73,7 @@ async function run() {
             console.log("すべての通知が1分後に送信されます");
 
             let date = new Date();
-            date.setMinutes(date.getMinutes() +1 );
+            date.setMinutes(date.getMinutes() + 1);
             sendTime = {
                 noticeH: date.getHours(),
                 noticeM: date.getMinutes(),
@@ -82,38 +84,38 @@ async function run() {
             };
             return;
         }
-        case 'メンテ告知&開始通知セット':{
+        case 'メンテ告知&開始通知セット': {
             dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
             client.login(config.token);
             // @ts-expect-error TS(2322): Type '{ noticeH: number; noticeM: number; startH: ... Remove this comment to see the full error message
             sendTime.startH =
-            sendTime = {
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                noticeH: parseFloat(await readUserInput('メンテ告知時間(HH)を入力')),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                noticeM: parseFloat(await readUserInput('メンテ告知時間(MM)を入力')),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                startH: parseFloat(await readUserInput('メンテ開始時間(HH)を入力')),
-                // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
-                startM: parseFloat(await readUserInput('メンテ開始時間(MM)を入力')),
-                endH: -1,
-                endM: -1,
-            };
+                sendTime = {
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+                    noticeH: parseFloat(await readUserInput('メンテ告知時間(HH)を入力')),
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+                    noticeM: parseFloat(await readUserInput('メンテ告知時間(MM)を入力')),
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+                    startH: parseFloat(await readUserInput('メンテ開始時間(HH)を入力')),
+                    // @ts-expect-error TS(2345): Argument of type 'unknown' is not assignable to pa... Remove this comment to see the full error message
+                    startM: parseFloat(await readUserInput('メンテ開始時間(MM)を入力')),
+                    endH: -1,
+                    endM: -1,
+                };
             console.log("設定した時間に通知を送信します")
             return;
         }
-        case '終了通知(1分後送信)':{
+        case '終了通知(1分後送信)': {
             console.log("終了通知が1分後に送信されます");
             dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
             client.login(config.token);
 
             let date = new Date();
-            date.setMinutes(date.getMinutes() +1 );
+            date.setMinutes(date.getMinutes() + 1);
             sendTime.endH = date.getHours();
             sendTime.endM = date.getMinutes();
             return;
         }
-        default:{
+        default: {
             process.exit(1);
         }
 
@@ -125,31 +127,29 @@ async function run() {
 cron.schedule('*/1  * * * *', async () => {
 
     const date = new Date();
-    if(date.getHours() === sendTime.noticeH && date.getMinutes() === sendTime.noticeM){
-        const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
-        for(let i = 0; i < data.length; i++) {
+    if (date.getHours() === sendTime.noticeH && date.getMinutes() === sendTime.noticeM) {
+        const data = await find("main", "guildData", {announce: {$nin: ["0000000000000000000"]}});
+        for (let i = 0; i < data.length; i++) {
             (client.channels.cache.get(data[i].announce) as TextChannel).send("@everyone");
             (client.channels.cache.get(data[i].announce) as TextChannel).send({embeds: [embed.notice]});
         }
     }
-    if(date.getHours() === sendTime.startH && date.getMinutes() === sendTime.startM){
-        const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
-        for(let i = 0; i < data.length; i++) {
+    if (date.getHours() === sendTime.startH && date.getMinutes() === sendTime.startM) {
+        const data = await find("main", "guildData", {announce: {$nin: ["0000000000000000000"]}});
+        for (let i = 0; i < data.length; i++) {
             (client.channels.cache.get(data[i].announce) as TextChannel).send("@everyone");
-            (client.channels.cache.get(data[i].announce) as TextChannel).send({ embeds: [embed.start] });
+            (client.channels.cache.get(data[i].announce) as TextChannel).send({embeds: [embed.start]});
         }
     }
-    if(date.getHours() === sendTime.endH && date.getMinutes() === sendTime.endM){
-        const data = await find("main","guildData",{announce:{$nin:["0000000000000000000"]}});
-        for(let i = 0; i < data.length; i++) {
+    if (date.getHours() === sendTime.endH && date.getMinutes() === sendTime.endM) {
+        const data = await find("main", "guildData", {announce: {$nin: ["0000000000000000000"]}});
+        for (let i = 0; i < data.length; i++) {
             (client.channels.cache.get(data[i].announce) as TextChannel).send("@everyone");
-            (client.channels.cache.get(data[i].announce) as TextChannel).send({embeds: [embed.end] });
+            (client.channels.cache.get(data[i].announce) as TextChannel).send({embeds: [embed.end]});
         }
     }
 
 });
-
-
 
 
 run().then(() => {

@@ -1,13 +1,15 @@
+/** @format */
+
 /*メッセージに反応する系のイースターエッグ*/
 export const func = function func(message: any) {
     let dt = new Date();
     let month = dt.getMonth();
     let date = dt.getDate();
-    if(message.author.bot){
+    if (message.author.bot) {
         return;
     }
 
-    if(month=== 9 && date===31){  /*Happy Halloween!*/
+    if (month === 9 && date === 31) {  /*Happy Halloween!*/
 
         if (message.content.match(/トリック/) && message.content.match(/オア/) && message.content.match(/トリート/)) {
             let reply_text = `単位くれないといたずらしちゃうぞ`;
@@ -15,7 +17,7 @@ export const func = function func(message: any) {
                 .catch(console.error);
         }
     }
-    if(month=== 0 && date===1){  /*Happy NewYear!*/
+    if (month === 0 && date === 1) {  /*Happy NewYear!*/
 
         if (message.content.match(/あけおめ/) || message.content.match(/あけまして/) && message.content.match(/明けまして/)) {
             let reply_text = `あけおめ！`;

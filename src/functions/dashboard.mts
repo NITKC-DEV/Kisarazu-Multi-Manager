@@ -1,21 +1,23 @@
+/** @format */
+
 import * as db from "./db.mjs";
 import {EmbedBuilder} from "@discordjs/builders";
 import * as system from "./logsystem.mjs";
 
 /*天気取得*/
 async function getWeather() {
-    const data = await db.find("main","weatherCache",{label: "最新の天気予報"});
+    const data = await db.find("main", "weatherCache", {label: "最新の天気予報"});
     return data[0].response;
 }
 
 /*日数カウント*/
 function diffInMonthsAndDays(from: any, to: any) {
-    if(from > to) {
+    if (from > to) {
         [from, to] = [to, from];
     }
     const fromDate = new Date(from);
     let toDate = new Date(to);
-    let months=0,days;
+    let months = 0, days;
     let daysInMonth;
     if (toDate.getFullYear() % 4 === 0 && toDate.getFullYear() % 4 !== 0) {
         daysInMonth = [31, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30]; /*前の月が何日であるかのリスト*/
@@ -25,24 +27,23 @@ function diffInMonthsAndDays(from: any, to: any) {
         daysInMonth = [31, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30];
     }
 
-    if(toDate.getFullYear() - fromDate.getFullYear() >= 1) { /*12ヶ月以上あるなら、その分加算*/
-        months += (toDate.getFullYear() - fromDate.getFullYear() - 1) *12
+    if (toDate.getFullYear() - fromDate.getFullYear() >= 1) { /*12ヶ月以上あるなら、その分加算*/
+        months += (toDate.getFullYear() - fromDate.getFullYear() - 1) * 12
     }
     months += 12 * (toDate.getFullYear() - fromDate.getFullYear()) + (toDate.getMonth() - fromDate.getMonth())
 
-    if(fromDate.getDate() > toDate.getDate()) {
+    if (fromDate.getDate() > toDate.getDate()) {
         days = daysInMonth[toDate.getMonth()] - fromDate.getDate() + toDate.getDate()
         months -= 1;
-    }
-    else{
+    } else {
         days = toDate.getDate() - fromDate.getDate();
     }
 
-    return [ months, days ];
+    return [months, days];
 }
 
 export const generation = async function func(guild: any) {
-    try{
+    try {
         /*現在時刻を取得*/
         const date = new Date();
         // @ts-expect-error TS(2339): Property 'toFormat' does not exist on type 'Date'.
@@ -55,7 +56,7 @@ export const generation = async function func(guild: any) {
         const botOnline = members.filter((member: any) => member.presence && member.presence.status !== "offline" && member.user.bot === true).size;
 
         /*定期テスト*/
-        const data = await db.find("main","nextTest",{label: {$in:["1","2","3","4"]}});
+        const data = await db.find("main", "nextTest", {label: {$in: ["1", "2", "3", "4"]}});
 
         let test, UNIXtest, testStart, testEnd;
         let now = Date.now() + 32400000;
@@ -67,21 +68,20 @@ export const generation = async function func(guild: any) {
             data[0].nextTest[3] = [0, 0, 0, 0, 0]
         } else {
             UNIXtest = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1, 8, 50, 0);
-            testStart = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1,  0, 0, 0);
-            testEnd = Date.UTC(data[0].year, data[0].month2 - 1, data[0].day2,  15, 0, 0);
+            testStart = Date.UTC(data[0].year, data[0].month1 - 1, data[0].day1, 0, 0, 0);
+            testEnd = Date.UTC(data[0].year, data[0].month2 - 1, data[0].day2, 15, 0, 0);
             if (now > testStart) {
                 if (now > testEnd) { /*テストが終了してたら*/
                     if (data[1].year === "0") {
                         test = "現在設定されている次のテストはありません。";
-                    }
-                    else{
+                    } else {
                         test = `${data[1].year}年${data[1].month1}月${data[1].day1}日〜${data[1].month2}月${data[1].day2}日`
                         UNIXtest = Date.UTC(data[1].year, data[1].month1 - 1, data[1].day1, 8, 50, 0);
                         const day = diffInMonthsAndDays(now, UNIXtest)
                         test += `(${day[0]}ヶ月と${day[1]}日後)`
                     }
 
-                    if(data[0].year !== "0"){
+                    if (data[0].year !== "0") {
                         for (let i = 0; i < 3; i++) {
                             await db.update(
                                 "main", "nextTest", {label: String(i + 1)},
@@ -110,11 +110,9 @@ export const generation = async function func(guild: any) {
                         )
                     }
 
-                }
-                else if (now > testEnd - 86400000) { /*最終日なら*/
+                } else if (now > testEnd - 86400000) { /*最終日なら*/
                     test = '本日はテスト期間最終日です'
-                }
-                else {
+                } else {
                     test = `現在テスト期間です(〜${data[0].month2}月${data[0].day2}日)`
 
                 }
@@ -150,11 +148,10 @@ export const generation = async function func(guild: any) {
         let weather;
         if (!weatherData) {
             weather = "天気を取得できませんでした";
-        }
-        else{
-            const weatherCache = [{},{}]; /*天気のキャッシュを取得*/
-            weatherCache[0] = (await db.find("main","weatherCache",{label: {$in:["0"]}}))[0];
-            weatherCache[1] = (await db.find("main","weatherCache",{label: {$in:["1"]}}))[0];
+        } else {
+            const weatherCache = [{}, {}]; /*天気のキャッシュを取得*/
+            weatherCache[0] = (await db.find("main", "weatherCache", {label: {$in: ["0"]}}))[0];
+            weatherCache[1] = (await db.find("main", "weatherCache", {label: {$in: ["1"]}}))[0];
 
             // @ts-expect-error TS(2339): Property 'min' does not exist on type '{}'.
             const min = [weatherData.forecasts[0].temperature.min.celsius ?? weatherCache[0].min, weatherData.forecasts[1].temperature.min.celsius ?? `---`];
@@ -203,8 +200,7 @@ export const generation = async function func(guild: any) {
             .setFooter({text: 'Developed by NITKC-DEV'});
 
         return embed;
-    }
-    catch(error: any){
+    } catch (error: any) {
         await system.error(`ダッシュボードの生成に失敗しましたを取得できませんでした`, error);
         return false;
     }

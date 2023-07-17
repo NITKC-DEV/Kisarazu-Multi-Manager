@@ -1,6 +1,8 @@
+/** @format */
+
 import {config} from "../environmentConfig.mjs";
 
-export const daily = async function func(message: any,title: any) {
+export const daily = async function func(message: any, title: any) {
     const daily = {
         color: 0x27668D,
         title: 'デイリー更新',
@@ -17,7 +19,7 @@ export const daily = async function func(message: any,title: any) {
         },
     };
     // @ts-ignore
-    client.channels.cache.get(config.daily).send({ embeds: [daily] })
+    client.channels.cache.get(config.daily).send({embeds: [daily]})
     let dt = new Date();
     let dayofweek = dt.getDay();
     let date = dt.getDate();
@@ -60,7 +62,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [monday] })
+        client.channels.cache.get(config.daily).send({embeds: [monday]})
     }
 
     if (dayofweek === 4) { /*木曜日*/
@@ -77,7 +79,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [thursday] })
+        client.channels.cache.get(config.daily).send({embeds: [thursday]})
     }
 
     if (dayofweek === 5) { /*金曜日*/
@@ -98,7 +100,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [friday] })
+        client.channels.cache.get(config.daily).send({embeds: [friday]})
     }
 
     if (dayofweek === 6) { /*土曜日*/
@@ -115,7 +117,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [saturday] })
+        client.channels.cache.get(config.daily).send({embeds: [saturday]})
     }
     if (date % 3 === 0) { /*3の倍数の日*/
         const multiple = {
@@ -125,7 +127,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [multiple] })
+        client.channels.cache.get(config.daily).send({embeds: [multiple]})
     }
     if (date % 3 === 1) { /*3の倍数+1の日*/
         const multiple2 = {
@@ -135,7 +137,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [multiple2] })
+        client.channels.cache.get(config.daily).send({embeds: [multiple2]})
     }
 
     if (date === 1) { /*毎月1日*/
@@ -156,7 +158,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [first] })
+        client.channels.cache.get(config.daily).send({embeds: [first]})
     }
     if (date === 16) { /*毎月16日*/
         const sixteenth = {
@@ -172,7 +174,7 @@ export const daily = async function func(message: any,title: any) {
             timestamp: new Date().toISOString(),
         };
         // @ts-ignore
-        client.channels.cache.get(config.daily).send({ embeds: [sixteenth] })
+        client.channels.cache.get(config.daily).send({embeds: [sixteenth]})
     }
 
 }
