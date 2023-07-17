@@ -1,26 +1,30 @@
 /** @format */
 
-import {EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder} from "@discordjs/builders";
+import { EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder } from "@discordjs/builders";
 import * as db from "./db.mjs";
-import {setTimeout} from "timers/promises";
+import { setTimeout } from "timers/promises";
 
 const departmentData = [
     {
         name: "機械工学科",
-        color: "00A0EA"
-    }, {
+        color: "00A0EA",
+    },
+    {
         name: "電気電子工学科",
-        color: "D64E5A"
-    }, {
+        color: "D64E5A",
+    },
+    {
         name: "電子制御工学科",
-        color: "865DC0"
-    }, {
+        color: "865DC0",
+    },
+    {
         name: "情報工学科",
-        color: "CAAB0D"
-    }, {
+        color: "CAAB0D",
+    },
+    {
         name: "環境工学科",
-        color: "1E9B50"
-    }
+        color: "1E9B50",
+    },
 ];
 
 const dayName = ["月", "火", "水", "木", "金"];
@@ -43,30 +47,31 @@ export const generation = async function func(grade: any, department: any, day: 
         const nowDay = date.getDay(); //今日
         let nextDay = parseFloat(day) - nowDay; //対象の曜日は何日後?
         if (0 > nextDay) {
-            nextDay += 7
+            nextDay += 7;
         }
 
-        date.setDate(date.getDate() + nextDay);//対象の日を取得
+        date.setDate(date.getDate() + nextDay); //対象の日を取得
         data = await db.find("main", "timetableData", {
             grade: String(grade),
             department: String(department),
-            day: String((date.getMonth() + 1) * 100 + date.getDate())
+            day: String((date.getMonth() + 1) * 100 + date.getDate()),
         });
         if (data.length === 0) {
-            data = await db.find("main", "timetableData", {grade: String(grade), department: String(department), day: String(day)});
-            dateText = `${dayName[parseFloat(day) - 1]}曜日`
+            data = await db.find("main", "timetableData", { grade: String(grade), department: String(department), day: String(day) });
+            dateText = `${dayName[parseFloat(day) - 1]}曜日`;
         } else {
-            dateText = `${date.getMonth() + 1}月${date.getDate()}日 (${dayName[parseFloat(day) - 1]})`
+            dateText = `${date.getMonth() + 1}月${date.getDate()}日 (${dayName[parseFloat(day) - 1]})`;
         }
     } else {
-        data = await db.find("main", "timetableData", {grade: String(grade), department: String(department), day: String(day)});
-        dateText = `${dayName[parseFloat(day) - 1]}曜日`
+        data = await db.find("main", "timetableData", { grade: String(grade), department: String(department), day: String(day) });
+        dateText = `${dayName[parseFloat(day) - 1]}曜日`;
     }
 
     if (data.length > 0) {
         if (data[0].test) {
             const siz = data[0].timetable.length;
-            for (let i = siz - 1; i >= 0; i--) { //末尾の空きコマ削除
+            for (let i = siz - 1; i >= 0; i--) {
+                //末尾の空きコマ削除
                 if (data[0].timetable[i].name === "空きコマ") {
                     data[0].timetable.pop();
                 } else {
@@ -74,15 +79,15 @@ export const generation = async function func(grade: any, department: any, day: 
                 }
             }
             if (data[0].timetable.length === 0) {
-                if (data[0].comment !== "") data[0].comment = "\n" + data[0].comment
-                data[0].comment = "本日設定された試験はありません。" + data[0].comment
+                if (data[0].comment !== "") data[0].comment = "\n" + data[0].comment;
+                data[0].comment = "本日設定された試験はありません。" + data[0].comment;
             }
 
             const field = [];
             for (let i = 0; i < data[0].timetable.length; i++) {
                 let comment = "";
                 if (data[0].timetable[i].comment !== "") {
-                    comment = `備考　　：${data[0].timetable[i].comment}`
+                    comment = `備考　　：${data[0].timetable[i].comment}`;
                 }
 
                 let subjectComment;
@@ -96,41 +101,50 @@ export const generation = async function func(grade: any, department: any, day: 
                     if (comment !== "") {
                         field.push({
                             name: data[0].timetable[i].name,
-                            value: `\`\`\`試験時間：${subjectComment}${comment}\`\`\``
-                        })
+                            value: `\`\`\`試験時間：${subjectComment}${comment}\`\`\``,
+                        });
                     } else {
                         field.push({
                             name: data[0].timetable[i].name,
-                            value: `\`\`\`試験時間：${subjectComment}\`\`\``
-                        })
+                            value: `\`\`\`試験時間：${subjectComment}\`\`\``,
+                        });
                     }
                 }
-
             }
             if (data[0].comment !== "") {
                 field.push({
                     name: "備考",
-                    value: `\`\`\`${data[0].comment}\`\`\``
-                })
+                    value: `\`\`\`${data[0].comment}\`\`\``,
+                });
             }
 
-
-            return new EmbedBuilder()
-                // @ts-ignore 引数の型が一致していない
-                .setColor(departmentData[parseFloat(department) - 1].color)
-                .setTitle(`${departmentData[parseFloat(department) - 1].name}${grade}年 ${data[0].day / 100 | 0}月${data[0].day % 100}日定期テスト時間割`)
-                .setAuthor({
-                    name: "木更津高専統合管理BOT",
-                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
-                })
-                .setDescription(`${data[0].day / 100 | 0}月${data[0].day % 100}日の定期テスト時間割です。\n※教室やテスト日程に変更がある場合があります。`)
-                .addFields(field)
-                .setTimestamp()
-                .setFooter({text: 'Developed by NITKC-DEV'});
+            return (
+                new EmbedBuilder()
+                    // @ts-ignore 引数の型が一致していない
+                    .setColor(departmentData[parseFloat(department) - 1].color)
+                    .setTitle(
+                        `${departmentData[parseFloat(department) - 1].name}${grade}年 ${(data[0].day / 100) | 0}月${
+                            data[0].day % 100
+                        }日定期テスト時間割`,
+                    )
+                    .setAuthor({
+                        name: "木更津高専統合管理BOT",
+                        iconURL: "https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png",
+                        url: "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager",
+                    })
+                    .setDescription(
+                        `${(data[0].day / 100) | 0}月${
+                            data[0].day % 100
+                        }日の定期テスト時間割です。\n※教室やテスト日程に変更がある場合があります。`,
+                    )
+                    .addFields(field)
+                    .setTimestamp()
+                    .setFooter({ text: "Developed by NITKC-DEV" })
+            );
         } else {
             const siz = data[0].timetable.length;
-            for (let i = siz - 1; i >= 0; i--) { //末尾の空きコマ削除
+            for (let i = siz - 1; i >= 0; i--) {
+                //末尾の空きコマ削除
                 if (data[0].timetable[i].name === "空きコマ") {
                     data[0].timetable.pop();
                 } else {
@@ -138,8 +152,8 @@ export const generation = async function func(grade: any, department: any, day: 
                 }
             }
             if (data[0].timetable.length === 0) {
-                if (data[0].comment !== "") data[0].comment = "\n" + data[0].comment
-                data[0].comment = "本日授業はありません。" + data[0].comment
+                if (data[0].comment !== "") data[0].comment = "\n" + data[0].comment;
+                data[0].comment = "本日授業はありません。" + data[0].comment;
             }
 
             const field = [];
@@ -147,11 +161,11 @@ export const generation = async function func(grade: any, department: any, day: 
             for (let i = 0; i < data[0].timetable.length; i++) {
                 const subject = await db.find("main", "syllabusData", {
                     title: data[0].timetable[i].name,
-                    subject_id: `${grade}${department}`
+                    subject_id: `${grade}${department}`,
                 });
                 let professor = "";
                 if (0 < subject[0].professor.length) {
-                    professor += "担当教員："
+                    professor += "担当教員：";
                 }
 
                 for (let j = 0; j < subject[0].professor.length; j++) {
@@ -166,51 +180,52 @@ export const generation = async function func(grade: any, department: any, day: 
                 }
 
                 if (0 < subject[0].professor.length) {
-                    professor += "\n"
+                    professor += "\n";
                 }
                 let comment = "";
                 if (data[0].timetable[i].comment !== "") {
-                    comment = `\n備考　　：${data[0].timetable[i].comment}`
+                    comment = `\n備考　　：${data[0].timetable[i].comment}`;
                 }
 
                 if (subject[0].title === "HR" || subject[0].title === "課題学習時間") {
-                    dailyComment += "7限  ：14:45 - 15:30\n"
+                    dailyComment += "7限  ：14:45 - 15:30\n";
                 } else if (subject[0].title !== "空きコマ") {
                     dailyComment += `${time[i]}`;
                 }
 
                 field.push({
                     name: subject[0].title,
-                    value: `\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``
-                })
+                    value: `\`\`\`${professor}授業場所：${subject[0].room}${comment}\`\`\``,
+                });
             }
             if (data[0].comment !== "") {
                 data[0].comment = "--------------------\n" + data[0].comment;
             }
             field.push({
                 name: "授業時間・備考",
-                value: `\`\`\`${dailyComment}${data[0].comment}\`\`\``
-            })
+                value: `\`\`\`${dailyComment}${data[0].comment}\`\`\``,
+            });
 
-            return new EmbedBuilder()
-                // @ts-ignore 引数の型が一致していない
-                .setColor(departmentData[parseFloat(department) - 1].color)
-                .setTitle(`${departmentData[parseFloat(department) - 1].name}${grade}年 ${dateText}の時間割`)
-                .setAuthor({
-                    name: "木更津高専統合管理BOT",
-                    iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-                    url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
-                })
-                .setDescription(`${dateText}の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
-                .addFields(field)
-                .setTimestamp()
-                .setFooter({text: 'Developed by NITKC-DEV'});
+            return (
+                new EmbedBuilder()
+                    // @ts-ignore 引数の型が一致していない
+                    .setColor(departmentData[parseFloat(department) - 1].color)
+                    .setTitle(`${departmentData[parseFloat(department) - 1].name}${grade}年 ${dateText}の時間割`)
+                    .setAuthor({
+                        name: "木更津高専統合管理BOT",
+                        iconURL: "https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png",
+                        url: "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager",
+                    })
+                    .setDescription(`${dateText}の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
+                    .addFields(field)
+                    .setTimestamp()
+                    .setFooter({ text: "Developed by NITKC-DEV" })
+            );
         }
     } else {
         return 0;
     }
-}
-
+};
 
 /***
  * 臨時時間割データを追加 or 生成
@@ -224,26 +239,26 @@ export const setNewTimetableData = async function func(interaction: any) {
     const day = interaction.customId[2];
     const mode = interaction.customId.slice(-2, -1);
     const period = interaction.customId.slice(-1);
-    const date = interaction.customId.substring(3, interaction.customId.match(/changeTimetableSelectMenu/).index) + '00';
+    const date = interaction.customId.substring(3, interaction.customId.match(/changeTimetableSelectMenu/).index) + "00";
 
-    let data = await db.find("main", "timetableData", {grade, department, day: date});
+    let data = await db.find("main", "timetableData", { grade, department, day: date });
     if (data.length === 0) {
         data = await db.find("main", "timetableData", {
             grade,
             department,
-            day: interaction.customId.substring(3, interaction.customId.match(/changeTimetableSelectMenu/).index)
+            day: interaction.customId.substring(3, interaction.customId.match(/changeTimetableSelectMenu/).index),
         });
         if (data.length === 0) {
-            data = await db.find("main", "timetableData", {grade, department, day: day});
+            data = await db.find("main", "timetableData", { grade, department, day: day });
         }
     }
     // @ts-ignore deleteされるプロパティはoptionalでなければならない
     delete data[0]._id;
     data[0].day = date;
-    data[0].timetable[parseInt(period, 10)] = {name: interaction.values[0], comment: ""};
+    data[0].timetable[parseInt(period, 10)] = { name: interaction.values[0], comment: "" };
 
     if (mode === "0" && data[0].timetable.length === 4) {
-        data[0].timetable.pop()
+        data[0].timetable.pop();
     }
     let subjects = "";
     for (let i = 0; i < data[0].timetable.length; i++) {
@@ -251,33 +266,36 @@ export const setNewTimetableData = async function func(interaction: any) {
     }
 
     const embed = new EmbedBuilder()
-        .setColor(0x00A0EA)
-        // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-        .setTitle(`授業変更・定期テスト登録 - ${departmentData[parseFloat(department) - 1].name}${grade}年 ${Math.floor(date / 10000)}月${Math.floor(date % 10000 / 100)}日`)
+        .setColor(0x00a0ea)
+        .setTitle(
+            `授業変更・定期テスト登録 - ${departmentData[parseFloat(department) - 1].name}${grade}年 ${Math.floor(
+                // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
+                date / 10000,
+                // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
+            )}月${Math.floor((date % 10000) / 100)}日`,
+        )
         .setAuthor({
             name: "木更津高専統合管理BOT",
-            iconURL: 'https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png',
-            url: 'https://github.com/NITKC-DEV/Kisarazu-Multi-Manager'
+            iconURL: "https://media.discordapp.net/attachments/1004598980929404960/1039920326903087104/nitkc22io-1.png",
+            url: "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager",
         })
         .setDescription(`教科を選択してください。\n\n入力が終わったら、登録ボタンを押してください`)
         .addFields({
             name: `現在選択済みの時間割`,
-            value: `\`\`\`${subjects}\`\`\``
+            value: `\`\`\`${subjects}\`\`\``,
         })
         .setTimestamp()
-        .setFooter({text: 'Developed by NITKC-DEV'});
+        .setFooter({ text: "Developed by NITKC-DEV" });
 
     try {
         const channel = client.channels.cache.get(interaction.message.channelId);
         // @ts-ignore channelがundefinedになる場合がある
-        channel.messages.fetch(interaction.message.id)
-            .then((message: any) => {
-                interaction.update({embeds: [embed], comments: message.comments});
-            })
-        await db.updateOrInsert("main", "timetableData", {grade, department, day: date}, data[0]);
-    } catch {
-    } //元メッセージ削除対策
-}
+        channel.messages.fetch(interaction.message.id).then((message: any) => {
+            interaction.update({ embeds: [embed], comments: message.comments });
+        });
+        await db.updateOrInsert("main", "timetableData", { grade, department, day: date }, data[0]);
+    } catch {} //元メッセージ削除対策
+};
 
 /***
  * 臨時時間割データにコメントを追加し本登録
@@ -291,7 +309,7 @@ export const showNewTimetableModal = async function func(interaction: any) {
     const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2, interaction.customId.match(/changeTimetableButton/).index);
 
-    const data = await db.find("main", "timetableData", {day: date + '00'});
+    const data = await db.find("main", "timetableData", { day: date + "00" });
 
     const modal = new ModalBuilder()
         .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
@@ -316,36 +334,37 @@ export const showNewTimetableModal = async function func(interaction: any) {
     await interaction.showModal(modal);
     const filter = (mInteraction: any) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
 
-    interaction.awaitModalSubmit({filter, time: 3600000})
+    interaction
+        .awaitModalSubmit({ filter, time: 3600000 })
         .then(async (mInteraction: any) => {
-            const inputTxt = []
+            const inputTxt = [];
             let comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
                 inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}${i}`);
             }
             comment = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}5`);
 
-
             for (let i = 0; i < data[0].timetable.length; i++) {
-                if (inputTxt[i] !== "" && inputTxt[i] !== undefined && inputTxt[i].length <= 100) data[0].timetable[i].comment = inputTxt[i];
+                if (inputTxt[i] !== "" && inputTxt[i] !== undefined && inputTxt[i].length <= 100)
+                    data[0].timetable[i].comment = inputTxt[i];
             }
             if (comment.length <= 100) data[0].comment = comment;
             data[0].day = date;
-            data[0].test = mode === '0';
+            data[0].test = mode === "0";
             // @ts-ignore deleteされるプロパティはoptionalでなければならない
             delete data[0]._id;
-            await db.updateOrInsert("main", "timetableData", {grade, department, day: date}, data[0]);
-            await db.del("main", "timetableData", {grade, department, day: date + '00'});
+            await db.updateOrInsert("main", "timetableData", { grade, department, day: date }, data[0]);
+            await db.del("main", "timetableData", { grade, department, day: date + "00" });
             const channel = client.channels.cache.get(interaction.message.channelId);
             // @ts-ignore channelがundefinedになる場合がある
-            channel.messages.fetch(interaction.message.id)
+            channel.messages
+                .fetch(interaction.message.id)
                 .then((message: any) => {
                     message.delete();
                 })
-                .catch(() => {
-                });
+                .catch(() => {});
             const replyOptions = (time: any) => {
-                return {content: '登録しました。\n(このメッセージは' + time + '秒後に自動で削除されます)', ephemeral: true};
+                return { content: "登録しました。\n(このメッセージは" + time + "秒後に自動で削除されます)", ephemeral: true };
             };
             await mInteraction.reply(replyOptions(5));
             for (let i = 5; i > 0; i--) {
@@ -354,28 +373,25 @@ export const showNewTimetableModal = async function func(interaction: any) {
                 await setTimeout(1000);
             }
             await mInteraction.deleteReply();
-
-
         })
         .catch(() => {
             try {
                 const channel = client.channels.cache.get(interaction.message.channelId);
                 // @ts-ignore channelがundefinedになる場合がある
-                channel.messages.fetch(interaction.message.id)
+                channel.messages
+                    .fetch(interaction.message.id)
                     .then((message: any) => {
                         message.delete();
                     })
-                    .catch(() => {
-                    });
-            } catch {
-            } //元メッセージ削除対策
-        })
-}
+                    .catch(() => {});
+            } catch {} //元メッセージ削除対策
+        });
+};
 
 export const deleteData = async function func() {
-    const date = new Date;
+    const date = new Date();
     date.setDate(date.getDate() - 1);
 
-    await db.del("main", "timetableData", {day: String(date.getMonth() + 1) + String(date.getDate())});
-    await db.del("main", "timetableData", {day: String(String(date.getMonth() + 1) + String(date.getDate()) + '00')});
-}
+    await db.del("main", "timetableData", { day: String(date.getMonth() + 1) + String(date.getDate()) });
+    await db.del("main", "timetableData", { day: String(String(date.getMonth() + 1) + String(date.getDate()) + "00") });
+};
