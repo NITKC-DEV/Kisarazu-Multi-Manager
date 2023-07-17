@@ -1,9 +1,10 @@
 /** @format */
 
+import { createRequire } from "module";
 import path from "path";
 import { fileURLToPath } from "url";
-import { EnvironmentConfig } from "./types/Kisarazu-Multi-Manager/jsonStructure";
-import { createRequire } from "module";
+
+import { EnvironmentConfig } from "./types/Kisarazu-Multi-Manager/jsonStructure.js";
 
 const require = createRequire(import.meta.url);
 

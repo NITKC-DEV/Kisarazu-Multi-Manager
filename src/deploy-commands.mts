@@ -1,12 +1,14 @@
 /** @format */
 
+import { createRequire } from "module";
 import fs from "node:fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
 import { REST } from "@discordjs/rest";
 import { Routes } from "discord.js";
+
 import { config } from "./environmentConfig.mjs";
-import { fileURLToPath } from "url";
-import { createRequire } from "module";
 
 const require = createRequire(import.meta.url);
 const { Select, MultiSelect, Toggle } = require("enquirer");
@@ -23,12 +25,12 @@ async function load() {
     // .mjsを検索
     const commandFiles = fs.readdirSync(commandsPath).filter((file: any) => file.endsWith(".mjs"));
     for (const file of commandFiles) {
-        //ファイルの数だけ
+        // ファイルの数だけ
         const filePath = `file://${path.join(commandsPath, file)}`;
         await import(filePath).then((command) => {
             const defaults = command.default;
             for (const commandData of defaults) {
-                //各コマンドを配列にぶちこむ
+                // 各コマンドを配列にぶちこむ
                 commands.push(commandData.data.toJSON());
             }
         });
@@ -39,7 +41,7 @@ async function run() {
     await load();
     // Discord API通信準備 トークン設定
     const rest = new REST({ version: "10" }).setToken(config.token);
-    //GETで現在登録されているのを取得
+    // GETで現在登録されているのを取得
     const data = await rest.get(Routes.applicationCommands(config.client));
     console.log("---コマンド一覧---");
     // @ts-ignore dataが返すunknown型に敗北した．誰かたすけて
@@ -62,7 +64,7 @@ async function run() {
     switch (mode) {
         case "登録(更新)": {
             console.log("---追加コマンド---");
-            //差分を確認
+            // 差分を確認
             // @ts-expect-error TS(7006): Parameter 'v' implicitly has an 'any' type.
             for (const filterElement of commands.filter((v) => !data.map((e: any) => e.name).includes(v.name))) {
                 console.log(`/${filterElement.name}`);

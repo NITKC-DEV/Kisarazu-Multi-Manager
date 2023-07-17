@@ -1,0 +1,50 @@
+# ESLint
+# cf. https://eslint.org
+
+root: true
+extends:
+  - "eslint:recommended"
+  - "airbnb-base"
+  - "airbnb-base-typescript"
+  - "plugin:@typescript-eslint/recommended"
+  - "prettier"
+parser: "@typescript-eslint/parser"
+env:
+  es2021: true
+parserOptions:
+  ecmaVersion: 2021
+  sourceType: module
+  project: "./tsconfig.json"
+
+# 独自定義ルール
+#   設計に影響するもの   - error
+#   フォーマット関係     - warn
+#   環境的に問題ないもの - off
+rules:
+  no-console: off
+  no-plusplus:
+    - error
+    - allowForLoopAfterthoughts: true
+  spaced-comment: warn
+
+  # eslint-plugin-import
+  # cf. https://github.com/import-js/eslint-plugin-import
+  import/extensions:
+    - warn
+    - always
+  import/order:
+    - warn
+    - groups:
+        - builtin
+        - external
+        - internal
+        - parent
+        - index
+        - sibling
+      newlines-between: always
+      alphabetize:
+        order: asc
+  import/newline-after-import:
+    - warn
+  import/no-unresolved:
+    - off
