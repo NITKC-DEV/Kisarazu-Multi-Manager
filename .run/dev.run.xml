@@ -1,5 +1,5 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="dev" type="NodeJSConfigurationType" folderName="Run" singleton="false" path-to-js-file="botmain.js" working-dir="$PROJECT_DIR$">
+  <configuration default="false" name="dev" type="NodeJSConfigurationType" folderName="Run" singleton="true" path-to-js-file="botmain.js" working-dir="$PROJECT_DIR$">
     <envs pass-parent-envs="false">
       <env name="NODE_ENV" value="development" />
     </envs>
