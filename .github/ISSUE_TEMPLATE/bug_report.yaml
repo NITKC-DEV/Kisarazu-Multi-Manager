@@ -42,9 +42,7 @@ body:
       description: 木更津高専統合管理botの実行環境を入力してください．
       placeholder: 内容を入力してください
       value: |
-        + **OS**: Windows 11 Pro 22H2
-        + **Discord**: Stable 199933 (db1e138)
-        + **木更津高専統合管理BOT**: v5.0.0
+        + **木更津高専統合管理BOT**: v5.0.3
     validations:
       required: true
   - type: textarea
