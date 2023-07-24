@@ -300,7 +300,7 @@ module.exports = [
 
 
             const embed = new EmbedBuilder()
-                .setColor(0x00A0EA)
+                .setColor(departmentData[parseFloat(interaction.options.getString('学科')-1)].color)
                 .setTitle(`授業変更・定期テスト登録 - ${departmentData[parseFloat(interaction.options.getString('学科'))-1].name}${interaction.options.getString('学年')}年 ${Math.floor(interaction.options.getInteger('変更日')/100)}月${Math.floor(interaction.options.getInteger('変更日')%100)}日`)
                 .setAuthor({
                     name: "木更津高専統合管理BOT",

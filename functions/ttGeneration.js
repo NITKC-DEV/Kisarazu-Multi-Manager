@@ -241,7 +241,12 @@ exports.setNewTimetableData = async function func(interaction) {
     }
     let subjects="";
     for(let i=0;i<data[0].timetable.length;i++){
-        subjects += `${2*i+1}-${2*i+2}限：${data[0].timetable[i].name}\n`;
+        if(mode==='0'){
+            subjects += `${i+1}コマ目：${data[0].timetable[i].name}\n`;
+        }
+        else{
+            subjects += `${2*i+1}-${2*i+2}限：${data[0].timetable[i].name}\n`;
+        }
     }
 
     const embed = new EmbedBuilder()
@@ -283,7 +288,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2,interaction.customId.match(/changeTimetableButton/).index);
 
-    const data = await db.find("main","timetableData",{day:date + '00'});
+    const data = await db.find("main","timetableData",{grade,department,day:date+'00'});
 
     const modal = new ModalBuilder()
         .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
