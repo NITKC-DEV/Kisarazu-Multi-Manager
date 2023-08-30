@@ -2,7 +2,7 @@
 
 import { setTimeout } from "timers/promises";
 
-/***
+/**
  * 返信し、time秒後に自動で削除する。
  * @param interaction 返信するinteraction
  * @param options メッセージのオブジェクト(contentの中の$time$を現在の残り時間に置き換える)

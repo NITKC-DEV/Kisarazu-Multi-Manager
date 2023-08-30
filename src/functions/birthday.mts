@@ -30,7 +30,9 @@ export const func = async function func() {
                 const channel = client.channels.cache.get(guild[0].main) ?? (await client.channels.fetch(guild[0].main));
                 // @ts-ignore channelがnullになる可能性がある
                 await channel.send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
-            } catch {}
+            } catch {
+                /* empty */
+            }
         }
     }
     // @ts-ignore 引数が足りない

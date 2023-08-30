@@ -1,19 +1,21 @@
 /** @format */
 
 import fs from "fs";
+
 import { configPath } from "../environmentConfig.mjs";
+
 import * as system from "./logsystem.mjs";
 import * as statusAndMode from "./statusAndMode.mjs";
 
 const statusName = ["online", "idle", "dnd", "invisible"];
 
-/***
+/** *
  * botのステータスを設定
- * @param status　[オンライン,退席中,取り込み中,オフライン]の位置で指定
+ * @param status オンライン,退席中,取り込み中,オフラインの位置で指定
  * @param presence ○○をプレイ中 のメッセージ
  * @returns {Promise<void>}
  */
-export const status = async function func(status: any, presence = "") {
+export const status = async function func(status: any, presence = ""): Promise<void> {
     // @ts-ignore
     client.user.setPresence({
         activities: [
@@ -31,12 +33,12 @@ export const status = async function func(status: any, presence = "") {
     client.user.setStatus(statusName[statusData]);
 };
 
-/***
+/** *
  * メンテナンスモードを切り替えます
  * @param mode Trueでメンテナンスモード
  * @returns {Promise<void>}
  */
-export const maintenance = async function (mode: any) {
+export const maintenance = async function (mode: any): Promise<void> {
     const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
     config.maintenanceMode = mode;
     fs.writeFileSync(configPath, JSON.stringify(config, null, "\t"));

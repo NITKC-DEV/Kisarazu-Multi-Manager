@@ -92,7 +92,7 @@ async function run() {
                 message: "対象のコマンドを<space>で選択、<a>で全選択、<i>で反転",
                 // @ts-ignore dataが返すunknown型に敗北した．誰かたすけて
                 choices: data.map((e: any) => ({
-                    name: "/" + e.name,
+                    name: `/${e.name}`,
                     value: e.id,
                 })),
                 result(commands: any) {

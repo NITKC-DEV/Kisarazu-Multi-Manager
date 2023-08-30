@@ -1,14 +1,16 @@
 /** @format */
 
-import { StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder } from "@discordjs/builders";
-import * as system from "./logsystem.mjs";
 import { createRequire } from "module";
+
+import { StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder } from "@discordjs/builders";
+
 import { HelpText } from "../types/Kisarazu-Multi-Manager/jsonStructure";
 
-const require = createRequire(import.meta.url);
+import * as system from "./logsystem.mjs";
 
-//helpTextの生成
-const helpText = require("./helpText.json") as HelpText;
+const require = createRequire(import.meta.url);
+const helpText = require("./helpText.json") as HelpText; // helpTextの生成
+
 const adminTable: any = [];
 for (let i = 0; i < helpText.admin.length; i++) {
     adminTable.push(

@@ -1,9 +1,10 @@
 /** @format */
 
 import { EmbedBuilder } from "@discordjs/builders";
+
 import { config } from "../environmentConfig.mjs";
 
-/***
+/** *
  * ログをコンソールとdiscordに送信する
  * @param message ログの本文
  * @param title ログのタイトル。省略可
@@ -23,7 +24,7 @@ export const log = async function func(message: any, title: any) {
     await channel.send({ embeds: [embed] });
 };
 
-/***
+/** *
  * エラー通知とログをコンソールとdiscordに送信する
  * @param message エラーメッセージの本文
  * @param error エラーオブジェクト。error.stackが存在する場合にそれが送られる。省略可
@@ -52,7 +53,7 @@ export const error = async function func(message: any, error = { stack: "" }, ti
     await logChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
 };
 
-/***
+/** *
  * 警告をdiscordに送信する
  * @param message ログの本文
  * @param title ログのタイトル。省略可

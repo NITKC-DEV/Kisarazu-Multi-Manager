@@ -1,39 +1,42 @@
 /** @format */
 
-import { MongoClient, ServerApiVersion } from "mongodb";
+import { MongoClient, ServerApiVersion, WithId } from "mongodb";
+
 import { config } from "../environmentConfig.mjs";
-import * as system from "./logsystem.mjs";
+
 import * as db from "./db.mjs";
+import * as system from "./logsystem.mjs";
 
 const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
 
-/***
+/**
  * データベースからデータを取得する
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
  * @param filter フィルターを指定
  * @returns {Promise<WithId<Document>[]>}
  */
-export const find = async function (dbName: any, collectionName: any, filter: any) {
+export const find = async function (dbName: any, collectionName: any, filter: any): Promise<WithId<Document>[]> {
     const collection = await dbClient.db(dbName).collection(collectionName);
 
-    return await collection.find(filter).toArray();
+    // @ts-ignore よくわからん(?)
+    return collection.find(filter).toArray();
 };
 
-/***
+/**
  * filterに該当する要素があるかどうか確認する
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
  * @param filter フィルターを指定
  * @returns {Promise<boolean>}
  */
-export const includes = async function (dbName: any, collectionName: any, filter: any) {
+export const includes = async function (dbName: any, collectionName: any, filter: any): Promise<boolean> {
     const collection = await dbClient.db(dbName).collection(collectionName);
     const data = await collection.find(filter).toArray();
     return data.length > 0;
 };
 
-/***
+/**
  * データベースを更新する
  * @param dbName 更新先データベース名
  * @param collectionName 更新先コレクション名
@@ -41,7 +44,7 @@ export const includes = async function (dbName: any, collectionName: any, filter
  * @param update update operatorを用いた更新内容の記述
  * @returns {Promise<void>}
  */
-export const update = async function run(dbName: any, collectionName: any, filter: any, update: any) {
+export const update = async function run(dbName: any, collectionName: any, filter: any, update: any): Promise<void> {
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
@@ -53,14 +56,14 @@ export const update = async function run(dbName: any, collectionName: any, filte
     }
 };
 
-/***
+/**
  * データベースにレコードを追加する
  * @param dbName 追加先データベース名
  * @param collectionName 追加先コレクション名
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
-export const insert = async function run(dbName: any, collectionName: any, object: any) {
+export const insert = async function run(dbName: any, collectionName: any, object: any): Promise<void> {
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
@@ -72,7 +75,7 @@ export const insert = async function run(dbName: any, collectionName: any, objec
     }
 };
 
-/***
+/**
  * filterにレコードが見つかればそれをsetで更新し、見つからなけれレコードを追加する
  * @param dbName 追加先データベース名
  * @param collectionName 追加先コレクション名
@@ -80,7 +83,7 @@ export const insert = async function run(dbName: any, collectionName: any, objec
  * @param object 追加するレコード(オブジェクト型)
  * @returns {Promise<void>}
  */
-export const updateOrInsert = async function run(dbName: any, collectionName: any, filter: any, object: any) {
+export const updateOrInsert = async function run(dbName: any, collectionName: any, filter: any, object: any): Promise<void> {
     try {
         const data = await db.find(dbName, collectionName, filter);
         if (data.length > 0) {
@@ -93,14 +96,14 @@ export const updateOrInsert = async function run(dbName: any, collectionName: an
     }
 };
 
-/***
+/**
  * データベースからレコードを削除する
  * @param dbName 削除元データベース名
  * @param collectionName 削除元コレクション名
  * @param filter 削除対象のフィルターを指定
  * @returns {Promise<void>}
  */
-export const del = async function run(dbName: any, collectionName: any, filter: any) {
+export const del = async function run(dbName: any, collectionName: any, filter: any): Promise<void> {
     try {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
@@ -112,24 +115,24 @@ export const del = async function run(dbName: any, collectionName: any, filter: 
     }
 };
 
-/***
+/**
  *
  * @returns {Promise<void>}
  */
-export const open = async function close() {
+export const open = async function close(): Promise<void> {
     const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
     // @ts-ignore 引数が足りない
     await system.log("DB - open");
 };
 
-/***
+/**
  *
  * @returns {Promise<void>}
  */
-export const close = async function close() {
+export const close = async function close(): Promise<void> {
     await dbClient.close();
     // @ts-ignore 引数が足りない
     await system.log("DB - close");
 };
 
-//引数の詳細については、mongodbの公式ドキュメントを参照すること
+// 引数の詳細については、mongodbの公式ドキュメントを参照すること

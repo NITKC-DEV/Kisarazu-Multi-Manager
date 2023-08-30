@@ -1,5 +1,7 @@
 /** @format */
 
+import { setTimeout } from "timers/promises";
+
 import {
     SlashCommandBuilder,
     StringSelectMenuBuilder,
@@ -9,10 +11,10 @@ import {
     TextInputBuilder,
     ActionRowBuilder,
 } from "@discordjs/builders";
-import * as timetable from "../functions/ttGeneration.mjs";
+
 import * as db from "../functions/db.mjs";
 import * as guildData from "../functions/guildDataSet.mjs";
-import { setTimeout } from "timers/promises";
+import * as timetable from "../functions/ttGeneration.mjs";
 
 const departmentData = [
     {
@@ -165,7 +167,7 @@ export default [
         async execute(interaction: any) {
             await interaction.deferReply({ ephemeral: true });
             await guildData.updateOrInsert(interaction.guildId, { timetable: interaction.options.data[0].value });
-            await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました。" });
+            await interaction.editReply({ content: `時間割定期通知機能を${interaction.options.data[0].value}に設定しました。` });
         },
     },
     {
@@ -232,26 +234,26 @@ export default [
                 grade: interaction.options.getString("学年"),
                 department: interaction.options.getString("学科"),
                 day: interaction.options.getString("ベースの曜日"),
-            }); //指定したベースデータ
+            }); // 指定したベースデータ
             if (defaultData[0] === undefined) {
                 defaultData = await db.find("main", "timetableData", {
                     grade: interaction.options.getString("学年"),
                     department: interaction.options.getString("学科"),
-                    day: String(interaction.options.getInteger("変更日")) + "00",
-                }); //変更日のキャッシュデータ
+                    day: `${String(interaction.options.getInteger("変更日"))}00`,
+                }); // 変更日のキャッシュデータ
 
                 if (defaultData[0] === undefined) {
                     defaultData = await db.find("main", "timetableData", {
                         grade: interaction.options.getString("学年"),
                         department: interaction.options.getString("学科"),
                         day: String(interaction.options.getInteger("変更日")),
-                    }); //変更日のデータ
+                    }); // 変更日のデータ
 
                     if (defaultData[0] === undefined) {
                         let date = new Date();
                         const now = parseFloat(String(date.getMonth()) + String(date.getDate()));
                         if (now > parseFloat(interaction.options.getInteger("変更日"))) {
-                            date.setDate(date.getFullYear() + 1); //来年なので1足す
+                            date.setDate(date.getFullYear() + 1); // 来年なので1足す
                         }
                         date = new Date(
                             date.getFullYear(),
@@ -263,13 +265,12 @@ export default [
                             grade: interaction.options.getString("学年"),
                             department: interaction.options.getString("学科"),
                             day: String(date.getDay()),
-                        }); //指定したベースデータ
+                        }); // 指定したベースデータ
                         if (defaultData[0] === undefined) {
                             interaction.editReply({ content: "その学科・曜日のデータは登録されていません。", ephemeral: true });
                             return;
-                        } else {
-                            day = String(date.getDay());
                         }
+                        day = String(date.getDay());
                     }
                 }
             } else {
@@ -278,14 +279,14 @@ export default [
 
             // @ts-ignore delete演算子のオペランドはoptionalじゃないとダメらしい
             delete defaultData[0]._id;
-            defaultData[0].day = String(interaction.options.getInteger("変更日")) + "00";
+            defaultData[0].day = `${String(interaction.options.getInteger("変更日"))}00`;
             await db.updateOrInsert(
                 "main",
                 "timetableData",
                 {
                     grade: interaction.options.getString("学年"),
                     department: interaction.options.getString("学科"),
-                    day: String(interaction.options.getInteger("変更日") + "00"),
+                    day: String(`${interaction.options.getInteger("変更日")}00`),
                 },
                 defaultData[0],
             );
@@ -443,15 +444,15 @@ export default [
             await db.del("main", "timetableData", {
                 grade: interaction.options.getString("学年"),
                 department: interaction.options.getString("学科"),
-                day: String(interaction.options.getInteger("削除日") + "00"),
+                day: String(`${interaction.options.getInteger("削除日")}00`),
             });
-            const replyOptions = (time: any) => {
-                return { content: "削除しました。\n(このメッセージは" + time + "秒後に自動で削除されます)", ephemeral: true };
-            };
+            const replyOptions = (time: any) => ({
+                content: `削除しました。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                ephemeral: true,
+            });
             await interaction.editReply(replyOptions(5));
             for (let i = 5; i > 0; i--) {
                 await interaction.editReply(replyOptions(i));
-                // @ts-ignore
                 await setTimeout(1000);
             }
             await interaction.deleteReply();
@@ -503,13 +504,13 @@ export default [
 
         async execute(interaction: any) {
             const nowDate = new Date();
-            const nowDay = nowDate.getDay(); //今日
-            let nextDay = parseFloat(interaction.options.getString("変更日")) - nowDay; //対象の曜日は何日後?
-            if (0 >= nextDay) {
+            const nowDay = nowDate.getDay(); // 今日
+            let nextDay = parseFloat(interaction.options.getString("変更日")) - nowDay; // 対象の曜日は何日後?
+            if (nextDay <= 0) {
                 nextDay += 7;
             }
 
-            nowDate.setDate(nowDate.getDate() + nextDay); //対象の日を取得
+            nowDate.setDate(nowDate.getDate() + nextDay); // 対象の日を取得
             const date = (nowDate.getMonth() + 1) * 100 + nowDate.getDate();
 
             const grade = interaction.options.getString("学年");
@@ -521,19 +522,13 @@ export default [
             } else if (defaultData.length !== 0) {
                 data = defaultData;
             } else {
-                const replyOptions = (time: any) => {
-                    return {
-                        content:
-                            "指定した学科・学年の時間割データが見つかりませんでした。\n(このメッセージは" +
-                            time +
-                            "秒後に自動で削除されます)",
-                        ephemeral: true,
-                    };
-                };
+                const replyOptions = (time: any) => ({
+                    content: `指定した学科・学年の時間割データが見つかりませんでした。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                    ephemeral: true,
+                });
                 await interaction.reply(replyOptions(5));
                 for (let i = 5; i > 0; i--) {
                     await interaction.editReply(replyOptions(i));
-                    // @ts-ignore
                     await setTimeout(1000);
                 }
                 await interaction.deleteReply();
@@ -581,30 +576,30 @@ export default [
                         if (
                             inputTxt[i] !== "" &&
                             inputTxt[i] !== undefined &&
-                            (defaultData[0].timetable[i].comment + `${inputTxt[i]}`).length <= 100
+                            `${defaultData[0].timetable[i].comment}${inputTxt[i]}`.length <= 100
                         ) {
                             if (defaultData[0].timetable[i].comment === "") {
-                                data[0].timetable[i].comment = defaultData[0].timetable[i].comment + `${inputTxt[i]}`;
+                                data[0].timetable[i].comment = `${defaultData[0].timetable[i].comment}${inputTxt[i]}`;
                             } else {
-                                data[0].timetable[i].comment = defaultData[0].timetable[i].comment + `\n　　　　　${inputTxt[i]}`;
+                                data[0].timetable[i].comment = `${defaultData[0].timetable[i].comment}\n　　　　　${inputTxt[i]}`;
                             }
                         }
                     }
                     if (comment !== "" && comment !== undefined && (defaultData[0].comment + comment).length <= 100)
-                        data[0].comment = defaultData[0].comment + "\n" + comment;
+                        data[0].comment = `${defaultData[0].comment}\n${comment}`;
                     data[0].day = String(date);
                     // @ts-ignore delete演算子のオペランドはoptionalじゃないとダメらしい
                     delete data[0]._id;
 
                     await db.updateOrInsert("main", "timetableData", { day: String(date) }, data[0]);
 
-                    const replyOptions = (time: any) => {
-                        return { content: "登録しました。\n(このメッセージは" + time + "秒後に自動で削除されます)", ephemeral: true };
-                    };
+                    const replyOptions = (time: any) => ({
+                        content: `登録しました。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                        ephemeral: true,
+                    });
                     await mInteraction.reply(replyOptions(5));
                     for (let i = 5; i > 0; i--) {
                         await mInteraction.editReply(replyOptions(i));
-                        // @ts-ignore
                         await setTimeout(1000);
                     }
                     await mInteraction.deleteReply();

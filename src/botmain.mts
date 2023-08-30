@@ -2,13 +2,33 @@
 
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
 
 import { Client, GatewayIntentBits, Partials, Collection, Events } from "discord.js";
 import dotenv from "dotenv";
+import esMain from "es-main";
 import cron from "node-cron";
 
-dotenv.config();
 import "date-utils";
+
+import { config, configPath } from "./environmentConfig.mjs"; // configファイル読み込み
+// 関数読み込み
+import * as CreateChannel from "./functions/CCFunc.mjs";
+import * as TxtEasterEgg from "./functions/TxtEasterEgg.mjs";
+import * as birthday from "./functions/birthday.mjs";
+import * as dashboard from "./functions/dashboard.mjs";
+import * as db from "./functions/db.mjs";
+import * as genshin from "./functions/genshin.mjs";
+import { ID_NODATA } from "./functions/guildDataSet.mjs";
+import * as guildData from "./functions/guildDataSet.mjs";
+import * as help from "./functions/help.mjs";
+import * as system from "./functions/logsystem.mjs";
+import * as mode from "./functions/statusAndMode.mjs";
+import * as statusAndMode from "./functions/statusAndMode.mjs";
+import * as timetable from "./functions/ttGeneration.mjs";
+import * as weather from "./functions/weather.mjs";
+
+dotenv.config();
 
 global.client = new Client({
     intents: [
@@ -24,27 +44,6 @@ global.client = new Client({
     ],
     partials: [Partials.Channel],
 });
-
-// configファイル読み込み
-import { config, configPath } from "./environmentConfig.mjs";
-
-// 関数読み込み
-import * as TxtEasterEgg from "./functions/TxtEasterEgg.mjs";
-import * as birthday from "./functions/birthday.mjs";
-import * as dashboard from "./functions/dashboard.mjs";
-import * as timetable from "./functions/ttGeneration.mjs";
-import * as system from "./functions/logsystem.mjs";
-import * as genshin from "./functions/genshin.mjs";
-import * as db from "./functions/db.mjs";
-import * as weather from "./functions/weather.mjs";
-import * as guildData from "./functions/guildDataSet.mjs";
-import { ID_NODATA } from "./functions/guildDataSet.mjs";
-import * as CreateChannel from "./functions/CCFunc.mjs";
-import * as mode from "./functions/statusAndMode.mjs";
-import * as statusAndMode from "./functions/statusAndMode.mjs";
-import * as help from "./functions/help.mjs";
-import { fileURLToPath } from "url";
-import esMain from "es-main";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 // スラッシュコマンド登録
@@ -96,7 +95,8 @@ client.on("interactionCreate", async (interaction: any) => {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) return;
-        let guild, channel;
+        let guild;
+        let channel;
         if (!interaction.guildId) {
             guild = { name: "ダイレクトメッセージ", id: "---" };
             channel = { name: "---", id: "---" };
@@ -130,7 +130,9 @@ client.on("interactionCreate", async (interaction: any) => {
                             "おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。",
                         ephemeral: true,
                     });
-                } catch {} // edit先が消えてる可能性を考えてtryに入れる
+                } catch {
+                    /* empty */
+                } // edit先が消えてる可能性を考えてtryに入れる
             }
         }
     } else {
@@ -140,7 +142,8 @@ client.on("interactionCreate", async (interaction: any) => {
             ephemeral: true,
         });
         const interactionTypeName = ["Ping", "ApplicationCommand", "MessageComponent", "ApplicationCommandAutocomplete", "ModalSubmit"];
-        let guild, channel;
+        let guild;
+        let channel;
         if (!interaction.guildId) {
             guild = { name: "ダイレクトメッセージ", id: "---" };
             channel = { name: "---", id: "---" };
@@ -333,52 +336,70 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
     const dayOfWeek = date.getDay();
 
     for (let i = 0; i < guildData.length; i++) {
+        // @ts-ignore
         if (guildData[i].timetable === true) {
+            // @ts-ignore
             const grade = year - parseFloat(guildData[i].grade) + 1;
             const embed = [];
-            if (0 < grade && grade < 6) {
+            if (grade > 0 && grade < 6) {
                 for (let j = 0; j < 5; j++) {
                     embed[j] = await timetable.generation(String(grade), String(j + 1), String(dayOfWeek + 1), true);
                 }
                 try {
+                    // @ts-ignore
                     if (embed[0] !== 0 && guildData[i].mChannel !== ID_NODATA)
                         // @ts-ignore
                         await (client.channels.cache.get(guildData[i].mChannel) ?? (await client.channels.fetch(guildData[i].mChannel)))
                             // @ts-ignore
                             .send({ embeds: [embed[0]] });
-                } catch {}
+                } catch {
+                    /* empty */
+                }
                 try {
+                    // @ts-ignore
                     if (embed[1] !== 0 && guildData[i].eChannel !== ID_NODATA)
                         // @ts-ignore
                         await (client.channels.cache.get(guildData[i].eChannel) ?? (await client.channels.fetch(guildData[i].eChannel)))
                             // @ts-ignore
                             .send({ embeds: [embed[1]] });
-                } catch {}
+                } catch {
+                    /* empty */
+                }
                 try {
+                    // @ts-ignore
                     if (embed[2] !== 0 && guildData[i].dChannel !== ID_NODATA)
                         // @ts-ignore
                         await (client.channels.cache.get(guildData[i].dChannel) ?? (await client.channels.fetch(guildData[i].dChannel)))
                             // @ts-ignore
                             .send({ embeds: [embed[2]] });
-                } catch {}
+                } catch {
+                    /* empty */
+                }
                 try {
+                    // @ts-ignore
                     if (embed[3] !== 0 && guildData[i].jChannel !== ID_NODATA)
                         // @ts-ignore
                         await (client.channels.cache.get(guildData[i].jChannel) ?? (await client.channels.fetch(guildData[i].jChannel)))
                             // @ts-ignore
                             .send({ embeds: [embed[3]] });
-                } catch {}
+                } catch {
+                    /* empty */
+                }
                 try {
+                    // @ts-ignore
                     if (embed[4] !== 0 && guildData[i].cChannel !== ID_NODATA)
                         // @ts-ignore
                         await (client.channels.cache.get(guildData[i].cChannel) ?? (await client.channels.fetch(guildData[i].cChannel)))
                             // @ts-ignore
                             .send({ embeds: [embed[4]] });
-                } catch {}
+                } catch {
+                    /* empty */
+                }
             } else {
                 try {
                     // @ts-ignore
                     await client.channels.cache
+                        // @ts-ignore
                         .get(guildData[i].main)
                         // @ts-ignore
                         .send(
@@ -387,7 +408,9 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
                                 "\n設定している場合、学年ではなく「入学年」を西暦4ケタで入力しているかどうか確認してください。" +
                                 "\n(この通知をOFFにするには、/tt-switcherコマンドを実行してください。)",
                         );
-                } catch {}
+                } catch {
+                    /* empty */
+                }
             }
         }
     }
@@ -399,10 +422,13 @@ cron.schedule("00 20 * * *", async () => {
     const data = await db.find("main", "guildData", { weather: true });
     for (let i = 0; i < data.length; i++) {
         try {
+            // @ts-ignore
             const channel = client.channels.cache.get(data[i].weatherChannel) ?? (await client.channels.fetch(data[i].weatherChannel));
             // @ts-ignore
             await channel.send({ embeds: [embed] });
-        } catch {}
+        } catch {
+            /* empty */
+        }
     }
 });
 
@@ -411,6 +437,7 @@ cron.schedule("*/1  * * * *", async () => {
     for (let i = 0; i < data.length; i++) {
         let flag = 0;
         if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
+            // @ts-ignore
             if (config.devServer === data[i].guild) {
                 flag = 1;
             }
@@ -418,18 +445,23 @@ cron.schedule("*/1  * * * *", async () => {
             flag = 1;
         }
 
+        // @ts-ignore
         if (flag === 1 && data[i].boardChannel !== ID_NODATA) {
             let dashboardGuild: any;
             try {
+                // @ts-ignore
                 dashboardGuild = client.guilds.cache.get(data[i].guild) ?? (await client.guilds.fetch(data[i].guild)); /* ギルド情報取得 */
                 const channel =
+                    // @ts-ignore
                     client.channels.cache.get(data[i].boardChannel) ??
+                    // @ts-ignore
                     (await client.channels.fetch(data[i].boardChannel)); /* チャンネル情報取得 */
                 const newEmbed = await dashboard.generation(dashboardGuild); /* フィールド生成 */
                 if (newEmbed) {
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     // @ts-ignore channelがnullになる場合がある
                     channel.messages
+                        // @ts-ignore
                         .fetch(data[i].board)
                         .then(async (dashboard: any) => {
                             await dashboard.edit({ embeds: [newEmbed] });
@@ -444,6 +476,7 @@ cron.schedule("*/1  * * * *", async () => {
                                 await db.update(
                                     "main",
                                     "guildData",
+                                    // @ts-ignore
                                     { guild: data[i].guild },
                                     {
                                         $set: {
@@ -472,6 +505,7 @@ cron.schedule("*/1  * * * *", async () => {
                     await db.update(
                         "main",
                         "guildData",
+                        // @ts-ignore
                         { guild: data[i].guild },
                         {
                             $set: {

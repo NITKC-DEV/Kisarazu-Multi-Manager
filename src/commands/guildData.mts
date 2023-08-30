@@ -1,10 +1,12 @@
 /** @format */
 
+import { setTimeout } from "timers/promises";
+
 import { SlashCommandBuilder, EmbedBuilder } from "@discordjs/builders";
+
 import * as db from "../functions/db.mjs";
 import * as guildData from "../functions/guildDataSet.mjs";
 import { ID_NODATA } from "../functions/guildDataSet.mjs";
-import { setTimeout } from "timers/promises";
 
 export default [
     {
@@ -99,7 +101,7 @@ export default [
                 .addFields(
                     {
                         name: "全般",
-                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : newData[0].grade + "年入学"}\nアナウンスチャンネル：${
+                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : `${newData[0].grade}年入学`}\nアナウンスチャンネル：${
                             newData[0].announce === ID_NODATA ? "未設定" : `<#${newData[0].announce}>`
                         }\nメインチャンネル：${newData[0].main === ID_NODATA ? "未設定" : `<#${newData[0].main}>`}`,
                     },
@@ -156,7 +158,6 @@ export default [
 
             let flag = -1;
             const otherReact = [0, 0];
-            // @ts-ignore
             await setTimeout(100);
 
             while (flag === -1) {
@@ -189,31 +190,23 @@ export default [
             if (flag === 0) {
                 await interaction.editReply("削除中...");
                 await guildData.reset(interaction.guildId);
-                replyOptions = (time: any) => {
-                    return {
-                        content:
-                            "削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは" +
-                            time +
-                            "秒後に自動で削除されます)",
-                        ephemeral: true,
-                    };
-                };
+                replyOptions = (time: any) => ({
+                    content: `削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                    ephemeral: true,
+                });
             } else if (flag === 1) {
                 await reply.reactions.removeAll();
-                replyOptions = (time: any) => {
-                    return {
-                        content: "操作をキャンセルしました。\n(このメッセージは" + time + "秒後に自動で削除されます)",
-                        ephemeral: true,
-                    };
-                };
+                replyOptions = (time: any) => ({
+                    content: `操作をキャンセルしました。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                    ephemeral: true,
+                });
             }
             // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
             await interaction.editReply(replyOptions(5));
-            //5秒カウントダウンしたのちに返信を削除
+            // 5秒カウントダウンしたのちに返信を削除
             for (let i = 5; i > 0; i--) {
                 // @ts-expect-error TS(2722): Cannot invoke an object which is possibly 'undefin... Remove this comment to see the full error message
                 await interaction.editReply(replyOptions(i));
-                // @ts-ignore
                 await setTimeout(1000);
             }
             await interaction.deleteReply();
@@ -227,7 +220,9 @@ export default [
         async execute(interaction: any) {
             await interaction.deferReply();
             const newData = await db.find("main", "guildData", { guild: String(interaction.guildId) });
-            let dashboard, timetable, weather;
+            let dashboard;
+            let timetable;
+            let weather;
             if (newData[0].board !== ID_NODATA) {
                 dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
             } else {
@@ -256,7 +251,7 @@ export default [
                 .addFields(
                     {
                         name: "全般",
-                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : newData[0].grade + "年入学"}\nアナウンスチャンネル：${
+                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : `${newData[0].grade}年入学`}\nアナウンスチャンネル：${
                             newData[0].announce === ID_NODATA ? "未設定" : `<#${newData[0].announce}>`
                         }\nメインチャンネル：${newData[0].main === ID_NODATA ? "未設定" : `<#${newData[0].main}>`}`,
                     },

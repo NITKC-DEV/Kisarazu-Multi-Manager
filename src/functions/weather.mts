@@ -1,25 +1,26 @@
 /** @format */
 
 import { EmbedBuilder } from "@discordjs/builders";
-import * as db from "./db.mjs";
 import axios from "axios";
+
+import * as db from "./db.mjs";
 import * as system from "./logsystem.mjs";
 
-/*天気取得*/
+/* 天気取得 */
 async function getWeather() {
     const data = await db.find("main", "weatherCache", { label: "最新の天気予報" });
+    // @ts-ignore
     return data[0].response;
 }
 
 function zenkaku2Hankaku(str: any) {
-    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, function (s: any) {
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, (s: any) => {
         if (s === "．") return `.`;
         if (s === "　") return "";
         if (s === "海") return " 海";
         if (s === "後") return " 後";
-        else {
-            return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
-        }
+
+        return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
     });
 }
 
@@ -31,7 +32,7 @@ export const generationDay = async function func(day: any) {
     let color;
     date.setDate(date.getDate() + day);
 
-    const telop = data.forecasts[day].telop;
+    const { telop } = data.forecasts[day];
     if (telop.indexOf("雪") !== -1 || telop.indexOf("みぞれ") !== -1 || telop.indexOf("ひょう") !== -1 || telop.indexOf("あられ") !== -1) {
         color = "76CCFF";
     } else if (telop.indexOf("雷") !== -1) {
@@ -44,8 +45,8 @@ export const generationDay = async function func(day: any) {
         color = "77787B";
     }
 
-    let annotation = "",
-        filed;
+    let annotation: string;
+    let filed;
 
     if (day === 0 && date.getHours() * 100 + date.getMinutes() > 505) {
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
@@ -69,6 +70,7 @@ export const generationDay = async function func(day: any) {
 
     let temperature = `最高気温：${weather.temperature.max.celsius}℃ | 最低気温：${weather.temperature.min.celsius}℃`;
     if (day === 0) {
+        // @ts-ignore
         temperature = `最高気温：${weatherCache[0].max}℃ | 最低気温：${weatherCache[0].min}℃`;
     }
 
@@ -131,6 +133,7 @@ export const update = async function func() {
 export const catcheUpdate = async function func() {
     const data = await db.find("main", "weatherCache", { label: "最新の天気予報" });
     const today = await db.find("main", "weatherCache", { label: "1" });
+    // @ts-ignore
     if (data[0].response.forecasts[0].date !== today[0].day) {
         await db.update(
             "main",
@@ -138,8 +141,11 @@ export const catcheUpdate = async function func() {
             { label: "0" },
             {
                 $set: {
+                    // @ts-ignore
                     day: data[0].response.forecasts[0].date,
+                    // @ts-ignore
                     max: data[0].response.forecasts[0].temperature.max.celsius ?? `---`,
+                    // @ts-ignore
                     min: data[0].response.forecasts[0].temperature.min.celsius ?? `---`,
                 },
             },
@@ -151,8 +157,11 @@ export const catcheUpdate = async function func() {
             { label: "0" },
             {
                 $set: {
+                    // @ts-ignore
                     day: today[0].day,
+                    // @ts-ignore
                     max: today[0].max ?? `---`,
+                    // @ts-ignore
                     min: today[0].min ?? `---`,
                 },
             },
@@ -160,14 +169,17 @@ export const catcheUpdate = async function func() {
     }
 
     await db.update(
-        /*明日の天気のキャッシュを更新*/
+        /* 明日の天気のキャッシュを更新 */
         "main",
         "weatherCache",
         { label: "1" },
         {
             $set: {
+                // @ts-ignore
                 day: data[0].response.forecasts[1].date,
+                // @ts-ignore
                 max: data[0].response.forecasts[1].temperature.max.celsius ?? `---`,
+                // @ts-ignore
                 min: data[0].response.forecasts[1].temperature.min.celsius ?? `---`,
             },
         },

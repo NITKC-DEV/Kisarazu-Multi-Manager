@@ -20,12 +20,12 @@ export const daily = async function func(message: any, title: any) {
     };
     // @ts-ignore
     client.channels.cache.get(config.daily).send({ embeds: [daily] });
-    let dt = new Date();
-    let dayofweek = dt.getDay();
-    let date = dt.getDate();
+    const dt = new Date();
+    const dayofweek = dt.getDay();
+    const date = dt.getDate();
     const genshinColor = 0x27668d;
     if (dayofweek === 1) {
-        /*月曜日*/
+        /* 月曜日 */
         const monday = {
             color: genshinColor,
             title: "新しい週が始まりました",
@@ -67,7 +67,7 @@ export const daily = async function func(message: any, title: any) {
     }
 
     if (dayofweek === 4) {
-        /*木曜日*/
+        /* 木曜日 */
         const thursday = {
             color: genshinColor,
             title: "木曜日になりました",
@@ -85,7 +85,7 @@ export const daily = async function func(message: any, title: any) {
     }
 
     if (dayofweek === 5) {
-        /*金曜日*/
+        /* 金曜日 */
         const friday = {
             color: genshinColor,
             title: "金曜日になりました",
@@ -107,7 +107,7 @@ export const daily = async function func(message: any, title: any) {
     }
 
     if (dayofweek === 6) {
-        /*土曜日*/
+        /* 土曜日 */
         const saturday = {
             color: genshinColor,
             title: "土曜日になりました",
@@ -124,7 +124,7 @@ export const daily = async function func(message: any, title: any) {
         client.channels.cache.get(config.daily).send({ embeds: [saturday] });
     }
     if (date % 3 === 0) {
-        /*3の倍数の日*/
+        /* 3の倍数の日 */
         const multiple = {
             color: genshinColor,
             title: "アイテム購入リセット",
@@ -135,7 +135,7 @@ export const daily = async function func(message: any, title: any) {
         client.channels.cache.get(config.daily).send({ embeds: [multiple] });
     }
     if (date % 3 === 1) {
-        /*3の倍数+1の日*/
+        /* 3の倍数+1の日 */
         const multiple2 = {
             color: genshinColor,
             title: "アイテム購入リセット",
@@ -147,7 +147,7 @@ export const daily = async function func(message: any, title: any) {
     }
 
     if (date === 1) {
-        /*毎月1日*/
+        /* 毎月1日 */
         const first = {
             color: genshinColor,
             title: "1日になりました",
@@ -168,7 +168,7 @@ export const daily = async function func(message: any, title: any) {
         client.channels.cache.get(config.daily).send({ embeds: [first] });
     }
     if (date === 16) {
-        /*毎月16日*/
+        /* 毎月16日 */
         const sixteenth = {
             color: genshinColor,
             title: "16日になりました",

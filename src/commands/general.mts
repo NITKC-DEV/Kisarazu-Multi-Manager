@@ -1,22 +1,25 @@
 /** @format */
 
-import { SlashCommandBuilder, EmbedBuilder, version } from "@discordjs/builders";
+import fs from "fs";
 import { createRequire } from "module";
+import { setTimeout } from "timers/promises";
+
+import { SlashCommandBuilder, EmbedBuilder, version } from "@discordjs/builders";
+
+import "date-utils";
+
+import { configPath } from "../environmentConfig.mjs";
+import * as CreateChannel from "../functions/CCFunc.mjs";
+import { autoDeleteEditReply } from "../functions/common.mjs";
+import * as db from "../functions/db.mjs";
+import * as guildData from "../functions/guildDataSet.mjs";
+import * as help from "../functions/help.mjs";
+import * as system from "../functions/logsystem.mjs";
+import * as mode from "../functions/statusAndMode.mjs";
+import * as weather from "../functions/weather.mjs";
 
 const require = createRequire(import.meta.url);
 const packageVer = require("../../package.json");
-import { setTimeout } from "timers/promises";
-import "date-utils";
-import * as system from "../functions/logsystem.mjs";
-import * as weather from "../functions/weather.mjs";
-import * as guildData from "../functions/guildDataSet.mjs";
-import * as db from "../functions/db.mjs";
-import fs from "fs";
-import { configPath } from "../environmentConfig.mjs";
-import * as mode from "../functions/statusAndMode.mjs";
-import * as CreateChannel from "../functions/CCFunc.mjs";
-import * as help from "../functions/help.mjs";
-import { autoDeleteEditReply } from "../functions/common.mjs";
 
 export default [
     {
@@ -55,7 +58,7 @@ export default [
                 .addFields([
                     {
                         name: "バージョン情報",
-                        value: "v" + packageVer.version,
+                        value: `v${packageVer.version}`,
                     },
                     {
                         name: "開発者",
@@ -71,12 +74,7 @@ export default [
                     },
                     {
                         name: "実行環境",
-                        value:
-                            "node.js v" +
-                            process.versions.node +
-                            `\n discord.js v` +
-                            version +
-                            `\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
+                        value: `node.js v${process.versions.node}\n discord.js v${version}\n\nDocker v24.0.2\n MongoDB 6.0 Powered by Google Cloud`,
                     },
                 ])
                 .setTimestamp()
@@ -161,41 +159,41 @@ export default [
                 const channelName = interaction.guild.channels.cache.get(interaction.channelId).name;
                 let sendingMsg = "";
 
-                //ロールメンション時パーミッション確認と除外処理
+                // ロールメンション時パーミッション確認と除外処理
                 if (!interaction.memberPermissions.has(1n << 17n)) {
                     const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
                     if (roleMentions) {
                         for (const roleMention of roleMentions) {
                             const role = interaction.guild.roles.cache.find((readRole: any) => readRole.id === roleMention.match(/\d+/)[0]);
                             if (role && !role.mentionable) {
-                                receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
+                                receivedMsg = receivedMsg.replace(roleMention, `@${role.name}`);
                             }
                         }
                     }
                     const everyoneMention = receivedMsg.search(/@everyone/);
                     if (everyoneMention !== -1) {
-                        const rg = new RegExp("(?<!`)@everyone(?<!`)", "g");
+                        const rg = /(?<!`)@everyone(?<!`)/g;
                         receivedMsg = receivedMsg.replace(rg, "`@everyone`\0");
                     }
                     const hereMention = receivedMsg.search(/@here/);
                     if (hereMention !== -1) {
-                        const rg = new RegExp("(?<!`)@here(?<!`)", "g");
+                        const rg = /(?<!`)@here(?<!`)/g;
                         receivedMsg = receivedMsg.replace(rg, "`@here`\0");
                     }
                 }
 
-                //改行とバクスラのエスケープ処理
+                // 改行とバクスラのエスケープ処理
                 if (receivedMsg)
                     for (let i = 0; i < receivedMsg.length; i++) {
                         if (receivedMsg[i] === "\\") {
                             switch (receivedMsg[i + 1]) {
                                 case "\\":
                                     sendingMsg += "\\\\";
-                                    i++;
+                                    i += 1;
                                     break;
                                 case "n":
                                     sendingMsg += "\n";
-                                    i++;
+                                    i += 1;
                                     break;
                             }
                         } else sendingMsg += receivedMsg[i];
@@ -218,21 +216,21 @@ export default [
                 autoDeleteEditReply(
                     interaction,
                     {
-                        content: channelName + "にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)",
+                        content: `${channelName}にメッセージを代理で送信します\n(このメッセージは$time$秒後に自動で削除されます)`,
                         ephemeral: true,
                     },
                     5,
                 );
                 if (sendingMsg)
                     await system.log(
-                        sendingMsg + "\nin <#" + interaction.channelId + ">\n",
-                        interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットメッセージ",
+                        `${sendingMsg}\nin <#${interaction.channelId}>\n`,
+                        `${interaction.user.username}#${interaction.user.discriminator}によるシークレットメッセージ`,
                     );
                 if (attachFiles)
                     for (const file of attachFiles)
                         await system.log(
-                            file.url + "\nin <#" + interaction.channelId + ">\n",
-                            interaction.user.username + "#" + interaction.user.discriminator + "によるシークレットファイル",
+                            `${file.url}\nin <#${interaction.channelId}>\n`,
+                            `${interaction.user.username}#${interaction.user.discriminator}によるシークレットファイル`,
                         );
                 if (sendingMsg || attachFiles[0])
                     interaction.guild.channels.cache.get(interaction.channelId).send({
@@ -368,7 +366,7 @@ export default [
             if (!interaction.options.getBoolean("定期送信")) {
                 await guildData.updateOrInsert(interaction.guildId, { weather: interaction.options.getBoolean("定期送信") });
                 await interaction.editReply({
-                    content: "天気定期通知機能を" + interaction.options.getBoolean("定期送信") + "に設定しました。",
+                    content: `天気定期通知機能を${interaction.options.getBoolean("定期送信")}に設定しました。`,
                 });
             } else if (interaction.options.getChannel("送信先").type === 0) {
                 await guildData.updateOrInsert(interaction.guildId, {
@@ -376,7 +374,7 @@ export default [
                     weatherChannel: interaction.options.getChannel("送信先").id,
                 });
                 await interaction.editReply({
-                    content: "天気定期通知機能を" + interaction.options.getBoolean("定期送信") + "に設定しました。",
+                    content: `天気定期通知機能を${interaction.options.getBoolean("定期送信")}に設定しました。`,
                 });
             } else {
                 await interaction.editReply({ content: "通常のチャンネルを指定してください" });

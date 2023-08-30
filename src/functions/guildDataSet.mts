@@ -4,27 +4,27 @@ import * as db from "./db.mjs";
 
 export const ID_NODATA = "0000000000000000000";
 
-/***
+/** *
  * Objectテンプレ
  {
-            grade: ,
-            announce: ,
-            main: ,
-            mChannel: ,
-            mRole: ,
-            eChannel: ,
-            eRole: ,
-            dChannel: ,
-            dRole: ,
-            jChannel: ,
-            jRole: ,
-            cChannel: ,
-            cRole: ,
-            boardChannel: ,
-            board: ,
-            timetable: ,
-            weather: ,
-            weatherChannel:
+ grade: ,
+ announce: ,
+ main: ,
+ mChannel: ,
+ mRole: ,
+ eChannel: ,
+ eRole: ,
+ dChannel: ,
+ dRole: ,
+ jChannel: ,
+ jRole: ,
+ cChannel: ,
+ cRole: ,
+ boardChannel: ,
+ board: ,
+ timetable: ,
+ weather: ,
+ weatherChannel:
  }
 
  更新したい内容のみで良いので、valueに更新後のデータを入れる。guildは不要
@@ -32,13 +32,13 @@ export const ID_NODATA = "0000000000000000000";
  設定されていないときは、文字列型でID_NODATAとする
  * */
 
-/***
+/** *
  * GuildDataを更新または新規作成する
  * @param guild guildID
  * @param object 更新データ。guildDataSet.jsにテンプレあり
  * @returns {Promise<void>}
  */
-export const updateOrInsert = async function func(guild: any, object = {}) {
+export const updateOrInsert = async function func(guild: any, object = {}): Promise<void> {
     const data = await db.find("main", "guildData", { guild: String(guild) });
     if (data.length > 0) {
         await db.update(
@@ -129,12 +129,12 @@ export const updateOrInsert = async function func(guild: any, object = {}) {
     }
 };
 
-/***
+/** *
  * GuildDataをリセットする(timetable、dashboardは除外)
  * @param guild guildID
  * @returns {Promise<void>}
  */
-export const reset = async function func(guild: any) {
+export const reset = async function func(guild: any): Promise<void> {
     const data = await db.find("main", "guildData", { guild: String(guild) });
     if (data.length > 0) {
         await db.update(
@@ -163,11 +163,11 @@ export const reset = async function func(guild: any) {
     }
 };
 
-/***
+/** *
  * BOTが参加してないGuildのデータを削除
  * @returns {Promise<void>}
  */
-export const checkGuild = async function func() {
+export const checkGuild = async function func(): Promise<void> {
     const data = await db.find("main", "guildData", {});
     for (let i = 0; i < data.length; i++) {
         try {
@@ -176,7 +176,8 @@ export const checkGuild = async function func() {
         } catch (err) {
             // @ts-expect-error TS(2571): Object is of type 'unknown'.
             if (err.code === 10004) {
-                //guildがないよエラーならギルド削除
+                // guildがないよエラーならギルド削除
+                // @ts-ignore
                 await db.del("main", "guildData", { guild: data[i].guild });
             }
         }

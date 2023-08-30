@@ -12,6 +12,9 @@ import "date-utils";
 import * as devConfig from "../env/config.dev.json";
 import * as config from "../env/config.json";
 
+/* 埋め込みメッセージ受け取り */
+// @ts-ignore ファイル無いんだが()
+import embed from "./announceText.js";
 
 dotenv.config();
 const client = new Client({
@@ -27,13 +30,9 @@ const client = new Client({
     partials: [Partials.Channel],
 });
 
-/*埋め込みメッセージ受け取り*/
-// @ts-ignore ファイル無いんだが()
-import embed from "./announceText.js";
-
 async function find(dbName: any, collectionName: any, filter: any) {
     const collection = dbClient.db(dbName).collection(collectionName);
-    return await collection.find(filter).toArray();
+    return collection.find(filter).toArray();
 }
 
 let dbClient: any;
@@ -76,7 +75,7 @@ async function run() {
             client.login(devConfig.token);
             console.log("すべての通知が1分後に送信されます");
 
-            let date = new Date();
+            const date = new Date();
             date.setMinutes(date.getMinutes() + 1);
             sendTime = {
                 noticeH: date.getHours(),
@@ -112,7 +111,7 @@ async function run() {
             dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
             client.login(config.token);
 
-            let date = new Date();
+            const date = new Date();
             date.setMinutes(date.getMinutes() + 1);
             sendTime.endH = date.getHours();
             sendTime.endM = date.getMinutes();

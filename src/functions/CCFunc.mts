@@ -1,24 +1,24 @@
 /** @format */
 
 import { ActionRowBuilder, StringSelectMenuBuilder } from "@discordjs/builders";
+
 import * as db from "./db.mjs";
+import * as system from "./logsystem.mjs";
 
 const dbMain = "main";
 const colCat = "CC-categories";
 const colChan = "CC-channels";
 
-import * as system from "./logsystem.mjs";
-
-/***
+/**
  * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
  *
  * ロールを作成するかを問うStringSelectMenuを投げる
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const createChannel = async function (interaction: any) {
+export const createChannel = async function (interaction: any): Promise<void> {
     const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
-    //ゴリ押しJson文字列をオブジェクト型に変換する
+    // ゴリ押しJson文字列をオブジェクト型に変換する
     const receivedValue = JSON.parse(interaction.values[0]);
 
     if (receivedValue.categoryID === "cancel") {
@@ -50,7 +50,7 @@ export const createChannel = async function (interaction: any) {
             guildID: interaction.guildId,
         });
 
-        //応答待ったりDB更新してる間にカテゴリの登録が解除されてたときにキャンセルする
+        // 応答待ったりDB更新してる間にカテゴリの登録が解除されてたときにキャンセルする
         if ((await db.find(dbMain, colCat, { ID: createdChannel.parentId || createdChannel.guildId })).length === 0) {
             await channelDelete(interaction, createdChannel.id);
             await db.del(dbMain, colChan, { ID: createdChannel.id });
@@ -88,12 +88,12 @@ export const createChannel = async function (interaction: any) {
     }
 };
 
-/***
+/**
  * functions/CCFunc.js.createChannel関数から投げられた、ロール作成用のStringSelectMenuの受取
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const createRole = async function (interaction: any) {
+export const createRole = async function (interaction: any): Promise<void> {
     const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
     const receivedValue = JSON.parse(interaction.values[0]);
 
@@ -131,14 +131,14 @@ export const createRole = async function (interaction: any) {
     }
 };
 
-/***
+/**
  * /remove-categoryによって作成されたStringSelectMenuの受け取る
  *
  * チャンネルとロールの削除するかを問うStringSelectMenuを投げる
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const removeCategory = async function (interaction: any) {
+export const removeCategory = async function (interaction: any): Promise<void> {
     const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
     switch (interaction.values[0]) {
         case "Cancel":
@@ -162,14 +162,14 @@ export const removeCategory = async function (interaction: any) {
     }
 };
 
-/***
+/**
  * functions/CCFunc.js.removeCategoryから投げられたStringSelectMenuを受け取る
  *
  * データを削除し、必要に応じチャンネルトロールを削除する
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const selectDelete = async function (interaction: any) {
+export const selectDelete = async function (interaction: any): Promise<void> {
     const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
     if (interaction.values[0] === "Cancel") {
         await waitingMessage.edit({ content: "キャンセルされました", components: [] });
@@ -189,7 +189,7 @@ export const selectDelete = async function (interaction: any) {
                             await channelDelete(interaction, channelData.ID);
                         } catch (error: any) {
                             await system.error("/remove-categoryチャンネル削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
 
                         try {
@@ -198,7 +198,7 @@ export const selectDelete = async function (interaction: any) {
                             }
                         } catch (error: any) {
                             await system.error("/remove-categoryロール削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
                     }
                 }
@@ -207,9 +207,9 @@ export const selectDelete = async function (interaction: any) {
                 await db.del(dbMain, colCat, { guildID: interaction.guildId });
 
                 if (receivedValue.value) {
-                    returnMessage =
-                        "このサーバーの全てのカテゴリの登録を解除し、それらに作られたチャンネルとロールを全て削除しました" +
-                        (errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "");
+                    returnMessage = `このサーバーの全てのカテゴリの登録を解除し、それらに作られたチャンネルとロールを全て削除しました${
+                        errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : ""
+                    }`;
                 } else {
                     returnMessage = "このサーバーの全てのカテゴリの登録を解除しました";
                 }
@@ -229,7 +229,7 @@ export const selectDelete = async function (interaction: any) {
                             await channelDelete(interaction, channelData.ID);
                         } catch (error: any) {
                             await system.error("/remove-categoryチャンネル削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
 
                         try {
@@ -238,7 +238,7 @@ export const selectDelete = async function (interaction: any) {
                             }
                         } catch (error: any) {
                             await system.error("/remove-categoryロール削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
                     }
                 }
@@ -247,12 +247,11 @@ export const selectDelete = async function (interaction: any) {
                 await db.del(dbMain, colCat, { ID: receivedValue.categoryID });
 
                 if (receivedValue.value) {
-                    returnMessage =
-                        catName +
-                        "の登録を解除し、そこに作られたチャンネルとロールを全て削除しました" +
-                        (errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : "");
+                    returnMessage = `${catName}の登録を解除し、そこに作られたチャンネルとロールを全て削除しました${
+                        errorCount > 0 ? `\n${errorCount}個のチャンネルまたはロールの削除に失敗しました` : ""
+                    }`;
                 } else {
-                    returnMessage = catName + "の登録を解除しました";
+                    returnMessage = `${catName}の登録を解除しました`;
                 }
 
                 break;
@@ -261,54 +260,53 @@ export const selectDelete = async function (interaction: any) {
     }
 };
 
-/***
+/**
  * 与えられた引数からチャンネルを削除する
  * @param interaction 何かしらのinteraction(使わない実装にもできるけどだるかった)
  * @param ID チャンネルID
  * @returns {Promise<void>} void(同期処理)
  */
-async function channelDelete(interaction: any, ID: any) {
+async function channelDelete(interaction: any, ID: any): Promise<void> {
     await interaction.guild.channels.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
 }
 
-/***
+/**
  * 与えられた引数からロールを削除する
  * @param interaction 何かしらのinteraction
  * @param ID ロールID
  * @returns {Promise<void>} void(同期処理)
  */
-async function roleDelete(interaction: any, ID: any) {
+async function roleDelete(interaction: any, ID: any): Promise<void> {
     await interaction.guild.roles.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
 }
 
-/***
+/**
  * チャンネルが削除されたときにDBから情報を削除する
  * @param channel チャンネルオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const removeDeletedChannelData = async function (channel: any) {
+export const removeDeletedChannelData = async function (channel: any): Promise<void> {
     await db.del(dbMain, colChan, { ID: channel.id });
 };
 
-/***
+/**
  * カテゴリが削除されたときにDBから情報を削除する
  * @param category カテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const removeDeletedCategoryData = async function (category: any) {
+export const removeDeletedCategoryData = async function (category: any): Promise<void> {
     await db.del(dbMain, colCat, { ID: category.id });
     await db.del(dbMain, colChan, { categoryID: category.id });
 };
 
-/***
+/**
  * チャンネルの情報が変更されたときにDBの情報を更新する
  * @param channel 変更を検知したときのchannelオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const updateChannelData = async function (channel: any) {
+export const updateChannelData = async function (channel: any): Promise<void> {
     const channelData = await db.find(dbMain, colChan, { ID: channel.id });
-    // @ts-ignore
-    const newChannel = await client.channels.cache.get(channel.id);
+    const newChannel = client.channels.cache.get(channel.id);
     if (channelData.length > 0) {
         // @ts-ignore newChannelがundefinedになる可能性がある
         if (channelData[0].categoryID !== (newChannel.parentId !== null ? newChannel.parentId : newChannel.guildId)) {
@@ -329,10 +327,9 @@ export const updateChannelData = async function (channel: any) {
  * @param category 変更を検知したときのカテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const updateCategoryData = async function (category: any) {
+export const updateCategoryData = async function (category: any): Promise<void> {
     const categoryData = await db.find(dbMain, colCat, { ID: category.id });
-    //@ts-ignore
-    const newCategory = await client.channels.cache.get(category.id);
+    const newCategory = client.channels.cache.get(category.id);
     if (categoryData.length > 0) {
         // @ts-ignore newCategoryがundefinedになる可能性がある
         if (categoryData[0].name !== newCategory.name) {
@@ -342,25 +339,24 @@ export const updateCategoryData = async function (category: any) {
     }
 };
 
-/***
+/**
  * ロールが削除されたときにDBから情報を削除する
  * @param role roleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const removeDeletedRoleData = async function (role: any) {
+export const removeDeletedRoleData = async function (role: any): Promise<void> {
     await db.update(dbMain, colChan, { roleID: role.id }, { $set: { thereRole: false, roleID: "", roleName: "" } });
 };
 
-/***
+/**
  * ロールの情報が変更されたときにDBの情報を更新する
  * @param role 変更を検知したときのroleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const updateRoleData = async function (role: any) {
+export const updateRoleData = async function (role: any): Promise<void> {
     const channelData = await db.find(dbMain, colChan, { roleID: role.id });
 
     if (channelData.length > 0) {
-        // @ts-ignore
         const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch(role.id);
         // @ts-ignore newRoleがundefinedになる可能性がある
         if (channelData[0].roleName !== newRole.name) {
@@ -370,12 +366,12 @@ export const updateRoleData = async function (role: any) {
     }
 };
 
-/***
+/**
  * ギルドから抜けたときにDBからその情報を削除する
  * @param guild 抜けたときのguildオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-export const deleteGuildData = async function (guild: any) {
+export const deleteGuildData = async function (guild: any): Promise<void> {
     const categoryData = await db.find(dbMain, colCat, { guildID: guild.id });
     for (const category of categoryData) {
         await db.del(dbMain, colChan, { categoryID: category.ID });
@@ -383,17 +379,16 @@ export const deleteGuildData = async function (guild: any) {
     await db.del(dbMain, colCat, { guildID: guild.id });
 };
 
-/***
+/**
  * ギルド、カテゴリ、チャンネル、ロールの情報を参照し、整合性を確認する
  * @returns {Promise<void>} void(同期処理)
  */
-export const dataCheck = async function () {
+export const dataCheck = async function (): Promise<void> {
     await system.log("開始", "createChannelデータベース整合性検証");
     try {
         for (const category of await db.find(dbMain, colCat, {})) {
             let guildData;
             try {
-                // @ts-ignore
                 guildData = await client.guilds.fetch(category.guildID);
             } catch (e) {
                 // @ts-expect-error TS(2571): Object is of type 'unknown'.
@@ -408,7 +403,7 @@ export const dataCheck = async function () {
                 }
             }
             if (category.ID !== category.guildID) {
-                const categoryData = await guildData.channels.cache.get(category.ID);
+                const categoryData = guildData.channels.cache.get(category.ID);
                 if (categoryData === undefined) {
                     await db.del(dbMain, colChan, { categoryID: category.ID });
                     await db.del(dbMain, colCat, { ID: category.ID });
@@ -423,8 +418,7 @@ export const dataCheck = async function () {
                 await db.del(dbMain, colChan, { ID: channel.ID });
                 continue;
             }
-            // @ts-ignore
-            const channelData = await client.channels.cache.get(channel.ID);
+            const channelData = client.channels.cache.get(channel.ID);
 
             if (channelData === undefined) {
                 await db.del(dbMain, colChan, { ID: channel.ID });
@@ -437,7 +431,6 @@ export const dataCheck = async function () {
             }
 
             if (channel.thereRole) {
-                // @ts-ignore
                 const roleData = await (
                     await client.guilds.fetch((await db.find(dbMain, colCat, { ID: channel.categoryID }))[0].guildID)
                 ).roles.fetch(channel.roleID);
