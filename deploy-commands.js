@@ -9,8 +9,8 @@ const commands = [];
 const commandsPath = path.join(__dirname, "commands");
 //.jsを検索
 const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
+//ファイルの数だけ
 for (const file of commandFiles) {
-    //ファイルの数だけ
     const filePath = path.join(commandsPath, file);
     const command = require(filePath);
     for (let i = 0; i < command.length; i++) {
