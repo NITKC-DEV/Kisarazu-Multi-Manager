@@ -3,7 +3,6 @@
 
 printWidth = 140      # default=80
 tabWidth = 4          # default=2
-requirePragma = true  # default=false
 
 [[overrides]]
 files = ["*.json", "*.md"]
