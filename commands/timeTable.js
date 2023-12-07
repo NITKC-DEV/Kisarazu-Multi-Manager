@@ -40,7 +40,7 @@ module.exports = [
         data: new SlashCommandBuilder()
             .setName("timetable")
             .setDescription("指定した学科・曜日の時間割を送信します")
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("曜日")
                     .setDescription("曜日を指定します。指定がなければ次の学校の日になります")
@@ -53,10 +53,10 @@ module.exports = [
                         { name: "金曜日", value: "5" },
                     ),
             )
-            .addBooleanOption((option) =>
+            .addBooleanOption(option =>
                 option.setName("授業変更").setDescription("授業変更を反映させるかどうか指定します(デフォルト=true)").setRequired(false),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学科")
                     .setDescription("学科を指定します")
@@ -69,7 +69,7 @@ module.exports = [
                         { name: "C-環境都市工学科", value: "5" },
                     ),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学年")
                     .setDescription("学年を指定します")
@@ -156,7 +156,7 @@ module.exports = [
             .setDescription("時間割定期送信のON/OFFを切り替えます")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addBooleanOption((option) => option.setName("options").setDescription("定期実行の可否を指定します").setRequired(true)),
+            .addBooleanOption(option => option.setName("options").setDescription("定期実行の可否を指定します").setRequired(true)),
 
         async execute(interaction) {
             await interaction.deferReply({ ephemeral: true });
@@ -170,14 +170,14 @@ module.exports = [
             .setDescription("授業変更、及び定期テスト等を登録します")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("モード")
                     .setDescription("モード選択")
                     .setRequired(true)
                     .addChoices({ name: "定期テスト", value: "0" }, { name: "授業変更", value: "1" }),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学科")
                     .setDescription("学科を指定します")
@@ -190,7 +190,7 @@ module.exports = [
                         { name: "C-環境都市工学科", value: "5" },
                     ),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学年")
                     .setDescription("学年を指定します")
@@ -203,10 +203,10 @@ module.exports = [
                         { name: "5年生", value: "5" },
                     ),
             )
-            .addIntegerOption((option) =>
+            .addIntegerOption(option =>
                 option.setName("変更日").setDescription("授業変更する日を、月×100+日でいれてください。例)12月14日→1214").setRequired(true),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("ベースの曜日")
                     .setDescription("ベースとする曜日を選択")
@@ -401,7 +401,7 @@ module.exports = [
             .setDescription("授業変更やテストのデータを削除します")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学科")
                     .setDescription("学科を指定します")
@@ -414,7 +414,7 @@ module.exports = [
                         { name: "C-環境都市工学科", value: "5" },
                     ),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学年")
                     .setDescription("学年を指定します")
@@ -427,7 +427,7 @@ module.exports = [
                         { name: "5年生", value: "5" },
                     ),
             )
-            .addIntegerOption((option) =>
+            .addIntegerOption(option =>
                 option.setName("削除日").setDescription("削除する日を、月×100+日でいれてください。例)12月14日→1214").setRequired(true),
             ),
 
@@ -443,7 +443,7 @@ module.exports = [
                 department: interaction.options.getString("学科"),
                 day: String(interaction.options.getInteger("削除日") + "00"),
             });
-            const replyOptions = (time) => {
+            const replyOptions = time => {
                 return {
                     content: "削除しました。\n(このメッセージは" + time + "秒後に自動で削除されます)",
                     ephemeral: true,
@@ -461,7 +461,7 @@ module.exports = [
         data: new SlashCommandBuilder()
             .setName("comment-timetable")
             .setDescription("特定の日にコメントを追加します。(明日からの1週間は曜日で指定可)")
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学科")
                     .setDescription("学科を指定します")
@@ -474,7 +474,7 @@ module.exports = [
                         { name: "C-環境都市工学科", value: "5" },
                     ),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("学年")
                     .setDescription("学年を指定します")
@@ -487,7 +487,7 @@ module.exports = [
                         { name: "5年生", value: "5" },
                     ),
             )
-            .addStringOption((option) =>
+            .addStringOption(option =>
                 option
                     .setName("変更日")
                     .setDescription("明日から来週の今日までの変更したい日を曜日で指定します(それ以上は管理者限定)")
@@ -525,7 +525,7 @@ module.exports = [
             } else if (defaultData.length !== 0) {
                 data = defaultData;
             } else {
-                const replyOptions = (time) => {
+                const replyOptions = time => {
                     return {
                         content:
                             "指定した学科・学年の時間割データが見つかりませんでした。\n(このメッセージは" +
@@ -566,11 +566,11 @@ module.exports = [
                 .setStyle(1);
             modal.addComponents(new ActionRowBuilder().addComponents(input));
             await interaction.showModal(modal);
-            const filter = (mInteraction) => mInteraction.customId === `${date}addCommentTimetableModal${grade}${department}`;
+            const filter = mInteraction => mInteraction.customId === `${date}addCommentTimetableModal${grade}${department}`;
 
             interaction
                 .awaitModalSubmit({ filter, time: 3600000 })
-                .then(async (mInteraction) => {
+                .then(async mInteraction => {
                     const inputTxt = [];
                     let comment;
                     for (let i = 0; i < data[0].timetable.length; i++) {
@@ -598,7 +598,7 @@ module.exports = [
 
                     await db.updateOrInsert("main", "timetableData", { day: String(date) }, data[0]);
 
-                    const replyOptions = (time) => {
+                    const replyOptions = time => {
                         return {
                             content: "登録しました。\n(このメッセージは" + time + "秒後に自動で削除されます)",
                             ephemeral: true,
@@ -611,7 +611,7 @@ module.exports = [
                     }
                     await mInteraction.deleteReply();
                 })
-                .catch((error) => {});
+                .catch(error => {});
         },
     },
 ];

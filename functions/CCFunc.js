@@ -183,7 +183,7 @@ exports.selectDelete = async function (interaction) {
         switch (receivedValue.categoryID) {
             case "All":
                 if (receivedValue.value) {
-                    for (const channelData of (await db.find(dbMain, colChan, { guildID: interaction.guildId })).map((channel) => ({
+                    for (const channelData of (await db.find(dbMain, colChan, { guildID: interaction.guildId })).map(channel => ({
                         ID: channel.ID,
                         thereRole: channel.thereRole,
                         roleID: channel.roleID,
@@ -221,7 +221,7 @@ exports.selectDelete = async function (interaction) {
             default:
                 const catName = (await db.find(dbMain, colCat, { ID: receivedValue.categoryID }))[0].name;
                 if (receivedValue.value) {
-                    for (const channelData of (await db.find(dbMain, colChan, { categoryID: receivedValue.categoryID })).map((channel) => ({
+                    for (const channelData of (await db.find(dbMain, colChan, { categoryID: receivedValue.categoryID })).map(channel => ({
                         ID: channel.ID,
                         thereRole: channel.thereRole,
                         roleID: channel.roleID,

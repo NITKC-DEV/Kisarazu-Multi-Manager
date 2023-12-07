@@ -47,7 +47,7 @@ function readUserInput(question) {
     });
 
     return new Promise((resolve, reject) => {
-        readline.question(question, (answer) => {
+        readline.question(question, answer => {
             resolve(answer);
             readline.close();
         });

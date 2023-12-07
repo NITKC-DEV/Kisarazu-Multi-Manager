@@ -51,12 +51,10 @@ exports.generation = async function func(guild) {
 
         /*bot及びユーザーの人数を取得*/
         const members = await guild.members.fetch({ withPresences: true });
-        const user = members.filter((member) => member.user.bot === false).size;
-        const online = members.filter(
-            (member) => member.presence && member.presence.status !== "offline" && member.user.bot === false,
-        ).size;
+        const user = members.filter(member => member.user.bot === false).size;
+        const online = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
         const botOnline = members.filter(
-            (member) => member.presence && member.presence.status !== "offline" && member.user.bot === true,
+            member => member.presence && member.presence.status !== "offline" && member.user.bot === true,
         ).size;
 
         /*定期テスト*/

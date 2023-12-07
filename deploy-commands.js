@@ -8,7 +8,7 @@ console.log(config);
 const commands = [];
 const commandsPath = path.join(__dirname, "commands");
 //.jsを検索
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 //ファイルの数だけ
 for (const file of commandFiles) {
     const filePath = path.join(commandsPath, file);
@@ -47,7 +47,7 @@ async function run() {
         case "登録(更新)": {
             console.log("---追加コマンド---");
             //差分を確認
-            for (const filterElement of commands.filter((v) => !data.map((e) => e.name).includes(v.name))) {
+            for (const filterElement of commands.filter(v => !data.map(e => e.name).includes(v.name))) {
                 console.log(`/${filterElement.name}`);
                 console.log(`  ${filterElement.description}`);
             }
@@ -61,7 +61,7 @@ async function run() {
                 // PUTで上書き すべてcommandsの内容に
                 await rest
                     .put(Routes.applicationCommands(config.client), { body: commands })
-                    .then((data) => console.log(`${data.length} 個のアプリケーション コマンドが正常に登録されました。`))
+                    .then(data => console.log(`${data.length} 個のアプリケーション コマンドが正常に登録されました。`))
                     .catch(console.error);
             }
 
@@ -71,7 +71,7 @@ async function run() {
             const selected = await new MultiSelect({
                 name: "value",
                 message: "対象のコマンドを<space>で選択、<a>で全選択、<i>で反転",
-                choices: data.map((e) => ({ name: "/" + e.name, value: e.id })),
+                choices: data.map(e => ({ name: "/" + e.name, value: e.id })),
                 result(commands) {
                     return Object.entries(this.map(commands));
                 },

@@ -19,12 +19,12 @@ module.exports = [
             .setDescription("次のテストを設定します。")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addIntegerOption((option) => option.setName("年").setDescription("テストが実施される年を入力").setRequired(true))
-            .addIntegerOption((option) => option.setName("開始月").setDescription("テストが開始される月を入力").setRequired(true))
-            .addIntegerOption((option) => option.setName("開始日").setDescription("テストが開始される日を入力").setRequired(true))
-            .addIntegerOption((option) => option.setName("終了月").setDescription("テストが終了する月を入力").setRequired(true))
-            .addIntegerOption((option) => option.setName("終了日").setDescription("テストが終了する日を入力").setRequired(true))
-            .addIntegerOption((option) => option.setName("テスト回").setDescription("何回後のテストか入力(1~4)").setRequired(true)),
+            .addIntegerOption(option => option.setName("年").setDescription("テストが実施される年を入力").setRequired(true))
+            .addIntegerOption(option => option.setName("開始月").setDescription("テストが開始される月を入力").setRequired(true))
+            .addIntegerOption(option => option.setName("開始日").setDescription("テストが開始される日を入力").setRequired(true))
+            .addIntegerOption(option => option.setName("終了月").setDescription("テストが終了する月を入力").setRequired(true))
+            .addIntegerOption(option => option.setName("終了日").setDescription("テストが終了する日を入力").setRequired(true))
+            .addIntegerOption(option => option.setName("テスト回").setDescription("何回後のテストか入力(1~4)").setRequired(true)),
 
         async execute(interaction) {
             if (interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5) {
@@ -79,7 +79,7 @@ module.exports = [
                 while (flag === -1) {
                     await reply
                         .awaitReactions({
-                            filter: (reaction) => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
+                            filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
                             max: 1,
                             time: 60_000,
                         })
@@ -119,7 +119,7 @@ module.exports = [
                         },
                     );
 
-                    replyOptions = (time) => {
+                    replyOptions = time => {
                         return {
                             content:
                                 "ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは" +
@@ -130,7 +130,7 @@ module.exports = [
                     };
                 } else if (flag === 1) {
                     await reply.reactions.removeAll();
-                    replyOptions = (time) => {
+                    replyOptions = time => {
                         return {
                             content: "生成をキャンセルしました。\n(このメッセージは" + time + "秒後に自動で削除されます。)",
                             ephemeral: true,
@@ -154,7 +154,7 @@ module.exports = [
                             },
                         },
                     );
-                    replyOptions = (time) => {
+                    replyOptions = time => {
                         return {
                             content:
                                 "ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは" +
@@ -169,7 +169,7 @@ module.exports = [
                         boardChannel: interaction.channelId,
                         board: String(board.id),
                     });
-                    replyOptions = (time) => {
+                    replyOptions = time => {
                         return {
                             content:
                                 "ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは" +

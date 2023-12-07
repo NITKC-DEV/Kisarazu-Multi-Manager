@@ -10,9 +10,7 @@ module.exports = [
             .setName("create-channel")
             .setDescription("チャンネルの作成")
             //チャンネル名を入力 -> string
-            .addStringOption((option) =>
-                option.setName("チャンネル名").setDescription("作成するチャンネル名を指定します").setRequired(true),
-            ),
+            .addStringOption(option => option.setName("チャンネル名").setDescription("作成するチャンネル名を指定します").setRequired(true)),
         /***
          * /add-category で登録されたカテゴリにチャンネルを作成する
          * @param interaction
@@ -31,7 +29,7 @@ module.exports = [
                                 .setPlaceholder("カテゴリを選択してください")
                                 .setCustomId("createChannel")
                                 .addOptions(
-                                    ...guildCats.map((data) => ({
+                                    ...guildCats.map(data => ({
                                         label: data.name,
                                         value: JSON.stringify({
                                             categoryID: data.ID,
@@ -76,7 +74,7 @@ module.exports = [
         data: new SlashCommandBuilder()
             .setName("add-category")
             .setDescription("/CreateChanによってチャンネルの作成ができるカテゴリにこのカテゴリを追加します")
-            .addNumberOption((option) =>
+            .addNumberOption(option =>
                 option
                     .setName("ロールの追加を許可")
                     .setDescription(
@@ -145,7 +143,7 @@ module.exports = [
                             .setCustomId("removeCategory")
                             .addOptions(
                                 { label: "全カテゴリを登録解除する", value: "All" },
-                                ...guildCats.map((cat) => ({ label: cat.name, value: cat.ID })),
+                                ...guildCats.map(cat => ({ label: cat.name, value: cat.ID })),
                                 { label: "キャンセル", value: "Cancel" },
                             ),
                     );

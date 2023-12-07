@@ -286,7 +286,7 @@ exports.setNewTimetableData = async function func(interaction) {
 
     try {
         const channel = client.channels.cache.get(interaction.message.channelId);
-        channel.messages.fetch(interaction.message.id).then((message) => {
+        channel.messages.fetch(interaction.message.id).then(message => {
             interaction.update({ embeds: [embed], comments: message.comments });
         });
         await db.updateOrInsert("main", "timetableData", { grade, department, day: date }, data[0]);
@@ -326,11 +326,11 @@ exports.showNewTimetableModal = async function func(interaction) {
         .setStyle(1);
     modal.addComponents(new ActionRowBuilder().addComponents(input));
     await interaction.showModal(modal);
-    const filter = (mInteraction) => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
+    const filter = mInteraction => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
 
     interaction
         .awaitModalSubmit({ filter, time: 3600000 })
-        .then(async (mInteraction) => {
+        .then(async mInteraction => {
             const inputTxt = [];
             let comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
@@ -351,11 +351,11 @@ exports.showNewTimetableModal = async function func(interaction) {
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages
                 .fetch(interaction.message.id)
-                .then((message) => {
+                .then(message => {
                     message.delete();
                 })
                 .catch(() => {});
-            const replyOptions = (time) => {
+            const replyOptions = time => {
                 return {
                     content: "登録しました。\n(このメッセージは" + time + "秒後に自動で削除されます)",
                     ephemeral: true,
@@ -373,7 +373,7 @@ exports.showNewTimetableModal = async function func(interaction) {
                 const channel = client.channels.cache.get(interaction.message.channelId);
                 channel.messages
                     .fetch(interaction.message.id)
-                    .then((message) => {
+                    .then(message => {
                         message.delete();
                     })
                     .catch(() => {});

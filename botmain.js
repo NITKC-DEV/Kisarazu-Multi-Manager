@@ -42,7 +42,7 @@ const help = require("./functions/help.js");
 
 //スラッシュコマンド登録
 const commandsPath = path.join(__dirname, "commands");
-const commandFiles = fs.readdirSync(commandsPath).filter((file) => file.endsWith(".js"));
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 client.commands = new Collection();
 module.exports = client.commands;
 client.once("ready", async () => {
@@ -68,7 +68,7 @@ client.once("ready", async () => {
 });
 
 /*command処理*/
-client.on("interactionCreate", async (interaction) => {
+client.on("interactionCreate", async interaction => {
     let flag = 0;
     if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
         for (let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
@@ -147,7 +147,7 @@ client.on("interactionCreate", async (interaction) => {
 });
 
 //StringSelectMenu受け取り
-client.on(Events.InteractionCreate, async (interaction) => {
+client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isStringSelectMenu()) {
         let flag = 0;
         if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
@@ -180,7 +180,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 //Button入力受け取り
-client.on(Events.InteractionCreate, async (interaction) => {
+client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
     let flag = 0;
     if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
@@ -199,7 +199,7 @@ client.on(Events.InteractionCreate, async (interaction) => {
 });
 
 //チャンネル(カテゴリ)削除検知
-client.on(Events.ChannelDelete, async (channel) => {
+client.on(Events.ChannelDelete, async channel => {
     if (channel.type === 0) {
         await CreateChannel.removeDeletedChannelData(channel);
     } else if (channel.type === 4) {
@@ -208,7 +208,7 @@ client.on(Events.ChannelDelete, async (channel) => {
 });
 
 //チャンネル(カテゴリ)情報変更検知
-client.on(Events.ChannelUpdate, async (channel) => {
+client.on(Events.ChannelUpdate, async channel => {
     if (channel.type === 0) {
         await CreateChannel.updateChannelData(channel);
     } else if (channel.type === 4) {
@@ -217,27 +217,27 @@ client.on(Events.ChannelUpdate, async (channel) => {
 });
 
 //ロール削除検知
-client.on(Events.GuildRoleDelete, async (role) => {
+client.on(Events.GuildRoleDelete, async role => {
     await CreateChannel.removeDeletedRoleData(role);
 });
 
 //ロール情報変更検知
-client.on(Events.GuildRoleUpdate, async (role) => {
+client.on(Events.GuildRoleUpdate, async role => {
     await CreateChannel.updateRoleData(role);
 });
 
-client.on(Events.GuildCreate, async (guild) => {
+client.on(Events.GuildCreate, async guild => {
     await guildData.updateOrInsert(guild.id);
 });
 
 //ギルド削除(退出)検知
-client.on(Events.GuildDelete, async (guild) => {
+client.on(Events.GuildDelete, async guild => {
     await CreateChannel.deleteGuildData(guild);
     await guildData.checkGuild();
 });
 
 /*TxtEasterEgg*/
-client.on("messageCreate", (message) => {
+client.on("messageCreate", message => {
     /*メンテナンスモード*/
     let flag = 0;
     if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
@@ -405,10 +405,10 @@ cron.schedule("*/1  * * * *", async () => {
                 if (newEmbed) {
                     channel.messages
                         .fetch(data[i].board)
-                        .then(async (dashboard) => {
+                        .then(async dashboard => {
                             await dashboard.edit({ embeds: [newEmbed] });
                         })
-                        .catch(async (error) => {
+                        .catch(async error => {
                             if (error.code === 10008 || error.code === 10003) {
                                 //メッセージかチャンネルが不明
                                 await system.error(

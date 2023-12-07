@@ -11,38 +11,36 @@ module.exports = [
             .setDescription("サーバー情報を登録します。指定した引数以外は変更されません。詳細は/adminhelpを参照してください")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addIntegerOption((option) =>
-                option.setName("学年").setDescription("入学した年を西暦4桁で入力してください。").setRequired(false),
-            )
-            .addChannelOption((option) =>
+            .addIntegerOption(option => option.setName("学年").setDescription("入学した年を西暦4桁で入力してください。").setRequired(false))
+            .addChannelOption(option =>
                 option
                     .setName("アナウンスチャンネル")
                     .setDescription("BOTのアナウンスをするときに使うチャンネルを指定してください。")
                     .setRequired(false),
             )
-            .addChannelOption((option) =>
+            .addChannelOption(option =>
                 option.setName("メインチャンネル").setDescription("雑談等メインで使うチャンネルを指定してください。").setRequired(false),
             )
-            .addChannelOption((option) =>
+            .addChannelOption(option =>
                 option.setName("m科チャンネル").setDescription("m科用チャンネルを指定してください。").setRequired(false),
             )
-            .addRoleOption((option) => option.setName("m科ロール").setDescription("m科用ロールを指定してください。").setRequired(false))
-            .addChannelOption((option) =>
+            .addRoleOption(option => option.setName("m科ロール").setDescription("m科用ロールを指定してください。").setRequired(false))
+            .addChannelOption(option =>
                 option.setName("e科チャンネル").setDescription("e科用チャンネルを指定してください。").setRequired(false),
             )
-            .addRoleOption((option) => option.setName("e科ロール").setDescription("e科用ロールを指定してください。").setRequired(false))
-            .addChannelOption((option) =>
+            .addRoleOption(option => option.setName("e科ロール").setDescription("e科用ロールを指定してください。").setRequired(false))
+            .addChannelOption(option =>
                 option.setName("d科チャンネル").setDescription("d科用チャンネルを指定してください。").setRequired(false),
             )
-            .addRoleOption((option) => option.setName("d科ロール").setDescription("d科用ロールを指定してください。").setRequired(false))
-            .addChannelOption((option) =>
+            .addRoleOption(option => option.setName("d科ロール").setDescription("d科用ロールを指定してください。").setRequired(false))
+            .addChannelOption(option =>
                 option.setName("j科チャンネル").setDescription("j科用チャンネルを指定してください。").setRequired(false),
             )
-            .addRoleOption((option) => option.setName("j科ロール").setDescription("j科用ロールを指定してください。").setRequired(false))
-            .addChannelOption((option) =>
+            .addRoleOption(option => option.setName("j科ロール").setDescription("j科用ロールを指定してください。").setRequired(false))
+            .addChannelOption(option =>
                 option.setName("c科チャンネル").setDescription("c科用チャンネルを指定してください。").setRequired(false),
             )
-            .addRoleOption((option) => option.setName("c科ロール").setDescription("c科用ロールを指定してください。").setRequired(false)),
+            .addRoleOption(option => option.setName("c科ロール").setDescription("c科用ロールを指定してください。").setRequired(false)),
         async execute(interaction) {
             await interaction.deferReply({ ephemeral: true });
             await db.find("main", "guildData", { guild: String(interaction.guildId) });
@@ -149,7 +147,7 @@ module.exports = [
             while (flag === -1) {
                 await reply
                     .awaitReactions({
-                        filter: (reaction) => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
+                        filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
                         max: 1,
                         time: 60_000,
                     })
@@ -176,7 +174,7 @@ module.exports = [
             if (flag === 0) {
                 await interaction.editReply("削除中...");
                 await guildData.reset(interaction.guildId);
-                replyOptions = (time) => {
+                replyOptions = time => {
                     return {
                         content:
                             "削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは" +
@@ -187,7 +185,7 @@ module.exports = [
                 };
             } else if (flag === 1) {
                 await reply.reactions.removeAll();
-                replyOptions = (time) => {
+                replyOptions = time => {
                     return {
                         content: "操作をキャンセルしました。\n(このメッセージは" + time + "秒後に自動で削除されます)",
                         ephemeral: true,

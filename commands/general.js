@@ -92,7 +92,7 @@ module.exports = [
             .setDescription("sugoi user do")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addBooleanOption((option) => option.setName("option").setDescription("True or False").setRequired(true)),
+            .addBooleanOption(option => option.setName("option").setDescription("True or False").setRequired(true)),
         async execute(interaction) {
             await interaction.deferReply();
             const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
@@ -112,7 +112,7 @@ module.exports = [
 
                 await reply
                     .awaitReactions({
-                        filter: (reaction) => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
+                        filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
                         max: 1,
                     })
                     .then(() => {
@@ -137,14 +137,14 @@ module.exports = [
         data: new SlashCommandBuilder()
             .setName("secret-msg")
             .setDescription("実行したチャンネルにbotが代理で送信します")
-            .addStringOption((option) => option.setName("メッセージ").setDescription("送りたいメッセージを入れます").setRequired(false))
-            .addAttachmentOption((option) =>
+            .addStringOption(option => option.setName("メッセージ").setDescription("送りたいメッセージを入れます").setRequired(false))
+            .addAttachmentOption(option =>
                 option.setName("添付ファイル1").setDescription("添付するファイルをアップロードします").setRequired(false),
             )
-            .addAttachmentOption((option) =>
+            .addAttachmentOption(option =>
                 option.setName("添付ファイル2").setDescription("添付するファイルをアップロードします").setRequired(false),
             )
-            .addAttachmentOption((option) =>
+            .addAttachmentOption(option =>
                 option.setName("添付ファイル3").setDescription("添付するファイルをアップロードします").setRequired(false),
             ),
 
@@ -163,7 +163,7 @@ module.exports = [
                     const roleMentions = receivedMsg.match(/(?<!\\)<@&\d+>/g);
                     if (roleMentions) {
                         for (const roleMention of roleMentions) {
-                            const role = interaction.guild.roles.cache.find((readRole) => readRole.id === roleMention.match(/\d+/)[0]);
+                            const role = interaction.guild.roles.cache.find(readRole => readRole.id === roleMention.match(/\d+/)[0]);
                             if (role && !role.mentionable) {
                                 receivedMsg = receivedMsg.replace(roleMention, "@" + role.name);
                             }
@@ -207,7 +207,7 @@ module.exports = [
                     return;
                 }
 
-                const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter((file) => file);
+                const attachFiles = [attachedFile1, attachedFile2, attachedFile3].filter(file => file);
                 for (const attachment of attachFiles) {
                     if (attachment.size > 26214400) {
                         await interaction.editReply({
@@ -255,9 +255,9 @@ module.exports = [
             .setName("birthday")
             .setDescription("あなたの誕生日を登録します。登録するとその日に祝ってくれます。")
             .setDMPermission(false)
-            .addIntegerOption((option) => option.setName("年").setDescription("生まれた年をいれます").setRequired(true))
-            .addIntegerOption((option) => option.setName("月").setDescription("生まれた月をいれます").setRequired(true))
-            .addIntegerOption((option) => option.setName("日").setDescription("生まれた日をいれます").setRequired(true)),
+            .addIntegerOption(option => option.setName("年").setDescription("生まれた年をいれます").setRequired(true))
+            .addIntegerOption(option => option.setName("月").setDescription("生まれた月をいれます").setRequired(true))
+            .addIntegerOption(option => option.setName("日").setDescription("生まれた日をいれます").setRequired(true)),
 
         async execute(interaction) {
             await interaction.deferReply({ ephemeral: true });
@@ -338,7 +338,7 @@ module.exports = [
         data: new SlashCommandBuilder()
             .setName("weather")
             .setDescription("その日の天気を取得します")
-            .addIntegerOption((option) =>
+            .addIntegerOption(option =>
                 option
                     .setName("日にち")
                     .setDescription("日にちを指定します。指定なければ今日の天気になります。")
@@ -369,8 +369,8 @@ module.exports = [
             .setDescription("天気定期送信のON/OFFを切り替えます")
             .setDefaultMemberPermissions(1 << 3)
             .setDMPermission(false)
-            .addBooleanOption((option) => option.setName("定期送信").setDescription("定期実行のオンオフを指定します").setRequired(true))
-            .addChannelOption((option) =>
+            .addBooleanOption(option => option.setName("定期送信").setDescription("定期実行のオンオフを指定します").setRequired(true))
+            .addChannelOption(option =>
                 option.setName("送信先").setDescription("送信先を指定します。削除時は適当なチャンネルをいれてください。").setRequired(true),
             ),
 
