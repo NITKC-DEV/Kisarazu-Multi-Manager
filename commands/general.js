@@ -1,18 +1,18 @@
-const { SlashCommandBuilder, EmbedBuilder, version } = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder, version} = require("discord.js");
 const packageVer = require("../package.json");
-const { setTimeout } = require("node:timers/promises");
+const {setTimeout} = require("node:timers/promises");
 require("date-utils");
 const system = require("../functions/logsystem.js");
 const weather = require("../functions/weather.js");
 const guildData = require("../functions/guildDataSet.js");
 const db = require("../functions/db.js");
 const fs = require("fs");
-const { configPath } = require("../environmentConfig.js");
+const {configPath} = require("../environmentConfig.js");
 const mode = require("../functions/statusAndMode.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const help = require("../functions/help.js");
-const { autoDeleteEditReply } = require("../functions/common.js");
-const { ID_NODATA } = require("../functions/guildDataSet");
+const {autoDeleteEditReply} = require("../functions/common.js");
+const {ID_NODATA} = require("../functions/guildDataSet");
 
 module.exports = [
     {
@@ -76,8 +76,8 @@ module.exports = [
                     },
                 ])
                 .setTimestamp()
-                .setFooter({ text: "Developed by NITKC-DEV" });
-            await interaction.reply({ embeds: [embed] });
+                .setFooter({text: "Developed by NITKC-DEV"});
+            await interaction.reply({embeds: [embed]});
         },
     },
     {
@@ -149,7 +149,7 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             if (interaction.guild) {
                 let receivedMsg = interaction.options.getString("メッセージ") ?? "";
                 const attachedFile1 = interaction.options.getAttachment("添付ファイル1");
@@ -260,7 +260,7 @@ module.exports = [
             .addIntegerOption(option => option.setName("日").setDescription("生まれた日をいれます").setRequired(true)),
 
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             const data = await db.find("main", "birthday", {
                 user: interaction.user.id,
                 guild: interaction.guildId,
@@ -305,7 +305,7 @@ module.exports = [
                     )}日に設定しました。\n他のサーバーで通知してほしい場合は、そのサーバーでもう一度実行してください。`,
                 });
             } else {
-                await interaction.editReply({ content: "誕生日を正しい数字で設定してください。" });
+                await interaction.editReply({content: "誕生日を正しい数字で設定してください。"});
             }
         },
     },
@@ -313,7 +313,7 @@ module.exports = [
         data: new SlashCommandBuilder().setName("del-birthday").setDMPermission(false).setDescription("あなたの誕生日を削除します"),
 
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             const data = await db.find("main", "birthday", {
                 user: interaction.user.id,
                 guild: interaction.guildId,
@@ -344,8 +344,8 @@ module.exports = [
                     .setDescription("日にちを指定します。指定なければ今日の天気になります。")
                     .setRequired(false)
                     .addChoices(
-                        { name: "今日", value: 0 },
-                        { name: "明日", value: 1 },
+                        {name: "今日", value: 0},
+                        {name: "明日", value: 1},
                         {
                             name: "明後日",
                             value: 2,
@@ -360,7 +360,7 @@ module.exports = [
             } else {
                 embed = await weather.generationDay(interaction.options.getInteger("日にち"));
             }
-            await interaction.editReply({ embeds: [embed] });
+            await interaction.editReply({embeds: [embed]});
         },
     },
     {
@@ -375,9 +375,9 @@ module.exports = [
             ),
 
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             if (!interaction.options.getBoolean("定期送信")) {
-                await guildData.updateOrInsert(interaction.guildId, { weather: interaction.options.getBoolean("定期送信") });
+                await guildData.updateOrInsert(interaction.guildId, {weather: interaction.options.getBoolean("定期送信")});
                 await interaction.editReply({
                     content: "天気定期通知機能を" + interaction.options.getBoolean("定期送信") + "に設定しました。",
                 });
@@ -390,7 +390,7 @@ module.exports = [
                     content: "天気定期通知機能を" + interaction.options.getBoolean("定期送信") + "に設定しました。",
                 });
             } else {
-                await interaction.editReply({ content: "通常のチャンネルを指定してください" });
+                await interaction.editReply({content: "通常のチャンネルを指定してください"});
             }
         },
     },

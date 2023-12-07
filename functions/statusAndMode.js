@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { configPath } = require("../environmentConfig.js");
+const {configPath} = require("../environmentConfig.js");
 const system = require("./logsystem.js");
 const statusAndMode = require("./statusAndMode.js");
 

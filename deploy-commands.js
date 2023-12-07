@@ -1,7 +1,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
-const { REST } = require("@discordjs/rest");
-const { Routes } = require("discord.js");
+const {REST} = require("@discordjs/rest");
+const {Routes} = require("discord.js");
 const config = require("./environmentConfig");
 console.log(config);
 // ./commands/ ディレクトリ内を探索
@@ -20,8 +20,8 @@ for (const file of commandFiles) {
 }
 
 // Discord API通信準備 トークン設定
-const rest = new REST({ version: "10" }).setToken(config.token);
-const { Select, MultiSelect, Toggle } = require("enquirer");
+const rest = new REST({version: "10"}).setToken(config.token);
+const {Select, MultiSelect, Toggle} = require("enquirer");
 
 async function run() {
     //GETで現在登録されているのを取得
@@ -60,7 +60,7 @@ async function run() {
             if (prompt) {
                 // PUTで上書き すべてcommandsの内容に
                 await rest
-                    .put(Routes.applicationCommands(config.client), { body: commands })
+                    .put(Routes.applicationCommands(config.client), {body: commands})
                     .then(data => console.log(`${data.length} 個のアプリケーション コマンドが正常に登録されました。`))
                     .catch(console.error);
             }
@@ -71,7 +71,7 @@ async function run() {
             const selected = await new MultiSelect({
                 name: "value",
                 message: "対象のコマンドを<space>で選択、<a>で全選択、<i>で反転",
-                choices: data.map(e => ({ name: "/" + e.name, value: e.id })),
+                choices: data.map(e => ({name: "/" + e.name, value: e.id})),
                 result(commands) {
                     return Object.entries(this.map(commands));
                 },

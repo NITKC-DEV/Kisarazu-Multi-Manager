@@ -1,6 +1,6 @@
-const { EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder } = require("discord.js");
+const {EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder} = require("discord.js");
 const db = require("./db.js");
-const { setTimeout } = require("node:timers/promises");
+const {setTimeout} = require("node:timers/promises");
 
 const departmentData = [
     {
@@ -143,7 +143,7 @@ exports.generation = async function func(grade, department, day, change = true) 
                 )
                 .addFields(field)
                 .setTimestamp()
-                .setFooter({ text: "Developed by NITKC-DEV" });
+                .setFooter({text: "Developed by NITKC-DEV"});
         } else {
             const siz = data[0].timetable.length;
             for (let i = siz - 1; i >= 0; i--) {
@@ -220,7 +220,7 @@ exports.generation = async function func(grade, department, day, change = true) 
                 .setDescription(`${dateText}の時間割です。\n※未登録の休講や授業変更等がある可能性があります。`)
                 .addFields(field)
                 .setTimestamp()
-                .setFooter({ text: "Developed by NITKC-DEV" });
+                .setFooter({text: "Developed by NITKC-DEV"});
         }
     } else {
         return 0;
@@ -241,7 +241,7 @@ exports.setNewTimetableData = async function func(interaction) {
     const period = interaction.customId.slice(-1);
     const date = interaction.customId.substring(3, interaction.customId.match(/changeTimetableSelectMenu/).index) + "00";
 
-    let data = await db.find("main", "timetableData", { grade, department, day: date });
+    let data = await db.find("main", "timetableData", {grade, department, day: date});
     if (data.length === 0) {
         data = await db.find("main", "timetableData", {
             grade,
@@ -249,12 +249,12 @@ exports.setNewTimetableData = async function func(interaction) {
             day: interaction.customId.substring(3, interaction.customId.match(/changeTimetableSelectMenu/).index),
         });
         if (data.length === 0) {
-            data = await db.find("main", "timetableData", { grade, department, day: day });
+            data = await db.find("main", "timetableData", {grade, department, day: day});
         }
     }
     delete data[0]._id;
     data[0].day = date;
-    data[0].timetable[parseInt(period, 10)] = { name: interaction.values[0], comment: "" };
+    data[0].timetable[parseInt(period, 10)] = {name: interaction.values[0], comment: ""};
 
     if (mode === "0" && data[0].timetable.length === 4) {
         data[0].timetable.pop();
@@ -282,14 +282,14 @@ exports.setNewTimetableData = async function func(interaction) {
             value: `\`\`\`${subjects}\`\`\``,
         })
         .setTimestamp()
-        .setFooter({ text: "Developed by NITKC-DEV" });
+        .setFooter({text: "Developed by NITKC-DEV"});
 
     try {
         const channel = client.channels.cache.get(interaction.message.channelId);
         channel.messages.fetch(interaction.message.id).then(message => {
-            interaction.update({ embeds: [embed], comments: message.comments });
+            interaction.update({embeds: [embed], comments: message.comments});
         });
-        await db.updateOrInsert("main", "timetableData", { grade, department, day: date }, data[0]);
+        await db.updateOrInsert("main", "timetableData", {grade, department, day: date}, data[0]);
     } catch {} //元メッセージ削除対策
 };
 
@@ -305,7 +305,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const mode = interaction.customId.slice(-1);
     const date = interaction.customId.substring(2, interaction.customId.match(/changeTimetableButton/).index);
 
-    const data = await db.find("main", "timetableData", { day: date + "00" });
+    const data = await db.find("main", "timetableData", {day: date + "00"});
 
     const modal = new ModalBuilder()
         .setCustomId(`${date}commentInputNewTimetableModal${grade}${department}`)
@@ -329,7 +329,7 @@ exports.showNewTimetableModal = async function func(interaction) {
     const filter = mInteraction => mInteraction.customId === `${date}commentInputNewTimetableModal${grade}${department}`;
 
     interaction
-        .awaitModalSubmit({ filter, time: 3600000 })
+        .awaitModalSubmit({filter, time: 3600000})
         .then(async mInteraction => {
             const inputTxt = [];
             let comment;
@@ -346,8 +346,8 @@ exports.showNewTimetableModal = async function func(interaction) {
             data[0].day = date;
             data[0].test = mode === "0";
             delete data[0]._id;
-            await db.updateOrInsert("main", "timetableData", { grade, department, day: date }, data[0]);
-            await db.delete("main", "timetableData", { grade, department, day: date + "00" });
+            await db.updateOrInsert("main", "timetableData", {grade, department, day: date}, data[0]);
+            await db.delete("main", "timetableData", {grade, department, day: date + "00"});
             const channel = client.channels.cache.get(interaction.message.channelId);
             channel.messages
                 .fetch(interaction.message.id)
@@ -385,6 +385,6 @@ exports.deleteData = async function func() {
     const date = new Date();
     date.setDate(date.getDate() - 1);
 
-    await db.delete("main", "timetableData", { day: String(date.getMonth() + 1) + String(date.getDate()) });
-    await db.delete("main", "timetableData", { day: String(String(date.getMonth() + 1) + String(date.getDate()) + "00") });
+    await db.delete("main", "timetableData", {day: String(date.getMonth() + 1) + String(date.getDate())});
+    await db.delete("main", "timetableData", {day: String(String(date.getMonth() + 1) + String(date.getDate()) + "00")});
 };

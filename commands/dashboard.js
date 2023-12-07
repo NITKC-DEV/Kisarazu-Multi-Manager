@@ -1,8 +1,8 @@
-const { SlashCommandBuilder } = require("discord.js");
+const {SlashCommandBuilder} = require("discord.js");
 const dashboard = require("../functions/dashboard.js");
 const db = require("../functions/db.js");
 const system = require("../functions/logsystem");
-const { setTimeout } = require("node:timers/promises");
+const {setTimeout} = require("node:timers/promises");
 module.exports = [
     {
         data: new SlashCommandBuilder().setName("dashboard").setDMPermission(false).setDescription("ダッシュボードを表示します"),
@@ -10,7 +10,7 @@ module.exports = [
         async execute(interaction) {
             await interaction.deferReply();
             const embed = await dashboard.generation(interaction.guild);
-            await interaction.editReply({ embeds: [embed] });
+            await interaction.editReply({embeds: [embed]});
         },
     },
     {
@@ -28,11 +28,11 @@ module.exports = [
 
         async execute(interaction) {
             if (interaction.options.data[5].value > 0 && interaction.options.data[5].value < 5) {
-                await interaction.deferReply({ ephemeral: true });
+                await interaction.deferReply({ephemeral: true});
                 await db.update(
                     "main",
                     "nextTest",
-                    { label: String(interaction.options.data[5].value) },
+                    {label: String(interaction.options.data[5].value)},
                     {
                         $set: {
                             year: String(interaction.options.data[0].value),
@@ -47,7 +47,7 @@ module.exports = [
                     content: `今年度${interaction.options.data[5].value}回目のテストを${interaction.options.data[0].value}年${interaction.options.data[1].value}月${interaction.options.data[2].value}日〜${interaction.options.data[3].value}月${interaction.options.data[4].value}日に設定しました`,
                 });
             } else {
-                await interaction.reply({ content: "どっか〜んするから、1~4の中で指定してくれ", ephemeral: true });
+                await interaction.reply({content: "どっか〜んするから、1~4の中で指定してくれ", ephemeral: true});
             }
         },
     },
@@ -63,7 +63,7 @@ module.exports = [
             let replyOptions;
             let data = await db.find("main", "guildData", {
                 guild: interaction.guildId,
-                board: { $nin: ["0000000000000000000"] },
+                board: {$nin: ["0000000000000000000"]},
             }); /*自動更新対象のボードがあるかどうか確認*/
             if (data.length > 0) {
                 const reply = await interaction.editReply(
@@ -105,11 +105,11 @@ module.exports = [
                 if (flag === 0) {
                     await interaction.editReply("生成中...");
                     const embed = await dashboard.generation(interaction.guild);
-                    const board = await interaction.channel.send({ embeds: [embed] });
+                    const board = await interaction.channel.send({embeds: [embed]});
                     await db.update(
                         "main",
                         "guildData",
-                        { guild: interaction.guildId },
+                        {guild: interaction.guildId},
                         {
                             $set: {
                                 guild: interaction.guildId,
@@ -138,14 +138,14 @@ module.exports = [
                     };
                 }
             } else {
-                data = await db.find("main", "guildData", { guild: interaction.guildId }); /*guildData作成済みかどうか確認*/
+                data = await db.find("main", "guildData", {guild: interaction.guildId}); /*guildData作成済みかどうか確認*/
                 const embed = await dashboard.generation(interaction.guild);
-                const board = await interaction.channel.send({ embeds: [embed] });
+                const board = await interaction.channel.send({embeds: [embed]});
                 if (data.length > 0) {
                     await db.update(
                         "main",
                         "guildData",
-                        { guild: interaction.guildId },
+                        {guild: interaction.guildId},
                         {
                             $set: {
                                 guild: interaction.guildId,

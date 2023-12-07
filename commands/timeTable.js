@@ -10,7 +10,7 @@ const {
 const timetable = require("../functions/ttGeneration.js");
 const db = require("../functions/db.js");
 const guildData = require("../functions/guildDataSet.js");
-const { setTimeout } = require("node:timers/promises");
+const {setTimeout} = require("node:timers/promises");
 
 const departmentData = [
     {
@@ -46,11 +46,11 @@ module.exports = [
                     .setDescription("曜日を指定します。指定がなければ次の学校の日になります")
                     .setRequired(false)
                     .addChoices(
-                        { name: "月曜日", value: "1" },
-                        { name: "火曜日", value: "2" },
-                        { name: "水曜日", value: "3" },
-                        { name: "木曜日", value: "4" },
-                        { name: "金曜日", value: "5" },
+                        {name: "月曜日", value: "1"},
+                        {name: "火曜日", value: "2"},
+                        {name: "水曜日", value: "3"},
+                        {name: "木曜日", value: "4"},
+                        {name: "金曜日", value: "5"},
                     ),
             )
             .addBooleanOption(option =>
@@ -62,11 +62,11 @@ module.exports = [
                     .setDescription("学科を指定します")
                     .setRequired(false)
                     .addChoices(
-                        { name: "M-機械工学科", value: "1" },
-                        { name: "E-電気電子工学科", value: "2" },
-                        { name: "D-電子制御工学科", value: "3" },
-                        { name: "J-情報工学科", value: "4" },
-                        { name: "C-環境都市工学科", value: "5" },
+                        {name: "M-機械工学科", value: "1"},
+                        {name: "E-電気電子工学科", value: "2"},
+                        {name: "D-電子制御工学科", value: "3"},
+                        {name: "J-情報工学科", value: "4"},
+                        {name: "C-環境都市工学科", value: "5"},
                     ),
             )
             .addStringOption(option =>
@@ -75,11 +75,11 @@ module.exports = [
                     .setDescription("学年を指定します")
                     .setRequired(false)
                     .addChoices(
-                        { name: "1年生", value: "1" },
-                        { name: "2年生", value: "2" },
-                        { name: "3年生", value: "3" },
-                        { name: "4年生", value: "4" },
-                        { name: "5年生", value: "5" },
+                        {name: "1年生", value: "1"},
+                        {name: "2年生", value: "2"},
+                        {name: "3年生", value: "3"},
+                        {name: "4年生", value: "4"},
+                        {name: "5年生", value: "5"},
                     ),
             ),
 
@@ -109,7 +109,7 @@ module.exports = [
 
             let department = interaction.options.getString("学科");
             if (department === undefined || (department === null && interaction.guild !== null)) {
-                const guildData = await db.find("main", "guildData", { guild: interaction.guildId });
+                const guildData = await db.find("main", "guildData", {guild: interaction.guildId});
                 if (interaction.member._roles.includes(guildData[0].mRole)) department = "1";
                 else if (interaction.member._roles.includes(guildData[0].eRole)) department = "2";
                 else if (interaction.member._roles.includes(guildData[0].dRole)) department = "3";
@@ -119,7 +119,7 @@ module.exports = [
 
             let grade = interaction.options.getString("学年");
             if (grade === undefined || (grade === null && interaction.guild !== null)) {
-                const guildData = await db.find("main", "guildData", { guild: interaction.guildId });
+                const guildData = await db.find("main", "guildData", {guild: interaction.guildId});
                 grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1;
             }
 
@@ -145,7 +145,7 @@ module.exports = [
                 if (embed === 0) {
                     await interaction.editReply("指定したデータは未登録です。");
                 } else if (embed !== -1) {
-                    await interaction.editReply({ embeds: [embed] });
+                    await interaction.editReply({embeds: [embed]});
                 }
             }
         },
@@ -159,9 +159,9 @@ module.exports = [
             .addBooleanOption(option => option.setName("options").setDescription("定期実行の可否を指定します").setRequired(true)),
 
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
-            await guildData.updateOrInsert(interaction.guildId, { timetable: interaction.options.data[0].value });
-            await interaction.editReply({ content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました。" });
+            await interaction.deferReply({ephemeral: true});
+            await guildData.updateOrInsert(interaction.guildId, {timetable: interaction.options.data[0].value});
+            await interaction.editReply({content: "時間割定期通知機能を" + interaction.options.data[0].value + "に設定しました。"});
         },
     },
     {
@@ -175,7 +175,7 @@ module.exports = [
                     .setName("モード")
                     .setDescription("モード選択")
                     .setRequired(true)
-                    .addChoices({ name: "定期テスト", value: "0" }, { name: "授業変更", value: "1" }),
+                    .addChoices({name: "定期テスト", value: "0"}, {name: "授業変更", value: "1"}),
             )
             .addStringOption(option =>
                 option
@@ -183,11 +183,11 @@ module.exports = [
                     .setDescription("学科を指定します")
                     .setRequired(true)
                     .addChoices(
-                        { name: "M-機械工学科", value: "1" },
-                        { name: "E-電気電子工学科", value: "2" },
-                        { name: "D-電子制御工学科", value: "3" },
-                        { name: "J-情報工学科", value: "4" },
-                        { name: "C-環境都市工学科", value: "5" },
+                        {name: "M-機械工学科", value: "1"},
+                        {name: "E-電気電子工学科", value: "2"},
+                        {name: "D-電子制御工学科", value: "3"},
+                        {name: "J-情報工学科", value: "4"},
+                        {name: "C-環境都市工学科", value: "5"},
                     ),
             )
             .addStringOption(option =>
@@ -196,11 +196,11 @@ module.exports = [
                     .setDescription("学年を指定します")
                     .setRequired(true)
                     .addChoices(
-                        { name: "1年生", value: "1" },
-                        { name: "2年生", value: "2" },
-                        { name: "3年生", value: "3" },
-                        { name: "4年生", value: "4" },
-                        { name: "5年生", value: "5" },
+                        {name: "1年生", value: "1"},
+                        {name: "2年生", value: "2"},
+                        {name: "3年生", value: "3"},
+                        {name: "4年生", value: "4"},
+                        {name: "5年生", value: "5"},
                     ),
             )
             .addIntegerOption(option =>
@@ -212,11 +212,11 @@ module.exports = [
                     .setDescription("ベースとする曜日を選択")
                     .setRequired(false)
                     .addChoices(
-                        { name: "月曜日", value: "1" },
-                        { name: "火曜日", value: "2" },
-                        { name: "水曜日", value: "3" },
-                        { name: "木曜日", value: "4" },
-                        { name: "金曜日", value: "5" },
+                        {name: "月曜日", value: "1"},
+                        {name: "火曜日", value: "2"},
+                        {name: "水曜日", value: "3"},
+                        {name: "木曜日", value: "4"},
+                        {name: "金曜日", value: "5"},
                     ),
             ),
 
@@ -294,7 +294,7 @@ module.exports = [
 
             const options = [];
             for (let i = 0; i < subject.length; i++) {
-                options.push({ label: subject[i].title, value: subject[i].title });
+                options.push({label: subject[i].title, value: subject[i].title});
             }
 
             if (interaction.options.getString("モード") === "1") {
@@ -356,7 +356,7 @@ module.exports = [
                     value: `\`\`\`${subjects}\`\`\``,
                 })
                 .setTimestamp()
-                .setFooter({ text: "Developed by NITKC-DEV" });
+                .setFooter({text: "Developed by NITKC-DEV"});
 
             const button = new ButtonBuilder({
                 custom_id: `${interaction.options.getString("学年")}${interaction.options.getString(
@@ -369,27 +369,27 @@ module.exports = [
                 await interaction.editReply({
                     embeds: [embed],
                     components: [
-                        { type: 1, components: [select[0]] },
-                        { type: 1, components: [select[1]] },
+                        {type: 1, components: [select[0]]},
+                        {type: 1, components: [select[1]]},
                         {
                             type: 1,
                             components: [select[2]],
                         },
-                        { type: 1, components: [select[3]] },
-                        { type: 1, components: [button] },
+                        {type: 1, components: [select[3]]},
+                        {type: 1, components: [button]},
                     ],
                 });
             } else {
                 await interaction.editReply({
                     embeds: [embed],
                     components: [
-                        { type: 1, components: [select[0]] },
-                        { type: 1, components: [select[1]] },
+                        {type: 1, components: [select[0]]},
+                        {type: 1, components: [select[1]]},
                         {
                             type: 1,
                             components: [select[2]],
                         },
-                        { type: 1, components: [button] },
+                        {type: 1, components: [button]},
                     ],
                 });
             }
@@ -407,11 +407,11 @@ module.exports = [
                     .setDescription("学科を指定します")
                     .setRequired(true)
                     .addChoices(
-                        { name: "M-機械工学科", value: "1" },
-                        { name: "E-電気電子工学科", value: "2" },
-                        { name: "D-電子制御工学科", value: "3" },
-                        { name: "J-情報工学科", value: "4" },
-                        { name: "C-環境都市工学科", value: "5" },
+                        {name: "M-機械工学科", value: "1"},
+                        {name: "E-電気電子工学科", value: "2"},
+                        {name: "D-電子制御工学科", value: "3"},
+                        {name: "J-情報工学科", value: "4"},
+                        {name: "C-環境都市工学科", value: "5"},
                     ),
             )
             .addStringOption(option =>
@@ -420,11 +420,11 @@ module.exports = [
                     .setDescription("学年を指定します")
                     .setRequired(true)
                     .addChoices(
-                        { name: "1年生", value: "1" },
-                        { name: "2年生", value: "2" },
-                        { name: "3年生", value: "3" },
-                        { name: "4年生", value: "4" },
-                        { name: "5年生", value: "5" },
+                        {name: "1年生", value: "1"},
+                        {name: "2年生", value: "2"},
+                        {name: "3年生", value: "3"},
+                        {name: "4年生", value: "4"},
+                        {name: "5年生", value: "5"},
                     ),
             )
             .addIntegerOption(option =>
@@ -467,11 +467,11 @@ module.exports = [
                     .setDescription("学科を指定します")
                     .setRequired(true)
                     .addChoices(
-                        { name: "M-機械工学科", value: "1" },
-                        { name: "E-電気電子工学科", value: "2" },
-                        { name: "D-電子制御工学科", value: "3" },
-                        { name: "J-情報工学科", value: "4" },
-                        { name: "C-環境都市工学科", value: "5" },
+                        {name: "M-機械工学科", value: "1"},
+                        {name: "E-電気電子工学科", value: "2"},
+                        {name: "D-電子制御工学科", value: "3"},
+                        {name: "J-情報工学科", value: "4"},
+                        {name: "C-環境都市工学科", value: "5"},
                     ),
             )
             .addStringOption(option =>
@@ -480,11 +480,11 @@ module.exports = [
                     .setDescription("学年を指定します")
                     .setRequired(true)
                     .addChoices(
-                        { name: "1年生", value: "1" },
-                        { name: "2年生", value: "2" },
-                        { name: "3年生", value: "3" },
-                        { name: "4年生", value: "4" },
-                        { name: "5年生", value: "5" },
+                        {name: "1年生", value: "1"},
+                        {name: "2年生", value: "2"},
+                        {name: "3年生", value: "3"},
+                        {name: "4年生", value: "4"},
+                        {name: "5年生", value: "5"},
                     ),
             )
             .addStringOption(option =>
@@ -493,11 +493,11 @@ module.exports = [
                     .setDescription("明日から来週の今日までの変更したい日を曜日で指定します(それ以上は管理者限定)")
                     .setRequired(true)
                     .addChoices(
-                        { name: "月曜日", value: "1" },
-                        { name: "火曜日", value: "2" },
-                        { name: "水曜日", value: "3" },
-                        { name: "木曜日", value: "4" },
-                        { name: "金曜日", value: "5" },
+                        {name: "月曜日", value: "1"},
+                        {name: "火曜日", value: "2"},
+                        {name: "水曜日", value: "3"},
+                        {name: "木曜日", value: "4"},
+                        {name: "金曜日", value: "5"},
                     ),
             ),
 
@@ -514,7 +514,7 @@ module.exports = [
 
             const grade = interaction.options.getString("学年");
             const department = interaction.options.getString("学科");
-            let data = await db.find("main", "timetableData", { grade, department, day: String(date) });
+            let data = await db.find("main", "timetableData", {grade, department, day: String(date)});
             let defaultData = await db.find("main", "timetableData", {
                 grade,
                 department,
@@ -569,7 +569,7 @@ module.exports = [
             const filter = mInteraction => mInteraction.customId === `${date}addCommentTimetableModal${grade}${department}`;
 
             interaction
-                .awaitModalSubmit({ filter, time: 3600000 })
+                .awaitModalSubmit({filter, time: 3600000})
                 .then(async mInteraction => {
                     const inputTxt = [];
                     let comment;
@@ -596,7 +596,7 @@ module.exports = [
                     data[0].day = String(date);
                     delete data[0]._id;
 
-                    await db.updateOrInsert("main", "timetableData", { day: String(date) }, data[0]);
+                    await db.updateOrInsert("main", "timetableData", {day: String(date)}, data[0]);
 
                     const replyOptions = time => {
                         return {

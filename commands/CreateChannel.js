@@ -1,4 +1,4 @@
-const { SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
+const {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
 const db = require("../functions/db.js");
 const dbMain = "main"; //データベースmainとコレクションCC-categoryを定数化
 const colCat = "CC-categories";
@@ -17,9 +17,9 @@ module.exports = [
          * @returns {Promise<void>}
          */
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             if (interaction.guild !== null) {
-                const guildCats = await db.find(dbMain, colCat, { guildID: interaction.guildId });
+                const guildCats = await db.find(dbMain, colCat, {guildID: interaction.guildId});
                 if (guildCats.length > 0) {
                     const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
                     if (channelName.length <= 30) {
@@ -81,7 +81,7 @@ module.exports = [
                         "/CreateChanによって作成されたチャンネルに対応するメンション用のロールの作成を許可するかどうかを指定します",
                     )
                     .setRequired(true)
-                    .addChoices({ name: "許可する", value: 1 }, { name: "許可しない", value: 0 }),
+                    .addChoices({name: "許可する", value: 1}, {name: "許可しない", value: 0}),
             )
             .setDefaultMemberPermissions(1 << 3),
         /***
@@ -90,7 +90,7 @@ module.exports = [
          * @returns {Promise<void>}
          */
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             if (interaction.channel.type === 0) {
                 const dbData = await db.find(dbMain, colCat, {
                     ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId,
@@ -102,15 +102,15 @@ module.exports = [
                         allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")),
                         guildID: interaction.guildId,
                     });
-                    await interaction.editReply({ content: "追加しました", ephemeral: true });
+                    await interaction.editReply({content: "追加しました", ephemeral: true});
                 } else if (dbData[0].allowRole !== Boolean(interaction.options.getNumber("ロールの追加を許可"))) {
                     await db.update(
                         dbMain,
                         colCat,
-                        { ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId },
-                        { $set: { allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可")) } },
+                        {ID: interaction.channel.parentId ? interaction.channel.parentId : interaction.guildId},
+                        {$set: {allowRole: Boolean(interaction.options.getNumber("ロールの追加を許可"))}},
                     );
-                    await interaction.editReply({ content: "登録されているカテゴリのロール作成権限を上書きしました" });
+                    await interaction.editReply({content: "登録されているカテゴリのロール作成権限を上書きしました"});
                 } else {
                     await interaction.editReply({
                         content: "このカテゴリはすでに追加されています",
@@ -133,18 +133,18 @@ module.exports = [
          * @returns {Promise<void>}
          */
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
+            await interaction.deferReply({ephemeral: true});
             if (interaction.guild !== null) {
-                const guildCats = await db.find(dbMain, colCat, { guildID: interaction.guildId });
+                const guildCats = await db.find(dbMain, colCat, {guildID: interaction.guildId});
                 if (guildCats.length > 0) {
                     const selectCategory = new ActionRowBuilder().addComponents(
                         new StringSelectMenuBuilder()
                             .setPlaceholder("カテゴリを選択")
                             .setCustomId("removeCategory")
                             .addOptions(
-                                { label: "全カテゴリを登録解除する", value: "All" },
-                                ...guildCats.map(cat => ({ label: cat.name, value: cat.ID })),
-                                { label: "キャンセル", value: "Cancel" },
+                                {label: "全カテゴリを登録解除する", value: "All"},
+                                ...guildCats.map(cat => ({label: cat.name, value: cat.ID})),
+                                {label: "キャンセル", value: "Cancel"},
                             ),
                     );
 

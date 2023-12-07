@@ -1,4 +1,4 @@
-const { setTimeout } = require("node:timers/promises");
+const {setTimeout} = require("node:timers/promises");
 
 /***
  * 返信し、time秒後に自動で削除する。

@@ -22,7 +22,7 @@ exports.func = async function func() {
         } else if (old === 20) {
             special = "ついに二十歳、おめでとう！";
         }
-        const guild = await db.find("main", "guildData", { guild: String(data[i].guild) });
+        const guild = await db.find("main", "guildData", {guild: String(data[i].guild)});
         if (guild.length > 0 && guild[0].main !== undefined) {
             try {
                 const channel = client.channels.cache.get(guild[0].main) ?? (await client.channels.fetch(guild[0].main));

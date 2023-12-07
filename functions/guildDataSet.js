@@ -40,12 +40,12 @@ exports.ID_NODATA = ID_NODATA;
  * @returns {Promise<void>}
  */
 exports.updateOrInsert = async function func(guild, object = {}) {
-    const data = await db.find("main", "guildData", { guild: String(guild) });
+    const data = await db.find("main", "guildData", {guild: String(guild)});
     if (data.length > 0) {
         await db.update(
             "main",
             "guildData",
-            { guild: String(guild) },
+            {guild: String(guild)},
             {
                 $set: {
                     grade: String(object.grade ?? data[0].grade),
@@ -100,12 +100,12 @@ exports.updateOrInsert = async function func(guild, object = {}) {
  * @returns {Promise<void>}
  */
 exports.reset = async function func(guild) {
-    const data = await db.find("main", "guildData", { guild: String(guild) });
+    const data = await db.find("main", "guildData", {guild: String(guild)});
     if (data.length > 0) {
         await db.update(
             "main",
             "guildData",
-            { guild: String(guild) },
+            {guild: String(guild)},
             {
                 $set: {
                     guild: String(guild),
@@ -140,7 +140,7 @@ exports.checkGuild = async function func() {
         } catch (err) {
             if (err.code === 10004) {
                 //guildがないよエラーならギルド削除
-                await db.delete("main", "guildData", { guild: data[i].guild });
+                await db.delete("main", "guildData", {guild: data[i].guild});
             }
         }
     }

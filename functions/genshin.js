@@ -1,5 +1,5 @@
 const config = require("../environmentConfig");
-const { EmbedBuilder } = require("discord.js");
+const {EmbedBuilder} = require("discord.js");
 exports.daily = async function func(message, title) {
     const daily = {
         color: 0x27668d,
@@ -16,7 +16,7 @@ exports.daily = async function func(message, title) {
             icon_url: "https://pbs.twimg.com/profile_images/1503219566478229506/0dkJeazd_400x400.jpg",
         },
     };
-    client.channels.cache.get(config.daily).send({ embeds: [daily] });
+    client.channels.cache.get(config.daily).send({embeds: [daily]});
     let dt = new Date();
     let dayofweek = dt.getDay();
     let date = dt.getDate();
@@ -59,7 +59,7 @@ exports.daily = async function func(message, title) {
             ],
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [monday] });
+        client.channels.cache.get(config.daily).send({embeds: [monday]});
     }
 
     if (dayofweek === 4) {
@@ -76,7 +76,7 @@ exports.daily = async function func(message, title) {
             ],
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [thursday] });
+        client.channels.cache.get(config.daily).send({embeds: [thursday]});
     }
 
     if (dayofweek === 5) {
@@ -97,7 +97,7 @@ exports.daily = async function func(message, title) {
             ],
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [friday] });
+        client.channels.cache.get(config.daily).send({embeds: [friday]});
     }
 
     if (dayofweek === 6) {
@@ -114,7 +114,7 @@ exports.daily = async function func(message, title) {
             ],
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [saturday] });
+        client.channels.cache.get(config.daily).send({embeds: [saturday]});
     }
     if (date % 3 === 0) {
         /*3の倍数の日*/
@@ -124,7 +124,7 @@ exports.daily = async function func(message, title) {
             description: "博来・長順以外の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n",
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [multiple] });
+        client.channels.cache.get(config.daily).send({embeds: [multiple]});
     }
     if (date % 3 === 1) {
         /*3の倍数+1の日*/
@@ -134,7 +134,7 @@ exports.daily = async function func(message, title) {
             description: "博来・長順の★4以上の食べ物、食材、素材、特産品購入がリセットされました\n\n",
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [multiple2] });
+        client.channels.cache.get(config.daily).send({embeds: [multiple2]});
     }
 
     if (date === 1) {
@@ -155,7 +155,7 @@ exports.daily = async function func(message, title) {
             ],
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [first] });
+        client.channels.cache.get(config.daily).send({embeds: [first]});
     }
     if (date === 16) {
         /*毎月16日*/
@@ -171,6 +171,6 @@ exports.daily = async function func(message, title) {
             ],
             timestamp: new Date().toISOString(),
         };
-        client.channels.cache.get(config.daily).send({ embeds: [sixteenth] });
+        client.channels.cache.get(config.daily).send({embeds: [sixteenth]});
     }
 };

@@ -1,4 +1,4 @@
-const { ActionRowBuilder, StringSelectMenuBuilder } = require("discord.js");
+const {ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
 const db = require("./db.js");
 const dbMain = "main";
 const colCat = "CC-categories";
@@ -13,12 +13,12 @@ const system = require("./logsystem.js");
  * @returns {Promise<void>} void(同期処理)
  */
 exports.createChannel = async function (interaction) {
-    const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
+    const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     //ゴリ押しJson文字列をオブジェクト型に変換する
     const receivedValue = JSON.parse(interaction.values[0]);
 
     if (receivedValue.categoryID === "cancel") {
-        await waitingMessage.edit({ content: "キャンセルされました", components: [] });
+        await waitingMessage.edit({content: "キャンセルされました", components: []});
     } else {
         let createdChannel;
         try {
@@ -29,7 +29,7 @@ exports.createChannel = async function (interaction) {
                 type: 0,
             });
         } catch (error) {
-            await waitingMessage.edit({ content: "チャンネルの作成に失敗しました", components: [] });
+            await waitingMessage.edit({content: "チャンネルの作成に失敗しました", components: []});
             await system.error("/create-channelチャンネル作成失敗", error);
             return;
         }
@@ -47,15 +47,15 @@ exports.createChannel = async function (interaction) {
         });
 
         //応答待ったりDB更新してる間にカテゴリの登録が解除されてたときにキャンセルする
-        if ((await db.find(dbMain, colCat, { ID: createdChannel.parentId || createdChannel.guildId })).length === 0) {
+        if ((await db.find(dbMain, colCat, {ID: createdChannel.parentId || createdChannel.guildId})).length === 0) {
             await channelDelete(interaction, createdChannel.id);
-            await db.delete(dbMain, colChan, { ID: createdChannel.id });
+            await db.delete(dbMain, colChan, {ID: createdChannel.id});
             await system.warn("カテゴリ参照失敗");
-            await waitingMessage.edit({ content: "このカテゴリは登録されていません", components: [] });
+            await waitingMessage.edit({content: "このカテゴリは登録されていません", components: []});
             return;
         }
 
-        if ((await db.find(dbMain, colCat, { ID: receivedValue.categoryID }))[0].allowRole) {
+        if ((await db.find(dbMain, colCat, {ID: receivedValue.categoryID}))[0].allowRole) {
             const createRole = new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder().setCustomId("createRole").addOptions(
                     {
@@ -82,7 +82,7 @@ exports.createChannel = async function (interaction) {
                 components: [createRole],
             });
         } else {
-            await waitingMessage.edit({ content: "作成しました", components: [] });
+            await waitingMessage.edit({content: "作成しました", components: []});
         }
     }
 };
@@ -93,7 +93,7 @@ exports.createChannel = async function (interaction) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.createRole = async function (interaction) {
-    const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
+    const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     const receivedValue = JSON.parse(interaction.values[0]);
 
     if (receivedValue.value) {
@@ -106,7 +106,7 @@ exports.createRole = async function (interaction) {
                 reason: "木更津高専統合管理BOTの/create-channelにより作成",
             });
         } catch (error) {
-            await waitingMessage.edit({ content: "ロールの作成に失敗しました", components: [] });
+            await waitingMessage.edit({content: "ロールの作成に失敗しました", components: []});
             await system.error("/create-channelロール作成失敗", error);
             return;
         }
@@ -114,7 +114,7 @@ exports.createRole = async function (interaction) {
         await db.update(
             dbMain,
             colChan,
-            { ID: receivedValue.channelID },
+            {ID: receivedValue.channelID},
             {
                 $set: {
                     thereRole: true,
@@ -124,9 +124,9 @@ exports.createRole = async function (interaction) {
             },
         );
 
-        await waitingMessage.edit({ content: "ロールを作成して終了しました", components: [] });
+        await waitingMessage.edit({content: "ロールを作成して終了しました", components: []});
     } else {
-        await waitingMessage.edit({ content: "ロールを作成せずに終了しました", components: [] });
+        await waitingMessage.edit({content: "ロールを作成せずに終了しました", components: []});
     }
 };
 
@@ -138,23 +138,23 @@ exports.createRole = async function (interaction) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.removeCategory = async function (interaction) {
-    const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
+    const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     switch (interaction.values[0]) {
         case "Cancel":
-            await waitingMessage.edit({ content: "キャンセルされました", components: [] });
+            await waitingMessage.edit({content: "キャンセルされました", components: []});
             break;
         default:
             const selectDelete = new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder().setCustomId("selectDelete").setOptions(
                     {
                         label: "はい",
-                        value: JSON.stringify({ value: true, categoryID: interaction.values[0] }),
+                        value: JSON.stringify({value: true, categoryID: interaction.values[0]}),
                     },
                     {
                         label: "いいえ",
-                        value: JSON.stringify({ value: false, categoryID: interaction.values[0] }),
+                        value: JSON.stringify({value: false, categoryID: interaction.values[0]}),
                     },
-                    { label: "キャンセル", value: "Cancel" },
+                    {label: "キャンセル", value: "Cancel"},
                 ),
             );
 
@@ -173,9 +173,9 @@ exports.removeCategory = async function (interaction) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.selectDelete = async function (interaction) {
-    const waitingMessage = await interaction.deferUpdate({ ephemeral: true });
+    const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     if (interaction.values[0] === "Cancel") {
-        await waitingMessage.edit({ content: "キャンセルされました", components: [] });
+        await waitingMessage.edit({content: "キャンセルされました", components: []});
     } else {
         const receivedValue = JSON.parse(interaction.values[0]);
         let returnMessage;
@@ -183,7 +183,7 @@ exports.selectDelete = async function (interaction) {
         switch (receivedValue.categoryID) {
             case "All":
                 if (receivedValue.value) {
-                    for (const channelData of (await db.find(dbMain, colChan, { guildID: interaction.guildId })).map(channel => ({
+                    for (const channelData of (await db.find(dbMain, colChan, {guildID: interaction.guildId})).map(channel => ({
                         ID: channel.ID,
                         thereRole: channel.thereRole,
                         roleID: channel.roleID,
@@ -206,8 +206,8 @@ exports.selectDelete = async function (interaction) {
                     }
                 }
 
-                await db.delete(dbMain, colChan, { guildID: interaction.guildId });
-                await db.delete(dbMain, colCat, { guildID: interaction.guildId });
+                await db.delete(dbMain, colChan, {guildID: interaction.guildId});
+                await db.delete(dbMain, colCat, {guildID: interaction.guildId});
 
                 if (receivedValue.value) {
                     returnMessage =
@@ -219,9 +219,9 @@ exports.selectDelete = async function (interaction) {
 
                 break;
             default:
-                const catName = (await db.find(dbMain, colCat, { ID: receivedValue.categoryID }))[0].name;
+                const catName = (await db.find(dbMain, colCat, {ID: receivedValue.categoryID}))[0].name;
                 if (receivedValue.value) {
-                    for (const channelData of (await db.find(dbMain, colChan, { categoryID: receivedValue.categoryID })).map(channel => ({
+                    for (const channelData of (await db.find(dbMain, colChan, {categoryID: receivedValue.categoryID})).map(channel => ({
                         ID: channel.ID,
                         thereRole: channel.thereRole,
                         roleID: channel.roleID,
@@ -244,8 +244,8 @@ exports.selectDelete = async function (interaction) {
                     }
                 }
 
-                await db.delete(dbMain, colChan, { categoryID: receivedValue.categoryID });
-                await db.delete(dbMain, colCat, { ID: receivedValue.categoryID });
+                await db.delete(dbMain, colChan, {categoryID: receivedValue.categoryID});
+                await db.delete(dbMain, colCat, {ID: receivedValue.categoryID});
 
                 if (receivedValue.value) {
                     returnMessage =
@@ -258,7 +258,7 @@ exports.selectDelete = async function (interaction) {
 
                 break;
         }
-        await waitingMessage.edit({ content: returnMessage, components: [] });
+        await waitingMessage.edit({content: returnMessage, components: []});
     }
 };
 
@@ -288,7 +288,7 @@ async function roleDelete(interaction, ID) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.removeDeletedChannelData = async function (channel) {
-    await db.delete(dbMain, colChan, { ID: channel.id });
+    await db.delete(dbMain, colChan, {ID: channel.id});
 };
 
 /***
@@ -297,8 +297,8 @@ exports.removeDeletedChannelData = async function (channel) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.removeDeletedCategoryData = async function (category) {
-    await db.delete(dbMain, colCat, { ID: category.id });
-    await db.delete(dbMain, colChan, { categoryID: category.id });
+    await db.delete(dbMain, colCat, {ID: category.id});
+    await db.delete(dbMain, colChan, {categoryID: category.id});
 };
 
 /***
@@ -307,15 +307,15 @@ exports.removeDeletedCategoryData = async function (category) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.updateChannelData = async function (channel) {
-    const channelData = await db.find(dbMain, colChan, { ID: channel.id });
+    const channelData = await db.find(dbMain, colChan, {ID: channel.id});
     const newChannel = await client.channels.cache.get(channel.id);
     if (channelData.length > 0) {
         if (channelData[0].categoryID !== (newChannel.parentId !== null ? newChannel.parentId : newChannel.guildId)) {
-            await db.delete(dbMain, colChan, { ID: newChannel.id });
+            await db.delete(dbMain, colChan, {ID: newChannel.id});
         }
 
         if (channelData[0].name !== newChannel.name) {
-            await db.update(dbMain, colChan, { ID: newChannel.id }, { $set: { name: newChannel.name } });
+            await db.update(dbMain, colChan, {ID: newChannel.id}, {$set: {name: newChannel.name}});
         }
     }
 };
@@ -326,11 +326,11 @@ exports.updateChannelData = async function (channel) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.updateCategoryData = async function (category) {
-    const categoryData = await db.find(dbMain, colCat, { ID: category.id });
+    const categoryData = await db.find(dbMain, colCat, {ID: category.id});
     const newCategory = await client.channels.cache.get(category.id);
     if (categoryData.length > 0) {
         if (categoryData[0].name !== newCategory.name) {
-            await db.update(dbMain, colCat, { ID: newCategory.id }, { $set: { name: newCategory.name } });
+            await db.update(dbMain, colCat, {ID: newCategory.id}, {$set: {name: newCategory.name}});
         }
     }
 };
@@ -341,7 +341,7 @@ exports.updateCategoryData = async function (category) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.removeDeletedRoleData = async function (role) {
-    await db.update(dbMain, colChan, { roleID: role.id }, { $set: { thereRole: false, roleID: "", roleName: "" } });
+    await db.update(dbMain, colChan, {roleID: role.id}, {$set: {thereRole: false, roleID: "", roleName: ""}});
 };
 
 /***
@@ -350,12 +350,12 @@ exports.removeDeletedRoleData = async function (role) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.updateRoleData = async function (role) {
-    const channelData = await db.find(dbMain, colChan, { roleID: role.id });
+    const channelData = await db.find(dbMain, colChan, {roleID: role.id});
 
     if (channelData.length > 0) {
         const newRole = await (await client.guilds.fetch(role.guild.id)).roles.fetch(role.id);
         if (channelData[0].roleName !== newRole.name) {
-            await db.update(dbMain, colChan, { roleID: newRole.id }, { $set: { roleName: newRole.name } });
+            await db.update(dbMain, colChan, {roleID: newRole.id}, {$set: {roleName: newRole.name}});
         }
     }
 };
@@ -366,11 +366,11 @@ exports.updateRoleData = async function (role) {
  * @returns {Promise<void>} void(同期処理)
  */
 exports.deleteGuildData = async function (guild) {
-    const categoryData = await db.find(dbMain, colCat, { guildID: guild.id });
+    const categoryData = await db.find(dbMain, colCat, {guildID: guild.id});
     for (const category of categoryData) {
-        await db.delete(dbMain, colChan, { categoryID: category.ID });
+        await db.delete(dbMain, colChan, {categoryID: category.ID});
     }
-    await db.delete(dbMain, colCat, { guildID: guild.id });
+    await db.delete(dbMain, colCat, {guildID: guild.id});
 };
 
 /***
@@ -386,8 +386,8 @@ exports.dataCheck = async function () {
                 guildData = await client.guilds.fetch(category.guildID);
             } catch (e) {
                 if (e.code === 10004) {
-                    await db.delete(dbMain, colChan, { guildID: category.guildID });
-                    await db.delete(dbMain, colCat, { guildID: category.guildID });
+                    await db.delete(dbMain, colChan, {guildID: category.guildID});
+                    await db.delete(dbMain, colCat, {guildID: category.guildID});
                     continue;
                 } else {
                     // 意図しない例外の場合、丸め込んでしまうため、そのまま例外をスローして、外でキャッチするため警告を抑制
@@ -398,38 +398,38 @@ exports.dataCheck = async function () {
             if (category.ID !== category.guildID) {
                 const categoryData = await guildData.channels.cache.get(category.ID);
                 if (categoryData === undefined) {
-                    await db.delete(dbMain, colChan, { categoryID: category.ID });
-                    await db.delete(dbMain, colCat, { ID: category.ID });
+                    await db.delete(dbMain, colChan, {categoryID: category.ID});
+                    await db.delete(dbMain, colCat, {ID: category.ID});
                 } else if (categoryData.name !== category.name) {
-                    await db.update(dbMain, colCat, { ID: category.ID }, { $set: { name: categoryData.name } });
+                    await db.update(dbMain, colCat, {ID: category.ID}, {$set: {name: categoryData.name}});
                 }
             }
         }
 
         for (const channel of await db.find(dbMain, colChan, {})) {
-            if ((await db.find(dbMain, colCat, { ID: channel.categoryID })).length === 0) {
-                await db.delete(dbMain, colChan, { ID: channel.ID });
+            if ((await db.find(dbMain, colCat, {ID: channel.categoryID})).length === 0) {
+                await db.delete(dbMain, colChan, {ID: channel.ID});
                 continue;
             }
 
             const channelData = await client.channels.cache.get(channel.ID);
 
             if (channelData === undefined) {
-                await db.delete(dbMain, colChan, { ID: channel.ID });
+                await db.delete(dbMain, colChan, {ID: channel.ID});
                 continue;
             } else if (channelData.name !== channel.name) {
-                await db.update(dbMain, colChan, { ID: channel.ID }, { $set: { name: channelData.name } });
+                await db.update(dbMain, colChan, {ID: channel.ID}, {$set: {name: channelData.name}});
             }
 
             if (channel.thereRole) {
                 const roleData = await (
-                    await client.guilds.fetch((await db.find(dbMain, colCat, { ID: channel.categoryID }))[0].guildID)
+                    await client.guilds.fetch((await db.find(dbMain, colCat, {ID: channel.categoryID}))[0].guildID)
                 ).roles.fetch(channel.roleID);
                 if (roleData === null) {
                     await db.update(
                         dbMain,
                         colChan,
-                        { ID: channel.ID },
+                        {ID: channel.ID},
                         {
                             $set: {
                                 thereRole: false,
@@ -439,7 +439,7 @@ exports.dataCheck = async function () {
                         },
                     );
                 } else if (roleData.name !== channel.roleName) {
-                    await db.update(dbMain, colChan, { ID: channel.ID }, { $set: { roleName: roleData.name } });
+                    await db.update(dbMain, colChan, {ID: channel.ID}, {$set: {roleName: roleData.name}});
                 }
             }
         }

@@ -1,11 +1,11 @@
 const axios = require("axios");
 const db = require("../functions/db.js");
-const { EmbedBuilder } = require("discord.js");
+const {EmbedBuilder} = require("discord.js");
 const system = require("./logsystem.js");
 
 /*天気取得*/
 async function getWeather() {
-    const data = await db.find("main", "weatherCache", { label: "最新の天気予報" });
+    const data = await db.find("main", "weatherCache", {label: "最新の天気予報"});
     return data[0].response;
 }
 
@@ -50,7 +50,7 @@ exports.generation = async function func(guild) {
         const time = date.toFormat("YYYY年 MM月DD日 HH24:MI:SS");
 
         /*bot及びユーザーの人数を取得*/
-        const members = await guild.members.fetch({ withPresences: true });
+        const members = await guild.members.fetch({withPresences: true});
         const user = members.filter(member => member.user.bot === false).size;
         const online = members.filter(member => member.presence && member.presence.status !== "offline" && member.user.bot === false).size;
         const botOnline = members.filter(
@@ -58,7 +58,7 @@ exports.generation = async function func(guild) {
         ).size;
 
         /*定期テスト*/
-        const data = await db.find("main", "nextTest", { label: { $in: ["1", "2", "3", "4"] } });
+        const data = await db.find("main", "nextTest", {label: {$in: ["1", "2", "3", "4"]}});
 
         let test, UNIXtest, testStart, testEnd;
         let now = Date.now() + 32400000;
@@ -89,7 +89,7 @@ exports.generation = async function func(guild) {
                             await db.update(
                                 "main",
                                 "nextTest",
-                                { label: String(i + 1) },
+                                {label: String(i + 1)},
                                 {
                                     $set: {
                                         year: String(data[i + 1].year),
@@ -104,7 +104,7 @@ exports.generation = async function func(guild) {
                         await db.update(
                             "main",
                             "nextTest",
-                            { label: "4" },
+                            {label: "4"},
                             {
                                 $set: {
                                     year: "0",
@@ -156,8 +156,8 @@ exports.generation = async function func(guild) {
             weather = "天気を取得できませんでした";
         } else {
             const weatherCache = [{}, {}]; /*天気のキャッシュを取得*/
-            weatherCache[0] = (await db.find("main", "weatherCache", { label: { $in: ["0"] } }))[0];
-            weatherCache[1] = (await db.find("main", "weatherCache", { label: { $in: ["1"] } }))[0];
+            weatherCache[0] = (await db.find("main", "weatherCache", {label: {$in: ["0"]}}))[0];
+            weatherCache[1] = (await db.find("main", "weatherCache", {label: {$in: ["1"]}}))[0];
 
             const min = [
                 weatherData.forecasts[0].temperature.min.celsius ?? weatherCache[0].min,
@@ -205,7 +205,7 @@ exports.generation = async function func(guild) {
                 },
             ])
             .setTimestamp()
-            .setFooter({ text: "Developed by NITKC-DEV" });
+            .setFooter({text: "Developed by NITKC-DEV"});
 
         return embed;
     } catch (error) {

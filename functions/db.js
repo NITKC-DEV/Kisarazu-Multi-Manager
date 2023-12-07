@@ -1,8 +1,8 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const {MongoClient, ServerApiVersion} = require("mongodb");
 const config = require("../environmentConfig");
 const system = require("./logsystem.js");
 const db = require("./db.js");
-const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
 
 /***
  * データベースからデータを取得する
@@ -81,7 +81,7 @@ exports.updateOrInsert = async function run(dbName, collectionName, filter, obje
     try {
         const data = await db.find(dbName, collectionName, filter);
         if (data.length > 0) {
-            await db.update(dbName, collectionName, filter, { $set: object });
+            await db.update(dbName, collectionName, filter, {$set: object});
         } else {
             await db.insert(dbName, collectionName, object);
         }
@@ -114,7 +114,7 @@ exports.delete = async function run(dbName, collectionName, filter) {
  * @returns {Promise<void>}
  */
 exports.open = async function close() {
-    const dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+    const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
     await system.log("DB - open");
 };
 

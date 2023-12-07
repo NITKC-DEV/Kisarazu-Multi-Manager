@@ -1,8 +1,8 @@
-const { SlashCommandBuilder, EmbedBuilder } = require("discord.js");
+const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
 const db = require("../functions/db.js");
 const guildData = require("../functions/guildDataSet.js");
-const { ID_NODATA } = require("../functions/guildDataSet.js");
-const { setTimeout } = require("node:timers/promises");
+const {ID_NODATA} = require("../functions/guildDataSet.js");
+const {setTimeout} = require("node:timers/promises");
 
 module.exports = [
     {
@@ -42,26 +42,26 @@ module.exports = [
             )
             .addRoleOption(option => option.setName("c科ロール").setDescription("c科用ロールを指定してください。").setRequired(false)),
         async execute(interaction) {
-            await interaction.deferReply({ ephemeral: true });
-            await db.find("main", "guildData", { guild: String(interaction.guildId) });
+            await interaction.deferReply({ephemeral: true});
+            await db.find("main", "guildData", {guild: String(interaction.guildId)});
             const object = {
                 guild: interaction.guildId,
                 grade: interaction.options.getInteger("学年"),
-                announce: (interaction.options.getChannel("アナウンスチャンネル") ?? { id: undefined }).id,
-                main: (interaction.options.getChannel("メインチャンネル") ?? { id: undefined }).id,
-                mChannel: (interaction.options.getChannel("m科チャンネル") ?? { id: undefined }).id,
-                mRole: (interaction.options.getRole("m科ロール") ?? { id: undefined }).id,
-                eChannel: (interaction.options.getChannel("e科チャンネル") ?? { id: undefined }).id,
-                eRole: (interaction.options.getRole("e科ロール") ?? { id: undefined }).id,
-                dChannel: (interaction.options.getChannel("d科チャンネル") ?? { id: undefined }).id,
-                dRole: (interaction.options.getRole("d科ロール") ?? { id: undefined }).id,
-                jChannel: (interaction.options.getChannel("j科チャンネル") ?? { id: undefined }).id,
-                jRole: (interaction.options.getRole("j科ロール") ?? { id: undefined }).id,
-                cChannel: (interaction.options.getChannel("c科チャンネル") ?? { id: undefined }).id,
-                cRole: (interaction.options.getRole("c科ロール") ?? { id: undefined }).id,
+                announce: (interaction.options.getChannel("アナウンスチャンネル") ?? {id: undefined}).id,
+                main: (interaction.options.getChannel("メインチャンネル") ?? {id: undefined}).id,
+                mChannel: (interaction.options.getChannel("m科チャンネル") ?? {id: undefined}).id,
+                mRole: (interaction.options.getRole("m科ロール") ?? {id: undefined}).id,
+                eChannel: (interaction.options.getChannel("e科チャンネル") ?? {id: undefined}).id,
+                eRole: (interaction.options.getRole("e科ロール") ?? {id: undefined}).id,
+                dChannel: (interaction.options.getChannel("d科チャンネル") ?? {id: undefined}).id,
+                dRole: (interaction.options.getRole("d科ロール") ?? {id: undefined}).id,
+                jChannel: (interaction.options.getChannel("j科チャンネル") ?? {id: undefined}).id,
+                jRole: (interaction.options.getRole("j科ロール") ?? {id: undefined}).id,
+                cChannel: (interaction.options.getChannel("c科チャンネル") ?? {id: undefined}).id,
+                cRole: (interaction.options.getRole("c科ロール") ?? {id: undefined}).id,
             };
             await guildData.updateOrInsert(interaction.guildId, object);
-            const newData = await db.find("main", "guildData", { guild: String(interaction.guildId) });
+            const newData = await db.find("main", "guildData", {guild: String(interaction.guildId)});
 
             const date = new Date();
             let description = "";
@@ -121,8 +121,8 @@ module.exports = [
                     },
                 )
                 .setTimestamp()
-                .setFooter({ text: "Developed by NITKC-DEV" });
-            await interaction.editReply({ embeds: [embed], ephemeral: true });
+                .setFooter({text: "Developed by NITKC-DEV"});
+            await interaction.editReply({embeds: [embed], ephemeral: true});
         },
     },
     {
@@ -208,7 +208,7 @@ module.exports = [
             .setDescription("現在guildDateSystemに設定されている内容を表示します。詳細は/adminhelpを参照してください"),
         async execute(interaction) {
             await interaction.deferReply();
-            const newData = await db.find("main", "guildData", { guild: String(interaction.guildId) });
+            const newData = await db.find("main", "guildData", {guild: String(interaction.guildId)});
             let dashboard, timetable, weather;
             if (newData[0].board !== ID_NODATA) {
                 dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
@@ -286,8 +286,8 @@ module.exports = [
                     },
                 )
                 .setTimestamp()
-                .setFooter({ text: "Developed by NITKC-DEV" });
-            await interaction.editReply({ embeds: [embed], ephemeral: true });
+                .setFooter({text: "Developed by NITKC-DEV"});
+            await interaction.editReply({embeds: [embed], ephemeral: true});
         },
     },
 ];

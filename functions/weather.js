@@ -1,11 +1,11 @@
-const { EmbedBuilder } = require("discord.js");
+const {EmbedBuilder} = require("discord.js");
 const db = require("../functions/db.js");
 const axios = require("axios");
 const system = require("./logsystem");
 
 /*天気取得*/
 async function getWeather() {
-    const data = await db.find("main", "weatherCache", { label: "最新の天気予報" });
+    const data = await db.find("main", "weatherCache", {label: "最新の天気予報"});
     return data[0].response;
 }
 
@@ -24,7 +24,7 @@ function zenkaku2Hankaku(str) {
 exports.generationDay = async function func(day) {
     const data = await getWeather();
     const weather = data.forecasts[day];
-    const weatherCache = await db.find("main", "weatherCache", { label: { $in: ["0", "1"] } });
+    const weatherCache = await db.find("main", "weatherCache", {label: {$in: ["0", "1"]}});
     const date = new Date();
     let color;
     date.setDate(date.getDate() + day);
@@ -97,7 +97,7 @@ exports.generationDay = async function func(day) {
             },
         ])
         .setTimestamp()
-        .setFooter({ text: "気象庁 Japan Meteorological Agency  |  Developed by NITKC-DEV" });
+        .setFooter({text: "気象庁 Japan Meteorological Agency  |  Developed by NITKC-DEV"});
 };
 
 exports.update = async function func() {
@@ -113,7 +113,7 @@ exports.update = async function func() {
         await db.update(
             "main",
             "weatherCache",
-            { label: "最新の天気予報" },
+            {label: "最新の天気予報"},
             {
                 $set: {
                     response: response.data,
@@ -124,13 +124,13 @@ exports.update = async function func() {
 };
 
 exports.catcheUpdate = async function func() {
-    const data = await db.find("main", "weatherCache", { label: "最新の天気予報" });
-    const today = await db.find("main", "weatherCache", { label: "1" });
+    const data = await db.find("main", "weatherCache", {label: "最新の天気予報"});
+    const today = await db.find("main", "weatherCache", {label: "1"});
     if (data[0].response.forecasts[0].date !== today[0].day) {
         await db.update(
             "main",
             "weatherCache",
-            { label: "0" },
+            {label: "0"},
             {
                 $set: {
                     day: data[0].response.forecasts[0].date,
@@ -143,7 +143,7 @@ exports.catcheUpdate = async function func() {
         await db.update(
             "main",
             "weatherCache",
-            { label: "0" },
+            {label: "0"},
             {
                 $set: {
                     day: today[0].day,
@@ -158,7 +158,7 @@ exports.catcheUpdate = async function func() {
         /*明日の天気のキャッシュを更新*/
         "main",
         "weatherCache",
-        { label: "1" },
+        {label: "1"},
         {
             $set: {
                 day: data[0].response.forecasts[1].date,

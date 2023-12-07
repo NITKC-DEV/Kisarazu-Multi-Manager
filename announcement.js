@@ -1,13 +1,13 @@
-const { Client, GatewayIntentBits, Partials, EmbedBuilder } = require("discord.js");
+const {Client, GatewayIntentBits, Partials, EmbedBuilder} = require("discord.js");
 const dotenv = require("dotenv");
 const cron = require("node-cron");
 require("date-utils");
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const {MongoClient, ServerApiVersion} = require("mongodb");
 const config = require("./config.json");
 const devConfig = require("./config.dev.json");
 
 const readline = require("readline");
-const { Select } = require("enquirer");
+const {Select} = require("enquirer");
 dotenv.config();
 const client = new Client({
     intents: [
@@ -63,7 +63,7 @@ async function run() {
 
     switch (mode) {
         case "通知テスト": {
-            dbClient = new MongoClient(devConfig.db, { serverApi: ServerApiVersion.v1 });
+            dbClient = new MongoClient(devConfig.db, {serverApi: ServerApiVersion.v1});
             client.login(devConfig.token);
             console.log("すべての通知が1分後に送信されます");
 
@@ -80,7 +80,7 @@ async function run() {
             return;
         }
         case "メンテ告知&開始通知セット": {
-            dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+            dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
             client.login(config.token);
             sendTime.startH = sendTime = {
                 noticeH: parseFloat(await readUserInput("メンテ告知時間(HH)を入力")),
@@ -95,7 +95,7 @@ async function run() {
         }
         case "終了通知(1分後送信)": {
             console.log("終了通知が1分後に送信されます");
-            dbClient = new MongoClient(config.db, { serverApi: ServerApiVersion.v1 });
+            dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
             client.login(config.token);
 
             let date = new Date();
@@ -113,24 +113,24 @@ async function run() {
 cron.schedule("*/1  * * * *", async () => {
     const date = new Date();
     if (date.getHours() === sendTime.noticeH && date.getMinutes() === sendTime.noticeM) {
-        const data = await find("main", "guildData", { announce: { $nin: ["0000000000000000000"] } });
+        const data = await find("main", "guildData", {announce: {$nin: ["0000000000000000000"]}});
         for (let i = 0; i < data.length; i++) {
             client.channels.cache.get(data[i].announce).send("@everyone");
-            client.channels.cache.get(data[i].announce).send({ embeds: [embed.notice] });
+            client.channels.cache.get(data[i].announce).send({embeds: [embed.notice]});
         }
     }
     if (date.getHours() === sendTime.startH && date.getMinutes() === sendTime.startM) {
-        const data = await find("main", "guildData", { announce: { $nin: ["0000000000000000000"] } });
+        const data = await find("main", "guildData", {announce: {$nin: ["0000000000000000000"]}});
         for (let i = 0; i < data.length; i++) {
             client.channels.cache.get(data[i].announce).send("@everyone");
-            client.channels.cache.get(data[i].announce).send({ embeds: [embed.start] });
+            client.channels.cache.get(data[i].announce).send({embeds: [embed.start]});
         }
     }
     if (date.getHours() === sendTime.endH && date.getMinutes() === sendTime.endM) {
-        const data = await find("main", "guildData", { announce: { $nin: ["0000000000000000000"] } });
+        const data = await find("main", "guildData", {announce: {$nin: ["0000000000000000000"]}});
         for (let i = 0; i < data.length; i++) {
             client.channels.cache.get(data[i].announce).send("@everyone");
-            client.channels.cache.get(data[i].announce).send({ embeds: [embed.end] });
+            client.channels.cache.get(data[i].announce).send({embeds: [embed.end]});
         }
     }
 });

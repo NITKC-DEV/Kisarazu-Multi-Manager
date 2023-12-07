@@ -1,4 +1,4 @@
-const { Client, GatewayIntentBits, Partials, Collection, Events } = require("discord.js");
+const {Client, GatewayIntentBits, Partials, Collection, Events} = require("discord.js");
 const dotenv = require("dotenv");
 const path = require("path");
 const fs = require("fs");
@@ -22,7 +22,7 @@ global.client = new Client({
 
 //configファイル読み込み
 const config = require("./environmentConfig.js");
-const { configPath } = require("./environmentConfig.js");
+const {configPath} = require("./environmentConfig.js");
 
 //関数読み込み
 const TxtEasterEgg = require("./functions/TxtEasterEgg.js");
@@ -34,7 +34,7 @@ const genshin = require("./functions/genshin.js");
 const db = require("./functions/db.js");
 const weather = require("./functions/weather.js");
 const guildData = require("./functions/guildDataSet.js");
-const { ID_NODATA } = require("./functions/guildDataSet.js");
+const {ID_NODATA} = require("./functions/guildDataSet.js");
 const CreateChannel = require("./functions/CCFunc.js");
 const mode = require("./functions/statusAndMode.js");
 const statusAndMode = require("./functions/statusAndMode.js");
@@ -87,8 +87,8 @@ client.on("interactionCreate", async interaction => {
         if (!command) return;
         let guild, channel;
         if (!interaction.guildId) {
-            guild = { name: "ダイレクトメッセージ", id: "---" };
-            channel = { name: "---", id: "---" };
+            guild = {name: "ダイレクトメッセージ", id: "---"};
+            channel = {name: "---", id: "---"};
         } else {
             guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
             channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
@@ -129,8 +129,8 @@ client.on("interactionCreate", async interaction => {
         const interactionTypeName = ["Ping", "ApplicationCommand", "MessageComponent", "ApplicationCommandAutocomplete", "ModalSubmit"];
         let guild, channel;
         if (!interaction.guildId) {
-            guild = { name: "ダイレクトメッセージ", id: "---" };
-            channel = { name: "---", id: "---" };
+            guild = {name: "ダイレクトメッセージ", id: "---"};
+            channel = {name: "---", id: "---"};
         } else {
             guild = client.guilds.cache.get(interaction.guildId) ?? (await client.guilds.fetch(interaction.guildId));
             channel = client.channels.cache.get(interaction.channelId) ?? (await client.channels.fetch(interaction.channelId));
@@ -169,7 +169,7 @@ client.on(Events.InteractionCreate, async interaction => {
             await CreateChannel.selectDelete(interaction);
         }
         //timetable用 customIDに引数を埋め込むため、一致で検索
-        else if ((interaction.customId.match(/changeTimetableSelectMenu/) ?? { index: false }).index > 0) {
+        else if ((interaction.customId.match(/changeTimetableSelectMenu/) ?? {index: false}).index > 0) {
             await timetable.setNewTimetableData(interaction);
         } else if (interaction.customId === "adminHelp") {
             await help.adminHelpDisplay(interaction);
@@ -193,7 +193,7 @@ client.on(Events.InteractionCreate, async interaction => {
     if (flag === 0) return;
 
     //timetable用 customIDに引数を埋め込むため、一致で検索
-    if ((interaction.customId.match(/changeTimetableButton/) ?? { index: false }).index > 0) {
+    if ((interaction.customId.match(/changeTimetableButton/) ?? {index: false}).index > 0) {
         await timetable.showNewTimetableModal(interaction);
     }
 });
@@ -328,31 +328,31 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
                     if (embed[0] !== 0 && guildData[i].mChannel !== ID_NODATA)
                         await (
                             client.channels.cache.get(guildData[i].mChannel) ?? (await client.channels.fetch(guildData[i].mChannel))
-                        ).send({ embeds: [embed[0]] });
+                        ).send({embeds: [embed[0]]});
                 } catch {}
                 try {
                     if (embed[1] !== 0 && guildData[i].eChannel !== ID_NODATA)
                         await (
                             client.channels.cache.get(guildData[i].eChannel) ?? (await client.channels.fetch(guildData[i].eChannel))
-                        ).send({ embeds: [embed[1]] });
+                        ).send({embeds: [embed[1]]});
                 } catch {}
                 try {
                     if (embed[2] !== 0 && guildData[i].dChannel !== ID_NODATA)
                         await (
                             client.channels.cache.get(guildData[i].dChannel) ?? (await client.channels.fetch(guildData[i].dChannel))
-                        ).send({ embeds: [embed[2]] });
+                        ).send({embeds: [embed[2]]});
                 } catch {}
                 try {
                     if (embed[3] !== 0 && guildData[i].jChannel !== ID_NODATA)
                         await (
                             client.channels.cache.get(guildData[i].jChannel) ?? (await client.channels.fetch(guildData[i].jChannel))
-                        ).send({ embeds: [embed[3]] });
+                        ).send({embeds: [embed[3]]});
                 } catch {}
                 try {
                     if (embed[4] !== 0 && guildData[i].cChannel !== ID_NODATA)
                         await (
                             client.channels.cache.get(guildData[i].cChannel) ?? (await client.channels.fetch(guildData[i].cChannel))
-                        ).send({ embeds: [embed[4]] });
+                        ).send({embeds: [embed[4]]});
                 } catch {}
             } else {
                 try {
@@ -373,17 +373,17 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
 /*天気*/
 cron.schedule("00 20 * * *", async () => {
     const embed = await weather.generationDay(1);
-    const data = await db.find("main", "guildData", { weather: true });
+    const data = await db.find("main", "guildData", {weather: true});
     for (let i = 0; i < data.length; i++) {
         try {
             const channel = client.channels.cache.get(data[i].weatherChannel) ?? (await client.channels.fetch(data[i].weatherChannel));
-            await channel.send({ embeds: [embed] });
+            await channel.send({embeds: [embed]});
         } catch {}
     }
 });
 
 cron.schedule("*/1  * * * *", async () => {
-    const data = await db.find("main", "guildData", { board: { $nin: ["0000000000000000000"] } });
+    const data = await db.find("main", "guildData", {board: {$nin: ["0000000000000000000"]}});
     for (let i = 0; i < data.length; i++) {
         let flag = 0;
         if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
@@ -406,7 +406,7 @@ cron.schedule("*/1  * * * *", async () => {
                     channel.messages
                         .fetch(data[i].board)
                         .then(async dashboard => {
-                            await dashboard.edit({ embeds: [newEmbed] });
+                            await dashboard.edit({embeds: [newEmbed]});
                         })
                         .catch(async error => {
                             if (error.code === 10008 || error.code === 10003) {
@@ -418,7 +418,7 @@ cron.schedule("*/1  * * * *", async () => {
                                 await db.update(
                                     "main",
                                     "guildData",
-                                    { guild: data[i].guild },
+                                    {guild: data[i].guild},
                                     {
                                         $set: {
                                             boardChannel: "0000000000000000000",
@@ -446,7 +446,7 @@ cron.schedule("*/1  * * * *", async () => {
                     await db.update(
                         "main",
                         "guildData",
-                        { guild: data[i].guild },
+                        {guild: data[i].guild},
                         {
                             $set: {
                                 boardChannel: "0000000000000000000",
