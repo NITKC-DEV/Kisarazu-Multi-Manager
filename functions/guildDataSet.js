@@ -3,33 +3,35 @@ const db = require("../functions/db.js");
 const ID_NODATA = "0000000000000000000";
 exports.ID_NODATA = ID_NODATA;
 
+// @formatter:off
 /***
  * Objectテンプレ
  {
- grade: ,
- announce: ,
- main: ,
- mChannel: ,
- mRole: ,
- eChannel: ,
- eRole: ,
- dChannel: ,
- dRole: ,
- jChannel: ,
- jRole: ,
- cChannel: ,
- cRole: ,
- boardChannel: ,
- board: ,
- timetable: ,
- weather: ,
- weatherChannel:
+     grade: ,
+     announce: ,
+     main: ,
+     mChannel: ,
+     mRole: ,
+     eChannel: ,
+     eRole: ,
+     dChannel: ,
+     dRole: ,
+     jChannel: ,
+     jRole: ,
+     cChannel: ,
+     cRole: ,
+     boardChannel: ,
+     board: ,
+     timetable: ,
+     weather: ,
+     weatherChannel:
  }
 
  更新したい内容のみで良いので、valueに更新後のデータを入れる。guildは不要
  timetableとweatherがbool、それ以外はstringかint
  設定されていないときは、文字列型でID_NODATAとする
  * */
+// @formatter:on
 
 /***
  * GuildDataを更新または新規作成する
