@@ -1,0 +1,11 @@
+# Prettier
+# cf. https://prettier.io
+
+printWidth = 140        # default=80
+tabWidth = 4            # default=2
+arrowParens = "avoid"   # default="always"
+bracketSpacing = false  # defaule=true
+
+[[overrides]]
+files = ["*.json", "*.md", "*.yaml", "*.toml"]
+options.tabWidth = 2

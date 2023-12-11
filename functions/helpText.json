@@ -1,276 +1,296 @@
 {
-    "help": [
-        {
-            "shortDescription": "時間割機能の説明です",
-            "value": {
-                "title": "時間割機能",
-                "description":"時間割機能についての説明です。\n> この機能では、様々な学年・学科・曜日の時間割を見れます。\n",
-                "field":[
-                    {
-                        "name":"/timetable",
-                        "value":"> 時間割を表示します。\n> 次回のその曜日に授業変更がある場合は変更後の日課が表示されます。「授業変更」をfalseにすることで通常日課が見れます。\n"
-                    }, {
-                        "name":"/comment-timetable",
-                        "value":"> 時間割にコメントを追加できます。\n> 直近1週間に対応していて、各授業のほかその日全体にコメントを追加することもできます。\n"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "チャンネル作成機能の説明です",
-            "value": {
-                "title": "チャンネル作成機能",
-                "description":"チャンネル作成機能の説明です。\nこの機能では、許可されたカテゴリ内でチャンネルの作成が誰でもできるようになります。\n",
-                "field":[
-                    {
-                        "name":"/create-channel",
-                        "value":"> 作成したいチャンネル名を指定して実行すると、カテゴリを選べます。\n> チャンネルを作成したいカテゴリを選択したうえで、チャンネル名と同じロールを作成するかどうか選択してください。\n"
-                    }, {
-                        "name":"許可されているカテゴリがないと言われる",
-                        "value":"> サーバー管理者が追加されたカテゴリのみ実行できるため、一つもカテゴリが追加されていないと利用できません。\n> カテゴリ追加は各サーバーの管理者に依頼してください。"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "シークレットメッセージ機能の説明です",
-            "value": {
-                "title": "シークレットメッセージ機能",
-                "description":"シークレットメッセージ機能の説明です。\nこの機能では、BOTに代理で発言させることが可能です。\n",
-                "field":[
-                    {
-                        "name":"/secret-msg",
-                        "value":"> BOTに代理でメッセージを送信させます。テキストのほか、添付ファイルを3つまで送ることができます。\n> 文字数やファイル容量の制限は、通常のDicordユーザーと同じです。"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "ダッシュボード機能の説明です",
-            "value": {
-                "title": "ダッシュボード機能",
-                "description":"ダッシュボード機能の説明です。\nこの機能では、サーバーダッシュボードを見ることができます。\n",
-                "field":[
-                    {
-                        "name":"/dashboard ",
-                        "value":"> 実行すると、現時点でのサーバーのダッシュボードを見れます。\n> 時刻やオンライン人数のほか、次の定期テストや今年度残り日数、今日明日の天気予報を見ることができます。"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "天気予報機能の説明です",
-            "value": {
-                "title": "天気予報機能",
-                "description":"天気予報機能の説明です。\nこの機能では、天気予報を見ることができます。\n",
-                "field":[
-                    {
-                        "name":"/weather",
-                        "value":"> 今日・明日・明後日の天気予報を見ることができます。天気のほか、気象庁発表の概況や気温・風・降水確率が見れます。"
-                    },
-                    {
-                        "name":"データ提供元と更新日時",
-                        "value":"> 気象庁 銚子地方気象台発表のデータを使用しています。\n> データの更新は気象庁発表の5分後(5:05、11:05、17:05)に行っています。"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "誕生日機能の説明です",
-            "value": {
-                "title": "誕生日機能機能",
-                "description":"誕生日機能の説明です。\nこの機能では、誕生日をお祝いしてもらえます。\n",
-                "field":[
-                    {
-                        "name":"/birthday",
-                        "value":"> 誕生日を登録します。誕生日になると、コマンドを実行したサーバーのメインチャンネルでお祝いされます。"
-                    },
-                    {
-                        "name":"/del-birthday ",
-                        "value":"> 実行したサーバーに登録されている誕生日を削除します。"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "その他の機能の説明です",
-            "value": {
-                "title": "その他機能",
-                "description":"その他の機能の紹介です。\n",
-                "field":[
-                    {
-                        "name":"/ping",
-                        "value":"> BOTの応答時間を見れます。"
-                    },
-                    {
-                        "name":"イースターエッグ",
-                        "value":"> 特定の日に特定のワードを言うと、それに反応してくれます。"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "BOTの運営とサポートについてです。",
-            "value": {
-                "title": "BOTの運営とサポート",
-                "description":"BOTの運営とサポートは、下記のとおりです。\n",
-                "field":[
-                    {
-                        "name":"ソースコード",
-                        "value":"> このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
-                    },{
-                        "name":"ホストサーバーについて",
-                        "value":"> このBOTは、高専生向けコミュニティを運営する[Kloudさん](https://kloud.community/)から提供していただいたサーバーにて動いています。\n"
-                    },{
-                        "name":"サポート",
-                        "value":"> 不明点等ありましたら、DiscordでID:kokastarまでDMを送っていただければ、対応します。\n"
-                    }, {
-                        "name":"バグの報告先",
-                        "value":"> [Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に書いてもらうか、サポートへ連絡をお願いします。\n"
-                    },{
-                        "name":"他のサーバーにも導入したい！",
-                        "value":"> DiscordでID:kokastarまで気軽にご相談ください。\n"
-                    }
-                ]
-            }
-        }
-    ],
-    "admin": [
-        {
-            "shortDescription": "時間割機能の設定についてです。",
-            "value": {
-                "title": "時間割機能",
-                "description":"時間割機能の、管理者向け設定についてです。\n",
-                "field":[
-                    {
-                        "name":"オプション補完機能",
-                        "value":"> guildDataSystemで入学年(西暦)と学科ロールを設定することで、オプションを省略できるようになります。\n"
-                    },
-                    {
-                        "name":"/add-exception",
-                        "value":"> 指定した日の授業変更を登録したり、定期テスト日課を登録できます。\n> \n> 「ベースの曜日」オプションとは、一々手動で設定しなくても指定した曜日を自動でコピーしてくれるオプションです。\n"
-                    }, {
-                        "name":"/delete-exception",
-                        "value":"> 指定した学年・学科・日にちの授業変更や定期テスト日程、コメントを削除できます。\n"
-                    },
-                    {
-                        "name":"時間割定期通知機能について",
-                        "value":"> 各学科の時間割を毎日20時に送信します。\n> \n> guildDataSystemに登録した各学科のチャンネルに送信されます。\n"
-                    },{
-                        "name":"/tt-switcher",
-                        "value":"> 時間割の定期送信のON/OFFを切り替えることができます。\n"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "ダッシュボード機能の設定についてです。",
-            "value": {
-                "title": "ダッシュボード機能",
-                "description":"ダッシュボード機能の、管理者向け設定についてです。\n",
-                "field":[
-                    {
-                        "name":"/auto-dashboard",
-                        "value":"> 実行したチャンネルに、1分毎に自動更新されるダッシュボードを作成できます(各サーバー1つまで)。\n> \n> 既存のダッシュボードがある場合は、確認画面が出ます。\n"
-                    },{
-                        "name":"/next-test",
-                        "value":"> 次回〜4回先までの定期テストを登録できます。全サーバー共通となっているので、データが間違っているときに使用してください。\n"
-                    }, {
-                        "name":"自動更新に設定したダッシュボードを確認したい",
-                        "value":"> /configを実行することで、ダッシュボードへのリンクがわかります。\n"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "天気予報・時間割の定期送信機能についてです。",
-            "value": {
-                "title": "定期通知機能設定",
-                "description":"> 天気予報・時間割の定期送信機能の設定についてです。\n",
-                "field":[
-                    {
-                        "name":"定期通知機能について",
-                        "value":"> 千葉の明日の天気や、各学科の時間割を毎日20時に送信します。\n> \n> guildDataSystemに登録したチャンネルが送信先になり、天気はmainチャンネル、時間割は各学科のチャンネルに送信されます。\n"
-                    },{
-                        "name":"/tt-switcher",
-                        "value":"> 時間割の定期送信のON/OFFを切り替えることができます。\n"
-                    }, {
-                        "name":"/weather-switcher",
-                        "value":"> 天気予報の定期送信のON/OFFを切り替えることができます。\n"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "チャンネル作成機能について",
-            "value": {
-                "title": "チャンネル作成機能",
-                "description":"チャンネル作成機能の設定についてです。\n",
-                "field":[
-                    {
-                        "name":"チャンネル作成機能について",
-                        "value":"> チャンネルの削除権限を与えず、チャンネルの作成権限だけを与えたいときに使えます。\n> \n> チャンネルの作成と同時にロールの作成もできます。できないように設定することも可能です。"
-                    },{
-                        "name":"/add-category",
-                        "value":"> /実行したカテゴリで、チャンネルを作成できるようにします。\n> \n> オプションで、チャンネル作成時にロールの作成も許可するかどうか選択できます。\n"
-                    },
-                    {
-                        "name":"/remove-category",
-                        "value":"> /add-categoryによって登録されたカテゴリの登録を解除します。\n> \n> 作成したチャンネルやロールを同時に削除するかどうかも選択できます。\n"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "サーバー情報管理システム「guildDataSystem」についてです。",
-            "value": {
-                "title": "guildDataSystem",
-                "description":"> サーバー情報を登録・管理する独自システム「guildDataSystem」についてです。\n",
-                "field":[
-                    {
-                        "name":"guildDataSsytemとは",
-                        "value":"> 各サーバーの情報をデータベースで管理する、このBOT独自のシステムです。\n"
-                    },{
-                        "name":"/guilddata",
-                        "value":"> guildDataSystemにサーバー情報を登録します。詳しくはは[wikiのページ](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/wiki/GuildDataSystem)をご覧ください。\n"
-                    }, {
-                        "name":"/config",
-                        "value":"> 現在のGuildDataSystemに登録されているデータをすべて見ることができます。\n"
-                    },{
-                        "name":"/config-reset",
-                        "value":"> /guilddateコマンドで設定できるすべての項目を初期値の空データに戻します。\n"
-                    }
-                ]
-            }
-        },
-        {
-            "shortDescription": "BOTの運営とサポートについてです。",
-            "value": {
-                "title": "BOTの運営とサポート",
-                "description":"BOTの運営とサポートは、下記のとおりです。\n",
-                "field":[
-                    {
-                        "name":"wiki",
-                        "value":"> このBOTには、主に管理者向けの情報を提供する[wiki](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/wiki)があります。\n"
-                    },
-                    {
-                        "name":"ソースコード",
-                        "value":"> このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
-                    },{
-                        "name":"ホストサーバーについて",
-                        "value":"> このBOTは、高専生向けコミュニティを運営する[Kloudさん](https://kloud.community/)から提供していただいたサーバーにて動いています。\n"
-                    },{
-                        "name":"サポート",
-                        "value":"> 不明点等ありましたら、DiscordでID:kokastarまでDMを送っていただければ、対応します。\n"
-                    }, {
-                        "name":"バグの報告先",
-                        "value":"> [Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に書いてもらうか、サポートへ連絡をお願いします。\n"
-                    },{
-                        "name":"他のサーバーにも導入したい！",
-                        "value":"> DiscordでID:kokastarまで気軽にご相談ください。\n"
-                    }
-                ]
-            }
-        }
-    ]
+  "help": [
+    {
+      "shortDescription": "時間割機能の説明です",
+      "value": {
+        "title": "時間割機能",
+        "description": "時間割機能についての説明です。\n> この機能では、様々な学年・学科・曜日の時間割を見れます。\n",
+        "field": [
+          {
+            "name": "/timetable",
+            "value": "> 時間割を表示します。\n> 次回のその曜日に授業変更がある場合は変更後の日課が表示されます。「授業変更」をfalseにすることで通常日課が見れます。\n"
+          },
+          {
+            "name": "/comment-timetable",
+            "value": "> 時間割にコメントを追加できます。\n> 直近1週間に対応していて、各授業のほかその日全体にコメントを追加することもできます。\n"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "チャンネル作成機能の説明です",
+      "value": {
+        "title": "チャンネル作成機能",
+        "description": "チャンネル作成機能の説明です。\nこの機能では、許可されたカテゴリ内でチャンネルの作成が誰でもできるようになります。\n",
+        "field": [
+          {
+            "name": "/create-channel",
+            "value": "> 作成したいチャンネル名を指定して実行すると、カテゴリを選べます。\n> チャンネルを作成したいカテゴリを選択したうえで、チャンネル名と同じロールを作成するかどうか選択してください。\n"
+          },
+          {
+            "name": "許可されているカテゴリがないと言われる",
+            "value": "> サーバー管理者が追加されたカテゴリのみ実行できるため、一つもカテゴリが追加されていないと利用できません。\n> カテゴリ追加は各サーバーの管理者に依頼してください。"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "シークレットメッセージ機能の説明です",
+      "value": {
+        "title": "シークレットメッセージ機能",
+        "description": "シークレットメッセージ機能の説明です。\nこの機能では、BOTに代理で発言させることが可能です。\n",
+        "field": [
+          {
+            "name": "/secret-msg",
+            "value": "> BOTに代理でメッセージを送信させます。テキストのほか、添付ファイルを3つまで送ることができます。\n> 文字数やファイル容量の制限は、通常のDicordユーザーと同じです。"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "ダッシュボード機能の説明です",
+      "value": {
+        "title": "ダッシュボード機能",
+        "description": "ダッシュボード機能の説明です。\nこの機能では、サーバーダッシュボードを見ることができます。\n",
+        "field": [
+          {
+            "name": "/dashboard ",
+            "value": "> 実行すると、現時点でのサーバーのダッシュボードを見れます。\n> 時刻やオンライン人数のほか、次の定期テストや今年度残り日数、今日明日の天気予報を見ることができます。"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "天気予報機能の説明です",
+      "value": {
+        "title": "天気予報機能",
+        "description": "天気予報機能の説明です。\nこの機能では、天気予報を見ることができます。\n",
+        "field": [
+          {
+            "name": "/weather",
+            "value": "> 今日・明日・明後日の天気予報を見ることができます。天気のほか、気象庁発表の概況や気温・風・降水確率が見れます。"
+          },
+          {
+            "name": "データ提供元と更新日時",
+            "value": "> 気象庁 銚子地方気象台発表のデータを使用しています。\n> データの更新は気象庁発表の5分後(5:05、11:05、17:05)に行っています。"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "誕生日機能の説明です",
+      "value": {
+        "title": "誕生日機能機能",
+        "description": "誕生日機能の説明です。\nこの機能では、誕生日をお祝いしてもらえます。\n",
+        "field": [
+          {
+            "name": "/birthday",
+            "value": "> 誕生日を登録します。誕生日になると、コマンドを実行したサーバーのメインチャンネルでお祝いされます。"
+          },
+          {
+            "name": "/del-birthday ",
+            "value": "> 実行したサーバーに登録されている誕生日を削除します。"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "その他の機能の説明です",
+      "value": {
+        "title": "その他機能",
+        "description": "その他の機能の紹介です。\n",
+        "field": [
+          {
+            "name": "/ping",
+            "value": "> BOTの応答時間を見れます。"
+          },
+          {
+            "name": "イースターエッグ",
+            "value": "> 特定の日に特定のワードを言うと、それに反応してくれます。"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "BOTの運営とサポートについてです。",
+      "value": {
+        "title": "BOTの運営とサポート",
+        "description": "BOTの運営とサポートは、下記のとおりです。\n",
+        "field": [
+          {
+            "name": "ソースコード",
+            "value": "> このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
+          },
+          {
+            "name": "ホストサーバーについて",
+            "value": "> このBOTは、高専生向けコミュニティを運営する[Kloudさん](https://kloud.community/)から提供していただいたサーバーにて動いています。\n"
+          },
+          {
+            "name": "サポート",
+            "value": "> 不明点等ありましたら、DiscordでID:kokastarまでDMを送っていただければ、対応します。\n"
+          },
+          {
+            "name": "バグの報告先",
+            "value": "> [Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に書いてもらうか、サポートへ連絡をお願いします。\n"
+          },
+          {
+            "name": "他のサーバーにも導入したい！",
+            "value": "> DiscordでID:kokastarまで気軽にご相談ください。\n"
+          }
+        ]
+      }
+    }
+  ],
+  "admin": [
+    {
+      "shortDescription": "時間割機能の設定についてです。",
+      "value": {
+        "title": "時間割機能",
+        "description": "時間割機能の、管理者向け設定についてです。\n",
+        "field": [
+          {
+            "name": "オプション補完機能",
+            "value": "> guildDataSystemで入学年(西暦)と学科ロールを設定することで、オプションを省略できるようになります。\n"
+          },
+          {
+            "name": "/add-exception",
+            "value": "> 指定した日の授業変更を登録したり、定期テスト日課を登録できます。\n> \n> 「ベースの曜日」オプションとは、一々手動で設定しなくても指定した曜日を自動でコピーしてくれるオプションです。\n"
+          },
+          {
+            "name": "/delete-exception",
+            "value": "> 指定した学年・学科・日にちの授業変更や定期テスト日程、コメントを削除できます。\n"
+          },
+          {
+            "name": "時間割定期通知機能について",
+            "value": "> 各学科の時間割を毎日20時に送信します。\n> \n> guildDataSystemに登録した各学科のチャンネルに送信されます。\n"
+          },
+          {
+            "name": "/tt-switcher",
+            "value": "> 時間割の定期送信のON/OFFを切り替えることができます。\n"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "ダッシュボード機能の設定についてです。",
+      "value": {
+        "title": "ダッシュボード機能",
+        "description": "ダッシュボード機能の、管理者向け設定についてです。\n",
+        "field": [
+          {
+            "name": "/auto-dashboard",
+            "value": "> 実行したチャンネルに、1分毎に自動更新されるダッシュボードを作成できます(各サーバー1つまで)。\n> \n> 既存のダッシュボードがある場合は、確認画面が出ます。\n"
+          },
+          {
+            "name": "/next-test",
+            "value": "> 次回〜4回先までの定期テストを登録できます。全サーバー共通となっているので、データが間違っているときに使用してください。\n"
+          },
+          {
+            "name": "自動更新に設定したダッシュボードを確認したい",
+            "value": "> /configを実行することで、ダッシュボードへのリンクがわかります。\n"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "天気予報・時間割の定期送信機能についてです。",
+      "value": {
+        "title": "定期通知機能設定",
+        "description": "> 天気予報・時間割の定期送信機能の設定についてです。\n",
+        "field": [
+          {
+            "name": "定期通知機能について",
+            "value": "> 千葉の明日の天気や、各学科の時間割を毎日20時に送信します。\n> \n> guildDataSystemに登録したチャンネルが送信先になり、天気はmainチャンネル、時間割は各学科のチャンネルに送信されます。\n"
+          },
+          {
+            "name": "/tt-switcher",
+            "value": "> 時間割の定期送信のON/OFFを切り替えることができます。\n"
+          },
+          {
+            "name": "/weather-switcher",
+            "value": "> 天気予報の定期送信のON/OFFを切り替えることができます。\n"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "チャンネル作成機能について",
+      "value": {
+        "title": "チャンネル作成機能",
+        "description": "チャンネル作成機能の設定についてです。\n",
+        "field": [
+          {
+            "name": "チャンネル作成機能について",
+            "value": "> チャンネルの削除権限を与えず、チャンネルの作成権限だけを与えたいときに使えます。\n> \n> チャンネルの作成と同時にロールの作成もできます。できないように設定することも可能です。"
+          },
+          {
+            "name": "/add-category",
+            "value": "> /実行したカテゴリで、チャンネルを作成できるようにします。\n> \n> オプションで、チャンネル作成時にロールの作成も許可するかどうか選択できます。\n"
+          },
+          {
+            "name": "/remove-category",
+            "value": "> /add-categoryによって登録されたカテゴリの登録を解除します。\n> \n> 作成したチャンネルやロールを同時に削除するかどうかも選択できます。\n"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "サーバー情報管理システム「guildDataSystem」についてです。",
+      "value": {
+        "title": "guildDataSystem",
+        "description": "> サーバー情報を登録・管理する独自システム「guildDataSystem」についてです。\n",
+        "field": [
+          {
+            "name": "guildDataSsytemとは",
+            "value": "> 各サーバーの情報をデータベースで管理する、このBOT独自のシステムです。\n"
+          },
+          {
+            "name": "/guilddata",
+            "value": "> guildDataSystemにサーバー情報を登録します。詳しくはは[wikiのページ](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/wiki/GuildDataSystem)をご覧ください。\n"
+          },
+          {
+            "name": "/config",
+            "value": "> 現在のGuildDataSystemに登録されているデータをすべて見ることができます。\n"
+          },
+          {
+            "name": "/config-reset",
+            "value": "> /guilddateコマンドで設定できるすべての項目を初期値の空データに戻します。\n"
+          }
+        ]
+      }
+    },
+    {
+      "shortDescription": "BOTの運営とサポートについてです。",
+      "value": {
+        "title": "BOTの運営とサポート",
+        "description": "BOTの運営とサポートは、下記のとおりです。\n",
+        "field": [
+          {
+            "name": "wiki",
+            "value": "> このBOTには、主に管理者向けの情報を提供する[wiki](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/wiki)があります。\n"
+          },
+          {
+            "name": "ソースコード",
+            "value": "> このBOTは、オープンソースとなっています。[GitHub](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager)にて公開されています。\n"
+          },
+          {
+            "name": "ホストサーバーについて",
+            "value": "> このBOTは、高専生向けコミュニティを運営する[Kloudさん](https://kloud.community/)から提供していただいたサーバーにて動いています。\n"
+          },
+          {
+            "name": "サポート",
+            "value": "> 不明点等ありましたら、DiscordでID:kokastarまでDMを送っていただければ、対応します。\n"
+          },
+          {
+            "name": "バグの報告先",
+            "value": "> [Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に書いてもらうか、サポートへ連絡をお願いします。\n"
+          },
+          {
+            "name": "他のサーバーにも導入したい！",
+            "value": "> DiscordでID:kokastarまで気軽にご相談ください。\n"
+          }
+        ]
+      }
+    }
+  ]
 }
