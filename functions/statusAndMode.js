@@ -1,13 +1,15 @@
 const fs = require("fs");
+
 const {configPath} = require("../environmentConfig.js");
+
 const system = require("./logsystem.js");
 const statusAndMode = require("./statusAndMode.js");
 
 const statusName = ["online", "idle", "dnd", "invisible"];
 
-/***
+/**
  * botのステータスを設定
- * @param status　[オンライン,退席中,取り込み中,オフライン]の位置で指定
+ * @param status 指定の位置は[オンライン,退席中,取り込み中,オフライン]
  * @param presence ○○をプレイ中 のメッセージ
  * @returns {Promise<void>}
  */
@@ -27,7 +29,7 @@ exports.status = async function func(status, presence = "") {
     client.user.setStatus(statusName[statusData]);
 };
 
-/***
+/**
  * メンテナンスモードを切り替えます
  * @param mode Trueでメンテナンスモード
  * @returns {Promise<void>}

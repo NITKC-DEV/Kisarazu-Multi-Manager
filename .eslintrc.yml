@@ -9,4 +9,82 @@ extends:
   - prettier
 parserOptions:
   ecmaVersion: latest
-rules: {}
+
+# 独自定義ルール
+#   設計に影響するもの(要手動修正)      - error
+#   **基本的に**`--fix`で修正できるもの - warn
+#   無効化                              - off
+rules:
+  arrow-body-style: warn
+  capitalized-comments: warn
+  curly: warn
+  dot-notation: warn
+  eqeqeq: warn
+  func-names: error
+  logical-assignment-operators: warn
+  multiline-comment-style: off # `//`形式のコメントを重ねられなくなる
+  no-console: off # ログ出力くらいさせろ
+  no-div-regex: warn
+  no-else-return: warn
+  no-extra-bind: warn
+  no-extra-boolean-cast: warn
+  no-extra-label: warn
+  no-implicit-coercion: warn
+  no-lonely-if: warn
+  no-plusplus:
+    - error
+    - allowForLoopAfterthoughts: true
+  no-regex-spaces: warn
+  no-undef-init: warn
+  no-unneeded-ternary: warn
+  no-unused-labels: warn
+  no-useless-computed-key: warn
+  no-useless-rename: warn
+  no-useless-return: warn
+  no-var: warn
+  object-shorthand: warn
+  one-var: warn
+  operator-assignment: warn
+  prefer-arrow-callback: warn
+  prefer-const: warn
+  prefer-destructuring: warn
+  prefer-exponentiation-operator: warn
+  prefer-numeric-literals: warn
+  prefer-object-has-own: warn
+  prefer-object-spread: warn
+  prefer-template: warn
+  sort-imports: warn
+  sort-vars: warn
+  spaced-comment: warn
+  strict: warn
+  unicode-bom: warn
+  yoda: warn
+
+  # eslint-plugin-import
+  # cf. https://github.com/import-js/eslint-plugin-import
+  import/consistent-type-specifier-style: warn
+  import/extensions:
+    - error
+    - always
+  import/first: warn
+  import/imports-first: warn
+  import/newline-after-import: warn
+  import/no-absolute-path: warn
+  import/no-duplicates: warn
+  import/no-empty-named-blocks: warn
+  import/no-import-module-exports: warn
+  import/no-namespace: warn
+  import/no-relative-packages: warn
+  import/no-useless-path-segments: warn
+  import/order:
+    - warn
+    - groups:
+        - builtin
+        - external
+        - internal
+        - parent
+        - index
+        - sibling
+      newlines-between: always
+      alphabetize:
+        order: asc

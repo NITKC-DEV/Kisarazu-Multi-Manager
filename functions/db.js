@@ -1,10 +1,13 @@
 const {MongoClient, ServerApiVersion} = require("mongodb");
+
 const config = require("../environmentConfig");
-const system = require("./logsystem.js");
+
 const db = require("./db.js");
+const system = require("./logsystem.js");
+
 const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
 
-/***
+/**
  * データベースからデータを取得する
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
@@ -17,7 +20,7 @@ exports.find = async function (dbName, collectionName, filter) {
     return await collection.find(filter).toArray();
 };
 
-/***
+/**
  * filterに該当する要素があるかどうか確認する
  * @param dbName 取得先データベース名
  * @param collectionName 取得先コレクション名
@@ -30,7 +33,7 @@ exports.includes = async function (dbName, collectionName, filter) {
     return data.length > 0;
 };
 
-/***
+/**
  * データベースを更新する
  * @param dbName 更新先データベース名
  * @param collectionName 更新先コレクション名
@@ -50,7 +53,7 @@ exports.update = async function run(dbName, collectionName, filter, update) {
     }
 };
 
-/***
+/**
  * データベースにレコードを追加する
  * @param dbName 追加先データベース名
  * @param collectionName 追加先コレクション名
@@ -69,7 +72,7 @@ exports.insert = async function run(dbName, collectionName, object) {
     }
 };
 
-/***
+/**
  * filterにレコードが見つかればそれをsetで更新し、見つからなけれレコードを追加する
  * @param dbName 追加先データベース名
  * @param collectionName 追加先コレクション名
@@ -90,7 +93,7 @@ exports.updateOrInsert = async function run(dbName, collectionName, filter, obje
     }
 };
 
-/***
+/**
  * データベースからレコードを削除する
  * @param dbName 削除元データベース名
  * @param collectionName 削除元コレクション名
@@ -109,7 +112,7 @@ exports.delete = async function run(dbName, collectionName, filter) {
     }
 };
 
-/***
+/**
  *
  * @returns {Promise<void>}
  */
@@ -118,7 +121,7 @@ exports.open = async function close() {
     await system.log("DB - open");
 };
 
-/***
+/**
  *
  * @returns {Promise<void>}
  */
@@ -127,4 +130,4 @@ exports.close = async function close() {
     await system.log("DB - close");
 };
 
-//引数の詳細については、mongodbの公式ドキュメントを参照すること
+// 引数の詳細については、mongodbの公式ドキュメントを参照すること

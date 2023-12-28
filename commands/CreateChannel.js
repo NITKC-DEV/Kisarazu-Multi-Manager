@@ -1,17 +1,19 @@
 const {SlashCommandBuilder, ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
+
 const db = require("../functions/db.js");
-const dbMain = "main"; //データベースmainとコレクションCC-categoryを定数化
+
+const dbMain = "main"; // データベースmainとコレクションCC-categoryを定数化
 const colCat = "CC-categories";
 
 module.exports = [
     {
-        //スラッシュコマンドの定義
+        // スラッシュコマンドの定義
         data: new SlashCommandBuilder()
             .setName("create-channel")
             .setDescription("チャンネルの作成")
-            //チャンネル名を入力 -> string
+            // チャンネル名を入力 -> string
             .addStringOption(option => option.setName("チャンネル名").setDescription("作成するチャンネル名を指定します").setRequired(true)),
-        /***
+        /**
          * /add-category で登録されたカテゴリにチャンネルを作成する
          * @param interaction
          * @returns {Promise<void>}
@@ -23,7 +25,7 @@ module.exports = [
                 if (guildCats.length > 0) {
                     const channelName = interaction.options.getString("チャンネル名").replace(/ /g, "-");
                     if (channelName.length <= 30) {
-                        //Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
+                        // Optionのvalueにはanyとか言っときながら、string型しか入力できないので、オブジェクト型を無理やりJson文字列に変換し渡す
                         const selectCategory = new ActionRowBuilder().addComponents(
                             new StringSelectMenuBuilder()
                                 .setPlaceholder("カテゴリを選択してください")
@@ -33,14 +35,14 @@ module.exports = [
                                         label: data.name,
                                         value: JSON.stringify({
                                             categoryID: data.ID,
-                                            channelName: channelName,
+                                            channelName,
                                         }),
                                     })),
                                     {
                                         label: "キャンセル",
                                         value: JSON.stringify({
                                             categoryID: "cancel",
-                                            channelName: channelName,
+                                            channelName,
                                         }),
                                     },
                                 ),
@@ -70,7 +72,7 @@ module.exports = [
         },
     },
     {
-        //カテゴリ登録用スラッシュコマンド
+        // カテゴリ登録用スラッシュコマンド
         data: new SlashCommandBuilder()
             .setName("add-category")
             .setDescription("/CreateChanによってチャンネルの作成ができるカテゴリにこのカテゴリを追加します")
@@ -84,7 +86,7 @@ module.exports = [
                     .addChoices({name: "許可する", value: 1}, {name: "許可しない", value: 0}),
             )
             .setDefaultMemberPermissions(1 << 3),
-        /***
+        /**
          * データベースに/create-channelを許可するカテゴリを登録する
          * @param interaction
          * @returns {Promise<void>}
@@ -127,7 +129,7 @@ module.exports = [
             .setName("remove-category")
             .setDescription("/add-categoryによって登録されたカテゴリの登録を解除します")
             .setDefaultMemberPermissions(1 << 3),
-        /***
+        /**
          * /add-categoryによって登録されたカテゴリの登録を解除する
          * @param interaction
          * @returns {Promise<void>}

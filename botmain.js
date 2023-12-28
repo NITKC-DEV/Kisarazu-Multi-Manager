@@ -1,10 +1,13 @@
+const fs = require("fs");
+const path = require("path");
+
 const {Client, GatewayIntentBits, Partials, Collection, Events} = require("discord.js");
 const dotenv = require("dotenv");
-const path = require("path");
-const fs = require("fs");
 const cron = require("node-cron");
+
 dotenv.config();
 require("date-utils");
+
 global.client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
@@ -20,27 +23,25 @@ global.client = new Client({
     partials: [Partials.Channel],
 });
 
-//configファイル読み込み
+// configファイル・関数読み込み
 const config = require("./environmentConfig.js");
 const {configPath} = require("./environmentConfig.js");
-
-//関数読み込み
+const CreateChannel = require("./functions/CCFunc.js");
 const TxtEasterEgg = require("./functions/TxtEasterEgg.js");
 const birthday = require("./functions/birthday.js");
 const dashboard = require("./functions/dashboard.js");
-const timetable = require("./functions/ttGeneration.js");
-const system = require("./functions/logsystem.js");
-const genshin = require("./functions/genshin.js");
 const db = require("./functions/db.js");
-const weather = require("./functions/weather.js");
+const genshin = require("./functions/genshin.js");
 const guildData = require("./functions/guildDataSet.js");
 const {ID_NODATA} = require("./functions/guildDataSet.js");
-const CreateChannel = require("./functions/CCFunc.js");
+const help = require("./functions/help.js");
+const system = require("./functions/logsystem.js");
 const mode = require("./functions/statusAndMode.js");
 const statusAndMode = require("./functions/statusAndMode.js");
-const help = require("./functions/help.js");
+const timetable = require("./functions/ttGeneration.js");
+const weather = require("./functions/weather.js");
 
-//スラッシュコマンド登録
+// スラッシュコマンド登録
 const commandsPath = path.join(__dirname, "commands");
 const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith(".js"));
 client.commands = new Collection();
@@ -55,7 +56,7 @@ client.once("ready", async () => {
             client.commands.set(command[i].data.name, command[i]);
         }
     }
-    await weather.update(); //天気更新
+    await weather.update(); // 天気更新
     await CreateChannel.dataCheck();
     await guildData.checkGuild();
     await system.log("Ready!");
@@ -67,7 +68,7 @@ client.once("ready", async () => {
     }
 });
 
-/*command処理*/
+/* command処理 */
 client.on("interactionCreate", async interaction => {
     let flag = 0;
     if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
@@ -85,7 +86,8 @@ client.on("interactionCreate", async interaction => {
         const command = interaction.client.commands.get(interaction.commandName);
 
         if (!command) return;
-        let guild, channel;
+        let guild;
+        let channel;
         if (!interaction.guildId) {
             guild = {name: "ダイレクトメッセージ", id: "---"};
             channel = {name: "---", id: "---"};
@@ -117,7 +119,7 @@ client.on("interactionCreate", async interaction => {
                             "おっと、想定外の事態が起きちゃった。[Issue](https://github.com/NITKC-DEV/Kisarazu-Multi-Manager/issues)に連絡してくれ。",
                         ephemeral: true,
                     });
-                } catch {} //edit先が消えてる可能性を考えてtryに入れる
+                } catch {} // edit先が消えてる可能性を考えてtryに入れる
             }
         }
     } else {
@@ -127,7 +129,8 @@ client.on("interactionCreate", async interaction => {
             ephemeral: true,
         });
         const interactionTypeName = ["Ping", "ApplicationCommand", "MessageComponent", "ApplicationCommandAutocomplete", "ModalSubmit"];
-        let guild, channel;
+        let channel;
+        let guild;
         if (!interaction.guildId) {
             guild = {name: "ダイレクトメッセージ", id: "---"};
             channel = {name: "---", id: "---"};
@@ -146,7 +149,7 @@ client.on("interactionCreate", async interaction => {
     }
 });
 
-//StringSelectMenu受け取り
+// StringSelectMenu受け取り
 client.on(Events.InteractionCreate, async interaction => {
     if (interaction.isStringSelectMenu()) {
         let flag = 0;
@@ -168,7 +171,7 @@ client.on(Events.InteractionCreate, async interaction => {
         } else if (interaction.customId === "selectDelete") {
             await CreateChannel.selectDelete(interaction);
         }
-        //timetable用 customIDに引数を埋め込むため、一致で検索
+        // timetable用 customIDに引数を埋め込むため、一致で検索
         else if ((interaction.customId.match(/changeTimetableSelectMenu/) ?? {index: false}).index > 0) {
             await timetable.setNewTimetableData(interaction);
         } else if (interaction.customId === "adminHelp") {
@@ -179,7 +182,7 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 });
 
-//Button入力受け取り
+// Button入力受け取り
 client.on(Events.InteractionCreate, async interaction => {
     if (!interaction.isButton()) return;
     let flag = 0;
@@ -192,13 +195,13 @@ client.on(Events.InteractionCreate, async interaction => {
     }
     if (flag === 0) return;
 
-    //timetable用 customIDに引数を埋め込むため、一致で検索
+    // timetable用 customIDに引数を埋め込むため、一致で検索
     if ((interaction.customId.match(/changeTimetableButton/) ?? {index: false}).index > 0) {
         await timetable.showNewTimetableModal(interaction);
     }
 });
 
-//チャンネル(カテゴリ)削除検知
+// チャンネル(カテゴリ)削除検知
 client.on(Events.ChannelDelete, async channel => {
     if (channel.type === 0) {
         await CreateChannel.removeDeletedChannelData(channel);
@@ -207,7 +210,7 @@ client.on(Events.ChannelDelete, async channel => {
     }
 });
 
-//チャンネル(カテゴリ)情報変更検知
+// チャンネル(カテゴリ)情報変更検知
 client.on(Events.ChannelUpdate, async channel => {
     if (channel.type === 0) {
         await CreateChannel.updateChannelData(channel);
@@ -216,12 +219,12 @@ client.on(Events.ChannelUpdate, async channel => {
     }
 });
 
-//ロール削除検知
+// ロール削除検知
 client.on(Events.GuildRoleDelete, async role => {
     await CreateChannel.removeDeletedRoleData(role);
 });
 
-//ロール情報変更検知
+// ロール情報変更検知
 client.on(Events.GuildRoleUpdate, async role => {
     await CreateChannel.updateRoleData(role);
 });
@@ -230,15 +233,15 @@ client.on(Events.GuildCreate, async guild => {
     await guildData.updateOrInsert(guild.id);
 });
 
-//ギルド削除(退出)検知
+// ギルド削除(退出)検知
 client.on(Events.GuildDelete, async guild => {
     await CreateChannel.deleteGuildData(guild);
     await guildData.checkGuild();
 });
 
-/*TxtEasterEgg*/
+/* TxtEasterEgg */
 client.on("messageCreate", message => {
-    /*メンテナンスモード*/
+    /* メンテナンスモード */
     let flag = 0;
     if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === true) {
         for (let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
@@ -256,7 +259,7 @@ client.on("messageCreate", message => {
     }
 });
 
-/*ステータス更新*/
+/* ステータス更新 */
 cron.schedule("* * * * *", async () => {
     if (JSON.parse(fs.readFileSync(configPath, "utf8")).maintenanceMode === false) {
         const date = new Date();
@@ -283,14 +286,14 @@ cron.schedule("* * * * *", async () => {
     }
 });
 
-/*誕生日通知とGuildDataチェック、時間割変更データチェック*/
+/* 誕生日通知とGuildDataチェック、時間割変更データチェック */
 cron.schedule("0 0 * * *", async () => {
     await birthday.func();
     await weather.update();
     await weather.catcheUpdate();
 });
 
-/*メンテナンスモード*/
+/* メンテナンスモード */
 cron.schedule("59 4 * * *", async () => {
     await mode.maintenance(true);
     await guildData.checkGuild();
@@ -298,18 +301,18 @@ cron.schedule("59 4 * * *", async () => {
     await mode.maintenance(false);
 });
 
-/*原神デイリー通知*/
+/* 原神デイリー通知 */
 cron.schedule("0 5 * * *", async () => {
     await genshin.daily();
     await system.log("デイリー通知送信完了");
 });
 
-/*天気キャッシュ取得*/
+/* 天気キャッシュ取得 */
 cron.schedule("5 5,11,17 * * *", async () => {
     await weather.update();
 });
 
-/*時間割*/
+/* 時間割 */
 cron.schedule("0 20 * * 0,1,2,3,4", async () => {
     const guildData = await db.find("main", "guildData", {});
     const date = new Date();
@@ -320,39 +323,44 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
         if (guildData[i].timetable === true) {
             const grade = year - parseFloat(guildData[i].grade) + 1;
             const embed = [];
-            if (0 < grade && grade < 6) {
+            if (grade > 0 && grade < 6) {
                 for (let j = 0; j < 5; j++) {
                     embed[j] = await timetable.generation(String(grade), String(j + 1), String(dayOfWeek + 1), true);
                 }
                 try {
-                    if (embed[0] !== 0 && guildData[i].mChannel !== ID_NODATA)
+                    if (embed[0] !== 0 && guildData[i].mChannel !== ID_NODATA) {
                         await (
                             client.channels.cache.get(guildData[i].mChannel) ?? (await client.channels.fetch(guildData[i].mChannel))
                         ).send({embeds: [embed[0]]});
+                    }
                 } catch {}
                 try {
-                    if (embed[1] !== 0 && guildData[i].eChannel !== ID_NODATA)
+                    if (embed[1] !== 0 && guildData[i].eChannel !== ID_NODATA) {
                         await (
                             client.channels.cache.get(guildData[i].eChannel) ?? (await client.channels.fetch(guildData[i].eChannel))
                         ).send({embeds: [embed[1]]});
+                    }
                 } catch {}
                 try {
-                    if (embed[2] !== 0 && guildData[i].dChannel !== ID_NODATA)
+                    if (embed[2] !== 0 && guildData[i].dChannel !== ID_NODATA) {
                         await (
                             client.channels.cache.get(guildData[i].dChannel) ?? (await client.channels.fetch(guildData[i].dChannel))
                         ).send({embeds: [embed[2]]});
+                    }
                 } catch {}
                 try {
-                    if (embed[3] !== 0 && guildData[i].jChannel !== ID_NODATA)
+                    if (embed[3] !== 0 && guildData[i].jChannel !== ID_NODATA) {
                         await (
                             client.channels.cache.get(guildData[i].jChannel) ?? (await client.channels.fetch(guildData[i].jChannel))
                         ).send({embeds: [embed[3]]});
+                    }
                 } catch {}
                 try {
-                    if (embed[4] !== 0 && guildData[i].cChannel !== ID_NODATA)
+                    if (embed[4] !== 0 && guildData[i].cChannel !== ID_NODATA) {
                         await (
                             client.channels.cache.get(guildData[i].cChannel) ?? (await client.channels.fetch(guildData[i].cChannel))
                         ).send({embeds: [embed[4]]});
+                    }
                 } catch {}
             } else {
                 try {
@@ -370,7 +378,7 @@ cron.schedule("0 20 * * 0,1,2,3,4", async () => {
     }
 });
 
-/*天気*/
+/* 天気 */
 cron.schedule("00 20 * * *", async () => {
     const embed = await weather.generationDay(1);
     const data = await db.find("main", "guildData", {weather: true});
@@ -397,11 +405,11 @@ cron.schedule("*/1  * * * *", async () => {
         if (flag === 1 && data[i].boardChannel !== ID_NODATA) {
             let dashboardGuild;
             try {
-                dashboardGuild = client.guilds.cache.get(data[i].guild) ?? (await client.guilds.fetch(data[i].guild)); /*ギルド情報取得*/
+                dashboardGuild = client.guilds.cache.get(data[i].guild) ?? (await client.guilds.fetch(data[i].guild)); /* ギルド情報取得 */
                 const channel =
                     client.channels.cache.get(data[i].boardChannel) ??
-                    (await client.channels.fetch(data[i].boardChannel)); /*チャンネル情報取得*/
-                const newEmbed = await dashboard.generation(dashboardGuild); /*フィールド生成*/
+                    (await client.channels.fetch(data[i].boardChannel)); /* チャンネル情報取得 */
+                const newEmbed = await dashboard.generation(dashboardGuild); /* フィールド生成 */
                 if (newEmbed) {
                     channel.messages
                         .fetch(data[i].board)
@@ -410,7 +418,7 @@ cron.schedule("*/1  * * * *", async () => {
                         })
                         .catch(async error => {
                             if (error.code === 10008 || error.code === 10003) {
-                                //メッセージかチャンネルが不明
+                                // メッセージかチャンネルが不明
                                 await system.error(
                                     `元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`,
                                     error,
@@ -438,7 +446,7 @@ cron.schedule("*/1  * * * *", async () => {
                 }
             } catch (error) {
                 if (error.code === 10008 || error.code === 10003) {
-                    //メッセージかチャンネルが不明
+                    // メッセージかチャンネルが不明
                     await system.error(
                         `元メッセージ・チャンネル削除により${dashboardGuild.name}(ID:${dashboardGuild.id}) のダッシュボードを取得できませんでした`,
                         error,

@@ -1,23 +1,23 @@
-const {EmbedBuilder} = require("discord.js");
-const db = require("../functions/db.js");
 const axios = require("axios");
-const system = require("./logsystem");
+const {EmbedBuilder} = require("discord.js");
 
-/*天気取得*/
+const db = require("./db.js");
+const system = require("./logsystem.js");
+
+/* 天気取得 */
 async function getWeather() {
     const data = await db.find("main", "weatherCache", {label: "最新の天気予報"});
     return data[0].response;
 }
 
 function zenkaku2Hankaku(str) {
-    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, function (s) {
+    return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, s => {
         if (s === "．") return `.`;
         if (s === "　") return "";
         if (s === "海") return " 海";
         if (s === "後") return " 後";
-        else {
-            return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
-        }
+
+        return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
     });
 }
 
@@ -29,7 +29,7 @@ exports.generationDay = async function func(day) {
     let color;
     date.setDate(date.getDate() + day);
 
-    const telop = data.forecasts[day].telop;
+    const {telop} = data.forecasts[day];
     if (telop.indexOf("雪") !== -1 || telop.indexOf("みぞれ") !== -1 || telop.indexOf("ひょう") !== -1 || telop.indexOf("あられ") !== -1) {
         color = "76CCFF";
     } else if (telop.indexOf("雷") !== -1) {
@@ -42,8 +42,8 @@ exports.generationDay = async function func(day) {
         color = "77787B";
     }
 
-    let annotation = "",
-        filed;
+    let annotation = "";
+    let filed;
 
     if (day === 0 && date.getHours() * 100 + date.getMinutes() > 505) {
         annotation = "発表データの関係で、気温は前日発表のデータを使用しています。";
@@ -155,7 +155,7 @@ exports.catcheUpdate = async function func() {
     }
 
     await db.update(
-        /*明日の天気のキャッシュを更新*/
+        /* 明日の天気のキャッシュを更新 */
         "main",
         "weatherCache",
         {label: "1"},

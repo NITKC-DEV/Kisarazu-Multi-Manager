@@ -1,8 +1,10 @@
+const {setTimeout} = require("node:timers/promises");
+
 const {SlashCommandBuilder, EmbedBuilder} = require("discord.js");
+
 const db = require("../functions/db.js");
 const guildData = require("../functions/guildDataSet.js");
 const {ID_NODATA} = require("../functions/guildDataSet.js");
-const {setTimeout} = require("node:timers/promises");
 
 module.exports = [
     {
@@ -68,10 +70,11 @@ module.exports = [
             if (
                 date.getFullYear() - interaction.options.getInteger("学年") < 0 ||
                 date.getFullYear() - interaction.options.getInteger("学年") > 5
-            )
+            ) {
                 description = `\n\n学年の値が少しおかしいようです。\nこのサーバーは本当に今年${
                     date.getFullYear() - interaction.options.getInteger("学年")
                 }年生の集まりですか?\n学年オプションには入学した年を**「西暦で」**いれてください。`;
+            }
 
             const embed = new EmbedBuilder()
                 .setColor(0x00a0ea)
@@ -85,7 +88,7 @@ module.exports = [
                 .addFields(
                     {
                         name: "全般",
-                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : newData[0].grade + "年入学"}\nアナウンスチャンネル：${
+                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : `${newData[0].grade}年入学`}\nアナウンスチャンネル：${
                             newData[0].announce === ID_NODATA ? "未設定" : `<#${newData[0].announce}>`
                         }\nメインチャンネル：${newData[0].main === ID_NODATA ? "未設定" : `<#${newData[0].main}>`}`,
                     },
@@ -174,26 +177,19 @@ module.exports = [
             if (flag === 0) {
                 await interaction.editReply("削除中...");
                 await guildData.reset(interaction.guildId);
-                replyOptions = time => {
-                    return {
-                        content:
-                            "削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは" +
-                            time +
-                            "秒後に自動で削除されます)",
-                        ephemeral: true,
-                    };
-                };
+                replyOptions = time => ({
+                    content: `削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                    ephemeral: true,
+                });
             } else if (flag === 1) {
                 await reply.reactions.removeAll();
-                replyOptions = time => {
-                    return {
-                        content: "操作をキャンセルしました。\n(このメッセージは" + time + "秒後に自動で削除されます)",
-                        ephemeral: true,
-                    };
-                };
+                replyOptions = time => ({
+                    content: `操作をキャンセルしました。\n(このメッセージは${time}秒後に自動で削除されます)`,
+                    ephemeral: true,
+                });
             }
             await interaction.editReply(replyOptions(5));
-            //5秒カウントダウンしたのちに返信を削除
+            // 5秒カウントダウンしたのちに返信を削除
             for (let i = 5; i > 0; i--) {
                 await interaction.editReply(replyOptions(i));
                 await setTimeout(1000);
@@ -209,7 +205,9 @@ module.exports = [
         async execute(interaction) {
             await interaction.deferReply();
             const newData = await db.find("main", "guildData", {guild: String(interaction.guildId)});
-            let dashboard, timetable, weather;
+            let dashboard;
+            let timetable;
+            let weather;
             if (newData[0].board !== ID_NODATA) {
                 dashboard = `[ダッシュボード](https://discord.com/channels/${newData[0].guild}/${newData[0].boardChannel}/${newData[0].board})は自動更新として設定されています。`;
             } else {
@@ -238,7 +236,7 @@ module.exports = [
                 .addFields(
                     {
                         name: "全般",
-                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : newData[0].grade + "年入学"}\nアナウンスチャンネル：${
+                        value: `学年：${newData[0].grade === ID_NODATA ? "未設定" : `${newData[0].grade}年入学`}\nアナウンスチャンネル：${
                             newData[0].announce === ID_NODATA ? "未設定" : `<#${newData[0].announce}>`
                         }\nメインチャンネル：${newData[0].main === ID_NODATA ? "未設定" : `<#${newData[0].main}>`}`,
                     },

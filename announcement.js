@@ -1,13 +1,13 @@
+const readline = require("readline");
+
 const {Client, GatewayIntentBits, Partials, EmbedBuilder} = require("discord.js");
 const dotenv = require("dotenv");
-const cron = require("node-cron");
-require("date-utils");
-const {MongoClient, ServerApiVersion} = require("mongodb");
-const config = require("./config.json");
-const devConfig = require("./config.dev.json");
-
-const readline = require("readline");
 const {Select} = require("enquirer");
+const {MongoClient, ServerApiVersion} = require("mongodb");
+const cron = require("node-cron");
+
+require("date-utils");
+
 dotenv.config();
 const client = new Client({
     intents: [
@@ -22,8 +22,10 @@ const client = new Client({
     partials: [Partials.Channel],
 });
 
-/*埋め込みメッセージ受け取り*/
+/* 埋め込みメッセージ受け取り */
 const embed = require("./announceText.js");
+const devConfig = require("./config.dev.json");
+const config = require("./config.json");
 
 async function find(dbName, collectionName, filter) {
     const collection = dbClient.db(dbName).collection(collectionName);
@@ -67,7 +69,7 @@ async function run() {
             client.login(devConfig.token);
             console.log("すべての通知が1分後に送信されます");
 
-            let date = new Date();
+            const date = new Date();
             date.setMinutes(date.getMinutes() + 1);
             sendTime = {
                 noticeH: date.getHours(),
@@ -98,7 +100,7 @@ async function run() {
             dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
             client.login(config.token);
 
-            let date = new Date();
+            const date = new Date();
             date.setMinutes(date.getMinutes() + 1);
             sendTime.endH = date.getHours();
             sendTime.endM = date.getMinutes();

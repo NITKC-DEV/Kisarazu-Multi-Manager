@@ -1,10 +1,10 @@
-const db = require("../functions/db.js");
+const db = require("./db.js");
 
 const ID_NODATA = "0000000000000000000";
 exports.ID_NODATA = ID_NODATA;
 
 // @formatter:off
-/***
+/**
  * Objectテンプレ
  {
      grade: ,
@@ -33,7 +33,7 @@ exports.ID_NODATA = ID_NODATA;
  * */
 // @formatter:on
 
-/***
+/**
  * GuildDataを更新または新規作成する
  * @param guild guildID
  * @param object 更新データ。guildDataSet.jsにテンプレあり
@@ -94,7 +94,7 @@ exports.updateOrInsert = async function func(guild, object = {}) {
     }
 };
 
-/***
+/**
  * GuildDataをリセットする(timetable、dashboardは除外)
  * @param guild guildID
  * @returns {Promise<void>}
@@ -128,7 +128,7 @@ exports.reset = async function func(guild) {
     }
 };
 
-/***
+/**
  * BOTが参加してないGuildのデータを削除
  * @returns {Promise<void>}
  */
@@ -139,7 +139,7 @@ exports.checkGuild = async function func() {
             await client.guilds.fetch(data[i].guild);
         } catch (err) {
             if (err.code === 10004) {
-                //guildがないよエラーならギルド削除
+                // guildがないよエラーならギルド削除
                 await db.delete("main", "guildData", {guild: data[i].guild});
             }
         }

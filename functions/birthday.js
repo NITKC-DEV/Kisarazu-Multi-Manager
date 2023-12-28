@@ -27,7 +27,9 @@ exports.func = async function func() {
             try {
                 const channel = client.channels.cache.get(guild[0].main) ?? (await client.channels.fetch(guild[0].main));
                 await channel.send(`<@!${data[i].user}>さん、${date.getFullYear() - data[i].year}歳の誕生日おめでとう！\n${special}`);
-            } catch {}
+            } catch {
+                /* empty */
+            }
         }
     }
     await system.log("誕生日お祝い！");

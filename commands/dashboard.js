@@ -1,8 +1,11 @@
+const {setTimeout} = require("node:timers/promises");
+
 const {SlashCommandBuilder} = require("discord.js");
+
 const dashboard = require("../functions/dashboard.js");
 const db = require("../functions/db.js");
-const system = require("../functions/logsystem");
-const {setTimeout} = require("node:timers/promises");
+const system = require("../functions/logsystem.js");
+
 module.exports = [
     {
         data: new SlashCommandBuilder().setName("dashboard").setDMPermission(false).setDescription("ダッシュボードを表示します"),
@@ -64,7 +67,7 @@ module.exports = [
             let data = await db.find("main", "guildData", {
                 guild: interaction.guildId,
                 board: {$nin: ["0000000000000000000"]},
-            }); /*自動更新対象のボードがあるかどうか確認*/
+            }); /* 自動更新対象のボードがあるかどうか確認 */
             if (data.length > 0) {
                 const reply = await interaction.editReply(
                     "このサーバーには既に自動更新のダッシュボードが存在します。\n新たに生成するボードに自動更新を変更する場合は:o:を、操作をキャンセルする場合は:x:を1分以内にリアクションしてください。",
@@ -119,26 +122,19 @@ module.exports = [
                         },
                     );
 
-                    replyOptions = time => {
-                        return {
-                            content:
-                                "ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは" +
-                                time +
-                                "秒後に自動で削除されます。)",
-                            ephemeral: true,
-                        };
-                    };
+                    replyOptions = time => ({
+                        content: `ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは${time}秒後に自動で削除されます。)`,
+                        ephemeral: true,
+                    });
                 } else if (flag === 1) {
                     await reply.reactions.removeAll();
-                    replyOptions = time => {
-                        return {
-                            content: "生成をキャンセルしました。\n(このメッセージは" + time + "秒後に自動で削除されます。)",
-                            ephemeral: true,
-                        };
-                    };
+                    replyOptions = time => ({
+                        content: `生成をキャンセルしました。\n(このメッセージは${time}秒後に自動で削除されます。)`,
+                        ephemeral: true,
+                    });
                 }
             } else {
-                data = await db.find("main", "guildData", {guild: interaction.guildId}); /*guildData作成済みかどうか確認*/
+                data = await db.find("main", "guildData", {guild: interaction.guildId}); /* guildData作成済みかどうか確認 */
                 const embed = await dashboard.generation(interaction.guild);
                 const board = await interaction.channel.send({embeds: [embed]});
                 if (data.length > 0) {
@@ -154,34 +150,24 @@ module.exports = [
                             },
                         },
                     );
-                    replyOptions = time => {
-                        return {
-                            content:
-                                "ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは" +
-                                time +
-                                "秒後に自動で削除されます。)",
-                            ephemeral: true,
-                        };
-                    };
+                    replyOptions = time => ({
+                        content: `ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは${time}秒後に自動で削除されます。)`,
+                        ephemeral: true,
+                    });
                 } else {
                     await db.insert("main", "guildData", {
                         guild: interaction.guildId,
                         boardChannel: interaction.channelId,
                         board: String(board.id),
                     });
-                    replyOptions = time => {
-                        return {
-                            content:
-                                "ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは" +
-                                time +
-                                "秒後に自動で削除されます)。",
-                            ephemeral: true,
-                        };
-                    };
+                    replyOptions = time => ({
+                        content: `ダッシュボードを生成し、自動更新を有効にしました。GuildDataを登録していないようなので、/guilddataを使って登録してください。\n(このメッセージは${time}秒後に自動で削除されます)。`,
+                        ephemeral: true,
+                    });
                 }
             }
             await interaction.editReply(replyOptions(5));
-            //5秒カウントダウンしたのちに返信を削除
+            // 5秒カウントダウンしたのちに返信を削除
             for (let i = 5; i > 0; i--) {
                 await interaction.editReply(replyOptions(i));
                 await setTimeout(1000);

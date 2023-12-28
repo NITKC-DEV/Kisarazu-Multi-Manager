@@ -1,8 +1,9 @@
 const {StringSelectMenuBuilder, StringSelectMenuOptionBuilder, EmbedBuilder, ActionRowBuilder} = require("discord.js");
+
+const helpText = require("./helpText.json");
 const system = require("./logsystem.js");
 
-//helpTextの生成
-const helpText = require("./helpText.json");
+// helpTextの生成
 const adminTable = [];
 for (let i = 0; i < helpText.admin.length; i++) {
     adminTable.push(

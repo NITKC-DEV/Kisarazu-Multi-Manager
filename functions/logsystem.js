@@ -1,7 +1,8 @@
 const {EmbedBuilder} = require("discord.js");
-const config = require("../environmentConfig");
 
-/***
+const config = require("../environmentConfig.js");
+
+/**
  * ログをコンソールとdiscordに送信する
  * @param message ログの本文
  * @param title ログのタイトル。省略可
@@ -20,7 +21,7 @@ exports.log = async function func(message, title) {
     await channel.send({embeds: [embed]});
 };
 
-/***
+/**
  * エラー通知とログをコンソールとdiscordに送信する
  * @param message エラーメッセージの本文
  * @param error エラーオブジェクト。error.stackが存在する場合にそれが送られる。省略可
@@ -45,7 +46,7 @@ exports.error = async function func(message, error = {stack: ""}, title = "エ�
     await logChannel.send(`\`\`\`\n${error.stack}\n\`\`\``);
 };
 
-/***
+/**
  * 警告をdiscordに送信する
  * @param message ログの本文
  * @param title ログのタイトル。省略可
