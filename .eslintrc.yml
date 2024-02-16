@@ -18,7 +18,9 @@ rules:
   no-await-in-loop: off # このプロダクトにおいてはわざわざ並列処理しなくてもよくね理論
   arrow-body-style: warn
   capitalized-comments: warn
-  curly: warn
+  curly:
+    - warn
+    - all
   dot-notation: warn
   eqeqeq: warn
   func-names: error
