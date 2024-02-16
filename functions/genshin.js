@@ -1,8 +1,7 @@
-const {EmbedBuilder} = require("discord.js");
+const {client} = require("../botmain.js");
+const config = require("../environmentConfig.js");
 
-const config = require("../environmentConfig");
-
-exports.daily = async function func(message, title) {
+exports.daily = async function func(/* message, title */) {
     const daily = {
         color: 0x27668d,
         title: "デイリー更新",

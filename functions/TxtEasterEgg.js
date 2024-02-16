@@ -11,16 +11,16 @@ exports.func = function func(message) {
         /* Happy Halloween! */
 
         if (message.content.match(/トリック/) && message.content.match(/オア/) && message.content.match(/トリート/)) {
-            const reply_text = `単位くれないといたずらしちゃうぞ`;
-            message.reply(reply_text).catch(console.error);
+            const replyText = `単位くれないといたずらしちゃうぞ`;
+            message.reply(replyText).catch(console.error);
         }
     }
     if (month === 0 && date === 1) {
         /* Happy NewYear! */
 
         if (message.content.match(/あけおめ/) || (message.content.match(/あけまして/) && message.content.match(/明けまして/))) {
-            const reply_text = `あけおめ！`;
-            message.reply(reply_text).catch(console.error);
+            const replyText = `あけおめ！`;
+            message.reply(replyText).catch(console.error);
         }
     }
 };

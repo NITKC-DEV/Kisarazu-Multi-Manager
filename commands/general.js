@@ -7,7 +7,6 @@ const {configPath} = require("../environmentConfig.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const {autoDeleteEditReply} = require("../functions/common.js");
 const db = require("../functions/db.js");
-const {ID_NODATA} = require("../functions/guildDataSet.js");
 const guildData = require("../functions/guildDataSet.js");
 const help = require("../functions/help.js");
 const system = require("../functions/logsystem.js");
@@ -95,7 +94,9 @@ module.exports = [
             const config = JSON.parse(fs.readFileSync(configPath, "utf8"));
             let flag = 0;
             for (let i = 0; i < config.sugoiTsuyoiHitotachi.length; i++) {
-                if (config.sugoiTsuyoiHitotachi[i] === interaction.user.id) flag = 1;
+                if (config.sugoiTsuyoiHitotachi[i] === interaction.user.id) {
+                    flag = 1;
+                }
             }
             if (flag === 1) {
                 const reply = await interaction.editReply(
@@ -168,12 +169,12 @@ module.exports = [
                     }
                     const everyoneMention = receivedMsg.search(/@everyone/);
                     if (everyoneMention !== -1) {
-                        const rg = new RegExp("(?<!`)@everyone(?<!`)", "g");
+                        const rg = /(?<!`)@everyone(?<!`)/g;
                         receivedMsg = receivedMsg.replace(rg, "`@everyone`\0");
                     }
                     const hereMention = receivedMsg.search(/@here/);
                     if (hereMention !== -1) {
-                        const rg = new RegExp("(?<!`)@here(?<!`)", "g");
+                        const rg = /(?<!`)@here(?<!`)/g;
                         receivedMsg = receivedMsg.replace(rg, "`@here`\0");
                     }
                 }
@@ -191,8 +192,12 @@ module.exports = [
                                     sendingMsg += "\n";
                                     i += 1;
                                     break;
+                                default:
+                                    break;
                             }
-                        } else sendingMsg += receivedMsg[i];
+                        } else {
+                            sendingMsg += receivedMsg[i];
+                        }
                     }
                 }
 
@@ -355,7 +360,7 @@ module.exports = [
                     ),
             ),
         async execute(interaction) {
-            const reply = await interaction.deferReply();
+            // const reply = await interaction.deferReply();
             let embed;
             if (interaction.options.getInteger("日にち") === undefined || interaction.options.getInteger("日にち") === null) {
                 embed = await weather.generationDay(0);

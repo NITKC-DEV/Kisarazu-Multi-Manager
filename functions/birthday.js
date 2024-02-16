@@ -1,3 +1,5 @@
+const {client} = require("../botmain.js");
+
 const db = require("./db.js");
 const system = require("./logsystem.js");
 

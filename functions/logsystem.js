@@ -1,5 +1,6 @@
 const {EmbedBuilder} = require("discord.js");
 
+const {client} = require("../botmain.js");
 const config = require("../environmentConfig.js");
 
 /**

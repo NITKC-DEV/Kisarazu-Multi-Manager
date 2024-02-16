@@ -1,3 +1,5 @@
+const {client} = require("../botmain.js");
+
 const db = require("./db.js");
 
 const ID_NODATA = "0000000000000000000";
