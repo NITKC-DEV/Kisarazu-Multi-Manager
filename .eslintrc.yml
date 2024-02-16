@@ -38,6 +38,7 @@ rules:
     - allowForLoopAfterthoughts: true
   no-regex-spaces: warn
   no-undef-init: warn
+  no-underscore-dangle: off # なんかprivateじゃないのに`_`で始まるフィールドを持つライブラリがある
   no-unneeded-ternary: warn
   no-unused-labels: warn
   no-useless-computed-key: warn
