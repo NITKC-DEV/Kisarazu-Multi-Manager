@@ -2,6 +2,8 @@ const {setTimeout} = require("node:timers/promises");
 
 const {EmbedBuilder, ActionRowBuilder, TextInputBuilder, ModalBuilder} = require("discord.js");
 
+const {client} = require("../botmain.js");
+
 const db = require("./db.js");
 
 const departmentData = [
@@ -88,7 +90,9 @@ exports.generation = async function func(grade, department, day, change = true) 
                 }
             }
             if (data[0].timetable.length === 0) {
-                if (data[0].comment !== "") data[0].comment = `\n${data[0].comment}`;
+                if (data[0].comment !== "") {
+                    data[0].comment = `\n${data[0].comment}`;
+                }
                 data[0].comment = `本日設定された試験はありません。${data[0].comment}`;
             }
 
@@ -158,7 +162,9 @@ exports.generation = async function func(grade, department, day, change = true) 
             }
         }
         if (data[0].timetable.length === 0) {
-            if (data[0].comment !== "") data[0].comment = `\n${data[0].comment}`;
+            if (data[0].comment !== "") {
+                data[0].comment = `\n${data[0].comment}`;
+            }
             data[0].comment = `本日授業はありません。${data[0].comment}`;
         }
 
@@ -234,7 +240,7 @@ exports.generation = async function func(grade, department, day, change = true) 
  * @returns {Promise<void>}
  */
 exports.setNewTimetableData = async function func(interaction) {
-    // カスタムID命名規則　${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
+    // カスタムID命名規則  ${学年1ケタ}${学科1ケタ}${元データ曜日1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableSelectMenu${テストモード識別(0/1)}${変更コマ(0~3)}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const day = interaction.customId[2];
@@ -291,7 +297,9 @@ exports.setNewTimetableData = async function func(interaction) {
             interaction.update({embeds: [embed], comments: message.comments});
         });
         await db.updateOrInsert("main", "timetableData", {grade, department, day: date}, data[0]);
-    } catch {} // 元メッセージ削除対策
+    } catch {
+        /* 元メッセージ削除対策 */
+    }
 };
 
 /**
@@ -300,7 +308,7 @@ exports.setNewTimetableData = async function func(interaction) {
  * @returns {Promise<void>}
  */
 exports.showNewTimetableModal = async function func(interaction) {
-    // カスタムID命名規則　${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
+    // カスタムID命名規則  ${学年1ケタ}${学科1ケタ}${変更日時5ケタ or 4ケタ文字列}changeTimetableButton${テストモード可否}
     const grade = interaction.customId[0];
     const department = interaction.customId[1];
     const mode = interaction.customId.slice(-1);
@@ -333,18 +341,19 @@ exports.showNewTimetableModal = async function func(interaction) {
         .awaitModalSubmit({filter, time: 3600000})
         .then(async mInteraction => {
             const inputTxt = [];
-            let comment;
             for (let i = 0; i < data[0].timetable.length; i++) {
                 inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}${i}`);
             }
-            comment = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}5`);
+            const comment = mInteraction.fields.getTextInputValue(`${date}commentInputNewTimetable${grade}${department}5`);
 
             for (let i = 0; i < data[0].timetable.length; i++) {
                 if (inputTxt[i] !== "" && inputTxt[i] !== undefined && inputTxt[i].length <= 100) {
                     data[0].timetable[i].comment = inputTxt[i];
                 }
             }
-            if (comment.length <= 100) data[0].comment = comment;
+            if (comment.length <= 100) {
+                data[0].comment = comment;
+            }
             data[0].day = date;
             data[0].test = mode === "0";
             delete data[0]._id;
@@ -357,8 +366,8 @@ exports.showNewTimetableModal = async function func(interaction) {
                     message.delete();
                 })
                 .catch(() => {});
-            const replyOptions = time => ({
-                content: `登録しました。\n(このメッセージは${time}秒後に自動で削除されます)`,
+            const replyOptions = delayTime => ({
+                content: `登録しました。\n(このメッセージは${delayTime}秒後に自動で削除されます)`,
                 ephemeral: true,
             });
             await mInteraction.reply(replyOptions(5));
@@ -377,7 +386,9 @@ exports.showNewTimetableModal = async function func(interaction) {
                         message.delete();
                     })
                     .catch(() => {});
-            } catch {} // 元メッセージ削除対策
+            } catch {
+                /* 元メッセージ削除対策 */
+            }
         });
 };
 

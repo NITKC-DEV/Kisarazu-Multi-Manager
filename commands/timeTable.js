@@ -11,7 +11,7 @@ const {
 } = require("discord.js");
 
 const db = require("../functions/db.js");
-const guildData = require("../functions/guildDataSet.js");
+const guildDataSet = require("../functions/guildDataSet.js");
 const timetable = require("../functions/ttGeneration.js");
 
 const departmentData = [
@@ -112,11 +112,17 @@ module.exports = [
             let department = interaction.options.getString("学科");
             if (department === undefined || (department === null && interaction.guild !== null)) {
                 const guildData = await db.find("main", "guildData", {guild: interaction.guildId});
-                if (interaction.member._roles.includes(guildData[0].mRole)) department = "1";
-                else if (interaction.member._roles.includes(guildData[0].eRole)) department = "2";
-                else if (interaction.member._roles.includes(guildData[0].dRole)) department = "3";
-                else if (interaction.member._roles.includes(guildData[0].jRole)) department = "4";
-                else if (interaction.member._roles.includes(guildData[0].cRole)) department = "5";
+                if (interaction.member.roles.resolve(guildData[0].mRole)) {
+                    department = "1";
+                } else if (interaction.member.roles.resolve(guildData[0].eRole)) {
+                    department = "2";
+                } else if (interaction.member.roles.resolve(guildData[0].dRole)) {
+                    department = "3";
+                } else if (interaction.member.roles.resolve(guildData[0].jRole)) {
+                    department = "4";
+                } else if (interaction.member.roles.resolve(guildData[0].cRole)) {
+                    department = "5";
+                }
             }
 
             let grade = interaction.options.getString("学年");
@@ -125,7 +131,7 @@ module.exports = [
                 grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1;
             }
 
-            if (isNaN(grade)) {
+            if (Number.isNaN(grade)) {
                 await interaction.editReply(
                     "このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、/guilddataで入学した年を登録してもらってください。",
                 );
@@ -162,7 +168,7 @@ module.exports = [
 
         async execute(interaction) {
             await interaction.deferReply({ephemeral: true});
-            await guildData.updateOrInsert(interaction.guildId, {timetable: interaction.options.data[0].value});
+            await guildDataSet.updateOrInsert(interaction.guildId, {timetable: interaction.options.data[0].value});
             await interaction.editReply({content: `時間割定期通知機能を${interaction.options.data[0].value}に設定しました。`});
         },
     },
@@ -566,11 +572,10 @@ module.exports = [
                 .awaitModalSubmit({filter, time: 3600000})
                 .then(async mInteraction => {
                     const inputTxt = [];
-                    let comment;
                     for (let i = 0; i < data[0].timetable.length; i++) {
                         inputTxt[i] = mInteraction.fields.getTextInputValue(`${date}addCommentTimetable${grade}${department}${i}`);
                     }
-                    comment = mInteraction.fields.getTextInputValue(`${date}addCommentTimetable${grade}${department}5`);
+                    const comment = mInteraction.fields.getTextInputValue(`${date}addCommentTimetable${grade}${department}5`);
 
                     for (let i = 0; i < data[0].timetable.length; i++) {
                         if (
@@ -604,7 +609,7 @@ module.exports = [
                     }
                     await mInteraction.deleteReply();
                 })
-                .catch(error => {});
+                .catch(() => {});
         },
     },
 ];
