@@ -12,10 +12,18 @@ async function getWeather() {
 
 function zenkaku2Hankaku(str) {
     return str.replace(/[Ａ-Ｚａ-ｚ０-９ ．　海後]/g, s => {
-        if (s === "．") return `.`;
-        if (s === "　") return "";
-        if (s === "海") return " 海";
-        if (s === "後") return " 後";
+        if (s === "．") {
+            return `.`;
+        }
+        if (s === "　") {
+            return "";
+        }
+        if (s === "海") {
+            return " 海";
+        }
+        if (s === "後") {
+            return " 後";
+        }
 
         return String.fromCharCode(s.charCodeAt(0) - 0xfee0);
     });
@@ -42,7 +50,7 @@ exports.generationDay = async function func(day) {
         color = "77787B";
     }
 
-    let annotation = "";
+    let annotation;
     let filed;
 
     if (day === 0 && date.getHours() * 100 + date.getMinutes() > 505) {
