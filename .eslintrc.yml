@@ -34,6 +34,10 @@ rules:
   no-extra-boolean-cast: warn
   no-extra-label: warn
   no-implicit-coercion: warn
+  no-irregular-whitespace:
+    - error
+    - skipRegExps: true
+      skipTemplates: true
   no-lonely-if: warn
   no-plusplus:
     - error
