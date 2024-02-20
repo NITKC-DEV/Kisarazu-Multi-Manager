@@ -1,8 +1,7 @@
 const {MongoClient, ServerApiVersion} = require("mongodb");
 
-const config = require("../environmentConfig");
+const config = require("../environmentConfig.js");
 
-const db = require("./db.js");
 const system = require("./logsystem.js");
 
 const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
@@ -14,7 +13,7 @@ const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
  * @param filter フィルターを指定
  * @returns {Promise<WithId<Document>[]>}
  */
-exports.find = async function (dbName, collectionName, filter) {
+exports.find = async function run(dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
 
     return await collection.find(filter).toArray();
@@ -27,7 +26,7 @@ exports.find = async function (dbName, collectionName, filter) {
  * @param filter フィルターを指定
  * @returns {Promise<boolean>}
  */
-exports.includes = async function (dbName, collectionName, filter) {
+exports.includes = async function run(dbName, collectionName, filter) {
     const collection = await dbClient.db(dbName).collection(collectionName);
     const data = await collection.find(filter).toArray();
     return data.length > 0;
@@ -46,7 +45,7 @@ exports.update = async function run(dbName, collectionName, filter, update) {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
-        const result = await collection.updateOne(filter, update);
+        await collection.updateOne(filter, update);
         await system.log(`${dbName}.${collectionName}を更新`, `DB更新実行`);
     } catch (err) {
         await system.error(`${dbName}.${collectionName}を更新できませんでした`, err, `DB更新失敗`);
@@ -65,7 +64,7 @@ exports.insert = async function run(dbName, collectionName, object) {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
-        const result = await collection.insertOne(object);
+        await collection.insertOne(object);
         await system.log(`${dbName}.${collectionName}にレコード追加`, `DB追加実行`);
     } catch (err) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`, err, `DB追加失敗`);
@@ -82,11 +81,11 @@ exports.insert = async function run(dbName, collectionName, object) {
  */
 exports.updateOrInsert = async function run(dbName, collectionName, filter, object) {
     try {
-        const data = await db.find(dbName, collectionName, filter);
+        const data = await exports.find(dbName, collectionName, filter);
         if (data.length > 0) {
-            await db.update(dbName, collectionName, filter, {$set: object});
+            await exports.update(dbName, collectionName, filter, {$set: object});
         } else {
-            await db.insert(dbName, collectionName, object);
+            await exports.insert(dbName, collectionName, object);
         }
     } catch (err) {
         await system.error(`${dbName}.${collectionName}にレコードを追加できませんでした`, err, `DB追加失敗`);
@@ -105,7 +104,7 @@ exports.delete = async function run(dbName, collectionName, filter) {
         const database = await dbClient.db(dbName);
         const collection = await database.collection(collectionName);
 
-        const result = await collection.deleteMany(filter);
+        await collection.deleteMany(filter);
         await system.log(`${dbName}.${collectionName}からレコード削除(削除されたとは言っていない)`, `DBレコード削除操作実行`);
     } catch (err) {
         await system.error(`${dbName}.${collectionName}からレコードを削除できませんでした`, err, `DB削除失敗`);
@@ -116,8 +115,8 @@ exports.delete = async function run(dbName, collectionName, filter) {
  *
  * @returns {Promise<void>}
  */
-exports.open = async function close() {
-    const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
+exports.open = async function run() {
+    // const dbClient = new MongoClient(config.db, {serverApi: ServerApiVersion.v1});
     await system.log("DB - open");
 };
 
@@ -125,7 +124,7 @@ exports.open = async function close() {
  *
  * @returns {Promise<void>}
  */
-exports.close = async function close() {
+exports.close = async function run() {
     await dbClient.close();
     await system.log("DB - close");
 };
