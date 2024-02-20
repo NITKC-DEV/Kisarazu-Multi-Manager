@@ -43,6 +43,7 @@ rules:
     - error
     - allowForLoopAfterthoughts: true
   no-regex-spaces: warn
+  no-return-await: off
   no-undef-init: warn
   no-underscore-dangle: off # なんかprivateじゃないのに`_`で始まるフィールドを持つライブラリがある
   no-unneeded-ternary: warn
