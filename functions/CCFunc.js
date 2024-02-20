@@ -1,5 +1,7 @@
 const {ActionRowBuilder, StringSelectMenuBuilder} = require("discord.js");
 
+const {client} = require("../botmain.js");
+
 const db = require("./db.js");
 const system = require("./logsystem.js");
 
@@ -8,13 +10,33 @@ const colCat = "CC-categories";
 const colChan = "CC-channels";
 
 /**
+ * 与えられた引数からチャンネルを削除する
+ * @param interaction 何かしらのinteraction(使わない実装にもできるけどだるかった)
+ * @param ID チャンネルID
+ * @returns {Promise<void>} void(同期処理)
+ */
+async function channelDelete(interaction, ID) {
+    await interaction.guild.channels.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
+}
+
+/**
+ * 与えられた引数からロールを削除する
+ * @param interaction 何かしらのinteraction
+ * @param ID ロールID
+ * @returns {Promise<void>} void(同期処理)
+ */
+async function roleDelete(interaction, ID) {
+    await interaction.guild.roles.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
+}
+
+/**
  * /createChannelによって作成されたStringSelectMenuを受け付け、チャンネルを作成する
  *
  * ロールを作成するかを問うStringSelectMenuを投げる
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.createChannel = async function (interaction) {
+exports.createChannel = async function createChannel(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     // ゴリ押しJson文字列をオブジェクト型に変換する
     const receivedValue = JSON.parse(interaction.values[0]);
@@ -94,7 +116,7 @@ exports.createChannel = async function (interaction) {
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.createRole = async function (interaction) {
+exports.createRole = async function createRole(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     const receivedValue = JSON.parse(interaction.values[0]);
 
@@ -139,13 +161,13 @@ exports.createRole = async function (interaction) {
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.removeCategory = async function (interaction) {
+exports.removeCategory = async function removeCategory(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     switch (interaction.values[0]) {
         case "Cancel":
             await waitingMessage.edit({content: "キャンセルされました", components: []});
             break;
-        default:
+        default: {
             const selectDelete = new ActionRowBuilder().addComponents(
                 new StringSelectMenuBuilder().setCustomId("selectDelete").setOptions(
                     {
@@ -164,6 +186,7 @@ exports.removeCategory = async function (interaction) {
                 content: "カテゴリの登録解除時に/create-channelによって作られたチャンネルとロールを削除しますか?",
                 components: [selectDelete],
             });
+        }
     }
 };
 
@@ -174,7 +197,7 @@ exports.removeCategory = async function (interaction) {
  * @param interaction StringSelectMenuInteractionオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.selectDelete = async function (interaction) {
+exports.selectDelete = async function selectDelete(interaction) {
     const waitingMessage = await interaction.deferUpdate({ephemeral: true});
     if (interaction.values[0] === "Cancel") {
         await waitingMessage.edit({content: "キャンセルされました", components: []});
@@ -194,7 +217,7 @@ exports.selectDelete = async function (interaction) {
                             await channelDelete(interaction, channelData.ID);
                         } catch (error) {
                             await system.error("/remove-categoryチャンネル削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
 
                         try {
@@ -203,7 +226,7 @@ exports.selectDelete = async function (interaction) {
                             }
                         } catch (error) {
                             await system.error("/remove-categoryロール削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
                     }
                 }
@@ -220,7 +243,7 @@ exports.selectDelete = async function (interaction) {
                 }
 
                 break;
-            default:
+            default: {
                 const catName = (await db.find(dbMain, colCat, {ID: receivedValue.categoryID}))[0].name;
                 if (receivedValue.value) {
                     for (const channelData of (await db.find(dbMain, colChan, {categoryID: receivedValue.categoryID})).map(channel => ({
@@ -232,7 +255,7 @@ exports.selectDelete = async function (interaction) {
                             await channelDelete(interaction, channelData.ID);
                         } catch (error) {
                             await system.error("/remove-categoryチャンネル削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
 
                         try {
@@ -241,7 +264,7 @@ exports.selectDelete = async function (interaction) {
                             }
                         } catch (error) {
                             await system.error("/remove-categoryロール削除失敗", error);
-                            errorCount++;
+                            errorCount += 1;
                         }
                     }
                 }
@@ -256,39 +279,19 @@ exports.selectDelete = async function (interaction) {
                 } else {
                     returnMessage = `${catName}の登録を解除しました`;
                 }
-
                 break;
+            }
         }
         await waitingMessage.edit({content: returnMessage, components: []});
     }
 };
 
 /**
- * 与えられた引数からチャンネルを削除する
- * @param interaction 何かしらのinteraction(使わない実装にもできるけどだるかった)
- * @param ID チャンネルID
- * @returns {Promise<void>} void(同期処理)
- */
-async function channelDelete(interaction, ID) {
-    await interaction.guild.channels.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
-}
-
-/**
- * 与えられた引数からロールを削除する
- * @param interaction 何かしらのinteraction
- * @param ID ロールID
- * @returns {Promise<void>} void(同期処理)
- */
-async function roleDelete(interaction, ID) {
-    await interaction.guild.roles.delete(ID, "木更津高専統合管理BOTの/remove-categoryにより削除");
-}
-
-/**
  * チャンネルが削除されたときにDBから情報を削除する
  * @param channel チャンネルオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.removeDeletedChannelData = async function (channel) {
+exports.removeDeletedChannelData = async function removeDeletedChannelData(channel) {
     await db.delete(dbMain, colChan, {ID: channel.id});
 };
 
@@ -297,7 +300,7 @@ exports.removeDeletedChannelData = async function (channel) {
  * @param category カテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.removeDeletedCategoryData = async function (category) {
+exports.removeDeletedCategoryData = async function removeDeletedCategoryData(category) {
     await db.delete(dbMain, colCat, {ID: category.id});
     await db.delete(dbMain, colChan, {categoryID: category.id});
 };
@@ -307,7 +310,7 @@ exports.removeDeletedCategoryData = async function (category) {
  * @param channel 変更を検知したときのchannelオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.updateChannelData = async function (channel) {
+exports.updateChannelData = async function updateChannelData(channel) {
     const channelData = await db.find(dbMain, colChan, {ID: channel.id});
     const newChannel = await client.channels.cache.get(channel.id);
     if (channelData.length > 0) {
@@ -326,7 +329,7 @@ exports.updateChannelData = async function (channel) {
  * @param category 変更を検知したときのカテゴリ(チャンネル)オブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.updateCategoryData = async function (category) {
+exports.updateCategoryData = async function updateCategoryData(category) {
     const categoryData = await db.find(dbMain, colCat, {ID: category.id});
     const newCategory = await client.channels.cache.get(category.id);
     if (categoryData.length > 0) {
@@ -341,7 +344,7 @@ exports.updateCategoryData = async function (category) {
  * @param role roleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.removeDeletedRoleData = async function (role) {
+exports.removeDeletedRoleData = async function removeDeletedRoleData(role) {
     await db.update(dbMain, colChan, {roleID: role.id}, {$set: {thereRole: false, roleID: "", roleName: ""}});
 };
 
@@ -350,7 +353,7 @@ exports.removeDeletedRoleData = async function (role) {
  * @param role 変更を検知したときのroleオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.updateRoleData = async function (role) {
+exports.updateRoleData = async function updateRoleData(role) {
     const channelData = await db.find(dbMain, colChan, {roleID: role.id});
 
     if (channelData.length > 0) {
@@ -366,7 +369,7 @@ exports.updateRoleData = async function (role) {
  * @param guild 抜けたときのguildオブジェクト
  * @returns {Promise<void>} void(同期処理)
  */
-exports.deleteGuildData = async function (guild) {
+exports.deleteGuildData = async function deleteGuildData(guild) {
     const categoryData = await db.find(dbMain, colCat, {guildID: guild.id});
     for (const category of categoryData) {
         await db.delete(dbMain, colChan, {categoryID: category.ID});
@@ -378,7 +381,7 @@ exports.deleteGuildData = async function (guild) {
  * ギルド、カテゴリ、チャンネル、ロールの情報を参照し、整合性を確認する
  * @returns {Promise<void>} void(同期処理)
  */
-exports.dataCheck = async function () {
+exports.dataCheck = async function dataCheck() {
     await system.log("開始", "createChannelデータベース整合性検証");
     try {
         for (const category of await db.find(dbMain, colCat, {})) {
