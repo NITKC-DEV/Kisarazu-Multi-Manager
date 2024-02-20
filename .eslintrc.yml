@@ -27,6 +27,7 @@ rules:
   logical-assignment-operators: warn
   multiline-comment-style: off # `//`形式のコメントを重ねられなくなる
   no-console: off # ログ出力くらいさせろ
+  no-continue: off # 思想の問題
   no-div-regex: warn
   no-bitwise: off # パーミッション指定でビットシフトを使うため
   no-else-return: warn
@@ -43,7 +44,7 @@ rules:
     - error
     - allowForLoopAfterthoughts: true
   no-regex-spaces: warn
-  no-return-await: off
+  no-return-await: off # 非推奨のため
   no-undef-init: warn
   no-underscore-dangle: off # なんかprivateじゃないのに`_`で始まるフィールドを持つライブラリがある
   no-unneeded-ternary: warn
