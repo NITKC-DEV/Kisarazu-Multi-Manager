@@ -4,7 +4,6 @@ const {SlashCommandBuilder} = require("discord.js");
 
 const dashboard = require("../functions/dashboard.js");
 const db = require("../functions/db.js");
-const system = require("../functions/logsystem.js");
 
 module.exports = [
     {
@@ -75,37 +74,11 @@ module.exports = [
                 await reply.react("⭕");
                 await reply.react("❌");
 
-                let flag = -1;
                 const otherReact = [0, 0];
                 await setTimeout(100);
 
-                while (flag === -1) {
-                    await reply
-                        .awaitReactions({
-                            filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
-                            max: 1,
-                            time: 60_000,
-                        })
-                        .then(() => {
-                            if (reply.reactions.cache.at(0).count === 2 + otherReact[0]) {
-                                if (reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id) {
-                                    flag = 0;
-                                } else {
-                                    otherReact[0] += 1;
-                                }
-                            } else if (reply.reactions.cache.at(1).count === 2 + otherReact[1]) {
-                                if (reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id) {
-                                    flag = 1;
-                                } else {
-                                    otherReact[1] += 1;
-                                }
-                            } else {
-                                flag = 1;
-                            }
-                        });
-                }
-                await reply.reactions.removeAll();
-                if (flag === 0) {
+                const generate = async () => {
+                    await reply.reactions.removeAll();
                     await interaction.editReply("生成中...");
                     const embed = await dashboard.generation(interaction.guild);
                     const board = await interaction.channel.send({embeds: [embed]});
@@ -126,13 +99,43 @@ module.exports = [
                         content: `ダッシュボードを生成し、自動更新を有効にしました。\n(このメッセージは${time}秒後に自動で削除されます。)`,
                         ephemeral: true,
                     });
-                } else if (flag === 1) {
+                };
+
+                const cancel = async () => {
                     await reply.reactions.removeAll();
                     replyOptions = time => ({
                         content: `生成をキャンセルしました。\n(このメッセージは${time}秒後に自動で削除されます。)`,
                         ephemeral: true,
                     });
-                }
+                };
+
+                await (async function loop() {
+                    await reply
+                        .awaitReactions({
+                            filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
+                            max: 1,
+                            time: 60_000,
+                        })
+                        .then(async () => {
+                            if (reply.reactions.cache.at(0).count === 2 + otherReact[0]) {
+                                if (reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id) {
+                                    await generate();
+                                } else {
+                                    otherReact[0] += 1;
+                                    await loop();
+                                }
+                            } else if (reply.reactions.cache.at(1).count === 2 + otherReact[1]) {
+                                if (reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id) {
+                                    await cancel();
+                                } else {
+                                    otherReact[1] += 1;
+                                    await loop();
+                                }
+                            } else {
+                                await cancel();
+                            }
+                        });
+                })();
             } else {
                 data = await db.find("main", "guildData", {guild: interaction.guildId}); /* guildData作成済みかどうか確認 */
                 const embed = await dashboard.generation(interaction.guild);
