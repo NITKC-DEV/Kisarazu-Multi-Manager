@@ -1,4 +1,3 @@
-const axios = require("axios");
 const {EmbedBuilder} = require("discord.js");
 
 const db = require("./db.js");
@@ -11,8 +10,10 @@ async function getWeather() {
 }
 
 /* 日数カウント */
-function diffInMonthsAndDays(from, to) {
-    if (from > to) {
+function diffInMonthsAndDays(start, end) {
+    let from = start;
+    let to = end;
+    if (start > end) {
         [from, to] = [to, from];
     }
     const fromDate = new Date(from);
@@ -159,9 +160,11 @@ exports.generation = async function func(guild) {
         if (!weatherData) {
             weather = "天気を取得できませんでした";
         } else {
-            const weatherCache = [{}, {}]; /* 天気のキャッシュを取得 */
-            weatherCache[0] = (await db.find("main", "weatherCache", {label: {$in: ["0"]}}))[0];
-            weatherCache[1] = (await db.find("main", "weatherCache", {label: {$in: ["1"]}}))[0];
+            /* 天気のキャッシュを取得 */
+            const weatherCache = [
+                (await db.find("main", "weatherCache", {label: {$in: ["0"]}}))[0],
+                (await db.find("main", "weatherCache", {label: {$in: ["1"]}}))[0],
+            ];
 
             const min = [
                 weatherData.forecasts[0].temperature.min.celsius ?? weatherCache[0].min,
@@ -210,7 +213,6 @@ exports.generation = async function func(guild) {
             ])
             .setTimestamp()
             .setFooter({text: "Developed by NITKC-DEV"});
-
         return embed;
     } catch (error) {
         await system.error(`ダッシュボードの生成に失敗しましたを取得できませんでした`, error);

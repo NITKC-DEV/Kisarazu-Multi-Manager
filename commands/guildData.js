@@ -135,6 +135,7 @@ module.exports = [
             .setDMPermission(false)
             .setDefaultMemberPermissions(1 << 3),
         async execute(interaction) {
+            let replyOptions;
             await interaction.deferReply();
             const reply = await interaction.editReply(
                 "この操作を実行すると、時間割/天気定期通知機能のON/OFF以外のすべての設定が失われます。\n続行する場合は:o:を、操作をキャンセルする場合は:x:をリアクションしてください。",
@@ -143,51 +144,54 @@ module.exports = [
             await reply.react("⭕");
             await reply.react("❌");
 
-            let flag = -1;
             const otherReact = [0, 0];
             await setTimeout(100);
 
-            while (flag === -1) {
-                await reply
-                    .awaitReactions({
-                        filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
-                        max: 1,
-                        time: 60_000,
-                    })
-                    .then(() => {
-                        if (reply.reactions.cache.at(0).count === 2 + otherReact[0]) {
-                            if (reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id) {
-                                flag = 0;
-                            } else {
-                                otherReact[0] += 1;
-                            }
-                        } else if (reply.reactions.cache.at(1).count === 2 + otherReact[1]) {
-                            if (reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id) {
-                                flag = 1;
-                            } else {
-                                otherReact[1] += 1;
-                            }
-                        } else {
-                            flag = 1;
-                        }
-                    });
-            }
-            await reply.reactions.removeAll();
-            let replyOptions;
-            if (flag === 0) {
+            const remove = async () => {
+                await reply.reactions.removeAll();
                 await interaction.editReply("削除中...");
                 await guildData.reset(interaction.guildId);
                 replyOptions = time => ({
                     content: `削除しました。再度設定するには、/guilddataコマンドを使用してください。\n(このメッセージは${time}秒後に自動で削除されます)`,
                     ephemeral: true,
                 });
-            } else if (flag === 1) {
+            };
+
+            const cancel = async () => {
                 await reply.reactions.removeAll();
                 replyOptions = time => ({
                     content: `操作をキャンセルしました。\n(このメッセージは${time}秒後に自動で削除されます)`,
                     ephemeral: true,
                 });
-            }
+            };
+
+            await (async function loop() {
+                await reply
+                    .awaitReactions({
+                        filter: reaction => reaction.emoji.name === "⭕" || reaction.emoji.name === "❌",
+                        max: 1,
+                        time: 60_000,
+                    })
+                    .then(async () => {
+                        if (reply.reactions.cache.at(0).count === 2 + otherReact[0]) {
+                            if (reply.reactions.cache.at(0).users.cache.at(1 + otherReact[0]).id === interaction.user.id) {
+                                await remove();
+                            } else {
+                                otherReact[0] += 1;
+                                await loop();
+                            }
+                        } else if (reply.reactions.cache.at(1).count === 2 + otherReact[1]) {
+                            if (reply.reactions.cache.at(1).users.cache.at(1 + otherReact[1]).id === interaction.user.id) {
+                                await cancel();
+                            } else {
+                                otherReact[1] += 1;
+                                await loop();
+                            }
+                        } else {
+                            await cancel();
+                        }
+                    });
+            })();
             await interaction.editReply(replyOptions(5));
             // 5秒カウントダウンしたのちに返信を削除
             for (let i = 5; i > 0; i--) {
