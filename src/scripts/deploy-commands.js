@@ -5,7 +5,7 @@ const {REST} = require("@discordjs/rest");
 const {Routes} = require("discord.js");
 const {Select, MultiSelect, Toggle} = require("enquirer");
 
-const config = require("./environmentConfig");
+const config = require("../environmentConfig.js");
 
 console.log(config);
 // ./commands/ ディレクトリ内を探索

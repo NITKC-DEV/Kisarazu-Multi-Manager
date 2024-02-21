@@ -3,6 +3,7 @@ const {setTimeout} = require("node:timers/promises");
 
 const {SlashCommandBuilder, EmbedBuilder, version} = require("discord.js");
 
+const packageVer = require("../../package.json");
 const {configPath} = require("../environmentConfig.js");
 const CreateChannel = require("../functions/CCFunc.js");
 const {autoDeleteEditReply} = require("../functions/common.js");
@@ -12,7 +13,6 @@ const help = require("../functions/help.js");
 const system = require("../functions/logsystem.js");
 const mode = require("../functions/statusAndMode.js");
 const weather = require("../functions/weather.js");
-const packageVer = require("../package.json");
 require("date-utils");
 
 module.exports = [

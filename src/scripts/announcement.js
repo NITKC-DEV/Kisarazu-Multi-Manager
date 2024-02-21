@@ -24,8 +24,8 @@ const client = new Client({
 
 /* 埋め込みメッセージ受け取り */
 const embed = require("./announceText.js");
-const devConfig = require("./config.dev.json");
-const config = require("./config.json");
+const devConfig = require("../../env/config.dev.json");
+const config = require("../../env/config.json");
 
 async function find(dbName, collectionName, filter) {
     const collection = dbClient.db(dbName).collection(collectionName);
