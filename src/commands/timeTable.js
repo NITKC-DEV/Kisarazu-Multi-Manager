@@ -131,7 +131,7 @@ module.exports = [
                 grade = dt.getFullYear() - parseFloat(guildData[0].grade) + 1;
             }
 
-            if (Number.isNaN(grade)) {
+            if (Number.isNaN(parseInt(grade))) {
                 await interaction.editReply(
                     "このサーバーに学年情報が登録されていないため、学年オプションを省略できません。\n管理者に伝えて、/guilddataで入学した年を登録してもらってください。",
                 );
