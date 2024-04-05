@@ -360,7 +360,7 @@ module.exports = [
                     ),
             ),
         async execute(interaction) {
-            // const reply = await interaction.deferReply();
+            await interaction.deferReply();
             let embed;
             if (interaction.options.getInteger("日にち") === undefined || interaction.options.getInteger("日にち") === null) {
                 embed = await weather.generationDay(0);
