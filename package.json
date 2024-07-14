@@ -15,12 +15,15 @@
   "name": "nitkc-main",
   "description": "",
   "version": "5.0.2",
-  "main": "botmain.js",
+  "main": "src/botmain.js",
   "scripts": {
-    "dev": "cross-env NODE_ENV=development node .",
-    "start": "cross-env NODE_ENV=production node .",
-    "cmd": "cross-env NODE_ENV=development node deploy-commands.js",
-    "cmd-prod": "cross-env NODE_ENV=production node deploy-commands.js",
+    "pm2-dev": "pm2 start ecosystem.config.cjs --env dev",
+    "pm2-prod": "pm2 start ecosystem.config.cjs --env prod",
+    "start-dev": "cross-env NODE_ENV=development node .",
+    "start-prod": "cross-env NODE_ENV=production node .",
+    "cmd-dev": "cross-env NODE_ENV=development node src/scripts/deploy-commands.js",
+    "cmd-prod": "cross-env NODE_ENV=production node src/scripts/deploy-commands.js",
+    "announce": "node src/scripts/announcement.js",
     "prepare": "husky install"
   },
   "repository": {
@@ -34,7 +37,11 @@
   },
   "homepage": "https://github.com/NITKC-DEV/Kisarazu-Multi-Manager#readme",
   "devDependencies": {
+    "@types/node": "^20.10.4",
     "cross-env": "^7.0.3",
+    "eslint": "^8.55.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-prettier": "^9.1.0",
     "husky": "^8.0.0",
     "lint-staged": "^15.1.0"
   },
@@ -44,6 +51,7 @@
     "pm2": "5.3.0"
   },
   "lint-staged": {
-    "*.{js,cjs,mjs,json,yaml,md}": "prettier --write"
+    "!(src/scripts/**)*.{js,cjs,mjs}": "eslint --fix",
+    "!(src/scripts/**)*.{js,cjs,mjs,json,yaml,yml,md}": "prettier --write"
   }
 }

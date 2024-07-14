@@ -7,5 +7,5 @@ arrowParens = "avoid"   # default="always"
 bracketSpacing = false  # defaule=true
 
 [[overrides]]
-files = ["*.json", "*.md", "*.yaml", "*.toml"]
+files = ["*.json", "*.md", "*.yaml", "*.yml", "*.toml"]
 options.tabWidth = 2

@@ -1,9 +1,9 @@
 <component name="ProjectRunConfigurationManager">
-  <configuration default="false" name="cmd-prod" type="js.build_tools.npm" folderName="deploy commands">
+  <configuration default="false" name="pm2-prod" type="js.build_tools.npm" folderName="start with pm2">
     <package-json value="$PROJECT_DIR$/package.json" />
     <command value="run" />
     <scripts>
-      <script value="cmd-prod" />
+      <script value="pm2-prod" />
     </scripts>
     <node-interpreter value="project" />
     <envs />
