@@ -17,7 +17,7 @@ exports.func = function func(message) {
     }
     if(month=== 0 && date===1){  /*Happy NewYear!*/
 
-        if (message.content.match(/あけおめ/) || message.content.match(/あけまして/) && message.content.match(/明けまして/)) {
+        if (message.content.match(/あけおめ/) || message.content.match(/あけまして/) || message.content.match(/明けまして/)) {
             let reply_text = `あけおめ！`;
             message.reply(reply_text)
                 .catch(console.error);
